@@ -5,6 +5,9 @@
   "notice": "聖誕快樂 by 老王",
   "sites": [
 
+    {"name":"🍕欧乐","key":"🍕欧乐","type":3,"api":"csp_OlyyAmns","jar": "./jar/aowu.jar;md5;acaa62334a0032c09ffc66c0aac9530e","searchable":1,"filterable":1,"quickSearch":1,"changeable":1},
+    {"name":"⛵爱壹帆","key":"⛵爱壹帆","type":3,"api":"csp_AiyfAmns","jar": "./jar/aowu.jar;md5;acaa62334a0032c09ffc66c0aac9530e","searchable":1,"filterable":1,"quickSearch":1,"changeable":1},
+
     {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",

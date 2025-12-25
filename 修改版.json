@@ -1,0 +1,1176 @@
+// ==================== 配置設定 ====================
+const TASK_DEBUG = false; // 設為 false 關閉詳細日誌，設為 true 開啟詳細日誌
+
+// ==================== 工具函數 ====================
+function debugLog(...args) {
+    if (TASK_DEBUG) {
+        console.log('[任務調試]', ...args);
+    }
+}
+
+function infoLog(...args) {
+    console.log('[任務系統]', ...args);
+}
+
+function warnLog(...args) {
+    console.warn('[任務警告]', ...args);
+}
+
+function errorLog(...args) {
+    console.error('[任務錯誤]', ...args);
+}
+
+// ==================== 模組定義工具 ====================
+infoLog('初始化模組系統，調試模式:', TASK_DEBUG);
+
+var t = {
+    // 模組載入器
+    n: e => {
+        debugLog('載入模組:', e?.name || '未知模組');
+        var a = e && e.__esModule 
+            ? () => e.default 
+            : () => e;
+        return t.d(a, { a }), a;
+    },
+    
+    // 定義屬性
+    d: (e, a) => {
+        debugLog(`定義模組屬性，共 ${Object.keys(a).length} 個`);
+        for (var n in a) {
+            t.o(a, n) && !t.o(e, n) && 
+            Object.defineProperty(e, n, {
+                enumerable: !0,
+                get: a[n]
+            });
+        }
+    },
+    
+    // 檢查物件是否有屬性
+    o: (t, e) => Object.prototype.hasOwnProperty.call(t, e)
+};
+
+// ==================== 載入依賴模組 ====================
+infoLog('開始載入依賴模組');
+try {
+    const e = _;
+    infoLog('_ 模組載入成功');
+    var a = t.n(e);
+    infoLog('工具函數初始化完成');
+} catch (error) {
+    errorLog('載入 _ 模組失敗:', error.message);
+    // 創建一個簡單的備用函數
+    var a = () => ({
+        get: (obj, path, defaultValue) => {
+            if (!obj || typeof path !== 'string') return defaultValue;
+            return path.split('.').reduce((acc, key) => acc && acc[key], obj) || defaultValue;
+        },
+        set: (obj, path, value) => {
+            if (!obj || typeof path !== 'string') return false;
+            const keys = path.split('.');
+            const lastKey = keys.pop();
+            const target = keys.reduce((acc, key) => {
+                if (!acc[key]) acc[key] = {};
+                return acc[key];
+            }, obj);
+            target[lastKey] = value;
+            return true;
+        },
+        isPlainObject: (obj) => obj && typeof obj === 'object' && !Array.isArray(obj) && obj !== null,
+        isEmpty: (obj) => !obj || Object.keys(obj).length === 0
+    });
+    warnLog('使用備用工具函數');
+}
+
+// ==================== 全局變數 ====================
+let p = !1;  // 處理標記：防止循環處理
+let b = null; // 快照資料：用於跨日檢查
+
+infoLog('全局變數初始化完成');
+
+// ==================== 工具函數 ====================
+
+/**
+ * 將時間字串轉換為分鐘數
+ * @param {string} t - 時間字串 (HH:MM)
+ * @returns {number|null} - 總分鐘數或 null
+ */
+function mh(t) {
+    debugLog(`解析時間字串: "${t}"`);
+    if ('string' != typeof t) {
+        debugLog('輸入不是字串');
+        return null;
+    }
+    
+    const e = /^(\d{1,2}):(\d{2})$/.exec(t.trim());
+    if (!e) {
+        debugLog('格式不符: HH:MM');
+        return null;
+    }
+    
+    const hour = Number(e[1]);
+    const minute = Number(e[2]);
+    
+    if (!Number.isFinite(hour) || !Number.isFinite(minute)) {
+        debugLog('數字無效');
+        return null;
+    }
+    
+    if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+        debugLog(`時間超出範圍: ${hour}:${minute}`);
+        return null;
+    }
+    
+    return 60 * hour + minute;
+}
+
+/**
+ * 解析任務結束時間字串
+ * @param {string} t - 格式: "第X天 HH:MM"
+ * @returns {object|null} - 時間物件或 null
+ */
+function mM(t) {
+    debugLog(`解析任務結束時間: "${t}"`);
+    if ('string' != typeof t) {
+        debugLog('輸入不是字串');
+        return null;
+    }
+    
+    const e = /第(\d+)天\s+(\d{1,2}):(\d{2})/.exec(t);
+    if (!e) {
+        debugLog('格式不符: 第X天 HH:MM');
+        return null;
+    }
+    
+    const day = Number(e[1]);
+    const hour = Number(e[2]);
+    const minute = Number(e[3]);
+    
+    if (!Number.isFinite(day) || !Number.isFinite(hour) || !Number.isFinite(minute)) {
+        debugLog('數字無效');
+        return null;
+    }
+    
+    return {
+        day: day,
+        hour: hour,
+        minute: minute,
+        totalMinutes: day * 1440 + hour * 60 + minute
+    };
+}
+
+/**
+ * 獲取當前遊戲時間
+ * @param {object} t - 遊戲資料
+ * @returns {object|null} - 時間物件或 null
+ */
+function mg(t) {
+    const day = a().get(t, '系統.經過天數');
+    const timeStr = a().get(t, '系統.當前時間');
+    
+    if (!Number.isFinite(day) || 'string' != typeof timeStr) {
+        debugLog('時間數據格式錯誤');
+        return null;
+    }
+    
+    const minutes = mh(timeStr);
+    if (minutes === null) {
+        return null;
+    }
+    
+    return {
+        day: day,
+        hour: Math.floor(minutes / 60),
+        minute: minutes % 60,
+        totalMinutes: Math.floor(day) * 1440 + minutes
+    };
+}
+
+/**
+ * 檢查並更新任務要求進度
+ * @param {object} r - 要求物件
+ * @returns {object} - 更新後的要求物件
+ */
+function checkReq(r) {
+    debugLog('檢查任務要求:', r);
+    
+    if (!a().isPlainObject(r)) {
+        return {...r};
+    }
+    
+    // 創建副本避免修改原物件
+    const newReq = {...r};
+    
+    if ('number' == typeof newReq.進度 && 'number' == typeof newReq.目標) {
+        debugLog(`進度: ${newReq.進度}/${newReq.目標}, 當前完成標記: ${newReq.已完成}`);
+        
+        // 進度達標但未標記完成
+        if (newReq.進度 >= newReq.目標 && !newReq.已完成) {
+            debugLog('進度達標，標記為已完成');
+            newReq.已完成 = !0;
+        }
+        // 進度未達標但標記完成
+        else if (newReq.進度 < newReq.目標 && newReq.已完成) {
+            debugLog('進度未達標，標記為未完成');
+            newReq.已完成 = !1;
+        }
+    }
+    
+    return newReq;
+}
+
+/**
+ * 更新任務完成狀態
+ * @param {object} t - 任務物件
+ * @param {string} path - 任務路徑
+ * @returns {boolean} - 是否發生變更
+ */
+async function updateTaskCompletion(t, path) {
+    debugLog(`開始更新任務完成狀態: ${path}`);
+    
+    const task = a().get(t.stat_data, path);
+    if (!a().isPlainObject(task)) {
+        debugLog(`${path} 不存在或不是物件`);
+        return !1;
+    }
+    
+    let changed = !1;
+    
+    // 處理基礎要求
+    const baseReqs = a().get(task, '任務要求');
+    if (a().isPlainObject(baseReqs)) {
+        const baseReqKeys = Object.keys(baseReqs).filter(k => !k.startsWith('$'));
+        debugLog(`發現 ${baseReqKeys.length} 個基礎要求`);
+        
+        let allBaseDone = !0;
+        
+        for (const [key, req] of Object.entries(baseReqs)) {
+            if (key.startsWith('$')) continue;
+            
+            const newReq = checkReq(req);
+            
+            if (JSON.stringify(newReq) !== JSON.stringify(req)) {
+                debugLog(`基礎要求變更: ${key}`);
+                
+                await Mvu.setMvuVariable(
+                    t, 
+                    `${path}.任務要求.${key}`, 
+                    newReq, 
+                    { reason: '更新要求進度' }
+                );
+                a().set(t.stat_data, `${path}.任務要求.${key}`, newReq);
+                changed = !0;
+            }
+            
+            if (!newReq.已完成) {
+                allBaseDone = !1;
+            }
+        }
+        
+        const currentBaseDone = a().get(task, '完成情況.基礎要求完成');
+        
+        if (allBaseDone !== currentBaseDone) {
+            debugLog(`基礎完成狀態變更: ${currentBaseDone} → ${allBaseDone}`);
+            
+            await Mvu.setMvuVariable(
+                t,
+                `${path}.完成情況.基礎要求完成`,
+                allBaseDone,
+                { reason: '更新基礎要求完成狀態' }
+            );
+            a().set(t.stat_data, `${path}.完成情況.基礎要求完成`, allBaseDone);
+            changed = !0;
+        }
+    }
+    
+    // 處理進階目標
+    const advReqs = a().get(task, '進階目標');
+    if (a().isPlainObject(advReqs)) {
+        const advReqKeys = Object.keys(advReqs).filter(k => !k.startsWith('$'));
+        debugLog(`發現 ${advReqKeys.length} 個進階目標`);
+        
+        let allAdvDone = !0;
+        
+        for (const [key, req] of Object.entries(advReqs)) {
+            if (key.startsWith('$')) continue;
+            
+            const newReq = checkReq(req);
+            
+            if (JSON.stringify(newReq) !== JSON.stringify(req)) {
+                debugLog(`進階目標變更: ${key}`);
+                
+                await Mvu.setMvuVariable(
+                    t,
+                    `${path}.進階目標.${key}`,
+                    newReq,
+                    { reason: '更新進階要求進度' }
+                );
+                a().set(t.stat_data, `${path}.進階目標.${key}`, newReq);
+                changed = !0;
+            }
+            
+            if (!newReq.已完成) {
+                allAdvDone = !1;
+            }
+        }
+        
+        const currentAdvDone = a().get(task, '完成情況.進階目標完成');
+        
+        if (allAdvDone !== currentAdvDone) {
+            debugLog(`進階完成狀態變更: ${currentAdvDone} → ${allAdvDone}`);
+            
+            await Mvu.setMvuVariable(
+                t,
+                `${path}.完成情況.進階目標完成`,
+                allAdvDone,
+                { reason: '更新進階目標完成狀態' }
+            );
+            a().set(t.stat_data, `${path}.完成情況.進階目標完成`, allAdvDone);
+            changed = !0;
+        }
+    }
+    
+    debugLog(`更新完成: ${path}, 變更: ${changed}`);
+    return changed;
+}
+
+/**
+ * 更新任務狀態
+ * @param {object} t - 任務物件
+ * @param {string} path - 任務路徑
+ * @param {string} type - 任務類型
+ * @returns {boolean} - 是否發生變更
+ */
+async function updateTaskStatus(t, path, type) {
+    debugLog(`開始更新任務狀態: ${path} (類型: ${type})`);
+    
+    const task = a().get(t.stat_data, path);
+    if (!a().isPlainObject(task)) {
+        debugLog(`${path} 不存在或不是物件`);
+        return !1;
+    }
+    
+    const status = a().get(task, '狀態');
+    const taskTitle = task.標題 || '無標題';
+    
+    // 如果已經是完成/放棄/失敗狀態，就不需要處理了
+    if (['已完成', '已放棄', '已失敗'].includes(status)) {
+        debugLog(`任務已是終態 (${status})，跳過處理`);
+        return !1;
+    }
+    
+    const baseDone = a().get(task, '完成情況.基礎要求完成', !1);
+    const advDone = a().get(task, '完成情況.進階目標完成', !1);
+    const hasAdvReqs = a().isPlainObject(a().get(task, '進階目標')) && 
+        Object.keys(a().get(task, '進階目標')).filter(k => !k.startsWith('$')).length > 0;
+    const endTimeStr = a().get(task, '結束時間', '');
+    const currentTime = mg(t.stat_data);
+    const timeout = a().get(task, '任務超時', !1);
+    
+    let correctStatus = status;
+    
+    const endTime = endTimeStr ? mM(endTimeStr) : null;
+    const isExpired = endTime && currentTime && currentTime.totalMinutes > endTime.totalMinutes;
+    
+    // 超時/過期處理
+    if ((type === '緊急' && timeout) || (type !== '緊急' && isExpired)) {
+        debugLog(`任務${type === '緊急' ? '超時' : '過期'}`);
+        
+        if (status === '進行中') {
+            if (baseDone) {
+                correctStatus = '已完成';
+                debugLog(`基礎已完成 → 標記為已完成`);
+            } else {
+                if (type === '緊急') {
+                    correctStatus = '已失敗';
+                    debugLog(`緊急任務未完成 → 標記為已失敗`);
+                    
+                    const settlement = a().get(task, '結算狀態') || {
+                        基礎獎勵已發放: !1,
+                        進階獎勵已發放: !1,
+                        失敗懲罰已發放: !1
+                    };
+                    
+                    if (settlement.失敗懲罰已發放 === undefined || settlement.失敗懲罰已發放 === !1) {
+                        settlement.失敗懲罰已發放 = !1;
+                        await Mvu.setMvuVariable(
+                            t,
+                            `${path}.結算狀態`,
+                            settlement,
+                            { reason: '設置失敗懲罰未發放' }
+                        );
+                        a().set(t.stat_data, `${path}.結算狀態`, settlement);
+                    }
+                } else {
+                    correctStatus = '已放棄';
+                    debugLog(`非緊急任務未完成 → 標記為已放棄`);
+                }
+            }
+        } else if (status === '進階中') {
+            correctStatus = '已完成';
+            debugLog(`進階中任務過期 → 標記為已完成`);
+        }
+    } 
+    // 正常狀態處理
+    else {
+        if (status === '進行中') {
+            if (!baseDone) {
+                correctStatus = '進行中';
+                debugLog(`基礎未完成 → 保持進行中`);
+            } else {
+                if (hasAdvReqs) {
+                    if (!advDone) {
+                        correctStatus = '進階中';
+                        debugLog(`有進階目標且未完成 → 標記為進階中`);
+                    } else {
+                        correctStatus = '已完成';
+                        debugLog(`有進階目標且已完成 → 標記為已完成`);
+                    }
+                } else {
+                    correctStatus = '已完成';
+                    debugLog(`無進階目標 → 標記為已完成`);
+                }
+            }
+        } else if (status === '進階中') {
+            if (advDone) {
+                correctStatus = '已完成';
+                debugLog(`進階目標已完成 → 標記為已完成`);
+            } else {
+                correctStatus = '進階中';
+                debugLog(`進階目標未完成 → 保持進階中`);
+            }
+        }
+    }
+    
+    if (status !== correctStatus) {
+        infoLog(`任務狀態更新: "${taskTitle}" ${status} → ${correctStatus}`);
+        
+        await Mvu.setMvuVariable(
+            t,
+            `${path}.狀態`,
+            correctStatus,
+            { reason: '自動修正任務狀態' }
+        );
+        a().set(t.stat_data, `${path}.狀態`, correctStatus);
+        
+        return !0;
+    }
+    
+    return !1;
+}
+
+/**
+ * 處理所有任務
+ * @param {object} t - 遊戲資料
+ * @returns {boolean} - 是否發生變更
+ */
+async function processAllTasks(t) {
+    infoLog('開始處理所有任務');
+    
+    let changed = !1;
+    let processedCount = 0;
+    let statusChangedCount = 0;
+    let completionChangedCount = 0;
+    
+    // 處理主要任務類型
+    const types = ['主線', '支線', '日常', '緊急'];
+    
+    for (const type of types) {
+        const path = `任務.${type}`;
+        const task = a().get(t.stat_data, path);
+        
+        if (a().isPlainObject(task) && !a().isEmpty(task)) {
+            processedCount++;
+            
+            // 更新完成狀態
+            if (await updateTaskCompletion(t, path)) {
+                changed = !0;
+                completionChangedCount++;
+            }
+            
+            // 更新任務狀態
+            if (await updateTaskStatus(t, path, type)) {
+                changed = !0;
+                statusChangedCount++;
+            }
+        }
+    }
+    
+    // 處理羈絆任務
+    const bondTasks = a().get(t.stat_data, '任務.羈絆');
+    
+    if (a().isPlainObject(bondTasks)) {
+        for (const [name, task] of Object.entries(bondTasks)) {
+            if (name.startsWith('$')) continue;
+            
+            const path = `任務.羈絆.${name}`;
+            
+            if (a().isPlainObject(task) && !a().isEmpty(task)) {
+                processedCount++;
+                
+                // 更新完成狀態
+                if (await updateTaskCompletion(t, path)) {
+                    changed = !0;
+                    completionChangedCount++;
+                }
+                
+                // 更新任務狀態
+                if (await updateTaskStatus(t, path, '羈絆')) {
+                    changed = !0;
+                    statusChangedCount++;
+                }
+            }
+        }
+    }
+    
+    if (processedCount > 0) {
+        infoLog(`任務處理完成: 共 ${processedCount} 個任務`);
+        if (completionChangedCount > 0) infoLog(`進度變更: ${completionChangedCount} 個`);
+        if (statusChangedCount > 0) infoLog(`狀態變更: ${statusChangedCount} 個`);
+    }
+    
+    return changed;
+}
+
+/**
+ * 檢查區域限制
+ * @param {object} t - 遊戲資料
+ * @returns {boolean} - 是否發生變更
+ */
+async function checkRegionRestrictions(t) {
+    debugLog('開始檢查區域限制');
+    
+    let changed = !1;
+    
+    const currentLocation = a().get(t.stat_data, '環境.當前位置');
+    
+    if ('string' != typeof currentLocation || currentLocation.trim() === '') {
+        debugLog('當前位置無效，跳過檢查');
+        return changed;
+    }
+    
+    const currentDay = a().get(t.stat_data, '系統.經過天數');
+    const previousDay = b && b.previousDay;
+    
+    if (!Number.isFinite(currentDay) || !Number.isFinite(previousDay) || currentDay <= previousDay) {
+        debugLog('未跨日或天數異常，跳過區域檢查');
+        return changed;
+    }
+    
+    infoLog(`檢測到跨日 (${previousDay} → ${currentDay})，檢查區域限制`);
+    
+    // 檢查主線、支線、日常任務
+    const types = ['主線', '支線', '日常'];
+    let abandonedCount = 0;
+    
+    for (const type of types) {
+        const path = `任務.${type}`;
+        const task = a().get(t.stat_data, path);
+        
+        if (a().isPlainObject(task) && !a().isEmpty(task)) {
+            const region = a().get(task, '區域限制', '');
+            const status = a().get(task, '狀態');
+            const taskTitle = task.標題 || '無標題';
+            
+            if (region && region !== '' && 
+                region !== currentLocation && 
+                (status === '進行中' || status === '進階中')) {
+                
+                infoLog(`區域限制: "${taskTitle}" 因區域不匹配被放棄 (${region} ≠ ${currentLocation})`);
+                abandonedCount++;
+                
+                // 先更新狀態為已放棄
+                await Mvu.setMvuVariable(
+                    t,
+                    `${path}.狀態`,
+                    '已放棄',
+                    { reason: '區域限制不匹配跨日' }
+                );
+                a().set(t.stat_data, `${path}.狀態`, '已放棄');
+                
+                // 然後清空任務內容（保留結構）
+                const emptyTask = {
+                    標題: task.標題 || '已放棄的任務',
+                    狀態: '已放棄',
+                    完成情況: task.完成情況 || {},
+                    結算狀態: task.結算狀態 || {}
+                };
+                
+                await Mvu.setMvuVariable(
+                    t,
+                    path,
+                    emptyTask,
+                    { reason: '區域限制放棄後清空' }
+                );
+                a().set(t.stat_data, path, emptyTask);
+                
+                changed = !0;
+            }
+        }
+    }
+    
+    if (abandonedCount > 0) {
+        infoLog(`區域檢查: ${abandonedCount} 個任務因區域限制被放棄`);
+    }
+    
+    return changed;
+}
+
+/**
+ * 清理已完成或已放棄的任務
+ * @param {object} t - 遊戲資料
+ * @returns {boolean} - 是否發生變更
+ */
+async function cleanupTasks(t) {
+    debugLog('開始清理任務');
+    
+    let changed = !1;
+    let cleanedCount = 0;
+    
+    // 清理主要任務
+    const types = ['主線', '支線', '日常', '緊急'];
+    
+    for (const type of types) {
+        const path = `任務.${type}`;
+        const task = a().get(t.stat_data, path);
+        
+        if (a().isPlainObject(task) && !a().isEmpty(task)) {
+            const status = a().get(task, '狀態');
+            const baseReward = a().get(task, '結算狀態.基礎獎勵已發放', !1);
+            const advReward = a().get(task, '結算狀態.進階獎勵已發放', !1);
+            const failurePenalty = a().get(task, '結算狀態.失敗懲罰已發放', !1);
+            const hasAdvReqs = a().isPlainObject(a().get(task, '進階目標')) && 
+                Object.keys(a().get(task, '進階目標')).filter(k => !k.startsWith('$')).length > 0;
+            const taskTitle = task.標題 || '無標題';
+            
+            // 已完成且獎勵已發放
+            if (status === '已完成' && baseReward && (!hasAdvReqs || advReward)) {
+                infoLog(`清理任務: "${taskTitle}" (已完成且獎勵已發放)`);
+                cleanedCount++;
+                
+                await Mvu.setMvuVariable(
+                    t,
+                    path,
+                    {},
+                    { reason: '任務已完成且獎勵已發放' }
+                );
+                a().set(t.stat_data, path, {});
+                changed = !0;
+            }
+            // 已放棄
+            else if (status === '已放棄') {
+                infoLog(`清理任務: "${taskTitle}" (已放棄)`);
+                cleanedCount++;
+                
+                await Mvu.setMvuVariable(
+                    t,
+                    path,
+                    {},
+                    { reason: '清理已放棄任務' }
+                );
+                a().set(t.stat_data, path, {});
+                changed = !0;
+            }
+            // 已失敗且懲罰已發放
+            else if (status === '已失敗' && failurePenalty) {
+                infoLog(`清理任務: "${taskTitle}" (已失敗且懲罰已發放)`);
+                cleanedCount++;
+                
+                await Mvu.setMvuVariable(
+                    t,
+                    path,
+                    {},
+                    { reason: '失敗懲罰已發放，清理任務' }
+                );
+                a().set(t.stat_data, path, {});
+                changed = !0;
+            }
+        }
+    }
+    
+    // 清理羈絆任務
+    const bondTasks = a().get(t.stat_data, '任務.羈絆');
+    
+    if (a().isPlainObject(bondTasks)) {
+        for (const [name, task] of Object.entries(bondTasks)) {
+            if (name.startsWith('$')) continue;
+            
+            const path = `任務.羈絆.${name}`;
+            
+            if (a().isPlainObject(task) && !a().isEmpty(task)) {
+                const status = a().get(task, '狀態');
+                const baseReward = a().get(task, '結算狀態.基礎獎勵已發放', !1);
+                const advReward = a().get(task, '結算狀態.進階獎勵已發放', !1);
+                const hasAdvReqs = a().isPlainObject(a().get(task, '進階目標')) && 
+                    Object.keys(a().get(task, '進階目標')).filter(k => !k.startsWith('$')).length > 0;
+                const taskTitle = task.標題 || '無標題';
+                
+                if (status === '已完成' && baseReward && (!hasAdvReqs || advReward)) {
+                    infoLog(`清理羈絆任務: "${taskTitle}" (已完成且獎勵已發放)`);
+                    cleanedCount++;
+                    
+                    await Mvu.setMvuVariable(
+                        t,
+                        path,
+                        {},
+                        { reason: '羈絆任務已完成且獎勵已發放' }
+                    );
+                    a().set(t.stat_data, path, {});
+                    changed = !0;
+                }
+                else if (status === '已放棄') {
+                    infoLog(`清理羈絆任務: "${taskTitle}" (已放棄)`);
+                    cleanedCount++;
+                    
+                    await Mvu.setMvuVariable(
+                        t,
+                        path,
+                        {},
+                        { reason: '清理已放棄羈絆任務' }
+                    );
+                    a().set(t.stat_data, path, {});
+                    changed = !0;
+                }
+            }
+        }
+    }
+    
+    if (cleanedCount > 0) {
+        infoLog(`任務清理完成: 共清理 ${cleanedCount} 個任務`);
+    }
+    
+    return changed;
+}
+
+/**
+ * 執行所有處理流程
+ * @param {object} t - 遊戲資料
+ * @returns {boolean} - 是否發生變更
+ */
+async function processAll(t) {
+    infoLog('開始執行任務處理流程');
+    
+    let hasChanges = !1;
+    
+    if (await processAllTasks(t)) {
+        hasChanges = !0;
+    }
+    
+    if (await checkRegionRestrictions(t)) {
+        hasChanges = !0;
+    }
+    
+    if (await cleanupTasks(t)) {
+        hasChanges = !0;
+    }
+    
+    if (hasChanges) {
+        infoLog('任務處理完成，有數據變更');
+    } else {
+        debugLog('任務處理完成，無數據變更');
+    }
+    
+    return hasChanges;
+}
+
+// ==================== 新增：特定路徑下數量為0的清理函數 ====================
+
+/**
+ * 檢查特定路徑下是否包含「數量」字段且值為0
+ * @param {object} t - 遊戲資料
+ * @returns {Array} - 需要刪除的路徑列表
+ */
+function findZeroQuantityInSpecificPaths(t) {
+    const pathsToCheck = [
+        '攜帶物品',
+        '同伴.攜帶物品', 
+        '寵物.攜帶物品',
+        '營地'
+    ];
+    
+    const toDelete = [];
+    
+    pathsToCheck.forEach(basePath => {
+        debugLog(`檢查路徑: ${basePath}`);  // 調試信息保持用 debugLog
+        
+        // ... 其他代碼 ...
+    });
+    
+    return toDelete;
+}
+
+/**
+ * 遞歸檢查物件中的「數量」字段
+ * @param {object} obj - 要檢查的物件
+ * @param {string} currentPath - 當前路徑
+ * @param {Array} toDelete - 要刪除的路徑陣列
+ */
+function checkObjectForZeroQuantity(obj, currentPath, toDelete) {
+    if (!a().isPlainObject(obj) && !Array.isArray(obj)) {
+        return;
+    }
+    
+    // 檢查當前層級的「數量」字段
+    if (a().isPlainObject(obj)) {
+        for (const [key, value] of Object.entries(obj)) {
+            if (key.startsWith('$')) continue;
+            
+            const itemPath = `${currentPath}.${key}`;
+            
+            // 如果字段名包含「數量」且值為0
+            if ((key === '數量' || key.includes('數量')) && 
+                (value === 0 || value === '0' || value === null || value === undefined)) {
+                debugLog(`找到數量為0: ${itemPath} = ${value}`);
+                toDelete.push({
+                    path: itemPath,
+                    parentPath: currentPath,
+                    key: key,
+                    value: value,
+                    fullObject: obj
+                });
+            }
+            
+            // 如果是物件或陣列，遞歸檢查
+            if (a().isPlainObject(value) || Array.isArray(value)) {
+                checkObjectForZeroQuantity(value, itemPath, toDelete);
+            }
+        }
+    } else if (Array.isArray(obj)) {
+        // 處理陣列中的物件
+        obj.forEach((item, index) => {
+            if (a().isPlainObject(item)) {
+                checkObjectForZeroQuantity(item, `${currentPath}[${index}]`, toDelete);
+            }
+        });
+    }
+}
+
+/**
+ * 遞歸檢查營地下的所有結構（更徹底的檢查）
+ * @param {object} campData - 營地數據
+ * @param {string} basePath - 基礎路徑（營地）
+ * @param {Array} toDelete - 要刪除的路徑陣列
+ */
+function recursivelyCheckForZeroQuantity(campData, basePath, toDelete) {
+    if (!campData) return;
+    
+    // 先檢查營地根目錄
+    checkObjectForZeroQuantity(campData, basePath, toDelete);
+    
+    // 遞歸檢查所有子目錄
+    function deepCheck(obj, path) {
+        if (!a().isPlainObject(obj)) return;
+        
+        for (const [key, value] of Object.entries(obj)) {
+            if (key.startsWith('$')) continue;
+            
+            const newPath = `${path}.${key}`;
+            
+            // 如果是物件，繼續遞歸檢查
+            if (a().isPlainObject(value)) {
+                deepCheck(value, newPath);
+            }
+            // 如果是陣列，檢查每個元素
+            else if (Array.isArray(value)) {
+                value.forEach((item, index) => {
+                    if (a().isPlainObject(item)) {
+                        deepCheck(item, `${newPath}[${index}]`);
+                    }
+                });
+            }
+        }
+    }
+    
+    deepCheck(campData, basePath);
+}
+
+/**
+ * 執行特定路徑下數量為0的清理
+ * @param {object} t - 遊戲資料
+ * @returns {boolean} - 是否發生變更
+ */
+async function cleanupZeroQuantitiesInSpecificPaths(t) {
+    infoLog('開始檢查特定路徑下數量為0的字段');  // 改用 infoLog
+    
+    // 詳細的調試信息仍然用 debugLog
+    debugLog('===== 數據調試信息 =====');
+    debugLog('1. 攜帶物品:', JSON.stringify(a().get(t.stat_data, '攜帶物品')));
+    debugLog('2. 同伴:', JSON.stringify(a().get(t.stat_data, '同伴')));
+    debugLog('3. 寵物:', JSON.stringify(a().get(t.stat_data, '寵物')));
+    debugLog('4. 營地:', JSON.stringify(a().get(t.stat_data, '營地')));
+    debugLog('========================');
+    
+    let changed = !1;
+    let deletedCount = 0;
+    
+    // 找出需要清理的路徑
+    const zeroQuantityPaths = findZeroQuantityInSpecificPaths(t);
+    
+    if (zeroQuantityPaths.length > 0) {
+        infoLog(`找到 ${zeroQuantityPaths.length} 個數量為0的字段需要清理`);  // 改用 infoLog
+        
+        // 詳細的路徑列表仍然用 debugLog
+        debugLog('需要清理的路徑:', zeroQuantityPaths.map(p => p.path));
+        
+        // 處理每個需要清理的項目
+        for (const item of zeroQuantityPaths) {
+            try {
+                const { path, parentPath, key, fullObject, value } = item;
+                
+                debugLog(`處理: ${path} (值: ${value})`);
+                
+                // 策略1：如果整個物件只有這個「數量」字段，刪除整個物件
+                if (a().isPlainObject(fullObject)) {
+                    const otherKeys = Object.keys(fullObject).filter(k => 
+                        !k.startsWith('$') && k !== key
+                    );
+                    
+                    if (otherKeys.length === 0) {
+                        // 只有「數量」字段，刪除整個物件
+                        await Mvu.setMvuVariable(
+                            t,
+                            parentPath,
+                            {},
+                            { reason: '刪除空物件（僅含數量0）' }
+                        );
+                        a().set(t.stat_data, parentPath, {});
+                        infoLog(`刪除空物件: ${parentPath}`);
+                    } else {
+                        // 有其他字段，只刪除「數量」字段
+                        await Mvu.setMvuVariable(
+                            t,
+                            path,
+                            null,
+                            { reason: '刪除數量為0的字段' }
+                        );
+                        // 同時從本地數據中刪除
+                        delete fullObject[key];
+                        debugLog(`刪除字段: ${path}`);
+                    }
+                } else {
+                    // 直接刪除該字段
+                    await Mvu.setMvuVariable(
+                        t,
+                        path,
+                        null,
+                        { reason: '刪除數量為0的字段' }
+                    );
+                    a().set(t.stat_data, path, null);
+                    debugLog(`刪除字段: ${path}`);
+                }
+                
+                deletedCount++;
+                changed = !0;
+                
+            } catch (error) {
+                errorLog(`清理 ${item.path} 時發生錯誤:`, error.message);
+            }
+        }
+        
+        if (deletedCount > 0) {
+            infoLog(`特定路徑數量清理完成: 刪除了 ${deletedCount} 個字段/物件`);  // 改用 infoLog
+        }
+    } else {
+        infoLog('未發現需要清理的數量為0字段');  // 改用 infoLog
+    }
+    
+    return changed;
+}
+
+// ==================== 主初始化函數 ====================
+infoLog('準備註冊事件監聽器');
+
+$(async () => {
+    infoLog('系統初始化開始');
+    
+    try {
+        // 等待 Mvu 系統初始化
+        infoLog('等待 Mvu 系統初始化...');
+        await waitGlobalInitialized('Mvu');
+        infoLog('Mvu 系統已就緒');
+        
+        // ==================== 事件監聽器 ====================
+        
+        // 監聽變數更新開始事件
+        eventOn(Mvu.events.VARIABLE_UPDATE_STARTED, t => {
+            debugLog('VARIABLE_UPDATE_STARTED 事件觸發');
+            
+            if (p) {
+                debugLog('系統正在處理中，跳過快照');
+                b = null;
+            } else {
+                try {
+                    const data = t.stat_data ?? {};
+                    b = {
+                        previousMissionRoot: a().get(data, '任務'),
+                        previousMission: a().get(data, '任務.緊急'),
+                        previousDay: a().get(data, '系統.經過天數'),
+                        previousTime: a().get(data, '系統.當前時間')
+                    };
+                    
+                    debugLog(`建立快照: 天數=${b.previousDay}, 時間=${b.previousTime}`);
+                } catch (error) {
+                    errorLog('建立快照時發生錯誤:', error.message);
+                    b = null;
+                }
+            }
+        });
+        
+        // 監聽變數更新結束事件
+        eventOn(Mvu.events.VARIABLE_UPDATE_ENDED, async t => {
+            infoLog('數據更新事件觸發');
+            debugLog(`當前處理標記: p=${p}`);
+            
+            // 如果正在處理中，直接返回（防止循環）
+            if (p) {
+                debugLog('系統正在處理中，跳過本次事件');
+                return;
+            }
+            
+            try {
+                debugLog('開始處理數據更新');
+                let hasChanges = !1;
+                
+                // 1. 確保任務路徑存在
+                const tasksRoot = a().get(t.stat_data, '任務');
+                
+                if (!a().isPlainObject(tasksRoot)) {
+                    infoLog('創建任務根目錄');
+                    const emptyRoot = {};
+                    await Mvu.setMvuVariable(
+                        t,
+                        '任務',
+                        emptyRoot,
+                        { reason: '自動維護任務路徑' }
+                    );
+                    a().set(t.stat_data, '任務', emptyRoot);
+                    hasChanges = !0;
+                }
+                
+                // 2. 確保各任務類型路徑存在
+                const taskTypes = ['主線', '支線', '緊急', '日常', '羈絆'];
+                let createdPaths = 0;
+                
+                for (const type of taskTypes) {
+                    const path = `任務.${type}`;
+                    let typeData = a().get(t.stat_data, path);
+                    
+                    if (!a().isPlainObject(typeData)) {
+                        debugLog(`創建任務類型路徑: ${path}`);
+                        typeData = {};
+                        await Mvu.setMvuVariable(
+                            t,
+                            path,
+                            typeData,
+                            { reason: '自動維護任務路徑' }
+                        );
+                        a().set(t.stat_data, path, typeData);
+                        hasChanges = !0;
+                        createdPaths++;
+                    }
+                    
+                    // 特別處理羈絆任務：為每個同伴創建任務路徑
+                    if (type === '羈絆') {
+                        const companions = a().get(t.stat_data, '同伴');
+                        if (a().isPlainObject(companions)) {
+                            for (const [name, companion] of Object.entries(companions)) {
+                                if (name.startsWith('$')) continue;
+                                
+                                const bondPath = `任務.羈絆.${name}`;
+                                let bondTask = a().get(t.stat_data, bondPath);
+                                
+                                if (!a().isPlainObject(bondTask)) {
+                                    debugLog(`為同伴 ${name} 創建羈絆任務路徑`);
+                                    bondTask = {};
+                                    await Mvu.setMvuVariable(
+                                        t,
+                                        bondPath,
+                                        bondTask,
+                                        { reason: '自動維護任務路徑' }
+                                    );
+                                    a().set(t.stat_data, bondPath, bondTask);
+                                    hasChanges = !0;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                if (createdPaths > 0) {
+                    infoLog(`創建了 ${createdPaths} 個任務路徑`);
+                }
+                
+                // 3. 檢查緊急任務是否超時
+                const emergencyTask = a().get(t.stat_data, '任務.緊急');
+                
+                if (a().isPlainObject(emergencyTask) && !a().isEmpty(emergencyTask)) {
+                    const endTimeStr = emergencyTask.結束時間;
+                    
+                    if ('string' == typeof endTimeStr && endTimeStr.trim() !== '') {
+                        const endTime = mM(endTimeStr);
+                        
+                        if (endTime) {
+                            const currentTime = mg(t.stat_data);
+                            
+                            if (currentTime && currentTime.totalMinutes > endTime.totalMinutes) {
+                                const currentTimeout = a().get(emergencyTask, '任務超時');
+                                
+                                if (!0 !== currentTimeout) {
+                                    infoLog('緊急任務已超時，設置超時標記');
+                                    await Mvu.setMvuVariable(
+                                        t,
+                                        '任務.緊急.任務超時',
+                                        !0,
+                                        { reason: '緊急任務超時' }
+                                    );
+                                    a().set(t.stat_data, '任務.緊急.任務超時', !0);
+                                    hasChanges = !0;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // 4. 執行所有處理流程
+                if (await processAll(t)) {
+                    hasChanges = !0;
+                }
+
+                // 5. 檢查並清理特定路徑下數量為0的字段
+                if (await cleanupZeroQuantitiesInSpecificPaths(t)) {
+                    hasChanges = !0;
+                }
+
+                // 6. 如果有變更，更新遊戲資料
+                if (hasChanges) {
+                    infoLog('有數據變更，觸發資料更新');
+                    p = !0; // 設置處理標記，防止循環
+                    
+                    await Mvu.replaceMvuData(t, {
+                        type: 'message',
+                        message_id: 'latest'
+                    });
+    
+                    p = !1; // 處理完成後重置標記
+                    b = null; // 清除快照
+                    infoLog('資料更新完成');
+                } else {
+                    debugLog('無數據變更，跳過資料更新');
+                }                
+            } catch (error) {
+                errorLog('處理過程中發生錯誤:', error.message);
+                errorLog('錯誤堆棧:', error.stack);
+                p = !1; // 錯誤時重置標記
+            }
+        });
+        
+        infoLog('系統初始化完成，事件監聽器已註冊');
+        
+    } catch (error) {
+        errorLog('初始化失敗:', error.message);
+        errorLog('錯誤堆棧:', error.stack);
+    }
+})();
+
+// ==================== 系統就緒標記 ====================
+infoLog('任務管理系統加載完成，調試模式:', TASK_DEBUG);
+infoLog('注意: 將 TASK_DEBUG 設為 false 可關閉詳細日誌');

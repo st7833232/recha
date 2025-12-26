@@ -2,7 +2,7 @@
   "spider": "./jar/xiaosa-1216.jar;md5;272051373d8c040310f1a3945a2a43f7",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "114.12.26.ver_1",
+  "notice": "114.12.26.ver_2",
   "sites": [
 
     {"key":"⛵爱壹帆","name":"🎖︎｜愛壹帆(官源+嗷嗚)","type":3,"api":"csp_AiyfAmns","jar": "./jar/aowu.jar;md5;8845da8529a9d2073931d429fcf80b2d","searchable":1,"filterable":1,"quickSearch":1,"changeable":1},
@@ -742,42 +742,6 @@
       "ext": "./drpy_js/优酷[官].js"
     },
     {
-      "key": "yfsp",
-      "name": "🎖︎｜愛壹帆｜官源",
-      "type": 3,
-      "searchable": 1,
-      "changeable": 1,
-      "quickSearch": 1,
-      "style": {"type": "rect", "ratio": 0.75},
-      "jar": "./jar/GM.jar;md5;3e59c9c3c50ea1d4609cec9dbee730c3",
-      "api": "csp_GM",
-      "ext": {
-        "userScript": "./drpy_js/ysfp.user.js",
-        "debug": false,
-        "webViewSettings": {
-          "blockNetworkImage": true,
-          "blockList": [
-            "*.png*",
-            "*.mp3*",
-            "*.css*",
-            "https://*.googletagmanager.com/*",
-            "https://*.google-analytics.com/*"
-          ]
-        },
-        "spider": {
-          "homeContent": {"loadUrl": "https://m.yfsp.tv/"},
-          "categoryContent": {
-            "loadUrl": "https://m.yfsp.tv/list/${tid}?type=${index-0:-0}${index-1:-,0}${index-2:-,0}${index-3:-,0}${index-4:-,0}${index-5:-}"
-          },
-          "detailContent": {"loadUrl": "https://m.yfsp.tv/play/${id}"},
-          "playerContent": {
-            "loadUrl": "https://m.yfsp.tv/play/${mediaKey}?id=${episodeKey}"
-          },
-          "searchContent": {"loadUrl": "https://m.yfsp.tv/search"}
-        }
-      }
-    },
-    {
       "key": "bilimd",
       "name": "🎖︎｜bilbil｜官源",
       "type": 3,
@@ -1397,7 +1361,7 @@
       "name": "🎵｜MTV",
       "type": 3,
       "api": "csp_Bili",
-      "jar": "https://10526.kstore.vip/xmky.jar",
+      "jar": "./jar/xmky.jar",
       "searchable": 1,
       "ext": {
         "json": "https://10526.kstore.vip/星河影视/mtv.json",
@@ -1410,7 +1374,7 @@
       "name": "🎵｜歌单｜",
       "type": 3,
       "api": "csp_Bili",
-      "jar": "https://10526.kstore.vip/xmky.jar",
+      "jar": "./jar/xmky.jar",
       "searchable": 1,
       "ext": {
         "json": "./json/酷奇mv.json",
@@ -1423,7 +1387,7 @@
       "name": "🎵｜演唱会｜",
       "type": 3,
       "api": "csp_Bili",
-      "jar": "https://10526.kstore.vip/xmky.jar",
+      "jar": "./jar/xmky.jar",
       "searchable": 1,
       "ext": {
         "json": "./json/song.json",

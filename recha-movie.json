@@ -2,19 +2,13 @@
   "spider": "./jar/xiaosa-1216.jar;md5;272051373d8c040310f1a3945a2a43f7",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "114.12.26.ver_2",
+  "notice": "114.12.26.ver_2\n新增愛壹帆、歐樂、聚合短劇\n修復小蘋果、春天、廠長\n優視頻的網站復活了",
   "sites": [
 
 
-    {
-            "key": "聚合短剧",
-            "name": "聚合短剧",
-            "type": 3,
-            "api": "./drpy_js/聚合短剧.js",
-            "changeable": 1
-    },
-    {"key":"⛵爱壹帆","name":"🎖︎｜愛壹帆(官源+嗷嗚)","type":3,"api":"csp_AiyfAmns","jar": "./jar/aowu.jar;md5;8845da8529a9d2073931d429fcf80b2d","searchable":1,"filterable":1,"quickSearch":1,"changeable":1},
 
+    {"key":"⛵爱壹帆","name":"🎖︎｜愛壹帆(官源+嗷嗚)","type":3,"api":"csp_AiyfAmns","jar": "./jar/aowu.jar;md5;8845da8529a9d2073931d429fcf80b2d","searchable":1,"filterable":1,"quickSearch":1,"changeable":1},
+    {"key":"🌱春天","name":"春天｜？","type":3,"api":"csp_NewGrAmns","jar": "./jar/aowu.jar;md5;8845da8529a9d2073931d429fcf80b2d","searchable":1,"filterable":1,"quickSearch":1,"changeable":1,"ext":"fcsH1ANGAUTUF9HVgAAHARACF0cRFwdCx0TGwlcBggZSlhIVlFtBFZDAQ0dC1VMR1BUV1ZEVEofVktQCRFQPSQKQjwgBjMpJz4MOyBQCxdmfAs0KhU+Ow48CzMgKjULMlQBKl1VNSlAIEpUS1JHDgJKTkhWUnQZSnscNj0oRkcVIA8EBzIxH0djY08OE15EUAgTQxQGF0VOSFYJEgFGBwJQMQsqEjM/MgIkITYeQwFMQHYaQ1hBByEXBVRLUkcGBBgrARARCFIRVRMMEwwZExBQSUdWCxwJGl1XHmxSHQAXR01WRRYNFAQ3BxhEAhBeExMCBREOFhECLQsGGQ1WUlQRUR1eHxcIEwsSWBYbBAkXDRoPAFIcHltSF0ZeRVUFHgE6FxgJAA4bQV9QCRFQVlBJV1QUCxYVEQQRCQdWEEgTE0NVUElXVBEXFxQdBxpKThMQRgMBQlRQGA=="},
     {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",
@@ -55,6 +49,13 @@
       "quickSearch": 0,
       "changeable": 0
     },
+    {
+      "key": "聚合短剧",
+      "name": "📺｜聚合短劇",
+      "type": 3,
+      "api": "./drpy_js/聚合短剧.js",
+      "changeable": 1
+    },    
     {
       "key": "网盘配置",
       "name": "🇹🇼｜Youtube、网盘、弹幕配置",

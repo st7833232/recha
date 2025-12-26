@@ -5,6 +5,14 @@
   "notice": "114.12.26.ver_2",
   "sites": [
 
+
+    {
+            "key": "聚合短剧",
+            "name": "聚合短剧",
+            "type": 3,
+            "api": "./drpy_js/聚合短剧.js",
+            "changeable": 1
+    },
     {"key":"⛵爱壹帆","name":"🎖︎｜愛壹帆(官源+嗷嗚)","type":3,"api":"csp_AiyfAmns","jar": "./jar/aowu.jar;md5;8845da8529a9d2073931d429fcf80b2d","searchable":1,"filterable":1,"quickSearch":1,"changeable":1},
 
     {

@@ -2404,34 +2404,9 @@
     }
   ],
   "parses": [
-    {
-      "name": "不知道名字",
-      "type": 1,
-      "url": "http://niiuma.qi-simple.top//nn.php?url=",
-      "ext": {
-        "flag": [
-          "qq",       "腾讯",       "qiyi",     "爱奇艺",      "奇艺",
-          "youku",    "优酷",       "sohu",     "搜狐",       "letv",
-          "乐视",       "mgtv",     "芒果",       "tnmb",     "seven",
-          "bilibili", "1905"
-        ],
-        "header": {"User-Agent": "okhttp/4.9.1"}
-      }
-    },
-    {
-      "name": "星河无恙",
-      "type": 0,
-      "url": "https://t2.qlplayer.cyou/player/analysis.php?v=",
-      "ext": {
-        "flag": [
-          "qq",       "腾讯",       "qiyi",     "爱奇艺",      "奇艺",
-          "youku",    "优酷",       "sohu",     "搜狐",       "letv",
-          "乐视",       "mgtv",     "芒果",       "tnmb",     "seven",
-          "bilibili", "1905"
-        ],
-        "header": {"user-agent": "okhttp/4.9.1"}
-      }
-    },
+    {"name":"解析聚合","type":3,"url":"Demo"},
+    {"name":"星河","url":"http://mg.itufm.top/mg.php?url=","type":1,"ext":{"flag":["mgtv","芒果"]}},
+    {"name":"星河无恙","type":0,"url":"https://t2.qlplayer.cyou/player/analysis.php?v=","ext":{"flag":["qq","腾讯","qiyi","爱奇艺","奇艺","sohu","搜狐","letv","乐视","tnmb","seven","bilili","1905"],"header":{"User-Agent":"Mozilla/5.0"}}},
     {
       "name": "OKPlay",
       "type": 0,

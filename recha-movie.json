@@ -496,22 +496,6 @@
       "timeout": 20
     },    
     {
-      "key": "t1_dian_ying_tian_tang_02",
-      "name": "🏆｜天堂｜藍光◎秒播(無廣告)",
-      "type": 1,
-      "api": "http://caiji.dyttzyapi.com/api.php/provide/vod/from/dyttm3u8/at/json/?ac=list",
-      "searchable": 1,
-      "quickSearch": 0,
-      "filterable": 0,
-      "changeable": 0,
-      "playUrl": "json:https://py.doube.eu.org/parse_dytt?url=",
-      "categories": [
-        "动作片",  "喜剧片",  "爱情片",  "科幻片",  "恐怖片",  "剧情片",  "战争片",  "国产剧",  "香港剧",
-        "韩国剧",  "欧美剧",  "记录片",  "台湾剧",  "日本剧",  "海外剧",  "泰国剧",  "大陆综艺", "港台综艺",
-        "日韩综艺", "欧美综艺", "国产动漫", "日韩动漫", "欧美动漫", "港台动漫", "伦理片",  "短剧",   "动画片"
-      ]
-    },
-    {
       "key": "py_愛電影.py",
       "name": "🏆｜金牌系列-愛電影",
       "type": 3,

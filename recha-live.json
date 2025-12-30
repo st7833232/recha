@@ -5,6 +5,14 @@
 
   "lives": [
  {
+    "name": "跨年晚會直播",
+    "url": "https://github.com/TWJK01/YouTubetp/raw/refs/heads/main/playlist.m3u",
+    "playerType": 2,
+    "epg": "https://gitee.com/taksssss/tv/raw/main/epg/112114.xml.gz,https://gitee.com/taksssss/tv/raw/main/epg/epgpw_tw.xml.gz，http://epg.52sw.top:668/?ch={name}&date={date}",
+    "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
+  },
+    
+ {
     "name": "天浪直播",
     "url": "http://210.245.166.84:1299/live/live1.txt",
     "playerType": 2,

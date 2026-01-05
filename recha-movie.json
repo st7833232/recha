@@ -6,7 +6,14 @@
   "sites": [
 
 
-
+    {
+            "key": "live2vod",
+            "name": "直播转点播",
+            "type": 3,
+            "searchable": 0,
+            "api": "./drpy_libs/live2vod4.js",
+            "ext": "./drpy_libs/yhl2v.json"
+        },
     
     {
       "key": "豆瓣",

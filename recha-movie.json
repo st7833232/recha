@@ -5,14 +5,6 @@
   "notice": "114.12.26.ver_3\n新增找短劇、聚合短劇，老婆再也不怕沒短劇看了！\n官源排序前移\n修復小蘋果、春天、廠長、歐樂\n優視頻的網站復活了",
   "sites": [
 
-    {
-            "key": "live2vod",
-            "name": "直播转点播",
-            "type": 3,
-            "searchable": 0,
-            "api": "./drpy_libs/live2vod4.js",
-            "ext": "./drpy_libs/yhl2v.json"
-        },
     
     {
       "key": "豆瓣",

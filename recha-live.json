@@ -9,10 +9,6 @@
       "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E6%B8%AF%E5%8F%B0%E5%A4%A7%E9%99%86%E9%A2%91%E9%81%93%E6%97%A018%E5%86%85%E5%AE%B9"
     },
     {
-      "name": "收費源",
-      "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E5%88%AB%E4%BA%BA%E6%94%B6%E8%B4%B9%E6%BA%90"
-    },
-    {
       "name": "海豚(直播)(py)",
       "type": 3,
       "url": "",
@@ -199,6 +195,10 @@
       "logo": "https://epg.112114.xyz/logo/{name}.png",
       "pass": true
     },
+    {
+      "name": "收費源(含18+)",
+      "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E5%88%AB%E4%BA%BA%E6%94%B6%E8%B4%B9%E6%BA%90"
+    },    
     {
       "name": "港台大陆频道(含18+)",
       "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E6%B8%AF%E5%8F%B0%E5%A4%A7%E9%99%86%E9%A2%91%E9%81%93"

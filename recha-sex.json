@@ -30,12 +30,6 @@
       }
     },
     {
-      "key": "py_coomer",
-      "name": "⏭｜coomer(沐辰)｜PYTHON",
-      "type": 3,
-      "api": "./py/coomer.py"
-    },
-    {
       "key":"XJCJ",
       "name":"👖TG频道@stymei丨香蕉丨12852部片",
       "type":1,
@@ -236,6 +230,12 @@
       "changeable": 0,
       "style": {"type": "rect", "ratio": 1.5}
     },
+    {
+      "key": "py_coomer",
+      "name": "⏭｜coomer(沐辰)｜國外",
+      "type": 3,
+      "api": "./py/coomer.py"
+    },    
     {
       "key": "py_stripchat",
       "name": "⏭｜py_stripchat",

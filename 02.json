@@ -6,14 +6,6 @@
   "sites": [
 
     {
-      "key": "海豚",
-      "name": "海豚(直播)(py)",
-      "type": 3,
-      "url": "",
-      "api": "./py/海豚.py",
-      "ext": {}
-    },
-    {
             "key": "live2vod",
             "name": "直播转点播",
             "type": 3,

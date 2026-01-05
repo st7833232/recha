@@ -29,7 +29,12 @@
         "直接播放": "1"
       }
     },
-
+    {
+      "key": "py_coomer",
+      "name": "⏭｜coomer(沐辰)｜PYTHON",
+      "type": 3,
+      "api": "./py/commer.py",
+    },
     {
       "key":"XJCJ",
       "name":"👖TG频道@stymei丨香蕉丨12852部片",

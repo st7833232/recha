@@ -1,8 +1,1701 @@
-    _.remove('系統.情境敏感度');
-    _.remove('系統.當前情境類型');
-    _.remove('系統.情境開始時間');
-    _.remove('系統.最後親密互動時間');
-    _.remove('系統.情境切換冷卻');
-    _.remove('系統.情境關鍵詞權重');
-    _.remove('系統.情境持續時間');
-    _.remove('系統.情境歷史記錄');
+// ==================== 防重複執行檢查 ====================
+if (window._wildernessScriptLoaded) {
+  console.log('[計算系統] ⚠️ 荒野求生腳本已載入，跳過重複執行');
+} else {
+  window._wildernessScriptLoaded = true;
+  
+  // ==================== 全局測試函數 ====================
+  window.testWildernessScript = function() {
+    console.log('[計算系統] === 荒野求生腳本測試 ===');
+    console.log('[計算系統] 🌱 作物系統: 運行中');
+    console.log('[計算系統] 📊 屬性修正: 運行中');
+    console.log('[計算系統] 🛡️ 雙時間系統: 運行中');
+    console.log('[計算系統] 🐄 畜牧系統: 運行中');
+    console.log('[計算系統] ✅ 腳本運行正常！');
+  };
+
+  window.showScriptStatus = function() {
+    console.log('[計算系統] === 荒野求生腳本狀態 ===');
+    console.log('[計算系統] 🔄 Mvu框架:', typeof Mvu !== 'undefined' ? '✅ 已載入' : '❌ 未載入');
+    console.log('[計算系統] 📅 當前時間:', new Date().toLocaleTimeString());
+    console.log('[計算系統] ⏰ 雙時間系統:', window._timeSystem ? '✅ 已初始化' : '❌ 未初始化');
+    console.log('[計算系統] 🐄 畜牧系統:', window._livestockSystem ? '✅ 已初始化' : '❌ 未初始化');
+  };
+
+  window.updateAllCrops = async function() {
+    console.log('[計算系統] 🔄 手動更新所有作物...');
+    
+    if (!Mvu || !Mvu.getCurrentContext) {
+      console.error('[計算系統] ❌ Mvu 未載入或缺少 getCurrentContext 方法');
+      return;
+    }
+    
+    try {
+      const context = Mvu.getCurrentContext();
+      if (!context) {
+        console.error('[計算系統] ❌ 無法獲取當前上下文');
+        return;
+      }
+      
+      if (window._checkCropGrowth) {
+        const updated = await window._checkCropGrowth(context);
+        if (updated) {
+          console.log('[計算系統] ✅ 作物已更新');
+          if (Mvu.replaceMvuData) {
+            await Mvu.replaceMvuData(context, { type: 'message', message_id: 'latest' });
+          }
+        } else {
+          console.log('[計算系統] ℹ️ 無需更新');
+        }
+      } else {
+        console.error('[計算系統] ❌ 內部函數 _checkCropGrowth 未載入');
+      }
+    } catch (error) {
+      console.error('[計算系統] ❌ 手動更新失敗:', error);
+    }
+  };
+
+  // ==================== 主腳本開始 ====================
+  var t = {
+    n: e => {
+      var a = e && e.__esModule ? () => e.default : () => e;
+      return t.d(a, { a }), a;
+    },
+    d: (e, a) => {
+      for (var n in a) t.o(a, n) && !t.o(e, n) && Object.defineProperty(e, n, { enumerable: !0, get: a[n] });
+    },
+    o: (t, e) => Object.prototype.hasOwnProperty.call(t, e)
+  };
+
+  const e = _;
+  var a = t.n(e);
+
+  // ==================== 核心變量 ====================
+  const n = '腳本修改',
+    i = ['系統.當前時間'],
+    r = ['系統.經過天數'],
+    u = '核心狀態.生命值上限',
+    s = '核心狀態.當前生命值',
+    o = '核心狀態.精神值上限',
+    c = '核心狀態.當前精神值',
+    m = '當前經驗',
+    l = '升級所需經驗',
+    f = [
+      { path: '生理.水分', min: 0, max: 100 },
+      { path: '生理.碳水', min: 0, max: 2e3 },
+      { path: '生理.脂肪', min: 0, max: 1e5 },
+      { path: '生理.蛋白質', min: 0, max: 2400 },
+      { path: '生理.維生素', min: 0, max: 100 },
+      { path: '生理.氮平衡', min: -100, max: 100 },
+      { path: '生理.免疫負荷', min: 0, max: 100 },
+      { path: '生理.體溫', min: 35, max: 40 },
+      { path: '精神.壓力', min: 0, max: 100 },
+      { path: '精神.無聊', min: 0, max: 100 },
+      { path: '精神.孤獨', min: 0, max: 100 },
+      { path: '精神.睡眠', min: 0, max: 100 },
+      { path: '次生屬性.飽腹感', min: 0, max: 100 },
+      { path: '狀態.表皮濕度', min: 0, max: 100 },
+      { path: '狀態.感染', min: 0, max: 100 },
+      { path: '狀態.清潔', min: 0, max: 100 },
+      { path: '狀態.疼痛', min: 0, max: 100 },
+      { path: '狀態.當前負重', min: 0, max: 9999 },
+      { path: '系統.生存點數', min: 0, max: 99999 },
+      { path: '系統.奇跡點數', min: 0, max: 99999 }
+    ];
+
+  let p = !1,
+    b = null;
+
+  // ==================== 畜牧系統配置 ====================
+  const LIVESTOCK_CONFIG = {
+    DEBUG: true,
+    
+    // 畜牧生長階段定義（天數）
+    GROWTH_STAGES: {
+        '幼年期': { min: 0, max: 30, next: '成長期' },
+        '成長期': { min: 31, max: 180, next: '成年期' },
+        '成年期': { min: 181, max: 3650, next: '老年期' }, // 最長10年
+        '老年期': { min: 3651, max: Infinity, next: null }
+    },
+    
+    // 動物生產週期配置（天數）
+    PRODUCTION_CYCLES: {
+        '野雞': {
+            產出物: '雞蛋',
+            週期: 2,
+            下次產出日路徑: '畜牧.野雞.產出物.下次產出日'
+        },
+        '野山羊': {
+            產出物: '羊毛',
+            週期: 15,
+            下次產出日路徑: '畜牧.野山羊.產出物.下次產出日'
+        },
+        '馬鹿': {
+            產出物: '鹿奶',
+            週期: 60,
+            下次產出日路徑: '畜牧.馬鹿.產出物.下次產出日'
+        },
+        '野兔': {
+            產出物: '小兔子',
+            週期: 45,
+            下次產出日路徑: '畜牧.野兔.產出物.下次產出日'
+        }
+    },
+    
+    // 動物繁殖配置
+    BREEDING_CONFIG: {
+        '野兔': {
+            繁殖週期: 45,
+            每次產量: '4d8', // 4-8隻
+            需要雌雄: true
+        }
+    }
+  };
+
+  // ==================== 畜牧管理工具函數 ====================
+  function logLivestock(...args) {
+      if (LIVESTOCK_CONFIG.DEBUG) {
+          console.log('[畜牧系統]', ...args);
+      }
+  }
+
+  /**
+   * 獲取畜牧數據
+   */
+  function getLivestockData(data) {
+      return a().get(data, '畜牧') || {};
+  }
+
+  /**
+   * 更新動物年齡
+   */
+  function calculateAnimalAge(animalData, currentDay) {
+      if (!animalData || !animalData.年齡) return 1;
+      
+      const baseAge = animalData.年齡 || 1;
+      const ageInDays = baseAge * 365; // 年齡轉換為天數
+      const totalDays = ageInDays + (currentDay - (animalData.飼養開始日 || currentDay));
+      
+      return Math.max(1, Math.floor(totalDays / 365));
+  }
+
+  /**
+   * 確定生長階段
+   */
+  function determineGrowthStage(ageInYears) {
+      if (ageInYears <= 1) return '幼年期';
+      if (ageInYears <= 5) return '成長期';
+      if (ageInYears <= 10) return '成年期';
+      return '老年期';
+  }
+
+  /**
+   * 解析骰子表達式 (如 "2d4", "4d8")
+   */
+  function parseDiceExpression(expression) {
+      if (!expression || typeof expression !== 'string') return 0;
+      
+      try {
+          const match = expression.match(/^(\d+)d(\d+)$/);
+          if (match) {
+              const count = parseInt(match[1]);
+              const sides = parseInt(match[2]);
+              let total = 0;
+              for (let i = 0; i < count; i++) {
+                  total += Math.floor(Math.random() * sides) + 1;
+              }
+              return total;
+          }
+          return parseInt(expression) || 0;
+      } catch (error) {
+          logLivestock('解析骰子表達式錯誤:', expression, error);
+          return 0;
+      }
+  }
+
+  /**
+   * 檢查並更新動物生產
+   */
+  async function updateAnimalProduction(t, animalName, animalData, currentDay) {
+      const productionConfig = LIVESTOCK_CONFIG.PRODUCTION_CYCLES[animalName];
+      if (!productionConfig || !animalData.產出物) return false;
+      
+      const nextProductionDay = animalData.產出物.下次產出日 || 0;
+      
+      // 如果已經過了產出日
+      if (currentDay >= nextProductionDay) {
+          logLivestock(`動物 ${animalName} 可產出: ${productionConfig.產出物}`);
+          
+          // 計算產量
+          const productionAmount = parseDiceExpression(animalData.產出物.產量 || '1');
+          
+          // 計算下次產出日
+          const nextDay = nextProductionDay + productionConfig.週期;
+          
+          // 更新數據
+          await d(t, `畜牧.${animalName}.產出物.下次產出日`, nextDay);
+          a().set(t.stat_data, `畜牧.${animalName}.產出物.下次產出日`, nextDay);
+          
+          // 這裡可以添加產出物品到庫存的邏輯
+          logLivestock(`產出 ${productionAmount} 個 ${productionConfig.產出物}，下次產出: 第${nextDay}天`);
+          
+          return true;
+      }
+      
+      return false;
+  }
+
+  /**
+   * 檢查動物繁殖
+   */
+  async function updateAnimalBreeding(t, animalName, animalData, currentDay) {
+      const breedingConfig = LIVESTOCK_CONFIG.BREEDING_CONFIG[animalName];
+      if (!breedingConfig || !animalData.飼養數量) return false;
+      
+      const { 雄性, 雌性 } = animalData.飼養數量;
+      
+      // 檢查是否有繁殖條件
+      if (breedingConfig.需要雌雄 && (!雄性 || 雄性 < 1 || !雌性 || 雌性 < 1)) {
+          return false;
+      }
+      
+      // 檢查是否成年
+      if (animalData.生長階段 !== '成年期') {
+          return false;
+      }
+      
+      // 這裡可以實現繁殖邏輯
+      // 例如：檢查上次繁殖時間，計算新生幼崽等
+      
+      return false;
+  }
+
+  /**
+   * 主畜牧更新函數
+   */
+  async function updateLivestockSystem(t) {
+      let updated = false;
+      const data = t.stat_data ?? {};
+      const currentDay = v(a().get(data, '系統.經過天數'), 0);
+      
+      logLivestock(`開始更新畜牧系統 - 當前天數: ${currentDay}`);
+      
+      const livestock = getLivestockData(data);
+      if (!a().isPlainObject(livestock)) {
+          logLivestock('沒有找到畜牧數據');
+          return false;
+      }
+      
+      for (const [animalName, animalData] of Object.entries(livestock)) {
+          if (animalName.startsWith('$') || !a().isPlainObject(animalData)) continue;
+          
+          logLivestock(`處理動物: ${animalName}`);
+          
+          // 1. 更新年齡和生長階段
+          const ageInYears = calculateAnimalAge(animalData, currentDay);
+          const growthStage = determineGrowthStage(ageInYears);
+          
+          // 檢查是否需要更新
+          if (animalData.年齡 !== ageInYears) {
+              await d(t, `畜牧.${animalName}.年齡`, ageInYears);
+              a().set(t.stat_data, `畜牧.${animalName}.年齡`, ageInYears);
+              updated = true;
+          }
+          
+          if (animalData.生長階段 !== growthStage) {
+              await d(t, `畜牧.${animalName}.生長階段`, growthStage);
+              a().set(t.stat_data, `畜牧.${animalName}.生長階段`, growthStage);
+              updated = true;
+          }
+          
+          // 2. 更新生產週期
+          const productionUpdated = await updateAnimalProduction(t, animalName, animalData, currentDay);
+          if (productionUpdated) {
+              updated = true;
+          }
+          
+          // 3. 更新繁殖
+          const breedingUpdated = await updateAnimalBreeding(t, animalName, animalData, currentDay);
+          if (breedingUpdated) {
+              updated = true;
+          }
+          
+          // 4. 驗證和修復數據完整性
+          if (!animalData.飼養開始日) {
+              await d(t, `畜牧.${animalName}.飼養開始日`, currentDay);
+              a().set(t.stat_data, `畜牧.${animalName}.飼養開始日`, currentDay);
+              updated = true;
+          }
+          
+          // 5. 確保飼養數量結構完整
+          if (!animalData.飼養數量) {
+              const defaultCount = { 雄性: 0, 雌性: 1 };
+              await d(t, `畜牧.${animalName}.飼養數量`, defaultCount);
+              a().set(t.stat_data, `畜牧.${animalName}.飼養數量`, defaultCount);
+              updated = true;
+          }
+      }
+      
+      if (updated) {
+          logLivestock(`畜牧系統更新完成，有 ${updated ? '變化' : '無變化'}`);
+      }
+      
+      return updated;
+  }
+
+  // ==================== 畜牧數據完整性檢查 ====================
+  async function validateAndFixLivestockData(t) {
+      const data = t.stat_data ?? {};
+      const currentDay = v(a().get(data, '系統.經過天數'), 0);
+      const livestock = getLivestockData(data);
+      
+      if (!a().isPlainObject(livestock)) {
+          // 如果畜牧數據不存在，創建基本結構
+          await d(t, '畜牧', {});
+          return true;
+      }
+      
+      let updated = false;
+      
+      // 預定義的動物類型
+      const expectedAnimals = ['野雞', '野山羊', '馬鹿', '野兔'];
+      
+      for (const animalName of expectedAnimals) {
+          if (!livestock[animalName]) {
+              // 創建缺失的動物數據
+              const defaultData = {
+                  年齡: 1,
+                  飼養數量: { 雄性: 0, 雌性: 0 },
+                  生長階段: '成年期',
+                  飼養開始日: currentDay
+              };
+              
+              // 添加生產信息
+              const productionConfig = LIVESTOCK_CONFIG.PRODUCTION_CYCLES[animalName];
+              if (productionConfig) {
+                  defaultData.產出物 = {
+                      名稱: productionConfig.產出物,
+                      週期: productionConfig.週期,
+                      下次產出日: currentDay + productionConfig.週期,
+                      產量: '1' // 默認產量
+                  };
+              }
+              
+              await d(t, `畜牧.${animalName}`, defaultData);
+              updated = true;
+              logLivestock(`創建缺失的動物數據: ${animalName}`);
+          }
+      }
+      
+      return updated;
+  }
+
+  // ==================== 雙時間系統 ====================
+  class DualTimeSystem {
+    constructor() {
+      this.PATHS = {
+        currentTime: '系統.當前時間',
+        previousTime: '系統.前次時間',
+        currentDay: '系統.經過天數',
+        previousDay: '系統.前次天數'
+      };
+      this.initialized = false;
+      console.log('[計算系統] 🔄 雙時間系統初始化完成');
+    }
+    
+    // 初始化或確保路徑存在
+    async initializeTimePaths(context) {
+      if (this.initialized) return;
+      
+      const data = context.stat_data ?? {};
+      
+      try {
+        // 如果沒有前次時間路徑，創建它
+        if (!a().has(data, this.PATHS.previousTime)) {
+          const currentTime = a().get(data, this.PATHS.currentTime) || '06:00';
+          await this.setMvuVariable(context, this.PATHS.previousTime, currentTime, '初始化前次時間');
+          console.log('[計算系統] ✅ 前次時間路徑初始化完成');
+        }
+        
+        // 如果沒有前次天數路徑，創建它
+        if (!a().has(data, this.PATHS.previousDay)) {
+          const currentDay = v(a().get(data, this.PATHS.currentDay), 0);
+          await this.setMvuVariable(context, this.PATHS.previousDay, currentDay, '初始化前次天數');
+          console.log('[計算系統] ✅ 前次天數路徑初始化完成');
+        }
+        
+        this.initialized = true;
+      } catch (error) {
+        console.error('[計算系統] 初始化時間路徑失敗:', error);
+      }
+    }
+    
+    // 輔助函數：設置變量
+    async setMvuVariable(context, path, value, reason) {
+      try {
+        const success = await Mvu.setMvuVariable(context, path, value, { reason: reason || '雙時間系統' });
+        if (success) {
+          a().set(context.stat_data, path, value);
+        }
+        return success;
+      } catch (error) {
+        console.error(`[計算系統] 設置變量失敗 ${path}:`, error);
+        return false;
+      }
+    }
+    
+    // 更新前次時間記錄（確保總是執行）
+    async updatePreviousTime(context, currentTime) {
+      try {
+        const data = context.stat_data ?? {};
+        
+        // 獲取當前天數（確保是最新的）
+        const currentDay = v(a().get(data, this.PATHS.currentDay), 0);
+        
+        // 更新前次時間
+        const timeSuccess = await this.setMvuVariable(
+          context,
+          this.PATHS.previousTime,
+          currentTime,
+          '更新前次時間記錄'
+        );
+        
+        // 更新前次天數
+        const daySuccess = await this.setMvuVariable(
+          context,
+          this.PATHS.previousDay,
+          currentDay,
+          '更新前次天數記錄'
+        );
+        
+        // 記錄更新
+        if (timeSuccess && daySuccess) {
+          console.log(`[計算系統] 🔄 更新時間記錄: ${currentTime}(天${currentDay})`);
+        }
+        
+        return timeSuccess && daySuccess;
+      } catch (error) {
+        console.error('[計算系統] 更新前次時間失敗:', error);
+        return false;
+      }
+    }
+    
+    // 判斷是否可能是跨日（在SillyTavern環境中，時間回退就是跨日）
+    isLikelyDayPass(previousMinutes, currentMinutes) {
+      // SillyTavern環境中，時間完全由腳本控制
+      // 時間回退就一定是跨日（23:xx → 00:xx）
+      return previousMinutes > currentMinutes;
+    }
+    
+    // 判斷時間是否相同
+    isTimeSame(time1, time2) {
+      if (!time1 || !time2) return false;
+      return this.normalizeTime(time1) === this.normalizeTime(time2);
+    }
+    
+    // 計算是否應該跨日（修正邏輯）
+    shouldDayActuallyPass(previousMinutes, currentMinutes) {
+      // 在SillyTavern環境中：
+      // 1. 時間回退 = 跨日（23:xx → 00:xx）
+      if (previousMinutes > currentMinutes) {
+        return true;
+      }
+      
+      // 2. 時間前進超過24小時（極端情況）
+      const timeDiff = currentMinutes - previousMinutes;
+      if (timeDiff >= 1440) { // 24小時
+        return true;
+      }
+      
+      // 3. 時間前進跨越午夜
+      const minutesToMidnight = 1440 - previousMinutes;
+      if (timeDiff >= minutesToMidnight) {
+        return true;
+      }
+      
+      return false;
+    }
+    
+    // 標準化時間格式
+    normalizeTime(timeString) {
+      if (typeof timeString !== 'string') return null;
+      
+      const trimmed = timeString.trim();
+      const match = trimmed.match(/^(\d{1,2}):(\d{1,2})$/);
+      if (!match) return null;
+      
+      const hours = parseInt(match[1], 10);
+      const minutes = parseInt(match[2], 10);
+      
+      if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+        return null;
+      }
+      
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    }
+    
+    // 時間加一分鐘（用於處理重複時間）
+    addOneMinute(timeString) {
+      const normalized = this.normalizeTime(timeString);
+      if (!normalized) return '00:01';
+      
+      const [hoursStr, minutesStr] = normalized.split(':');
+      let hours = parseInt(hoursStr, 10);
+      let minutes = parseInt(minutesStr, 10);
+      
+      minutes += 1;
+      
+      if (minutes >= 60) {
+        minutes = minutes % 60;
+        hours += 1;
+      }
+      
+      if (hours >= 24) {
+        hours = hours % 24;
+      }
+      
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    }
+    
+    // 智能時間驗證（核心邏輯）
+    async verifyTime(context) {
+      try {
+        const data = context.stat_data ?? {};
+        
+        // 確保路徑存在
+        await this.initializeTimePaths(context);
+        
+        // 獲取四個關鍵值
+        const currentTime = a().get(data, this.PATHS.currentTime) || '06:00';
+        const previousTime = a().get(data, this.PATHS.previousTime) || currentTime;
+        const currentDay = v(a().get(data, this.PATHS.currentDay), 0);
+        const previousDay = v(a().get(data, this.PATHS.previousDay), 0);
+        
+        // 轉換為分鐘
+        const currentMinutes = h(currentTime);
+        const previousMinutes = h(previousTime);
+        
+        // 有效性檢查
+        if (currentMinutes === null || previousMinutes === null) {
+          console.warn('[計算系統] ⚠️ 時間格式無效，跳過檢查');
+          await this.updatePreviousTime(context, currentTime);
+          return { shouldFix: false, reason: 'invalid_time' };
+        }
+        
+        console.log(`[計算系統] 📊 時間對比: 前次=${previousTime}(天${previousDay}) → 當前=${currentTime}(天${currentDay})`);
+        console.log(`[計算系統] ⏱️ 時間差: ${currentMinutes - previousMinutes}分鐘`);
+        
+        let result;
+        
+        // 情況1：時間相同
+        if (this.isTimeSame(currentTime, previousTime)) {
+          result = await this.handleTimeUnchanged(context, currentTime, currentDay, previousTime);
+        }
+        // 情況2：時間前進
+        else if (currentMinutes > previousMinutes) {
+          result = await this.handleTimeForward(
+            context, 
+            currentTime, currentDay, currentMinutes,
+            previousTime, previousDay, previousMinutes
+          );
+        }
+        // 情況3：時間回退（在SillyTavern中，這一定是跨日）
+        else if (currentMinutes < previousMinutes) {
+          result = await this.handleTimeBackward(
+            context, 
+            currentTime, currentDay, currentMinutes,
+            previousTime, previousDay, previousMinutes
+          );
+        }
+        // 未知情況
+        else {
+          result = { shouldFix: false, reason: 'unknown_time_state' };
+        }
+        
+        // ✅ 確保無論如何都更新前次記錄
+        await this.updatePreviousTime(context, currentTime);
+        
+        return result;
+        
+      } catch (error) {
+        console.error('[計算系統] verifyTime錯誤:', error);
+        // 錯誤時也嘗試更新
+        try {
+          const data = context.stat_data ?? {};
+          const currentTime = a().get(data, this.PATHS.currentTime) || '06:00';
+          await this.updatePreviousTime(context, currentTime);
+        } catch (e) {}
+        return { shouldFix: false, reason: 'error' };
+      }
+    }
+    
+    // 處理時間前進的情況（修正跨日判斷）
+    async handleTimeForward(context, currentTime, currentDay, currentMinutes, previousTime, previousDay, previousMinutes) {
+      try {
+        console.log(`[計算系統] ⏩ 時間前進: ${previousTime} → ${currentTime}`);
+        
+        // 計算時間差
+        const timeDiff = currentMinutes - previousMinutes;
+        
+        // ✅ 檢查是否應該跨日
+        const shouldDayPass = this.shouldDayActuallyPass(previousMinutes, currentMinutes);
+        const expectedDay = previousDay + (shouldDayPass ? 1 : 0);
+        
+        console.log(`[計算系統] 🔍 跨日分析: 應該跨日=${shouldDayPass ? '是' : '否'}, 期望天數=${expectedDay}`);
+        
+        // 情況1：天數正確（無論是否跨日）
+        if (currentDay === expectedDay) {
+          console.log(`[計算系統] ✅ 天數正確: ${previousDay} → ${currentDay} (${shouldDayPass ? '已跨日' : '未跨日'})`);
+          return { shouldFix: false, reason: 'normal_progress' };
+        }
+        
+        // 情況2：天數不正確，需要修正
+        console.warn(`[計算系統] 🚨 天數錯誤: 當前=${currentDay}, 期望=${expectedDay}`);
+        
+        // 修正天數
+        const success = await this.setMvuVariable(
+          context,
+          this.PATHS.currentDay,
+          expectedDay,
+          `修正天數錯誤（時間前進${timeDiff}分鐘）`
+        );
+        
+        if (success) {
+          console.log(`[計算系統] 🔧 已修正天數: ${currentDay} → ${expectedDay}`);
+          return { shouldFix: true, reason: 'fixed_day_mismatch' };
+        } else {
+          console.warn(`[計算系統] ⚠️ 修正天數失敗`);
+          return { shouldFix: false, reason: 'fix_failed' };
+        }
+        
+      } catch (error) {
+        console.error('[計算系統] handleTimeForward錯誤:', error);
+        return { shouldFix: false, reason: 'error' };
+      }
+    }
+    
+    // 處理時間回退的情況（在SillyTavern中，時間回退一定是跨日）
+    async handleTimeBackward(context, 
+                            currentTime, currentDay, currentMinutes,
+                            previousTime, previousDay, previousMinutes) {
+      try {
+        console.log(`[計算系統] ⏪ 時間回退檢測: ${previousTime} → ${currentTime}`);
+        
+        // ==================== 核心修正 ====================
+        // 在SillyTavern環境中，時間回退就一定是跨日
+        // 23:14 → 07:14 是正常的跨日情況
+        const expectedDay = previousDay + 1;
+        
+        console.log(`[計算系統] 🌙 檢測到跨日時間回退: 時間 ${previousTime}→${currentTime}, 天數應從 ${previousDay} → ${expectedDay}`);
+        
+        // 情況1：天數已正確更新
+        if (currentDay === expectedDay) {
+          console.log(`[計算系統] ✅ 天數已正確更新: ${previousDay}→${currentDay}`);
+          return { shouldFix: false, reason: 'normal_day_pass' };
+        }
+        
+        // 情況2：天數需要修正
+        console.log(`[計算系統] 🔄 修正跨日天數: ${currentDay} → ${expectedDay}`);
+        
+        // 修正天數
+        const success = await this.setMvuVariable(
+          context,
+          this.PATHS.currentDay,
+          expectedDay,
+          '修正跨日天數'
+        );
+        
+        if (success) {
+          return { shouldFix: true, reason: 'fixed_day_pass' };
+        } else {
+          return { shouldFix: false, reason: 'fix_failed' };
+        }
+        
+      } catch (error) {
+        console.error('[計算系統] handleTimeBackward錯誤:', error);
+        return { shouldFix: false, reason: 'error' };
+      }
+    }
+    
+    // 處理時間不變的情況（確保所有路徑都更新）
+    async handleTimeUnchanged(context, currentTime, currentDay, previousTime) {
+      try {
+        console.log('[計算系統] ⏸️ 時間未變化');
+        
+        let newTime = currentTime;
+        let reason = 'time_unchanged';
+        let shouldFix = false;
+        
+        // 使用原有的 fixRepeatedTime 邏輯
+        const normalizedCurrent = this.normalizeTime(currentTime);
+        
+        // 1. 處理00:00特殊情況（改為00:05，保持與原有邏輯一致）
+        if (normalizedCurrent === '00:00') {
+          newTime = '00:05';
+          console.log('[計算系統] ⏰ 檢測到00:00時間，自動修正為00:05');
+          reason = 'fixed_00:00_to_00:05';
+          shouldFix = true;
+        }
+        // 2. 處理一般時間相同的情況
+        else if (previousTime && this.isTimeSame(currentTime, previousTime)) {
+          newTime = this.addOneMinute(currentTime);
+          console.log(`[計算系統] ⏰ 檢測到重複時間：${previousTime} → ${currentTime}，自動+1分鐘：${newTime}`);
+          reason = 'fixed_repeated_time';
+          shouldFix = true;
+        }
+        
+        // 如果需要修正時間
+        if (shouldFix && newTime !== currentTime) {
+          const success = await this.setMvuVariable(
+            context,
+            this.PATHS.currentTime,
+            newTime,
+            '修正時間重複問題'
+          );
+          
+          if (success) {
+            return { shouldFix: true, reason: reason };
+          } else {
+            return { shouldFix: false, reason: 'fix_failed' };
+          }
+        }
+        
+        return { shouldFix: false, reason: 'time_unchanged' };
+        
+      } catch (error) {
+        console.error('[計算系統] handleTimeUnchanged錯誤:', error);
+        return { shouldFix: false, reason: 'error' };
+      }
+    }
+    
+    // 重置系統（用於測試）
+    reset() {
+      this.initialized = false;
+      console.log('[計算系統] 🔄 雙時間系統已重置');
+    }
+  }
+
+  // ==================== 創建全局時間系統實例 ====================
+  window._timeSystem = new DualTimeSystem();
+  
+  // ==================== 時間處理函數 ====================
+  function h(t) {
+    if ('string' != typeof t) return null;
+    const e = /^(\d{1,2}):(\d{2})$/.exec(t.trim());
+    if (!e) return null;
+    const a = Number(e[1]),
+      n = Number(e[2]);
+    return Number.isFinite(a) && Number.isFinite(n) ? a < 0 || a > 23 || n < 0 || n > 59 ? null : 60 * a + n : null;
+  }
+
+  function v(t, e = 0) {
+    if ('number' == typeof t && Number.isFinite(t)) return t;
+    const a = Number(t);
+    return Number.isFinite(a) ? a : e;
+  }
+
+  function M(t, e) {
+    for (const n of e)
+      if (a().has(t, n)) return n;
+    return e.length > 0 ? e[0] : null;
+  }
+
+  function g(t, e, a) {
+    if ('number' != typeof a || !Number.isFinite(a)) return null;
+    if (a <= 0) return 0;
+    let n = 'number' == typeof t ? t : Number(t);
+    Number.isFinite(n) || (n = 0);
+    const i = 'number' == typeof e ? e : Number(e);
+    if (!Number.isFinite(i) || i <= 0) {
+      const t = Math.round(Math.min(a, Math.max(0, n)));
+      return Number.isFinite(t) ? t : 0;
+    }
+    const r = (n / i) * a;
+    if (!Number.isFinite(r)) return 0;
+    const u = Math.round(r);
+    return Math.max(0, Math.min(a, u));
+  }
+
+  // ==================== 時間相同檢測與修正函數 ====================
+  function normalizeTime(timeString) {
+    if (typeof timeString !== 'string') return null;
+    
+    const trimmed = timeString.trim();
+    const match = trimmed.match(/^(\d{1,2}):(\d{1,2})$/);
+    if (!match) return null;
+    
+    const hours = parseInt(match[1], 10);
+    const minutes = parseInt(match[2], 10);
+    
+    if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+      return null;
+    }
+    
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  }
+
+  function isTimeSame(time1, time2) {
+    if (!time1 || !time2) return false;
+    
+    const norm1 = normalizeTime(time1);
+    const norm2 = normalizeTime(time2);
+    
+    if (!norm1 || !norm2) return false;
+    return norm1 === norm2;
+  }
+
+  function addOneMinute(timeString) {
+    const normalized = normalizeTime(timeString);
+    if (!normalized) return '00:01';
+    
+    const [hoursStr, minutesStr] = normalized.split(':');
+    let hours = parseInt(hoursStr, 10);
+    let minutes = parseInt(minutesStr, 10);
+    
+    minutes += 1;
+    
+    if (minutes >= 60) {
+      minutes = minutes % 60;
+      hours += 1;
+    }
+    
+    if (hours >= 24) {
+      hours = hours % 24;
+    }
+    
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  }
+
+  function fixRepeatedTime(currentTime, previousTime) {
+    const normalizedCurrent = normalizeTime(currentTime);
+    if (normalizedCurrent === '00:00') {
+      console.log('[計算系統] ⏰ 檢測到00:00時間，自動修正為00:05');
+      return '00:05';
+    }
+    
+    if (previousTime && isTimeSame(currentTime, previousTime)) {
+      const newTime = addOneMinute(currentTime);
+      console.log(`[計算系統] ⏰ 檢測到重複時間：${previousTime} → ${currentTime}，自動+1分鐘：${newTime}`);
+      return newTime;
+    }
+    
+    return currentTime;
+  }
+
+  // ==================== 分鐘數轉時間格式 ====================
+  function formatMinutesToTime(minutes) {
+    if (minutes === null || minutes === undefined) return '未知';
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+  }
+
+  // ==================== 通用函數 ====================
+async function d(t, e, i) {
+  const r = a().get(t.stat_data, e);
+  
+  let valueToSet = i;
+  if (typeof r === 'number' || e.includes('日期') || e.includes('天數') || e.includes('週期')) {
+    valueToSet = Number(i);
+  } else if (typeof r === 'string' || e.includes('階段') || e.includes('狀態')) {
+    valueToSet = String(i);
+  } else if (typeof r === 'boolean' || e.includes('已') || e.includes('是否')) {
+    valueToSet = Boolean(i);
+  }
+  
+  if (Number.isFinite(r) && Number.isFinite(valueToSet) && r === valueToSet) return !1;
+  
+  try {
+    const u = await Mvu.setMvuVariable(t, e, valueToSet, { reason: n });
+    return u && a().set(t.stat_data, e, valueToSet), u;
+  } catch (error) {
+    console.error(`[計算系統] [錯誤] 設置變量失敗 ${e}:`, error);
+    return false;
+  }
+}
+
+  async function x(t, e) {
+    const i = a().get(t.stat_data, e);
+    if (!a().isPlainObject(i)) return !1;
+    let r = !1;
+    for (const [u, s] of Object.entries(i)) {
+      if (u.startsWith('$')) continue;
+      if (!a().isPlainObject(s)) continue;
+      const i = `${e}.${u}.等級`,
+        o = `${e}.${u}.${m}`,
+        c = `${e}.${u}.${l}`;
+      let f = v(a().get(s, '等級'), 0),
+        p = v(a().get(s, m), 0);
+      const b = e.includes('屬性') ? 10 : 100,
+        h = t => Math.max(1, Math.floor(t) * b);
+      let M = !1,
+        g = 0;
+      for (;;) {
+        const t = h(f);
+        if (!(p >= t)) break;
+        if ((p -= t), f += 1, (M = !0), (g += 1), g > 1e3) break;
+      }
+      const d = h(f);
+M && (await Mvu.setMvuVariable(t, i, Number(f), { reason: n })) && (a().set(t.stat_data, i, f), (r = !0)),
+p !== v(a().get(s, m), 0) &&
+  (await Mvu.setMvuVariable(t, o, Number(p), { reason: n })) &&
+  (a().set(t.stat_data, o, p), (r = !0)),
+d !== v(a().get(s, l), NaN) &&
+  (await Mvu.setMvuVariable(t, c, Number(d), { reason: n })) &&
+  (a().set(t.stat_data, c, d), (r = !0));
+    }
+    return r;
+  }
+
+  // ==================== 季節系統 ====================
+  const SEASON_GROWTH_BONUS = {
+    '春季': 15,
+    '夏季': 20,
+    '秋季': 0,
+    '冬季': -50
+  };
+
+  const DEBUG_MODE = true;
+
+  function getSeasonGrowthBonus(season) {
+    if (!season) return 0;
+    return SEASON_GROWTH_BONUS[season] || 0;
+  }
+
+  function extractCropBonusFromObject(obj) {
+    if (!obj || typeof obj !== 'object') return 0;
+    
+    let totalBonus = 0;
+    
+    if (obj['作物加成'] !== undefined) {
+      const bonus = Number(obj['作物加成']);
+      if (!isNaN(bonus) && bonus > 0) {
+        totalBonus += bonus;
+        if (DEBUG_MODE) {
+          console.log('[計算系統] 📊 提取到作物加成:', bonus, '%');
+        }
+      }
+    }
+    
+    return totalBonus;
+  }
+
+  function extractCropBonusFromCarriedItems(items) {
+    if (!a().isPlainObject(items)) return 0;
+    
+    let totalBonus = 0;
+    
+    for (const [itemName, itemData] of Object.entries(items)) {
+      if (itemName.startsWith('$') || !a().isPlainObject(itemData)) continue;
+      totalBonus += extractCropBonusFromObject(itemData);
+    }
+    
+    return totalBonus;
+  }
+
+  function extractCropBonusFromCompanionItems(companions) {
+    if (!a().isPlainObject(companions)) return 0;
+    
+    let totalBonus = 0;
+    
+    for (const [companionName, companionData] of Object.entries(companions)) {
+      if (companionName.startsWith('$') || !a().isPlainObject(companionData)) continue;
+      
+      const companionItems = a().get(companionData, '攜帶物品');
+      if (a().isPlainObject(companionItems)) {
+        totalBonus += extractCropBonusFromCarriedItems(companionItems);
+      }
+    }
+    
+    return totalBonus;
+  }
+
+  async function calculateActualGrowthDays(t, cropName, baseGrowthDays) {
+    const e = t.stat_data ?? {};
+    let totalPercentageBonus = 0;
+    
+    if (DEBUG_MODE) {
+      console.log('[計算系統] 🌱 計算', cropName, '生長加成 (基礎:', baseGrowthDays, '天)');
+    }
+    
+    const currentSeason = a().get(e, '環境.季節');
+    const seasonBonus = getSeasonGrowthBonus(currentSeason);
+    totalPercentageBonus += seasonBonus;
+    
+    if (DEBUG_MODE) {
+      console.log('[計算系統] 📅 季節加成 (', currentSeason, '):', seasonBonus, '%');
+    }
+    
+    const crops = a().get(e, '作物');
+    if (a().isPlainObject(crops)) {
+      for (const [otherCropName, otherCropData] of Object.entries(crops)) {
+        if (otherCropName.startsWith('$') || !a().isPlainObject(otherCropData) || otherCropName === cropName) continue;
+        
+        const cropBonus = extractCropBonusFromObject(otherCropData);
+        if (cropBonus > 0) {
+          totalPercentageBonus += cropBonus;
+          if (DEBUG_MODE) {
+            console.log('[計算系統] 🌿', otherCropName, '全局作物加成:', cropBonus, '%');
+          }
+        }
+      }
+    }
+    
+    const companions = a().get(e, '同伴');
+    const companionBonus = extractCropBonusFromCompanionItems(companions);
+    if (companionBonus > 0) {
+      totalPercentageBonus += companionBonus;
+      if (DEBUG_MODE) {
+        console.log('[計算系統] 👥 同伴攜帶物品作物加成:', companionBonus, '%');
+      }
+    }
+    
+    if (DEBUG_MODE) {
+      console.log('[計算系統] 📊', cropName, '總加成:', totalPercentageBonus, '%');
+    }
+    
+    let actualGrowthDays;
+    
+    if (totalPercentageBonus <= 0) {
+      actualGrowthDays = baseGrowthDays;
+      if (DEBUG_MODE) {
+        console.log('[計算系統] 📅', cropName, '實際生長天數:', actualGrowthDays, '天 (無加成)');
+      }
+    } else if (totalPercentageBonus <= 50) {
+      const reducedDays = Math.floor(baseGrowthDays * (totalPercentageBonus / 100));
+      actualGrowthDays = Math.max(1, baseGrowthDays - reducedDays);
+      if (DEBUG_MODE) {
+        console.log('[計算系統] 📅', cropName, '實際生長天數:', actualGrowthDays, '天 (減少', reducedDays, '天)');
+      }
+    } else {
+      const growthMultiplier = 1 + (totalPercentageBonus / 100);
+      actualGrowthDays = Math.max(1, Math.floor(baseGrowthDays / growthMultiplier));
+      const reducedDays = baseGrowthDays - actualGrowthDays;
+      if (DEBUG_MODE) {
+        console.log('[計算系統] 📅', cropName, '實際生長天數:', actualGrowthDays, '天 (除以', growthMultiplier.toFixed(2), ', 減少', reducedDays, '天)');
+      }
+    }
+    
+    return actualGrowthDays;
+  }
+
+function calculateGrowthStage(cropData, currentDay, actualGrowthDays) {
+  const plantedDay = v(cropData.種植日期, 0);
+  const growthCycle = v(cropData.成長週期, 0);
+   
+  const hasBonus = extractCropBonusFromObject(cropData) > 0;
+  const isSpecialCrop = growthCycle < 0 || hasBonus;
+  
+  const growthDays = currentDay - plantedDay;
+  
+  if (isSpecialCrop) {
+    return '特殊作物';
+  }
+  
+  const growthProgress = Math.min(100, Math.round((growthDays / actualGrowthDays) * 100));
+  
+  if (growthProgress < 30) {
+    return '幼苗期';
+  } else if (growthProgress < 60) {
+    return '生長期';
+  } else if (growthProgress < 100) {
+    return '熟成期';
+  } else {
+    return '可收割';
+  }
+}
+
+  async function updateCropGrowthStages(t) {
+    let updated = false;
+    const e = t.stat_data ?? {};
+    const currentDay = v(a().get(e, '系統.經過天數'), 0);
+    const currentSeason = a().get(e, '環境.季節');
+    const crops = a().get(e, '作物');
+    
+    if (DEBUG_MODE) {
+      console.log('[計算系統] 📅 更新作物生長階段 - 當前天數:', currentDay, ', 季節:', currentSeason);
+    }
+    
+    if (!a().isPlainObject(crops)) {
+      if (DEBUG_MODE) {
+        console.log('[計算系統] ⚠️ 沒有找到作物數據');
+      }
+      return false;
+    }
+    
+    for (const [cropName, cropData] of Object.entries(crops)) {
+      if (cropName.startsWith('$')) continue;
+      if (!a().isPlainObject(cropData)) continue;
+      
+      const growthCycle = v(cropData.成長週期, 0);
+      const plantedDay = v(cropData.種植日期, 0);
+      
+      if (plantedDay <= 0) {
+        if (DEBUG_MODE) {
+          console.log('[計算系統] 🌱', cropName, ': 未種植');
+        }
+        continue;
+      }
+      
+      const growthDays = currentDay - plantedDay;
+      if (DEBUG_MODE) {
+        console.log('[計算系統] 🌱', cropName, ': 種植第', growthDays, '天 (種植日:', plantedDay, ')');
+      }
+      
+      let actualGrowthDays = Math.abs(growthCycle);
+      
+      if (growthCycle > 0) {
+        actualGrowthDays = await calculateActualGrowthDays(t, cropName, growthCycle);
+      }
+      
+      const currentStage = calculateGrowthStage(cropData, currentDay, actualGrowthDays);
+      const stagePath = `作物.${cropName}.生長階段`;
+      const currentStageInData = a().get(e, stagePath);
+
+      if (growthCycle > 0 && plantedDay > 0) {
+        const maturityDay = plantedDay + actualGrowthDays;
+        const harvestDatePath = `作物.${cropName}.收成日期`;
+        
+        const currentHarvestDate = a().get(e, harvestDatePath);
+        if (currentHarvestDate !== maturityDay) {
+          if (DEBUG_MODE) {
+            console.log('[計算系統] 📅', cropName, ': 舊收成日', currentHarvestDate, '-> 新收成日', maturityDay);
+          }
+          await Mvu.setMvuVariable(t, harvestDatePath, Number(maturityDay), { reason: '修正收成日期' });
+          a().set(e, harvestDatePath, maturityDay);
+          updated = true;
+        }
+      }
+
+      if (currentStage !== currentStageInData) {
+        if (DEBUG_MODE) {
+          console.log('[計算系統] 🔄', cropName, ':', currentStageInData || '無', '->', currentStage);
+        }
+        await Mvu.setMvuVariable(t, stagePath, String(currentStage), { reason: '作物生長階段更新' });
+        a().set(e, stagePath, currentStage);
+        updated = true;
+        
+        if (currentStage === '可收割' && !a().get(e, `作物.${cropName}.已成熟`)) {
+          await Mvu.setMvuVariable(t, `作物.${cropName}.已成熟`, true, { reason: '作物成熟標記' });
+          a().set(e, `作物.${cropName}.已成熟`, true);
+        }
+      }
+    }
+    
+    return updated;
+  }
+
+  window._checkCropGrowth = async function(t) {
+    let updated = false;
+    updated = (await updateCropGrowthStages(t)) || updated;
+    return updated;
+  };
+
+  // ==================== 其他原有功能 ====================
+  async function w(t) {
+    let e = !1;
+    const i = a().get(t.stat_data, '同伴');
+    if (a().isPlainObject(i))
+      for (const [r, u] of Object.entries(i)) {
+        if (r.startsWith('$')) continue;
+        const s = `同伴.${r}`;
+        let o = !1;
+        const c = [
+          { path: `${s}.好感度`, min: 0, max: 100 },
+          { path: `${s}.性慾值`, min: 0, max: 100 },
+          { path: `${s}.墮落值`, min: 0, max: 100 },
+          { path: `${s}.開發度`, min: 0, max: 100 },
+          { path: `${s}.健康度`, min: 0, max: 100 },
+          { path: `${s}.水分值`, min: 0, max: 100 },
+          { path: `${s}.飽腹感`, min: 0, max: 100 },
+          { path: `${s}.疲勞度`, min: 0, max: 100 }
+        ];
+        for (const { path: m, min: l, max: f } of c) {
+          const p = v(a().get(t.stat_data, m), NaN);
+          if (!Number.isFinite(p)) continue;
+          let b = p;
+          'number' == typeof f && p > f && (b = f),
+            'number' == typeof l && b < l && (b = l),
+            b !== p && (await d(t, m, b)) && ((o = !0), (e = !0));
+        }
+        (await x(t, `${s}.屬性`)) && ((o = !0), (e = !0)),
+          (await x(t, `${s}.技能`)) && ((o = !0), (e = !0));
+      }
+    return e;
+  }
+
+  // ==================== 新增畜牧測試和工具函數 ====================
+  window.testLivestockSystem = function() {
+    console.log('[計算系統] === 畜牧系統測試 ===');
+    console.log('[計算系統] 🐔 畜牧系統: 運行中');
+    console.log('[計算系統] 📅 生產週期計算: 運行中');
+    console.log('[計算系統] 🐄 生長階段管理: 運行中');
+    console.log('[計算系統] ✅ 畜牧系統運行正常！');
+    
+    // 測試骰子解析
+    console.log('[計算系統] 🎲 骰子解析測試:');
+    const diceTests = ['2d4', '4d8', '1d6', '3d10'];
+    diceTests.forEach(dice => {
+      const result = parseDiceExpression(dice);
+      console.log(`[計算系統]   ${dice} -> ${result}`);
+    });
+  };
+
+  window.showLivestockStatus = function() {
+    console.log('[計算系統] === 畜牧系統狀態 ===');
+    
+    if (Mvu && Mvu.getCurrentContext) {
+      try {
+        const context = Mvu.getCurrentContext();
+        if (context && context.stat_data) {
+          const data = context.stat_data;
+          const livestock = getLivestockData(data);
+          
+          console.log(`[計算系統] 📊 畜牧總數: ${Object.keys(livestock).length} 種`);
+          
+          for (const [animalName, animalData] of Object.entries(livestock)) {
+            if (animalName.startsWith('$')) continue;
+            
+            console.log(`[計算系統] 🐾 ${animalName}:`);
+            console.log(`[計算系統]   年齡: ${animalData.年齡 || 1} 歲`);
+            console.log(`[計算系統]   生長階段: ${animalData.生長階段 || '未知'}`);
+            
+            if (animalData.飼養數量) {
+              const { 雄性 = 0, 雌性 = 0 } = animalData.飼養數量;
+              console.log(`[計算系統]   數量: 雄${雄性} 雌${雌性}`);
+            }
+            
+            if (animalData.產出物) {
+              const nextProd = animalData.產出物.下次產出日 || 0;
+              const currentDay = v(a().get(data, '系統.經過天數'), 0);
+              const daysUntil = Math.max(0, nextProd - currentDay);
+              console.log(`[計算系統]   下次產出: 第${nextProd}天 (${daysUntil}天後)`);
+            }
+          }
+        }
+      } catch (error) {
+        console.log('[計算系統] ⚠️ 無法獲取畜牧狀態:', error.message);
+      }
+    }
+  };
+
+  // ==================== 新增測試和工具函數 ====================
+  window.testDaySystem = function() {
+    console.log('[計算系統] === 雙時間系統測試 ===');
+    
+    if (window._timeSystem) {
+      console.log('[計算系統] ✅ 雙時間系統已初始化');
+      
+      // 測試時間標準化
+      console.log('[計算系統] ⏰ 時間標準化測試:');
+      const testTimes = ['00:00', '12:34', '23:59', '8:05', '0:0'];
+      testTimes.forEach(time => {
+        const normalized = window._timeSystem.normalizeTime(time);
+        console.log(`[計算系統]   ${time} -> ${normalized}`);
+      });
+      
+      // 測試時間相同判斷
+      console.log('[計算系統] 🔄 時間相同判斷測試:');
+      const sameTests = [
+        { time1: '08:00', time2: '8:00', expected: true },
+        { time1: '12:30', time2: '12:30', expected: true },
+        { time1: '23:59', time2: '00:01', expected: false }
+      ];
+      sameTests.forEach(test => {
+        const result = window._timeSystem.isTimeSame(test.time1, test.time2);
+        console.log(`[計算系統]   ${test.time1} == ${test.time2} ? ${result} ${result === test.expected ? '✅' : '❌'}`);
+      });
+      
+      // 測試跨日判斷
+      console.log('[計算系統] 🌙 跨日判斷測試:');
+      const dayPassTests = [
+        { previous: '23:30', current: '00:05', expected: true },
+        { previous: '22:00', current: '23:00', expected: false },
+        { previous: '01:00', current: '00:30', expected: false }
+      ];
+      dayPassTests.forEach(test => {
+        const prevMin = h(test.previous);
+        const currMin = h(test.current);
+        const result = window._timeSystem.isLikelyDayPass(prevMin, currMin);
+        console.log(`[計算系統]   ${test.previous} → ${test.current} : ${result} ${result === test.expected ? '✅' : '❌'}`);
+      });
+      
+      // 測試時間加一分鐘
+      console.log('[計算系統] ⏰ 時間加一分鐘測試:');
+      const addMinuteTests = [
+        { input: '10:30', expected: '10:31' },
+        { input: '23:59', expected: '00:00' },
+        { input: '00:00', expected: '00:01' },
+        { input: '12:59', expected: '13:00' }
+      ];
+      addMinuteTests.forEach(test => {
+        const result = window._timeSystem.addOneMinute(test.input);
+        console.log(`[計算系統]   ${test.input} +1分鐘 = ${result} ${result === test.expected ? '✅' : '❌'}`);
+      });
+      
+    } else {
+      console.error('[計算系統] ❌ 雙時間系統未初始化');
+    }
+  };
+
+  window.resetTimeSystem = function() {
+    if (window._timeSystem) {
+      window._timeSystem.reset();
+      console.log('[計算系統] 🔄 雙時間系統已重置');
+    } else {
+      console.error('[計算系統] ❌ 雙時間系統未初始化');
+    }
+  };
+
+  window.fixCurrentTime = async function() {
+    if (!Mvu || !Mvu.getCurrentContext) {
+      console.error('[計算系統] ❌ Mvu 未載入或缺少 getCurrentContext 方法');
+      return;
+    }
+    
+    try {
+      const context = Mvu.getCurrentContext();
+      if (!context) {
+        console.error('[計算系統] ❌ 無法獲取當前上下文');
+        return;
+      }
+      
+      console.log('[計算系統] 🔄 手動檢查並修正時間系統...');
+      
+      if (window._timeSystem) {
+        const result = await window._timeSystem.verifyTime(context);
+        console.log(`[計算系統] ✅ 檢查完成: ${result.reason}`);
+        
+        if (result.shouldFix && Mvu.replaceMvuData) {
+          await Mvu.replaceMvuData(context, { type: 'message', message_id: 'latest' });
+        }
+      } else {
+        console.error('[計算系統] ❌ 時間系統未初始化');
+      }
+    } catch (error) {
+      console.error('[計算系統] ❌ 手動修正失敗:', error);
+    }
+  };
+
+  window.showTimeStatus = function() {
+    console.log('[計算系統] === 雙時間系統狀態 ===');
+    
+    if (window._timeSystem) {
+      console.log(`[計算系統] 🎯 系統初始化: ${window._timeSystem.initialized ? '✅' : '❌'}`);
+    } else {
+      console.log('[計算系統] ❌ 雙時間系統未初始化');
+    }
+    
+    if (Mvu && Mvu.getCurrentContext) {
+      try {
+        const context = Mvu.getCurrentContext();
+        if (context && context.stat_data) {
+          const data = context.stat_data;
+          
+          // 嘗試獲取時間信息
+          const currentTime = a().get(data, '系統.當前時間');
+          const previousTime = a().get(data, '系統.前次時間');
+          const currentDay = a().get(data, '系統.經過天數');
+          const previousDay = a().get(data, '系統.前次天數');
+          
+          console.log(`[計算系統] 📊 當前遊戲時間: ${currentTime || '未找到'}`);
+          console.log(`[計算系統] 📊 前次遊戲時間: ${previousTime || '未找到'}`);
+          console.log(`[計算系統] 📊 當前遊戲天數: ${currentDay || '未找到'}`);
+          console.log(`[計算系統] 📊 前次遊戲天數: ${previousDay || '未找到'}`);
+          
+          if (currentTime && previousTime) {
+            const currMin = h(currentTime);
+            const prevMin = h(previousTime);
+            console.log(`[計算系統] ⏱️ 時間差: ${prevMin !== null && currMin !== null ? Math.abs(currMin - prevMin) : '無法計算'}分鐘`);
+          }
+        }
+      } catch (error) {
+        console.log('[計算系統] ⚠️ 無法獲取當前遊戲狀態');
+      }
+    }
+  };
+
+  // ==================== 事件監聽器 ====================
+  if (!window._wildernessEventListenersAdded) {
+    $(async () => {
+      try {
+        await waitGlobalInitialized('Mvu');
+      } catch (t) {
+        return void console.error('[計算系統] [荒野求生腳本] Mvu 初始化失敗', t);
+      }
+      
+      if (Mvu && Mvu.events) {
+        if (!window._wildernessEventListenersAdded) {
+          console.log('[計算系統] 📌 綁定荒野求生腳本事件監聽器（雙時間系統版）');
+          
+          // 簡化的事件處理 - 移除快照依賴
+          eventOn(Mvu.events.VARIABLE_UPDATE_STARTED, async (t) => {
+            if (p) b = null;
+            else {
+              try {
+                // 不再記錄複雜快照，只標記開始
+                b = { timestamp: Date.now() };
+                
+                // 確保時間系統路徑存在
+                if (window._timeSystem) {
+                  await window._timeSystem.initializeTimePaths(t);
+                }
+              } catch (error) {
+                console.error('[計算系統] [荒野求生腳本] 初始化時間路徑失敗', error);
+                b = null;
+              }
+            }
+          });
+          
+          eventOn(Mvu.events.VARIABLE_UPDATE_ENDED, async (t) => {
+            if (p) return (p = !1), void (b = null);
+            
+            try {
+              let e = !1;
+              
+              // ==================== 1. 雙時間系統驗證（優先執行） ====================
+              if (window._timeSystem) {
+                const timeResult = await window._timeSystem.verifyTime(t);
+                if (timeResult.shouldFix) {
+                  e = true;
+                  console.log(`[計算系統] 🛡️ 雙時間系統: ${timeResult.reason}`);
+                }
+              } else {
+                console.warn('[計算系統] ⚠️ 雙時間系統未初始化，跳過時間檢查');
+              }
+              
+              // ==================== 2. 原有的屬性、技能等系統更新 ====================
+              (await x(t, '屬性')) && (e = !0),
+              (await x(t, '技能')) && (e = !0),
+              
+              // ==================== 3. 生命值、精神值等計算 ====================
+              (await (async function (t) {
+                const e = t.stat_data ?? {};
+                const n = Math.max(0, v(a().get(e, '屬性.力量.等級'), 0));
+                const i = Math.max(0, v(a().get(e, '屬性.耐力.等級'), 0));
+                const r = Math.max(0, v(a().get(e, '屬性.意志.等級'), 0));
+                const intLevel = Math.max(0, v(a().get(e, '屬性.智力.等級'), 0));
+
+                const m = Math.round(5 * i);
+                const l = Math.round(4 * r + 2 * intLevel);
+                const f = Math.max(0, 2 * n);
+                let p = 0;
+                
+                try {
+                  const t = a().get(e, '裝備'),
+                    n = t => {
+                      if (a().isPlainObject(t))
+                        for (const [e, i] of Object.entries(t))
+                          if (!e.startsWith('$')) {
+                            if ('負重加成' === e) {
+                              const t = v(i, NaN);
+                              Number.isFinite(t) && (p += t);
+                              continue;
+                            }
+                            a().isPlainObject(i) && n(i);
+                          }
+                    };
+                  n(t);
+                } catch {}
+                
+                const h = p > 0 ? p : 1,
+                  M = Math.round(f * h),
+                  x = Math.round(i);
+                let N = !1;
+                
+                // 生命值上限更新
+                if (await d(t, u, m)) {
+                  N = !0;
+                  const currentHp = v(a().get(e, s), 0);
+                  if (currentHp > m) {
+                    await d(t, s, m);
+                  }
+                }
+                
+                // 精神值上限更新
+                if (await d(t, o, l)) {
+                  N = !0;
+                  const currentSp = v(a().get(e, c), 0);
+                  if (currentSp > l) {
+                    await d(t, c, l);
+                  }
+                }
+                
+                // 負重上限和免疫力
+                (await d(t, '次生屬性.負重上限', M)) && (N = !0),
+                (await d(t, '次生屬性.免疫力', x)) && (N = !0);
+
+                // 計算當前負重
+                let totalWeight = 0;
+                const carriedItems = a().get(e, '攜帶物品');
+                if (a().isPlainObject(carriedItems))
+                  for (const [itemName, item] of Object.entries(carriedItems)) {
+                    if (itemName.startsWith('$')) continue;
+                    const quantity = v(a().get(item, '數量'), 0),
+                      weight = v(a().get(item, '重量'), 0);
+                    totalWeight += quantity * weight;
+                  }
+                const equipment = a().get(e, '裝備');
+                if (a().isPlainObject(equipment))
+                  for (const [eqName, eq] of Object.entries(equipment)) {
+                    if (eqName.startsWith('$')) continue;
+                    const weight = v(a().get(eq, '重量'), 0);
+                    totalWeight += weight;
+                  }
+                (await d(t, '狀態.當前負重', Math.round(100 * totalWeight) / 100)) && (N = !0);
+                
+                // 確保生命值和精神值不超過上限
+                const w = v(a().get(e, s), 0),
+                  y = v(a().get(e, u), m);
+                w > y && (await d(t, s, y)) && (N = !0);
+                
+                const F = v(a().get(e, c), 0),
+                  O = v(a().get(e, o), l);
+                F > O && (await d(t, c, O)) && (N = !0);
+                
+                // 疲勞度限制
+                const fatigueMax = 4 * i,
+                  fatigueCurrent = v(a().get(e, '狀態.疲勞'), 0);
+                if (fatigueCurrent > fatigueMax) (await d(t, '狀態.疲勞', fatigueMax)) && (N = !0);
+                else if (fatigueCurrent < 0) (await d(t, '狀態.疲勞', 0)) && (N = !0);
+                
+                // 碳水轉化為脂肪
+                const carbsCurrent = v(a().get(e, '生理.碳水'), 0);
+                if (carbsCurrent > 2e3) {
+                  const t = (carbsCurrent - 2e3) * 0.75;
+                  await d(t, '生理.碳水', 2e3),
+                    (await d(t, '生理.脂肪', v(a().get(e, '生理.脂肪'), 0) + t)) && (N = !0);
+                }
+                return N;
+              })(t)) && (e = !0),
+              
+              // ==================== 4. 狀態數值範圍限制 ====================
+              (await (async function (t) {
+  let e = !1;
+  
+  // 添加調試日誌
+  console.log('[計算系統] 🔍 開始檢查狀態數值範圍...');
+  
+  for (const { path: n, min: i, max: r } of f) {
+    try {
+      // 獲取值，提供合理的默認值
+      const rawValue = a().get(t.stat_data, n);
+      let u;
+      
+      // 處理undefined/null的情況
+      if (rawValue === undefined || rawValue === null) {
+        console.log(`[計算系統] ℹ️ 屬性 ${n} 不存在，跳過檢查`);
+        continue;
+      }
+      
+      u = v(rawValue, i || 0); // 使用最小值作為默認值
+      
+      // 檢查是否為有效數字
+      if (!Number.isFinite(u)) {
+        console.warn(`[計算系統] ⚠️ 屬性 ${n} 的值無效: ${rawValue} (轉換為: ${u})`);
+        continue;
+      }
+      
+      let s = u;
+      let needsFix = false;
+      let reason = '';
+      
+      // 檢查最大值
+      if ('number' == typeof r && u > r) {
+        s = r;
+        needsFix = true;
+        reason = `超過最大值 ${r}`;
+        console.log(`[計算系統] 📉 ${n}: ${u} > ${r}, 修正為 ${s}`);
+      }
+      
+      // 檢查最小值
+      if ('number' == typeof i && s < i) {
+        s = i;
+        needsFix = true;
+        reason = reason ? `${reason}, 低於最小值 ${i}` : `低於最小值 ${i}`;
+        console.log(`[計算系統] 📈 ${n}: ${u} < ${i}, 修正為 ${s}`);
+      }
+      
+      // 如果需要修正
+      if (needsFix && s !== u) {
+        console.log(`[計算系統] 🔧 修正 ${n}: ${u} → ${s} (原因: ${reason})`);
+        const success = await d(t, n, s);
+        if (success) {
+          e = !0;
+          console.log(`[計算系統] ✅ ${n} 已修正`);
+        } else {
+          console.error(`[計算系統] ❌ 修正 ${n} 失敗`);
+        }
+      }
+    } catch (error) {
+      console.error(`[計算系統] ❌ 檢查屬性 ${n} 時出錯:`, error);
+    }
+  }
+  
+  if (e) {
+    console.log('[計算系統] ✅ 狀態數值範圍檢查完成，有屬性被修正');
+  } else {
+    console.log('[計算系統] ✅ 狀態數值範圍檢查完成，無需修正');
+  }
+  
+  return e;
+})(t)) && (e = !0),
+              
+              // ==================== 5. 同伴系統 ====================
+              (await w(t)) && (e = !0),
+              
+              // ==================== 6. 作物系統 ====================
+              (await window._checkCropGrowth(t)) && (e = !0),
+              
+              // ==================== 7. 畜牧系統 ====================
+              (await updateLivestockSystem(t)) && (e = !0),
+              
+              // ==================== 8. 如果需要，刷新數據 ====================
+              e && ((p = !0), await Mvu.replaceMvuData(t, { type: 'message', message_id: 'latest' }));
+              
+            } catch (error) {
+              console.error('[計算系統] [荒野求生腳本] 處理更新時出錯', error);
+            } finally {
+              b = null;
+            }
+          });
+          
+          window._wildernessEventListenersAdded = true;
+console.log('[計算系統] ✅ 荒野求生腳本事件監聽器綁定完成（雙時間系統）');
+console.log('[計算系統] 🛡️ 雙時間防作弊系統已啟用');
+console.log('[計算系統] 🐄 畜牧管理系統已啟用');
+
+// 第一次載入時檢查畜牧數據完整性 - 使用更安全的方式
+setTimeout(async () => {
+    try {
+        // 等待 Mvu 完全初始化
+        if (!Mvu || !Mvu.getCurrentContext) {
+            console.log('[計算系統] ⏳ 等待 Mvu 初始化...');
+            return;
+        }
+        
+        const context = Mvu.getCurrentContext();
+        if (context && context.stat_data) {
+            const updated = await validateAndFixLivestockData(context);
+            if (updated) {
+                console.log('[計算系統] ✅ 畜牧數據完整性檢查完成，已修復數據');
+                // 如果需要，可以觸發數據更新
+                if (Mvu.replaceMvuData) {
+                    await Mvu.replaceMvuData(context, { type: 'message', message_id: 'latest' });
+                }
+            } else {
+                console.log('[計算系統] ✅ 畜牧數據完整性檢查完成，無需修復');
+            }
+        } else {
+            console.log('[計算系統] ⚠️ 無法獲取當前上下文，跳過畜牧檢查');
+        }
+    } catch (error) {
+        console.error('[計算系統] ❌ 畜牧初始化檢查失敗:', error);
+    }
+}, 3000); // 延遲稍微長一點，確保 Mvu 完全初始化
+  
+  console.log('[計算系統] ✅ 荒野求生腳本載入完成（雙時間系統版）');
+  console.log('[計算系統] 🛡️ 雙時間防作弊系統已啟用');
+  console.log('[計算系統] 🐄 畜牧管理系統已載入');
+  console.log('[計算系統] 🔍 調試模式:', LIVESTOCK_CONFIG.DEBUG);
+}

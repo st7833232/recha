@@ -36,16 +36,6 @@
       "filterable": 1
     },
     {
-      "key": "py_椰子_APP",
-      "name": "🧿 |椰子(FOX)",
-      "type": 3,
-      "api": "./py/app/appfox.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {"host": "http://nico.oiio.fun", "ver": "2"}
-    },
-    {
       "key": "py_恋鱼_APP",
       "name": "🧿 |恋鱼(FOX)",
       "type": 3,
@@ -2154,6 +2144,16 @@
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1
+    },
+    {
+      "key": "py_椰子_APP",
+      "name": "🎡｜椰子",
+      "type": 3,
+      "api": "./py/app/appfox.py",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": {"host": "http://nico.oiio.fun", "ver": "2"}
     },    
     {
       "key": "py_丫丫_APP",

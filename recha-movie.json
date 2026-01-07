@@ -2,7 +2,7 @@
   "spider": "./jar/xiaosa-1216.jar;md5;272051373d8c040310f1a3945a2a43f7",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.01.07.ver_15\n 測試中",
+  "notice": "115.01.07.ver_16\n 測試中",
   "sites": [
     {
       "key": "csp_T4Guard",
@@ -31,18 +31,6 @@
       "type": 3,
       "api": "csp_PTT",
       "jar": "./jar/lem0106.jar;md5;8A3F412E42E8B36750E238B066AC4D7A",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1
-    },
-    {
-      "key": "csp_Dm84Guard",
-      "name": "🧿 | 🐾动漫巴士(SP)",
-      "type": 3,
-      "api": "csp_Dm84Guard",
-      "jar": "./jar/lem0106.jar;md5;8A3F412E42E8B36750E238B066AC4D7A",
-      "timeout": 10,
-      "playerType": 2,
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1
@@ -2155,6 +2143,18 @@
       "changeable": 1,
       "filterable": 0
     },
+    {
+      "key": "csp_Dm84Guard",
+      "name": "🎡｜动漫巴士",
+      "type": 3,
+      "api": "csp_Dm84Guard",
+      "jar": "./jar/lem0106.jar;md5;8A3F412E42E8B36750E238B066AC4D7A",
+      "timeout": 10,
+      "playerType": 2,
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1
+    },    
     {
       "key": "py_丫丫_APP",
       "name": "🎡｜丫丫",

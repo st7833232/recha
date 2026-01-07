@@ -6,7 +6,6 @@
   "sites": [
 {"key":"py_非凡资源无广","name":"🍎非凡资源无广(T3)","type":3,"api":"https://gcore.jsdelivr.net/gh/doube-ba/TVlogo/py/采集去广模板.py","searchable":1,"quickSearch":0,"filterable":0,"changeable":0,"ext":{"url":"http://ffzy.tv/api.php/provide/vod/from/ffm3u8/at/json/","a":[1,2,3]}},
 {"key":"py_电影天堂无广","name":"🍎电影天堂无广(T3)","type":3,"api":"https://gcore.jsdelivr.net/gh/doube-ba/TVlogo/py/采集去广模板.py","searchable":1,"quickSearch":0,"filterable":0,"changeable":0,"ext":{"url":"http://caiji.dyttzyapi.com/api.php/provide/vod/from/dyttm3u8/at/json/","a":[1,2,3,4,5,33]}},
-{"key":"py_官方采集789","name":"🍎官方采集789(T4)","type":4,"api":"https://py.doube.eu.org/static/v2/spider?site=006849a2c19a6be413be5017be468c63","searchable":1,"quickSearch":0,"filterable":0,"changeable":0},
 {"key":"csp_T4Guard","name":"🧀 | 奶酪(SP)","type":3,"api":"csp_T4Guard","jar":"./jar/lem0106.jar;md5;8A3F412E42E8B36750E238B066AC4D7A","searchable":1,"quickSearch":1,"changeable":0,"ext":"rfOIzPkSUkANv6AT2prC8en3+TzKx9TnlT8vaY37HhtYfAQe6C5xqrVuJPhQwYV6r3eRdMBGm3Qm6Th+BushR86B6KqJGXDsHazHw7alBG/7zUxkN1tK/NypRxnpBNoeUtpw4jcCGhytI75yO4g4zG6SOPA0RSwhksM0IF2friAkrHCWoW3v+0mdw6sjz4t4XB1Df7yL/R5cfaA/5LQYq3I8OkvMrJMU9Q1P7JXwx7NSF2zTyH/ANVmZ4u5m567DW1KVG7OuQjXPjZiOXTYk0+wjpfBRTf19yIq6q/C76k2Fs80joAMPw0ueDR+QHxtuDcTom2rmHkI1Fonkzi6BotbpUcbSi4PiIgmfdbvVwhG6Z+i4nvt+IYa48l5aLA7PLgDiERpuOs31aHaXlgFswT87XyTb8QaF4CuzKWJuXptwNTjvXAS9KHdxH49Ay+hfBAB2bCvUf4CMoldF2wZUv0mI2qY966erFpOFg+FOc7t88EUH8j8ACXQtHJiKC9RQ+SaLIF0="},
 {"key":"csp_Uvod","name":"💎 | 优视频(SP)","type":3,"api":"csp_Uvod","jar":"./jar/lem0106.jar;md5;8A3F412E42E8B36750E238B066AC4D7A","searchable":1,"quickSearch":1,"changeable":1},
 {"key":"csp_PTT","name":"🎈 | PTT(SP)","type":3,"api":"csp_PTT","jar":"./jar/lem0106.jar;md5;8A3F412E42E8B36750E238B066AC4D7A","searchable":1,"quickSearch":1,"filterable":1},
@@ -164,27 +163,6 @@
       "quickSearch": 0,
       "api": "csp_FreeOk",
       "jar": "./jar/mi-0815.png;md5;66623623fe5ae34dad253ae2e0802416"
-    },
-    {
-      "key": "hohaiemby",
-      "name": "🗄┃EMBY┃好嗨",
-      "type": 3,
-      "api": "https://yydsys.top/duo/py/emby.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 1,
-      "ext": {
-        "server": "https://emby.hohai.eu.org:443",
-        "username": "chuxin666",
-        "password": "ycc123456",
-        "proxy": "",
-        "thread": 0,
-        "device_name": "My Computer",
-        "client": "Hills Windows",
-        "client_version": "0.3.2",
-        "device_id": "a9f74849-83d5-4a28-8b85-a087af1402e3"
-      }
     },
     {
       "key": "NYa-emby",
@@ -1786,22 +1764,6 @@
       }
     },
     {
-      "key": "冬日",
-      "name": "🎡｜冬日动漫",
-      "type": 3,
-      "quickSearch": 1,
-      "api": "csp_AppGet",
-      "ext": {
-        "url"     : "http://www.drdm.fun",
-        "site"    : "",
-        "dataKey" : "qE2nD0rL1lH4uP9r",
-        "dataIv"  : "qE2nD0rL1lH4uP9r",
-        "deviceId": "",
-        "version" : "",
-        "ua"      : ""
-      }
-    },
-    {
       "key": "漫屋",
       "name": "🎡｜动漫屋",
       "type": 3,
@@ -1827,50 +1789,6 @@
         "siteKey": "rectangleadsadxa",
         "listKey": "aassddwwxxllsx1x",
         "parsesKey": "aassddwwxxllsx1x"
-      }
-    },
-    {
-      "key": "稀饭动漫",
-      "name": "🎡｜稀饭动漫",
-      "type": 3,
-      "quickSearch": 1,
-      "api": "csp_AppGet",
-      "ext": {
-        "site": "https://xfapp-1305390065.cos.ap-guangzhou.myqcloud.com/getapp.txt",
-        "url": "https://pzoap.moedot.net",
-        "dataKey": "1yZ2Spn9krnzVKoC",
-        "dataIv": "1yZ2Spn9krnzVKoC",
-        "deviceId": "",
-        "version": ""
-      }
-    },
-    {
-      "key": "多多动漫",
-      "name": "🎡｜多多动漫",
-      "type": 3,
-      "quickSearch": 1,
-      "api": "csp_AppGet",
-      "ext": {
-        "url"     : "",
-        "site"    : "https://app.cf4k.xyz/1.txt",
-        "dataKey" : "qqqqqqqqqqqqqqqq",
-        "dataIv"  : "qqqqqqqqqqqqqqqq",
-        "deviceId": "",
-        "version" : ""
-      }
-    },
-    {
-      "key": "黑猫动漫",
-      "name": "🎡｜黑猫动漫",
-      "type": 3,
-      "quickSearch": 1,
-      "api": "csp_AppGet",
-      "ext": {
-        "url"     : "https://dm.xxdm123.top:9991",
-        "dataKey" : "0fe3b5781782c621",
-        "dataIv"  : "0fe3b5781782c621",
-        "deviceId": "",
-        "version" : "203"
       }
     },
     {
@@ -1919,38 +1837,6 @@
         "site"    : "",
         "dataKey" : "2c4h36abd96se10u",
         "dataIv"  : "2c4h36abd96se10u",
-        "deviceId": "",
-        "version" : "",
-        "ua"      : ""
-      }
-    },
-    {
-      "key": "番薯",
-      "name": "🎡｜番薯动漫",
-      "type": 3,
-      "quickSearch": 1,
-      "api": "csp_AppGet",
-      "ext": {
-        "url"     : "https://new.app.bytegooty.com",
-        "site"    : "",
-        "dataKey" : "N4yj7l7xKxHF4*gz",
-        "dataIv"  : "N4yj7l7xKxHF4*gz",
-        "deviceId": "",
-        "version" : "",
-        "ua"      : ""
-      }
-    },
-    {
-      "key": "凛冬",
-      "name": "🎡｜凛冬动漫",
-      "type": 3,
-      "quickSearch": 1,
-      "api": "csp_AppGet",
-      "ext": {
-        "url"     : "http://cydd.xyz",
-        "site"    : "",
-        "dataKey" : "cyddkeyf774b3b39",
-        "dataIv"  : "cyddkeyf774b3b39",
         "deviceId": "",
         "version" : "",
         "ua"      : ""
@@ -2009,50 +1895,6 @@
       }
     },
     {
-      "key": "58动漫网",
-      "name": "🎡｜58动漫网",
-      "type": 3,
-      "api": "csp_XBPQ",
-      "jar": "./jar/xyqxbpq.jar;md5;fd3cefc7302f3a39a442682f802b11e5",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "简介"   : "简介：&&</p>",
-        "搜索url": "https://dbwyt.com/search.php?searchword={wd}",
-        "分类url": "https://dbwyt.com/wuba/{cateId}-{catePg}.html",
-        "分类"   : "国产动漫$1#日本动漫$2#欧美动漫$47#海外动漫$3#动漫电影$4"
-      }
-    },
-    {
-      "key": "动漫大全",
-      "name": "🎡｜动漫大全",
-      "type": 3,
-      "api": "csp_XBPQ",
-      "jar": "./jar/xyqxbpq.jar;md5;fd3cefc7302f3a39a442682f802b11e5",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "简介"   : "简介：&&</p>",
-        "线路数组" : "<aclass=\"hl-tabs-btnhl-slide-swiper\"&&</a>",
-        "线路标题" : "</i>&nbsp;&&</a>+集",
-        "分类url": "https://dingdingdm.com/list/{cateId}-{catePg}.html",
-        "分类"   : "动漫电影$1#国产动漫$3#日本动漫$2#欧美动漫$4#短劇$20"
-      }
-    },
-    {
-      "key": "csp_饼干动漫",
-      "name": "🎡｜饼干动漫",
-      "type": 3,
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "api": "csp_XBPQ",
-      "jar": "./jar/xyqxbpq.jar;md5;fd3cefc7302f3a39a442682f802b11e5",
-      "ext": "./json/餅乾動漫.json"
-    },
-    {
       "key": "csp_桵空",
       "name": "🎡｜桵空动漫",
       "type": 3,
@@ -2067,39 +1909,8 @@
       }
     },
     {
-      "key": "樱花动漫1",
-      "name": "🎡｜櫻花动漫",
-      "type": 3,
-      "api": "csp_XBPQ",
-      "jar": "./jar/xyqxbpq.jar;md5;fd3cefc7302f3a39a442682f802b11e5",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "请求头": "User-Agent$MOBILE_UA",
-        "编码": "UTF-8",
-        "主页url": "http://www.yinghuadongman.cn/",
-        "数组": "<a href=\"/vod_&&</a>",
-        "图片": "data-original=\"&&\"",
-        "标题": "title=\"&&\"",
-        "副标题": "item-note\">&&</div>",
-        "链接": "http://www.yinghuadongman.cn/vod_+&&.html",
-        "播放数组": "module-play-list-content&&</div>",
-        "播放列表": "<a&&a>",
-        "播放链接": "href=\"&&\"",
-        "播放标题": "<span>&&</span>",
-        "线路数组": "module-tab-item tab-item&&</div>",
-        "线路标题": "<span>&&</span>",
-        "跳转播放链接": "var player_*\"url\":\"&&\"",
-        "简介": "<p>&&</p>",
-        "搜索url": "http://www.yinghuadongman.cn/search_{wd}----------{pg}---.html",
-        "分类url": "http://www.yinghuadongman.cn/show_{cateId}--{by}------{catePg}---{year}.html",
-        "分类": "日本动漫$ribendongman#国产动漫$guochandongman#动漫电影$dongmandianying#欧美动漫$oumeidongman"
-      }
-    },
-    {
       "key": "櫻花動漫2",
-      "name": "🎡｜857动漫",
+      "name": "🎡｜櫻花动漫",
       "type": 3,
       "api": "csp_XBPQ",
       "jar": "./jar/xyqxbpq.jar;md5;fd3cefc7302f3a39a442682f802b11e5",
@@ -2128,51 +1939,6 @@
       "jar": "./jar/panda1123.jar;md5;d9004aa2e16f60b04baed361713fb710",
       "searchable": 1,
       "changeable": 1
-    },
-    {
-      "key": "csp_醬子社",
-      "name": "🎡｜醬子社动漫",
-      "type": 3,
-      "api": "csp_XBPQ",
-      "jar": "./jar/xyqxbpq.jar;md5;fd3cefc7302f3a39a442682f802b11e5",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "数组": "class=\"public-list-exp\"&&</a>",
-        "标题": "alt=\"&&封面图",
-        "线路数组": "class=\"swiper-slide on nav-dt swiper-slide-active\"&&</span>",
-        "线路标题": "老王好無聊",
-        "图片": "data-src=\"&&\"",
-        "主页url": "https://www.jzsdm.com/",
-        "搜索url": "https://www.jzsdm.com/index.php/vod/search.html?wd={wd}",
-        "分类url": "https://www.jzsdm.com/index.php/vod/show/by/{by}/id/{cateId}/page/{catePg}/year/{year}.html",
-        "分类": "日番$1#美番$2#劇場版$3#真人番劇$4"
-      }
-    },
-    {
-      "key": "csp_漫岛",
-      "name": "🎡｜动漫岛",
-      "type": 3,
-      "api": "csp_XBPQ",
-      "jar": "./jar/xyqxbpq.jar;md5;fd3cefc7302f3a39a442682f802b11e5",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "请求头": "User-Agent$MOBILE_UA",
-        "编码": "UTF-8",
-        "主页": "http://www.dmand5.com",
-        "播放数组": "class=\"arconix-toggle-content fn-clear&&</ul>",
-        "播放列表": "<a&&a>",
-        "播放链接": "href=\"&&\"",
-        "播放标题": ">&&</",
-        "线路数组": "class=\"arconix-toggle-title&&</span>",
-        "线路标题": ">&&</font>",
-        "分类url": "http://www.dmand5.com/vod-list-id-{cateId}-pg-{catePg}-order--by--class-{class}-year-{year}-letter-{letter}-area--lang-.html",
-        "分类": "新番连载$1#热门国漫$4#完结日漫$3#劇场动漫$16",
-        "劇情": "冒险$1#热血$2#奇幻$3#恋爱$4#校园$5#后宫$6#搞笑$7#青春$8#百合$9#科幻$14#推理$13#魔法$12#神魔$11#治愈$10#竞技$59#悬疑$60#战争$62#萝莉$63#魔幻$64#战斗$65#歌舞$98#历史$99#励志$108#偶像$118#职场$121冒险$50#热血$51#武侠$52#奇幻$53#玄幻$54#竞技$55#魔幻$56#科幻$57#恋爱$58#历史$73#战斗$74#搞笑$75#神魔$76#战争$97#古风$111#少女$112#萝莉$113#治愈$114#日常$115#歌舞$116#偶像$120#职场$123#仙侠$125冒险$36#热血$37#奇幻$38#恋爱$39#校园$40#后宫$41#搞笑$42#治愈$43#神魔$44#魔法$45#百合$46#推理$47#科幻$48#竞技$49#悬疑$66#战争$68#萝莉$69#魔幻$70#战斗$71#青春$72#历史$100#歌舞$101#恐怖$104#职场$107#励志$109#偶像$119||冒险$77#热血$78#奇幻$79#恋爱$80#校园$81#后宫$82#搞笑$83#青春$84#百合$85#治愈$86#神魔$87#魔法$88#推理$89#科幻$90#竞技$91#悬疑$92#战争$93#萝莉$94#魔幻$95#战斗$96#历史$102#歌舞$103#恐怖$105#职场$106#励志$110#偶像$117#职场$124"
-      }
     },
     {
       "key": "csp_AG動漫",
@@ -2213,39 +1979,6 @@
       "ext": "./drpy_js/去看吧.js"
     },
     {
-      "key": "drpy_js_奇米动漫",
-      "name": "🎡｜奇米动漫",
-      "type": 3,
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "api": "./drpy_libs/drpy2.min.js",
-      "jar": "./jar/fm.jar",
-      "ext": "./drpy_js/奇米动漫.js"
-    },
-    {
-      "key": "动画片",
-      "name": "🎡｜动画片",
-      "type": 3,
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "api": "./drpy_libs/drpy2.min.js",
-      "jar": "./jar/fm.jar",
-      "ext": "./drpy_js/DHPDQ.js"
-    },
-    {
-      "key": "动漫岛",
-      "name": "🎡｜动漫岛",
-      "type": 3,
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "api": "./drpy_libs/drpy2.min.js",
-      "jar": "./jar/fm.jar",
-      "ext": "./drpy_js/DMD.js"
-    },
-    {
       "key": "好看动漫",
       "name": "🎡｜好看动漫",
       "type": 3,
@@ -2279,17 +2012,6 @@
       "ext": "./drpy_js/七色番[漫].js"
     },
     {
-      "key": "奇米动漫",
-      "name": "🎡｜奇米动漫",
-      "type": 3,
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "api": "./drpy_libs/drpy2.min.js",
-      "jar": "./jar/fm.jar",
-      "ext": "./drpy_js/奇米动漫.js"
-    },
-    {
       "key": "hipy_js_爱弹幕[漫]",
       "name": "🎡｜爱动漫",
       "type": 3,
@@ -2309,27 +2031,6 @@
       "searchable": 1,
       "quickSearch": 1,
       "ext": "./drpy_js/异世界.js"
-    },
-    {
-      "key": "hipy_js_奇米动漫[漫]",
-      "name": "🎡｜奇米动漫",
-      "type": 3,
-      "api": "./drpy_libs/drpy2.min.js",
-      "jar": "./jar/fm.jar",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "order_num": 0,
-      "ext": "./drpy_js/奇米动漫[漫].js"
-    },
-    {
-      "key": "直播转点播",
-      "name": "㊙︎｜直播转点播",
-      "type": 4,
-      "api": "http://zhangqun66.com/zh/2241-2.php",
-      "jar": "./jar/fm.jar;md5;41c87635d7592069884a5dafa12acabe",
-      "searchable": 1,
-      "changeable": 0
     }
   ],
   "parses": [

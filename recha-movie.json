@@ -6,18 +6,6 @@
   "sites": [
 
     {
-      "key":"☕韩剧秒播",
-      "name":"韓劇",
-      "type":3,
-      "api":"csp_HxqAmns",
-      "jar": "./jar/aowu.jar;md5;a024aeec4fc8dcf6dddeafa86043d96c",
-      "searchable":1,
-      "filterable":1,
-      "quickSearch":1,
-      "changeable":1
-    },
-
-    {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",
       "type": 3,

@@ -3,26 +3,31 @@
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://tv.nxog.top/m/t/",
   "lives": [
-{"name":"雷蒙影视电视直播","type":0,"url":"https://cors.isteed.cc/https://raw.githubusercontent.com/n3rddd/CTVLive/main/live.txt","ua":"okhttp/3.15","epg":"http://epg.51zmt.top:8000/api/diyp/?ch={name}&date={date}","logo":"https://epg.112114.xyz/logo/{name}.png"},
-{"name":"雷蒙影视轻量直播","type":0,"url":"https://cors.isteed.cc/https://raw.githubusercontent.com/n3rddd/CTVLive/main/litelive.m3u","ua":"okhttp/3.15","epg":"http://epg.51zmt.top:8000/api/diyp/?ch={name}&date={date}","logo":"https://epg.112114.xyz/logo/{name}.png"},
-{"name":"CatVod-1","type":0,"url":"https://iptv.catvod.com/tv.m3u"},
-{"name":"CatVod-2","type":0,"url":"https://live.catvod.com/tv.m3u"},
-{
+
+    {
+      "name": "斯馬特",
+      "url": "http://96.44.160.246:9999/smt.php"
+    },
+    {
       "name": "港台大陆频道",
       "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E6%B8%AF%E5%8F%B0%E5%A4%A7%E9%99%86%E9%A2%91%E9%81%93%E6%97%A018%E5%86%85%E5%AE%B9"
     },
     {
       "name": "海豚直播",
-      "type": 3,
       "url": "http://hufa.zabc.net:8080/iptvpro.txt",
-      "api": "",
-      "ext": {},
-      "ua": "okhttp/5.1.0"
-    },
+      "ua":"okhttp/5.1.0"
+    },    
     {"name": "大街直播", "url": "./live/綜合大街.txt"},
     {
       "name": "纯血4g",
       "url": "http://dreamtv.sylu.net:2082/m3u8view?token=lxbjj8O2w50t7jTlHHZVNvjQR_SxVy86CKier7PVtDGLWgE1ojaO69xOwH_FyNfw",
+      "playerType": 2,
+      "epg": "https://gitee.com/taksssss/tv/raw/main/epg/112114.xml.gz,https://gitee.com/taksssss/tv/raw/main/epg/epgpw_tw.xml.gz，http://epg.52sw.top:668/?ch={name}&date={date}",
+      "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
+    },
+    {
+      "name": "Smart",
+      "url": "./live/smart.m3u",
       "playerType": 2,
       "epg": "https://gitee.com/taksssss/tv/raw/main/epg/112114.xml.gz,https://gitee.com/taksssss/tv/raw/main/epg/epgpw_tw.xml.gz，http://epg.52sw.top:668/?ch={name}&date={date}",
       "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
@@ -50,11 +55,6 @@
       "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
       "logo": "https://epg.112114.eu.org/logo/{name}.png",
       "pass": true
-    },
-    {
-      "name": "IPTV(Judy)",
-      "url": "https://iptv.mydiver.eu.org/get.php?username=tg_ueiw02xw&password=wcytxrwpblzi&type=m3u_plus",
-      "ua": "xieanqishiwoerzi/0.0.1"
     },
     {
       "name": "沐辰直播(Litv)",
@@ -181,13 +181,6 @@
       "ua": "okhttp/3",
       "epg": "https://epg.112114.eu.org/?ch={name}&date={date}&serverTimeZone=Asia/Taipei",
       "logo": "https://epg.112114.eu.org/logo/{name}.png"
-    },
-    {
-      "name": "SMT直播(py)",
-      "type": 3,
-      "api": "./py/SMT.py",
-      "ext": {},
-      "pass": true
     },
     {
       "name": "台灣景點直播",

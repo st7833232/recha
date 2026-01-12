@@ -642,18 +642,6 @@
       "changeable": 0
     },
     {
-      "key": "🌱春天",
-      "name": "🏆｜春天",
-      "type": 3,
-      "api": "csp_NewGrAmns",
-      "jar": "./jar/aowu.jar;md5;a024aeec4fc8dcf6dddeafa86043d96c",
-      "searchable": 1,
-      "filterable": 1,
-      "quickSearch": 1,
-      "changeable": 1,
-      "ext": "PnUH1ANGAUTUF9HVgAAHARACF0cRFwdCx0TGwlcBggZSlhIVlFtBFZDAQ0dC1VMR1BUV1ZEVEofVktQCRFQPSQKQjwgBjMpJz4MOyBQCxdmfAs0KhU+Ow48CzMgKjULMlQBKl1VNSlAIEpUS1JHDgJKTkhWUnQZSnscNj0oRkcVIA8EBzIxH0djY08OE15EUAgTQxQGF0VOSFYJEgFGBwJQMQsqEjM/MgIkITYeQwFMQHYaQ1hBByEXBVRLUkcGBBgrARARCFIRVRMMEwwZExBQSUdWCxwJGl1XHmxSHQAXR01WRRYCOAcYRFlWHxJQV1QEDREAKB8DUF9HVlFHW01XBkFSCRdTE1JORgRQSUdWGBULH1JVF2xfEwkXR01WRREKCloNGAkaVhwDWlAcBxcLEAIGXAkPFw1WRFQRQQtAbgIIExERGRUfR11USkZKWBMQAUpCAAEeABYFAlBfR1ZZRUpYExAEVkMBDR0LVUxHUFFXRFhESgk="
-    },
-    {
       "key": "🔥熱播",
       "name": "🏆｜熱播",
       "type": 3,
@@ -1103,20 +1091,6 @@
       "filterable": 1
     },
     {
-      "key": "金牌",
-      "name": "📱｜金牌｜高清◎秒播(無廣告+APP)",
-      "type": 3,
-      "searchable": 1,
-      "changeable": 1,
-      "api": "csp_AppQi",
-      "ext": {
-        "site"   : "https://dtqj1.gg1080.com:443/dtjp.txt",
-        "url"    : "https://qj.ggtvb.cc",
-        "dataKey": "kecbio48dsq131ed",
-        "dataIv" : "kecbio48dsq131ed"
-      }
-    },
-    {
       "key": "星空",
       "name": "📱｜星空｜高清◎秒播(無廣告+APP)",
       "type": 3,
@@ -1312,32 +1286,6 @@
       }
     },
     {
-      "key": "py_恋鱼_APP",
-      "name": "📱｜恋鱼",
-      "type": 3,
-      "api": "./py/app/appfox.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "host": "https://173220859-1333208043.cos.ap-shanghai.myqcloud.com/1.json",
-        "ver": "2"
-      }
-    },
-    {
-      "key": "py_叶子_APP",
-      "name": "📱｜叶子",
-      "type": 3,
-      "api": "./py/app/appfox.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "host": "https://yzysap.oss-cn-hangzhou.aliyuncs.com/yzysapp.json",
-        "ver" : "2"
-      }
-    },
-    {
       "key": "py_爱影_APP",
       "name": "📱｜爱影",
       "type": 3,
@@ -1350,21 +1298,6 @@
         "api"    : "/api.php/qijiappapi",
         "datakey": "sada21321sdq231d",
         "dataiv" : "sada21321sdq231d"
-      }
-    },
-    {
-      "key": "py_金牌_APP",
-      "name": "📱｜金牌",
-      "type": 3,
-      "api": "./py/app/qijiapp.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "host"   : "https://dtqj1.gg1080.com:443/dtjp.txt",
-        "api"    : "/api.php/qijiappapi",
-        "datakey": "kecbio48dsq131ed",
-        "dataiv" : "kecbio48dsq131ed"
       }
     },
     {
@@ -1473,21 +1406,6 @@
       }
     },
     {
-      "key": "py_随看_APP",
-      "name": "📱｜随看",
-      "type": 3,
-      "api": "./py/app/getapp.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "host"   : "https://suikan.tpmbt.cn",
-        "api"    : "/api.php/getappapi",
-        "datakey": "pHQsm6wjYaCuSPEz",
-        "dataiv" : "pHQsm6wjYaCuSPEz"
-      }
-    },
-    {
       "key": "py_白鸽_APP",
       "name": "📱｜白鸽",
       "type": 3,
@@ -1530,21 +1448,6 @@
         "api"    : "/api.php/getappapi",
         "datakey": "1234567890987654",
         "dataiv" : "1234567890987654"
-      }
-    },
-    {
-      "key": "py_魔方_APP",
-      "name": "📱｜魔方",
-      "type": 3,
-      "api": "./py/app/getapp.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "host"   : "https://www.mfsp4k.top",
-        "api"    : "/api.php/getappapi",
-        "datakey": "1234567887654321",
-        "dataiv" : "1234567887654321"
       }
     },
     {

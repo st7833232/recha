@@ -16,10 +16,10 @@
       "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/iptvpro"
     },    
     {
-      "name": "海豚(直播)(py)",
+      "name": "海豚直播",
       "type": 3,
-      "url": "",
-      "api": "./py/海豚.py",
+      "url": "http://hufa.zabc.net:8080/iptvpro.txt",
+      "api": "",
       "ext": {},
       "ua": "okhttp/5.1.0"
     },

@@ -188,49 +188,6 @@
       "changeable": 1
     },
     {
-      "key": "py_Miss",
-      "name": "⏭｜MissAV(沐辰)｜T4",
-      "type": 4,
-      "api": "https://py.doube.eu.org/spider?site=Miss",
-      "searchable": 1,
-      "quickSearch": 0,
-      "filterable": 0,
-      "changeable": 0
-    },
-    {
-      "key": "py_BadNews",
-      "name": "⏭｜BadNews(沐辰)｜PYTHON",
-      "type": 4,
-      "api": "https://py.doube.eu.org/spider?site=BadNews",
-      "searchable": 1,
-      "quickSearch": 0,
-      "filterable": 0,
-      "changeable": 0,
-      "style": {"type": "rect", "ratio": 1.5}
-    },
-    {
-      "key": "py_AiDou",
-      "name": "⏭｜AiDou(沐辰)｜PYTHON",
-      "type": 4,
-      "api": "https://py.doube.eu.org/spider?site=AiDou",
-      "searchable": 1,
-      "quickSearch": 0,
-      "filterable": 0,
-      "changeable": 0,
-      "style": {"type": "rect", "ratio": 1.5}
-    },
-    {
-      "key": "py_MrJav",
-      "name": "⏭｜MRJav(沐辰)｜PYTHON",
-      "type": 4,
-      "api": "https://py.doube.eu.org/spider?site=MrJav",
-      "searchable": 1,
-      "quickSearch": 0,
-      "filterable": 0,
-      "changeable": 0,
-      "style": {"type": "rect", "ratio": 1.5}
-    },
-    {
       "key": "py_coomer",
       "name": "⏭｜coomer(沐辰)｜國外",
       "type": 3,

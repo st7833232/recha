@@ -165,6 +165,7 @@ body {
   gap: 12px 18px;
   color: var(--survival-text); /* High contrast */
   font-size: 15px;
+  margin-bottom: 4px; /* 確保行間距 */
 }
 .row-item { white-space: nowrap; }
 
@@ -2502,7 +2503,7 @@ function renderUnifiedStatus(target, statData) {
     rightCol.append(t('無聊', Number(e(mental['無聊'] ?? 0)), 100));
     rightCol.append(t('孤獨', Number(e(mental['孤獨'] ?? 0)), 100));
     rightCol.append(t('睡眠', Number(e(mental['睡眠'] ?? 0)), 100));
-    rightCol.append(t('表皮濕度', Number(e(state['表皮溼度'] ?? 0)), 100));
+    rightCol.append(t('表皮溼度', Number(e(state['表皮溼度'] ?? 0)), 100));
     rightCol.append(t('疲勞', Number(e(state['疲勞'] ?? 0)), 100));
     rightCol.append(t('清潔', Number(e(state['清潔'] ?? 0)), 100));
     rightCol.append(t('感染', Number(e(state['感染'] ?? 0)), 100, 'danger-progress'));
@@ -2559,6 +2560,7 @@ function r(container, data) {
   const environment = data['環境'] ?? {}, system = data['系統'] ?? {};
   const top = $('<div>').addClass('top-info');
   top.append($('<div>').addClass('time-display').text(textify(system['當前時間'], '--:--')));
+
   const infoStack = $('<div>').addClass('info-stack');
   infoStack.append(
     $('<div>').addClass('info-row').append(
@@ -2569,18 +2571,22 @@ function r(container, data) {
       $('<div>').addClass('row-item').text(textify(environment['天氣'], '')),
       $('<div>').addClass('row-item').text(`風速 ${textify(environment['風速'], '--')}`),
       $('<div>').addClass('row-item').text(`舒適度 ${textify(environment['舒適度'], '--')}`)
+    ),
+    // --- 新增這一行：腳本狀態 ---
+    $('<div>').addClass('info-row').append(
+      $('<div>').addClass('row-item').text(`腳本狀態：${textify(system['腳本修正狀態'], '🔄 未執行')}`)
     )
   );
+  
   top.append(infoStack, $('<div>').addClass('location-display').text(`位置：${textify(environment['當前位置'], '未知')}`));
   container.append(top);
   renderTemperatures(container, data);
+  
   const core = data['核心狀態'] ?? {};
   const hpCurrent = Number(e(core['當前生命值'] ?? 0)), hpMax = Number(e(core['生命值上限'] ?? 0));
   const mpCurrent = Number(e(core['當前精神值'] ?? 0)), mpMax = Number(e(core['精神值上限'] ?? 0));
   const coreWrapper = $('<div>').addClass('core-stats-wrapper');
-  coreWrapper.append($('<div>').addClass('core-stat-item').append(
-
- t('生命值', hpCurrent, hpMax, 'hp-progress')));
+  coreWrapper.append($('<div>').addClass('core-stat-item').append(t('生命值', hpCurrent, hpMax, 'hp-progress')));
   coreWrapper.append($('<div>').addClass('core-stat-item').append(t('精神值', mpCurrent, mpMax, 'mp-progress')));
   container.append(coreWrapper);
 }

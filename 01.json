@@ -1,3669 +1,465 @@
-```
-<html><head><style>
-/* --- Modern Theme Overrides --- */
-:root {
-  --survival-primary: #111828;
-  --survival-secondary: rgba(32, 45, 68, 0.75);
-  --survival-surface: rgba(20, 34, 54, 0.78);
-  --survival-surface-strong: rgba(24, 36, 58, 0.92);
-  --survival-glass-border: rgba(148, 197, 255, 0.18);
-  --survival-accent: #5ea1ff;
-  --survival-accent-strong: #8fd6ff;
-  --survival-warning: #ffb86c;
-  --survival-success: #58f0a7;
-  --survival-danger: #ff7b9c;
-  --survival-text: #eff6ff;
-  --survival-muted: #a0aec0;
-  --survival-border: rgba(148, 197, 255, 0.25);
-  --survival-shadow: 0 24px 60px rgba(6, 12, 25, 0.55);
-  --survival-glow: 0 0 30px rgba(94, 161, 255, 0.35);
-}
-
-body {
-    background: radial-gradient(circle at 20% 20%, rgba(94, 161, 255, 0.12), transparent 55%),
-                radial-gradient(circle at 80% 10%, rgba(255, 120, 180, 0.1), transparent 50%),
-                linear-gradient(160deg, #050a16, #101b2f 55%, #070b18);
-    font-family: "Inter", "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
-    color: var(--survival-text);
-    min-height: 100vh;
-    margin: 0;
-    padding: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-attachment: fixed;
-}
-
-.survival-ui {
-    width: clamp(320px, 92vw, 1180px);
-    margin: 0 auto;
-    padding: 18px clamp(18px, 3vw, 28px) 28px;
-    display: flex;
-    flex-direction: column;
-    gap: 28px;
-    border-radius: 28px;
-    background: var(--survival-surface);
-    border: 1px solid var(--survival-glass-border);
-    box-shadow: var(--survival-shadow);
-    backdrop-filter: blur(18px) saturate(160%);
-    position: relative;
-    overflow: hidden;
-    font-weight: 600;
-    font-family:"Microsoft YaHei","Segoe UI",Arial,sans-serif;color:var(--survival-text);gap:8px}
-
-.survival-ui::before { /* 這是那個漂亮的左上角光暈 */
-    content: "";
-    position: absolute;
-    inset: -60% 35% 45% -40%;
-    background: radial-gradient(circle, rgba(94, 161, 255, 0.16), transparent 60%);
-    opacity: 0.6;
-    pointer-events: none;
-}
-
-.survival-ui::-webkit-scrollbar{width:6px}.survival-ui::-webkit-scrollbar-track{background:rgba(0,0,0,.2);border-radius:3px}.survival-ui::-webkit-scrollbar-thumb{background:var(--survival-accent);border-radius:3px}
-
-.section__title {
-  font-size: 15px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--survival-muted);
-  margin: 0 0 12px;
-}
-
-.section__list{list-style:none;margin:0;padding-left:12px;font-size:14px;line-height:1.35}
-.item{display:flex;justify-content:space-between;gap:4px}
-.item__key{white-space:nowrap}
-.item__value{font-weight:600}
-
-/* --- 營地信息特殊樣式 v5.0 · 終 · By 果農 --- */
-/* 步驟一：先讓所有孩子都乖乖站好，別自己亂加距離 */
-.camp-info-item {
-    font-size: 16px !important;
-    font-weight: 700 !important;
-    padding: 0; /* 內邊距清零，讓它更緊湊 */
-    line-height: 1.6;
-    transition: all 0.2s ease;
-    /* 把個體的margin-bottom去掉，由容器統一管理 */
-    margin-bottom: 0 !important;
-}
-
-/* 步驟二：容器來發號施令，精準控制每個孩子之間的距離 */
-.camp-info-container {
-    display: flex; /* 啟用flex佈局，這是現代佈局的魔法核心！*/
-    flex-direction: column; /* 讓孩子們垂直排隊 */
-    gap: 8px; /* 每個孩子之間自動產生8px的間距！不多不少，剛剛好！*/
-    margin-bottom: 28px; /* 容器和下面的物品列表保持24px的社交距離 */
-    /* 關鍵！把和上面標題的距離交給父級的padding，不再自己加margin-top */
-}
-
-
-/* 顏色和懸停效果還是原來那套，因為它們是無辜的 */
-.camp-info-item .prop-key,
-.camp-info-item .prop-sep {
-    color: #ffb86c !important;
-}
-
-.camp-info-item .prop-val {
-    color: var(--survival-text) !important;
-}
-
-.camp-info-item:hover .prop-key,
-.camp-info-item:hover .prop-sep {
-    color: #ffd19a !important;
-    text-shadow: 0 0 8px rgba(255, 184, 108, 0.6);
-}
-
-.camp-info-item:hover .prop-val {
-    color: #ffffff !important;
-}
-
-.top-info {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) minmax(0, 2fr);
-  gap: 18px;
-  padding: 22px clamp(18px, 3vw, 24px);
-  border-radius: 22px;
-  background: var(--survival-surface-strong);
-  border: 1px solid var(--survival-glass-border);
-  box-shadow: var(--survival-glow);
-  align-items: center;
-}
-
-@media (max-width: 960px) {
-  .top-info {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .top-info .location-display {
-    grid-column: 1 / -1;
-  }
-}
-
-@media (max-width: 720px) {
-  .top-info {
-    grid-template-columns: 1fr;
-    align-items: flex-start;
-  }
-}
-
-.top-info .time-display {
-  font-size: clamp(44px, 7vw, 66px);
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.04em;
-  color: var(--survival-accent-strong);
-  text-shadow: 0 0 32px rgba(94, 161, 255, 0.45);
-}
-
-.top-info .info-stack {
-  display: grid;
-  gap: 12px;
-}
-
-.top-info .info-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 18px;
-  color: var(--survival-text); /* High contrast */
-  font-size: 15px;
-  margin-bottom: 4px; /* 確保行間距 */
-}
-.row-item { white-space: nowrap; }
-
-.top-info .location-display {
-  justify-self: end;
-  font-size: clamp(20px, 3.2vw, 30px);
-  font-weight: 600;
-  color: var(--survival-text);
-}
-@media (max-width: 720px) {
-    .top-info .location-display {
-        justify-self: start;
-        margin-top: 8px;
-        width: 100%;
-        font-size: 24px;
-    }
-}
-
-.core-stats-wrapper{display:flex;gap:12px;margin-top:10px}.core-stats-wrapper .core-stat-item{flex:1}
-.progress-wrapper{margin-bottom:16px}
-.mini-progress-wrapper{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
-.mini-progress-wrapper .mini-progress__text{font-size:12px;white-space:nowrap;min-width:40px;text-align:right}
-
-@media(max-width: 480px){.mini-progress-wrapper{flex:1;width:100%}}
-
-/* --- 【終極修正方案 v4.0 - 全局統一】 --- */
-.collapsible {
-    margin-bottom: 24px;
-    border: 1px solid var(--survival-border);
-    border-radius: 6px;
-    overflow: hidden;
-}
-.collapsible__header {
-    /* 核心修改：啟用flex佈局來對齊標題和標籤 */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    background: rgba(40, 58, 88, 0.85); /* 2. 底色：一個更有對比度的深藍色，且帶點透明感 */
-    padding: 16px 20px;                 /* 3. 高度：增加上下內邊距，自然就把高度撐起來了 */
-    font-size: 16px;                    /* 讓標題字大一點 */
-    color: #FFFFFF;/* 4. 字體顏色：使用你定義的亮藍色，更醒目 */
-    font-weight: 700;                   /* 加粗標題字 */
-    border-left: 5px solid var(--survival-accent); /* 左邊的指示條也加粗一點 */
-    transition: background 0.3s ease;   /* 加個懸停過渡效果，更有質感 */
-    cursor: pointer;
-}
-
-/* 給鼠標懸停時加個交互效果 */
-.collapsible__header:hover {
-    background: rgba(55, 78, 115, 0.95);
-}
-
-/* 2. 針對整個折疊欄容器 .collapsible */
-.collapsible {
-    border-radius: 14px; /* 5. 圓角加大，從 6px 增加到 14px，看起來更圓潤 */
-    border: 1px solid var(--survival-glass-border); /* 邊框顏色用你定義的玻璃質感邊框，更統一 */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* 加點陰影，讓它浮起來 */
-    margin-bottom: 16px; /* 增加一點和下面元素的間距 */
-}
-
-/* 3. 修改折疊後的內容區，讓它風格也統一 */
-.collapsible__body {
-    background: rgba(10, 20, 35, 0.6); /* 內容區背景也深一點 */
-    padding: 20px; /* 內容區的內邊距也加大 */
-    border-top: 1px solid var(--survival-glass-border); /* 在頭部和內容之間加一條細線分割 */
-    display: none; /* 這一行至關重要！保證內容區默認隱藏 */
-}
-
-.collapsible__bars-container{display:flex;flex-wrap:wrap;gap:8px;flex:1;min-width:0}
-@media(max-width: 480px){.collapsible__bars-container{flex-direction:column;width:100%}}
-.collapsible.active .collapsible__header:after{transform:rotate(0)}
-.collapsible.active .collapsible__header--with-progress .collapsible__indicator{transform:rotate(0)}
-
-.temp-range-wrapper { margin:10px 0 15px; padding:10px; background:rgba(0,0,0,.15); border-radius:6px; font-size:14px; }
-.nutrition-hydration-wrapper { display:flex; flex-direction:column; gap:10px; background:rgba(0,0,0,.15); padding:10px; border-radius:4px; }
-.phys-mental-wrapper { display:flex;gap:32px;flex-wrap:wrap; }
-.phys-mental-wrapper .phys-col,
-.phys-mental-wrapper .mental-col { flex:1 1 300px; min-width:260px; background:rgba(0,0,0,.15); padding:10px; border-radius:4px; }
-.attr-skill-wrapper .attr-col,
-.attr-skill-wrapper .skill-col { flex:1 1 300px; min-width:260px; background:rgba(0,0,0,.15); padding:10px; border-radius:4px; }
-.task-bar { margin-bottom:12px; background:var(--survival-surface-strong); border:1px solid var(--survival-glass-border); border-radius:20px; padding:18px clamp(18px, 3vw, 24px); }
-
-/* --- 從一號狀態欄移植的狀態效果CSS --- */
-.status-effects-container {
-    margin-top: 12px; /* 與上方的溫度條保持間距 */
-    margin-bottom: 4px; /* 與下方的核心狀態條保持間距 */
-    padding: 10px;
-    background: rgba(0,0,0,.15);
-    border-radius: 6px;
-}
-.status-effects-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 8px;
-}
-.status-effect-container {
-    display: flex;
-    flex-direction: column;
-}
-.status-effect-name {
-    padding: 4px 10px;
-    background: var(--survival-bg-light);
-    border: 1px solid var(--survival-border);
-    border-radius: 4px;
-    font-size: 13px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-    white-space: nowrap; /* 防止標籤內文字換行 */
-    transition: all 0.2s ease;
-    cursor: default;
-    min-height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* 有效果的狀態名 - 可點選 */
-.status-effect-name.has-effect {
-    cursor: pointer;
-    position: relative;
-    padding-right: 20px; /* 為箭頭留出空間 */
-}
-
-/* 有效果的狀態名 - 新增箭頭指示器 */
-.status-effect-name.has-effect::after {
-    content: '▼';
-    font-size: 10px;
-    margin-left: 5px;
-    transition: transform 0.3s ease;
-    position: absolute;
-    right: 8px;
-}
-
-/* 展開狀態 */
-.status-effect-name.has-effect.expanded::after {
-    transform: rotate(180deg);
-}
-
-.status-effect-name:hover {
-    transform: translateY(-2px);
-    background: var(--survival-secondary);
-    border-color: var(--survival-accent);
-}
-
-/* 效果詳情區域 */
-.status-effect-detail {
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid var(--survival-border);
-    border-radius: 4px;
-    padding: 8px 10px;
-    margin-top: 4px;
-    font-size: 12px;
-    line-height: 1.4;
-    color: var(--survival-text);
-    white-space: normal; /* 允許換行 */
-    max-width: 250px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    animation: fadeIn 0.2s ease;
-}
-
-/* 效果詳情的淡入動畫 */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-5px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* 移動端適配 */
-@media (max-width: 768px) {
-    .status-effects-list {
-        gap: 6px;
-    }
-    
-    .status-effect-name {
-        padding: 4px 8px;
-        font-size: 12px;
-    }
-    
-    .status-effect-detail {
-        max-width: 200px;
-        font-size: 11px;
-        padding: 6px 8px;
-    }
-    
-    .status-effect-name.has-effect {
-        padding-right: 25px; /* 移動端箭頭更大一點 */
-    }
-    
-    .status-effect-name.has-effect::after {
-        right: 6px;
-        font-size: 11px;
-    }
-}
-
-/* 小螢幕適配 */
-@media (max-width: 480px) {
-    .status-effects-container {
-        padding: 8px;
-    }
-    
-    .status-effects-list {
-        justify-content: center;
-    }
-    
-    .status-effect-detail {
-        max-width: 180px;
-    }
-}
-/* --- 狀態效果CSS結束 --- */
-
-.temp-range-bar,
-.nitrogen-gradient,
-.immune-bar,
-.progress,
-.mini-progress {
-  height: 12px;
-  background: linear-gradient(135deg, rgba(18, 30, 48, 0.65), rgba(11, 20, 31, 0.65));
-  border-radius: 999px;
-  border: 1px solid rgba(148, 197, 255, 0.14);
-  position: relative;
-  overflow: visible;
-}
-/* --- 體溫與免疫條 視覺修正 --- */
-
-/* 這是控制體溫條漸變背景的本體 */
-.temp-range-bar .temp-gradient {
-  /* 我們在這裡明確指定背景圖像，覆蓋掉任何其他可能的通用樣式 */
-  background-image: linear-gradient(90deg, #3498db 0%, #2ecc71 50%, #e74c3c 100%) !important;
-  width: 100%; /* 確保它填滿整個條 */
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  border-radius: inherit;
-}
-
-.mini-progress { height: 8px; }
-
-.progress__bar,
-.mini-progress__bar,
-.immune-fill,
-.temp-gradient {
-  position:absolute; top:0; left:0; height:100%;
-  border-radius: inherit;
-  background-image: linear-gradient(90deg, rgba(94, 161, 255, 0.9), rgba(96, 225, 183, 0.9));
-  box-shadow: 0 0 18px rgba(94, 161, 255, 0.35);
-}
-
-.hp-progress .progress__bar { background-image: linear-gradient(90deg, #ff8fb1, #58f0a7); }
-.mp-progress .progress__bar { background-image: linear-gradient(90deg, #8c8bff, #58f0a7); }
-.hunger-progress .progress__bar, .hunger-progress.mini-progress .mini-progress__bar { background-image: linear-gradient(90deg, #ffdc84, #ff9f6c); }
-.water-progress .progress__bar, .water-progress.mini-progress .mini-progress__bar { background-image: linear-gradient(90deg, #7fd8ff, #5ea1ff); }
-
-.carbs-progress .progress__bar{background-image:linear-gradient(90deg, #f39c12, #d35400)}
-.fat-progress .progress__bar{background-image:linear-gradient(90deg, #f1c40f, #f39c12)}
-.protein-progress .progress__bar{background-image:linear-gradient(90deg, #27ae60, #16a085)}
-.vitamin-progress .progress__bar{background-image:linear-gradient(90deg, #2ecc71, #27ae60)}
-
-.progress-wrapper > div:first-child, .mini-progress__text, .progress-number {
-    /* --- 字體修正點 --- */
-    font-family: "IBM Plex Mono", Consolas, monospace;
-}
-.mini-progress__text {
-  font-family: "IBM Plex Mono", Consolas, monospace;
-  font-size: 13px;
-  letter-spacing: 0.06em;
-  color: var(--survival-text); /* High Contrast */
-}
-
-.button-container{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: flex-end;
-  margin-top:auto;
-}
-
-@media (max-width: 600px) {
-  .button-container {
-    justify-content: stretch;
-  }
-
-  .action-btn { /* Renamed for clarity */
-    flex: 1 1 100%;
-    text-align: center;
-  }
-}
-
-.action-btn { /* Renamed and unified */
-  position: relative;
-  padding: 12px 18px;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 197, 255, 0.25);
-  background: linear-gradient(135deg, rgba(17, 31, 49, 0.9), rgba(29, 45, 68, 0.85));
-  color: var(--survival-text);
-  font-family: "Inter", "Microsoft YaHei", sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-}
-
-.action-btn::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(120deg, transparent 25%, rgba(94, 161, 255, 0.2), transparent 75%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.action-btn:hover {
-  transform: translateY(-3px);
-  border-color: rgba(148, 197, 255, 0.55);
-  box-shadow: 0 12px 28px rgba(8, 18, 34, 0.35);
-}
-
-.action-btn:hover::before {
-  opacity: 1;
-}
-
-.action-btn:active {transform:translateY(0)}
-
-/* Breathing light effect for draw buttons */
-.draw-btn.survival {
-  animation: glow-survival 3s ease-in-out infinite;
-}
-.draw-btn.miracle {
-  animation: glow-miracle 3s ease-in-out infinite;
-}
-
-@keyframes glow-survival {
-  0%, 100% {
-    box-shadow: 0 0 5px rgba(94, 161, 255, 0.2), 0 0 10px rgba(94, 161, 255, 0.2);
-    border-color: rgba(94, 161, 255, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 15px rgba(94, 161, 255, 0.5), 0 0 25px rgba(94, 161, 255, 0.5);
-    border-color: rgba(148, 197, 255, 0.8);
-  }
-}
-
-@keyframes glow-miracle {
-  0%, 100% {
-    box-shadow: 0 0 5px rgba(243, 156, 18, 0.2), 0 0 10px rgba(243, 156, 18, 0.2);
-    border-color: rgba(243, 156, 18, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 15px rgba(243, 156, 18, 0.5), 0 0 25px rgba(243, 156, 18, 0.5);
-    border-color: rgba(255, 184, 108, 0.8);
-  }
-}
-
-.inventory-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:1000;display:flex;justify-content:center;align-items:center}
-/* --- 【全景物品欄升級補丁】 --- */
-.inventory-modal__content {
-    position: relative;
-    /* 讓寬度在90%到1400px之間浮動，既能滿版又不至於在超寬螢幕上過於分散 */
-    width: clamp(90%, 95vw, 1400px);
-    height: clamp(80%, 90vh, 800px); /* 同時也讓高度更合理 */
-    padding: 20px;
-    overflow-y:auto;display:flex;flex-direction:row;gap:20px;
-    border-radius: 26px;
-    border: 1px solid rgba(148, 197, 255, 0.18);
-    background: linear-gradient(155deg, rgba(17, 28, 45, 0.94), rgba(24, 36, 58, 0.94));
-    box-shadow: var(--survival-shadow);
-    backdrop-filter: blur(20px) saturate(160%);
-    animation:modalFadeIn .3s ease-out
-}
-
-.inventory-modal__close{position:absolute;top:10px;right:15px;font-size:24px;cursor:pointer;color:var(--survival-text);transition:all .2s ease;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%}
-.inventory-modal__close:hover{color:var(--survival-danger);background:rgba(231,76,60,.2);transform:scale(1.1)}
-@keyframes modalFadeIn{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
-.attr-skill-wrapper{display:flex;gap:24px;flex-wrap:wrap}
-.attr-skill-wrapper .attr-col,.attr-skill-wrapper .skill-col{flex:1 1 300px;min-width:260px;background:rgba(0,0,0,.15);padding:18px;border-radius:16px;}
-.inventory-grid {
-    display: grid;
-    /* 核心改動：將每個格子的最小寬度從 320px！
-       這樣一來，在大多數常見的螢幕寬度下，一行最多只能放下3-4個格子。 */
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 6px; /* 格子之間的空隙也再拉開一點，顯得更大氣 */
-}
-.inventory-item {
-    background: var(--survival-surface-strong);
-    border: 1px solid var(--survival-border);
-    border-radius: 10px; /* 圓角稍微大一點，更有設計感 */
-    padding: 16px;      /* 內邊距加大，讓文字和邊框的距離更遠 */
-    transition: all .25s ease-out;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-    align-items: flex-start;
-    text-align: left;
-    min-height: 100px; /* 最小高度也稍微增加 */
-    box-shadow: var(--survival-glow); /* 加上一點點輝光效果 */
-}
-.inventory-item:hover{transform:translateY(-3px);box-shadow:0 5px 15px rgba(0,0,0,.3);background:rgba(52,73,94,.9);border-color:var(--survival-accent)}
-.inventory-item .item-name {
-    font-weight: 600; /* 字重降低一點，顯得更優雅 */
-    margin-bottom: 12px;
-    font-size: 18px;    /* 標題字號：16px -> 18px，醒目！ */
-    color: var(--survival-accent-strong); /* 使用更亮眼的強調色 */
-    letter-spacing: 0.05em; /* 增加一點點字間距 */
-}
-/* --- 裝備列表網格佈局 --- */
-.inventory-list {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 一行3個 */
-    gap: 12px; /* 格子間距 */
-    margin-top: 10px;
-    margin-bottom: 20px;
-}
-
-/* 裝備項目的樣式調整 */
-.inventory-list-item {
-    background: var(--survival-surface-strong);
-    border: 1px solid var(--survival-border);
-    border-radius: 10px;
-    padding: 16px;
-    transition: all .25s ease-out;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-    align-items: flex-start;
-    text-align: left;
-    min-height: 120px; /* 稍微增加最小高度 */
-    box-shadow: var(--survival-glow);
-}
-
-.inventory-list-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,.3);
-    background: rgba(52,73,94,.9);
-    border-color: var(--survival-accent);
-}
-
-.inventory-list-item .item-name {
-    font-weight: 600;
-    margin-bottom: 12px;
-    font-size: 18px;
-    color: var(--survival-accent-strong);
-    letter-spacing: 0.05em;
-}
-
-/* 響應式設計 */
-@media (max-width: 960px) {
-    .inventory-list {
-        grid-template-columns: repeat(2, 1fr); /* 中等屏幕一行2個 */
-    }
-}
-
-@media (max-width: 640px) {
-    .inventory-list {
-        grid-template-columns: 1fr; /* 小屏幕一行1個 */
-    }
-}
-/* --- 【最终修正补丁 v5.0 - 标签防断裂】 --- */
-
-/* 步骤一：确保整个属性条目可以灵活换行 */
-.item-prop {
-  display: flex;         /* 啟用Flexbox佈局，這是所有魔法的基礎 */
-  align-items: flex-start; /* 頂部對齊，防止長短不一時錯位 */
-  gap: 4px;              /* 元素之間留點空隙 */
-  font-size: 14px;
-  line-height: 1.6;
-  color: #ffffff;
-}
-
-/* 步驟二：給家長下死命令 - 標題和冒號，你們倆給爺鎖死！ */
-/* 為了美觀，單獨調整一下標題的顏色 */
-.item-prop .prop-key {
-    color: var(--survival-muted);
-    white-space: nowrap; /* <-- 就是加上這一行！ */
-
-}
-
-.item-prop .prop-sep {
-  flex-shrink: 0;      /* 空間再小，也不許壓縮你們的寬度！ */
-  white-space: nowrap;   /* 你們本身內部也絕對不許換行！ */
-}
-
-.item-prop .prop-sep {
-  white-space: nowrap; /* <-- 核心：强制这两个部分永不换行 */
-  flex-shrink: 0;      /* <-- 辅助：告诉flex布局，不要压缩我！ */
-}
-
-/* 步驟三：讓孩子承擔所有 - 描述內容，所有換行的壓力都是你的！ */
-.item-prop .prop-val {
-  /* 這裡不需要特別的 flex 屬性，它會自動佔據剩餘空間 */
-  word-break: break-word; /* 讓它智能地斷詞換行 */
-  min-width: 0;           /* 防止溢出的保險措施 */
-  font-weight: 500;
-}
-.inventory-list-item{background:var(--survival-bg-light);border:1px solid var(--survival-border);border-radius:6px;padding:12px;transition:all .2s ease-out;display:flex;flex-direction:column;position:relative;overflow:hidden}
-.inventory-list-item:hover{transform:translateY(-2px);box-shadow:0 3px 10px rgba(0,0,0,.3);background:rgba(52,73,94,.9);border-color:var(--survival-accent)}
-.inventory-list-item .item-name{font-weight:bold;margin-bottom:6px;font-size:16px;color:#fff}
-
-/*.nitrogen-balance:before{content:"";position:absolute;top:0;bottom:0;left:50%;width:2px;background:hsla(0,0%,100%,.7);z-index:1}*/
-.vertical-progress{width:30px;height:200px;background:rgba(0,0,0,.3);border-radius:15px;position:relative;margin:20px auto;box-shadow:inset 0 0 10px rgba(0,0,0,.5)}
-.vertical-progress__bar{position:absolute;bottom:0;left:0;width:100%;background:linear-gradient(to top, var(--survival-warning), var(--survival-accent));border-radius:15px;transition:height .5s ease-out;box-shadow:0 0 10px rgba(52,152,219,.5)}
-.vertical-progress__label{position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);white-space:nowrap;text-align:center;width:100px;font-weight:bold;color:var(--survival-text);text-shadow:0 1px 2px rgba(0,0,0,.5)}
-.vertical-progress__value{position:absolute;top:-30px;left:50%;transform:translateX(-50%);white-space:nowrap;text-align:center;width:100px;font-weight:bold;color:var(--survival-accent);text-shadow:0 1px 2px rgba(0,0,0,.5)}
-.weight-container{display:flex;flex-direction:column;align-items:center;min-width:100px;padding-right:20px;border-right:1px solid var(--survival-border);justify-content:center}
-.inventory-content{flex:1;display:flex;flex-direction:column;overflow-y:auto}
-.inventory-content h3{margin-top:0;margin-bottom:15px;color:var(--survival-accent);font-size:18px;border-bottom:1px solid hsla(0,0%,100%,.1);padding-bottom:8px;position:relative}
-.inventory-content h3:after{content:"";position:absolute;bottom:-1px;left:0;width:60px;height:2px;background:var(--survival-accent)}
-.temp-range-wrapper{font-size:14px}
-.temp-range-bar{height:16px;margin-top:8px;overflow:visible}
-.comfort-zone{position:absolute;height:100%;background:hsla(0,0%,100%,.2);border:1px dashed hsla(0,0%,100%,.7);border-radius:8px;z-index:1}
-.current-temp{position:absolute;width:4px;height:24px;background:#fff;border-radius:2px;top:-4px;transform:translateX(-2px);z-index:2;box-shadow:0 0 5px hsla(0,0%,100%,.8)}
-
-.nitrogen-gradient{height:12px;}
-.nitrogen-marker{position:absolute;top:-6px;bottom:-6px;width:4px;background:#fff;border-radius:2px;box-shadow:0 0 5px hsla(0,0%,100%,.8)}
-.temp-gradient{height:12px; background-image: linear-gradient(90deg, #3498db 0%, #2ecc71 50%, #e74c3c 100%);}
-.temp-marker{position:absolute;top:-6px;bottom:-6px;width:4px;background:#fff;border-radius:2px;box-shadow:0 0 5px hsla(0,0%,100%,.8)}
-.temp-normal-zone{position:absolute;height:100%;background:hsla(0,0%,100%,.2);border:1px dashed hsla(0,0%,100%,.7);border-radius:4px;z-index:1}
-.temp-gradient{height:12px; background-image: linear-gradient(90deg, #3498db 0%, #2ecc71 50%, #e74c3c 100%);}
-.temp-marker{position:absolute;top:-6px;bottom:-6px;width:4px;background:#fff;border-radius:2px;box-shadow:0 0 5px hsla(0,0%,100%,.8)}
-.temp-normal-zone{position:absolute;height:100%;background:hsla(0,0%,100%,.2);border:1px dashed hsla(0,0%,100%,.7);border-radius:4px;z-index:1}
-.immune-bar{height:12px;}
-.immune-fill{background-image:linear-gradient(90deg, #2ecc71 0%, #f39c12 50%, #e74c3c 100%);transition:width .3s ease}
-.immune-marker{position:absolute;top:-6px;bottom:-6px;width:4px;background:#fff;border-radius:2px;box-shadow:0 0 5px hsla(0,0%,100%,.8);z-index:2}
-.skill-item{margin-bottom:2px;background:rgba(0,0,0,.1);padding:2px 8px;border-radius:4px}
-.skill-item .skill-name{font-weight:bold;margin-bottom:5px}
-.skill-desc { font-size: .85em; color: var(--survival-muted); opacity: 0.8; margin-top: 4px; }
-
-/* 任務系統樣式 */
-.task-strip {
-  padding: 12px 16px;
-  margin: 8px 0;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  text-align: center;
-  border: 1px solid transparent;
-}
-
-.task-strip:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.task-strip.main-task {
-  background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.1));
-  border-color: rgba(52, 152, 219, 0.3);
-  color: #3498db;
-}
-
-.task-strip.side-task {
-  background: linear-gradient(135deg, rgba(243, 156, 18, 0.2), rgba(243, 156, 18, 0.1));
-  border-color: rgba(243, 156, 18, 0.3);
-  color: #f39c12;
-}
-
-.task-strip.emergency-task {
-  background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(231, 76, 60, 0.1));
-  border-color: rgba(231, 76, 60, 0.3);
-  color: #e74c3c;
-  animation: pulse 2s infinite;
-}
-/* 日常任務樣式 */
-.task-strip.daily-task {
-  background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1));
-  border-color: rgba(46, 204, 113, 0.3);
-  color: #2ecc71;
-}
-
-/* 羈絆任務樣式 */
-.task-strip.bond-task {
-  background: linear-gradient(135deg, rgba(189, 147, 249, 0.25), rgba(189, 147, 249, 0.15)); /* 紫色調得更淺更亮 */
-  border-color: rgba(142, 68, 173, 0.4); /* 邊框顏色可以稍微保留一點深度，增加輪廓感 */
-  color: #f0e6ff; /* 字體顏色直接換成非常淺的淡紫色，接近白色，保證對比度 */
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); /* 給文字加一點點陰影，讓它更有立體感，更容易閱讀 */
-}
-
-.task-detail {
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 8px;
-  padding: 16px;
-  margin: 8px 0;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.task-desc {
-  text-align: left;
-  margin-bottom: 16px;
-  line-height: 1.4;
-  color: var(--survival-text);
-  white-space: pre-line;
-  word-wrap: break-word;
-  /* 這裏可以添加字體大小，例如： */
-  font-size: 15px; /* 添加這一行來設置任務描述字體大小 */
-}
-
-.target-section {
-  margin: 16px 0;
-}
-
-.section-title {
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: var(--survival-accent);
-  /* 這裏可以添加字體大小，例如： */
-  font-size: 15px; /* 設置"任務要求"、"進階目標"等標題的字體大小 */
-}
-
-.target-desc {
-  margin-bottom: 8px;
-  line-height: 1.4;
-  color: var(--survival-text);
-  white-space: pre-line;
-  word-wrap: break-word;
-  /* 這裏可以添加字體大小，例如： */
-  font-size: 15px; /* 添加這一行來設置任務目標描述字體大小 */
-}
-
-.reward-info {
-  color: var(--survival-text);
-  font-weight: 600;
-  margin-top: 13px;
-  /* 這裏可以添加字體大小，例如： */
-  font-size: 15px; /* 設置獎勵信息的字體大小 */
-}
-
-.reward-info .points {
-  color: var(--survival-warning);
-}
-
-.penalty-info {
-  /* 1. 核心佈局與對齊 */
-  display: flex; /* 啟用flex佈局，讓圖標和文字能肩並肩站好 */
-  align-items: center; /* 垂直居中對齊，看起來更舒服 */
-  text-align: left; /* 改成你想要的左對齊 */
-
-  /* 2. 背景與邊框，打造"警報卡片"感 */
-  background: linear-gradient(135deg, rgba(231, 76, 60, 0.15), rgba(231, 76, 60, 0.05));
-  border-left: 4px solid var(--survival-danger); /* 左側加一條醒目的紅色指示條 */
-  border-radius: 6px; /* 加個小圓角，不那麼生硬 */
-
-  /* 3. 內邊距與外邊距，讓它呼吸起來 */
-  padding: 10px 14px;
-  margin-top: 12px;
-
-  /* 4. 字體與文字效果 */
-  font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif; /* 確保字體統一 */
-  font-size: 18px; /* 字號稍微調整一下 */
-  color: #ffdde5; /* 文字用柔和的粉紅色，而不是刺眼的鮮紅 */
-  font-weight: 600;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* 加點文字陰影，更有立體感 */
-}
-
-/* 5. 畫龍點睛的圖標！ */
-.penalty-info::before {
-  content: '⚠️'; /* 你也可以換成 '🛡️💥💀' */
-  margin-right: 8px; /* 讓圖標和文字之間有點距離 */
-  font-size: 18px; /* 圖標稍微大一點點 */
-  animation: pulse-danger 2s infinite; /* 給圖標加個呼吸動畫 */
-}
-
-/* 6. 配套的呼吸動畫，讓警告"活"起來 */
-@keyframes pulse-danger {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.1); opacity: 0.8; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.task-divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--survival-border), transparent);
-  margin: 16px 0;
-}
-
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.7; }
-  100% { opacity: 1; }
-}
-
-/* 抽卡系統樣式 - 與任務系統完全一致 */
-.draw-main-task {
-  background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.1));
-  border-color: rgba(52, 152, 219, 0.3);
-  color: #3498db;
-}
-
-.draw-side-task {
-  background: linear-gradient(135deg, rgba(243, 156, 18, 0.2), rgba(243, 156, 18, 0.1));
-  border-color: rgba(243, 156, 18, 0.3);
-  color: #f39c12;
-}
-
-.draw-container {
-  margin-bottom: 8px;
-}
-
-/* 抽卡選項的特定樣式 */
-.requirement-item.draw-ready .req-desc {
-  color: var(--survival-success);
-  font-weight: 600;
-}
-
-.requirement-item.draw-disabled .req-desc {
-  color: var(--survival-text);
-  opacity: 0.6;
-}
-
-.requirement-item {
-  cursor: pointer;
-  transition: all 0.2s ease;
-  padding: 8px 12px;
-  border-radius: 4px;
-  margin: 4px 0;
-}
-
-.requirement-item:hover {
-  background: rgba(148, 197, 255, 0.1);
-}
-
-.requirement-item.draw-ready:hover {
-  background: rgba(46, 204, 113, 0.1);
-}
-
-.requirement-item.draw-disabled {
-  cursor: not-allowed;
-}
-
-.requirement-item.draw-disabled:hover {
-  background: transparent;
-}
-
-/* 任務完成樣式 - 整個描述（包括進度數字）都變灰劃掉 */
-.target-desc.completed {
-  color: #999 !important;
-  text-decoration: line-through;
-  opacity: 0.7;
-}
-
-/* 進度數字的黃色樣式（和生存點數一樣的黃色） */
-.progress-number {
-  color: var(--survival-warning) !important;
-  font-weight: bold;
-}
-
-/* 獎勵點數樣式 */
-.reward-info .points {
-  color: var(--survival-warning) !important;
-  font-weight: bold;
-}
-
-/* 緊急任務時間信息樣式 */
-.time-info {
-  font-size: 15px;  
-  line-height: 1.5;  
-  color: var(--survival-text);
-  margin-top: 8px;
-  text-align: left; 
-}
-
-.time-info div {
-  margin-bottom: 4px;
-}
-
-/* 失敗懲罰樣式 */
-.penalty-info {
-  color: var(--survival-danger) !important;
-  font-weight: bold;
-  text-align: center;
-  margin-top: 8px;
-}
-
-/* 物品狀態樣式 */
-.item-state {
-  font-size: .8em;
-  color: var(--survival-success);
-  margin-top: 4px;
-}
-
-/* 修復描述文本換行 */
-.item-props {
-  width: 100%;
-}
-
-.item-prop .prop-val {
-  word-wrap: break-word;
-  white-space: normal;
-  line-height: 1.3;
-  overflow-wrap: break-word;
-}
-
-/* 任務系統樣式 - 簡化狀態指示器 */
-.task-strip {
-  position: relative;
-  padding: 12px 16px;
-  margin: 8px 0;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  text-align: center;
-  border: 1px solid transparent;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 44px;
-}
-
-.task-strip:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.task-strip.main-task {
-  background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.1));
-  border-color: rgba(52, 152, 219, 0.3);
-  color: #3498db;
-}
-
-.task-strip.side-task {
-  background: linear-gradient(135deg, rgba(243, 156, 18, 0.2), rgba(243, 156, 18, 0.1));
-  border-color: rgba(243, 156, 18, 0.3);
-  color: #f39c12;
-}
-
-.task-strip.daily-task {
-  background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1));
-  border-color: rgba(46, 204, 113, 0.3);
-  color: #2ecc71;
-}
-
-.task-strip.emergency-task {
-  background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(231, 76, 60, 0.1));
-  border-color: rgba(231, 76, 60, 0.3);
-  color: #e74c3c;
-  animation: pulse 2s infinite;
-}
-
-/* 任務狀態指示器 - 簡化版 */
-.task-status-indicator {
-  position: absolute;
-  right: 13px; /* 從16px減小到12px，讓位置更緊湊 */
-  top: 50%;
-  transform: translateY(-50%) scale(0.9); /* 添加整體縮放90% */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.status-text {
-  font-size: 10px; /* 從12px減小到10px */
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.8px; /* 稍微減小字間距 */
-  transform: rotate(-15deg);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  padding: 1px 4px; /* 從2px 6px減小到1px 4px */
-  border-radius: 2px;
-}
-
-/* 不同狀態的顏色 */
-.status-ongoing {
-  color: #3498db;
-  background: rgba(52, 152, 219, 0.15);
-}
-
-.status-pending {
-  color: #f39c12;
-  background: rgba(243, 156, 18, 0.15);
-}
-
-.status-completed {
-  color: #2ecc71;
-  background: rgba(46, 204, 113, 0.15);
-}
-
-.status-failed {
-  color: #e74c3c;
-  background: rgba(231, 76, 60, 0.15);
-}
-
-.status-abandoned {
-  color: #95a5a6;
-  background: rgba(149, 165, 166, 0.15);
-  text-decoration: line-through;
-}
-
-/* 修改 .task-content 爲抽卡專用樣式 */
-.task-content {
-  text-align: center;
-  line-height: 1.4;
-  font-family: "Microsoft YaHei","Segoe UI",Arial,sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  color: inherit;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* 其他現有樣式保持不變 */
-.task-detail {
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 8px;
-  padding: 16px;
-  margin: 8px 0;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.task-desc {
-  text-align: left;
-  margin-bottom: 16px;
-  line-height: 1.4;
-  color: var(--survival-text);
-  white-space: pre-line;
-  word-wrap: break-word;
-}
-
-.target-section {
-  margin: 16px 0;
-}
-
-.section-title {
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: var(--survival-accent);
-}
-
-.target-desc {
-  margin-bottom: 8px;
-  line-height: 1.4;
-  color: var(--survival-text);
-  white-space: pre-line;
-  word-wrap: break-word;
-}
-
-.reward-info {
-  color: var(--survival-text);
-  font-weight: 600;
-  margin-top: 12px;
-}
-
-.reward-info .points {
-  color: var(--survival-warning);
-}
-
-.penalty-info {
-  color: var(--survival-danger);
-  font-weight: 600;
-  text-align: center;
-}
-
-.task-divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--survival-border), transparent);
-  margin: 16px 0;
-}
-
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.7; }
-  100% { opacity: 1; }
-}
-
-/* --- MAP CSS START --- */
-.map-modal {
-    position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; color: #ffffff;
-    background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 1000;
-}
-.map-modal__content {
-    position: relative; width: 95vw; height: 95vh; padding: 0; overflow: hidden; display: flex; flex-direction: column;
-    border-radius: 26px; border: 1px solid rgba(148, 197, 255, 0.18);
-    background: linear-gradient(155deg, rgba(17, 28, 45, 0.94), rgba(24, 36, 58, 0.94));
-    box-shadow: var(--survival-shadow); backdrop-filter: blur(20px) saturate(160%);
-    animation: modalFadeIn .3s ease-out;
-}
-.map-modal__close {
-    position:absolute; top:10px; right:15px; font-size:24px; cursor:pointer;
-    color:rgba(239, 246, 255, 0.7); transition:all .2s ease;
-    width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:50%; z-index: 1100;
-}
-.map-modal__close:hover{ color:var(--survival-danger); background:rgba(231,76,60,.2); transform:scale(1.1) }
-
-.map-modal .map-container {
-    flex: 1; position: relative; overflow: hidden; touch-action: none; background: #2a2a2a;
-    cursor: grab;
-}
-.map-modal .map-container.linking { cursor: crosshair; }
-.map-modal .map-container.dragging { cursor: grabbing; }
-
-.map-modal .info-panel, .map-modal .zoom-controls button {
-  border-color: rgba(148, 197, 255, 0.2);
-  background: rgba(24, 36, 58, 0.9);
-  box-shadow: 0 12px 28px rgba(6, 12, 25, 0.45);
-}
-.map-modal .zoom-btn:hover {
-  background: rgba(94, 161, 255, 0.25);
-  transform: translateY(-3px) scale(1.05);
-}
-/* --- MAP CSS END --- */
-
-/* --- Draw Confirmation Modal --- */
-.draw-confirm-modal { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(circle at center, rgba(41, 128, 185, 0.38), rgba(10, 14, 22, 0.92)); backdrop-filter: blur(10px); z-index: 10000; animation: fadeInModal 0.25s ease; }
-.draw-confirm-modal__content {
-    position: relative; width: min(420px, 90vw); overflow: hidden; text-align: center;
-    border-radius: 26px; border: 1px solid rgba(148, 197, 255, 0.18);
-    background: linear-gradient(155deg, rgba(17, 28, 45, 0.94), rgba(24, 36, 58, 0.94));
-    box-shadow: var(--survival-shadow); backdrop-filter: blur(20px) saturate(160%);
-    padding: 28px 26px 24px;
-}
-.draw-confirm-modal__glow { position: absolute; inset: -45%; background: radial-gradient(circle, rgba(77, 208, 255, 0.35) 0%, transparent 65%); filter: blur(60px); opacity: 0.65; animation: modalGlow 6s ease-in-out infinite; pointer-events: none; }
-.draw-confirm-modal__title { position: relative; z-index: 1; font-size: 20px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #e9f5ff; margin: 0 0 12px; }
-.draw-confirm-modal__desc { position: relative; z-index: 1; font-size: 15px; color: var(--survival-text); margin: 0 0 18px; }
-.draw-confirm-modal__points { position: relative; z-index: 1; font-size: 14px; color: var(--survival-muted); letter-spacing: 0.05em; margin-bottom: 24px; }
-.draw-confirm-modal__points span { display: inline-block; margin-top: 6px; font-size: 30px; font-weight: 700; color: #4dd0ff; text-shadow: 0 0 18px rgba(77, 208, 255, 0.55); }
-.draw-confirm-modal__actions { position: relative; z-index: 1; display: flex; gap: 12px; justify-content: center; margin-top: 10px; }
-.draw-confirm-modal__button { flex: 1; padding: 12px 16px; border-radius: 999px; border: none; font-size: 15px; font-weight: 600; cursor: pointer; transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease; font-family: "Inter", "Microsoft YaHei", sans-serif;}
-.draw-confirm-modal__button:active { transform: scale(0.96); }
-.draw-confirm-modal__confirm { background: linear-gradient(135deg, #26c6da, #7c4dff); color: #fff; box-shadow: 0 12px 34px rgba(124, 77, 255, 0.35); }
-.draw-confirm-modal__confirm:hover:not(.is-disabled) { transform: translateY(-1px); box-shadow: 0 16px 42px rgba(124, 77, 255, 0.48); }
-.draw-confirm-modal__cancel { background: rgba(37, 49, 68, 0.9); color: var(--survival-text); box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35); }
-.draw-confirm-modal__cancel:hover { transform: translateY(-1px); box-shadow: 0 14px 32px rgba(0, 0, 0, 0.4); }
-.draw-confirm-modal__confirm.is-disabled { background: rgba(90, 96, 112, 0.7); color: var(--survival-text); cursor: not-allowed; box-shadow: none; }
-.draw-confirm-modal__confirm.is-loading { color: transparent; position: relative; }
-.draw-confirm-modal__confirm.is-loading::after { content: ''; position: absolute; top: 50%; left: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px; border: 2px solid rgba(255, 255, 255, 0.32); border-top-color: #ffffff; border-radius: 50%; animation: spin 0.7s linear infinite; }
-.draw-confirm-modal__status { position: relative; z-index: 1; margin-top: 20px; min-height: 18px; font-size: 13px; color: var(--survival-text); letter-spacing: 0.03em; }
-
-@keyframes fadeInModal { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-@keyframes modalGlow { 0% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 0.7; } 100% { transform: scale(0.8); opacity: 0.5; } }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* --- Image Viewer Modal --- */
-.image-viewer-modal { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; padding: 30px; background: radial-gradient(circle at 20% 20%, rgba(46, 134, 222, 0.35), transparent 55%), rgba(8, 11, 19, 0.92); backdrop-filter: blur(12px); z-index: 9990; animation: fadeInModal 0.25s ease; }
-.image-viewer-modal__content {
-    position: relative; width: min(960px, 94vw); height: min(82vh, 700px); display: flex; flex-direction: column; overflow: hidden;
-    border-radius: 26px; border: 1px solid rgba(148, 197, 255, 0.18);
-    background: linear-gradient(155deg, rgba(17, 28, 45, 0.94), rgba(24, 36, 58, 0.94));
-    box-shadow: var(--survival-shadow); backdrop-filter: blur(20px) saturate(160%);
-}
-.image-viewer__header { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px 12px; color: #e9f5ff; }
-.image-viewer__title { font-size: 18px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
-.image-viewer__close { background: none; border: none; font-size: 22px; cursor: pointer; transition: transform 0.2s ease, color 0.2s ease; color: var(--survival-muted); }
-.image-viewer__close:hover { color: #ffffff; transform: rotate(90deg); }
-
-.image-viewer__canvas {
-  position: relative; flex: 1; margin: 0 24px 24px; overflow: hidden; touch-action: none;
-  background: radial-gradient(circle at 35% 30%, rgba(94, 161, 255, 0.14), rgba(9, 13, 22, 0.92));
-  border: 1px solid rgba(148, 197, 255, 0.16);
-  border-radius: 14px; cursor: grab;
-}
-.image-viewer__canvas.is-grabbing { cursor: grabbing; }
-.image-viewer__image { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1); transform-origin: center center; max-width: none; max-height: none; will-change: transform; pointer-events: none; user-select: none; }
-.image-viewer__placeholder { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70%; max-width: 360px; text-align: center; font-size: 14px; line-height: 1.6; pointer-events: none; color: var(--survival-text); }
-.image-viewer__status { position: absolute; left: 24px; bottom: 18px; font-size: 13px; letter-spacing: 0.02em; color: var(--survival-text); }
-.image-viewer__toolbar { display: flex; align-items: center; gap: 12px; padding: 0 24px 16px; flex-wrap: wrap; }
-.image-viewer__controls { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-shrink: 0; }
-.image-viewer__hint { flex: 1 1 auto; font-size: 13px; line-height: 1.5; min-width: 200px; color: var(--survival-text);}
-.image-viewer__hint strong { color: #fff;}
-.image-viewer__control-button {
-  width: 38px; height: 38px; border-radius: 50%; border: none; font-size: 16px; cursor: pointer;
-  background: rgba(32, 43, 60, 0.85); color: var(--survival-text);
-  transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
-  font-family: "Inter", "Microsoft YaHei", sans-serif;
-}
-.image-viewer__control-button:hover { transform: translateY(-1px); background: rgba(77, 208, 255, 0.2); box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35); }
-
-.temp-fill { position: absolute; top: 0; left: 0; height: 100%; border-radius: 8px; background-image: linear-gradient(90deg, var(--survival-accent), var(--survival-success)); opacity: .55; }
-
-@media (max-width: 720px) {
-  .image-viewer-modal { padding: 18px; }
-  .image-viewer-modal__content { height: 88vh; }
-  .image-viewer__toolbar { flex-direction: column; align-items: stretch; }
-  .image-viewer__hint { margin-bottom: 8px; }
-  .image-viewer__controls { margin-left: 0; }
-  .image-viewer__canvas { margin: 0 18px 18px; }
-}
-
-@media (max-width: 480px) {
-  .draw-confirm-modal__content { padding: 24px 18px 20px; }
-  .draw-confirm-modal__actions { flex-direction: column; }
-  .image-viewer__header { padding: 16px 18px 10px; }
-  .image-viewer-modal__content { border-radius: 16px; }
-}
-
-.other-group { margin-top: 8px; }
-.other-card { background: rgba(0,0,0,.15); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--survival-border); margin-bottom: 6px; }
-.other-card__title { font-weight: 700; margin-bottom: 4px; }
-.empty-text { opacity: .75; font-size: 13px; }
-
-/* --- 同伴狀態條新配色方案 --- */
-.love-progress .progress__bar {
-    background-image: linear-gradient(90deg, #FF8FB1, #FFCAD4); /* 好感度: 粉紅色漸層 */
-    box-shadow: 0 0 18px rgba(255, 143, 177, 0.55);
-}
-.desire-progress .progress__bar {
-    background-image: linear-gradient(90deg, #E94057, #F27121); /* 性慾: 激情玫瑰紅到柑橘橙的漸變 */
-    box-shadow: 0 0 18px rgba(233, 64, 87, 0.55);
-}
-.dev-progress .progress__bar {
-    background-image: linear-gradient(90deg, #C39BD3, #8E44AD); /* 開發度: 紫色漸層 */
-    box-shadow: 0 0 18px rgba(142, 68, 173, 0.55);
-}
-.crevice-progress .progress__bar {
-    background-image: linear-gradient(90deg, #485461, #28313b); /* 墮落值: 從深灰到黑色的漸層，代表裂縫 */
-    box-shadow: 0 0 18px rgba(40, 49, 59, 0.55);
-}
-.health-progress .progress__bar {
-    background-image: linear-gradient(90deg, #58f0a7, #1abc9c); /* 健康 - 生命的翠綠色 */
-    box-shadow: 0 0 18px rgba(46, 204, 113, 0.45);
-}
-.satiety-progress .progress__bar {
-    background-image: linear-gradient(90deg, #ffdc84, #ff9f6c); /* 飽腹 - 豐收的南瓜色 */
-    box-shadow: 0 0 18px rgba(243, 156, 18, 0.45);
-}
-.fatigue-progress .progress__bar {
-    background-image: linear-gradient(90deg, #95a5a6, #7f8c8d); /* 疲勞 - 沉靜的石板灰 */
-    box-shadow: 0 0 18px rgba(127, 140, 141, 0.45);
-}
-.water-progress .progress__bar {
-    background-image: linear-gradient(90deg, #7fd8ff, #5ea1ff); /* 水分 - 清澈的水藍色 */
-    box-shadow: 0 0 18px rgba(94, 161, 255, 0.45);
-}
-
-/* --- 新增：同伴物品欄專用網格樣式 --- */
-.companion-inventory-grid {
-    display: grid;
-    /* 核心指令：固定為4列，每列平分剩餘空間 */
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px; /* 格子之間的間距 */
-    margin-top: 20px; /* 和上面的技能區塊拉開一點距離 */
-}
-
-/* 為了在小螢幕上體驗更好，我們加個媒體查詢 */
-@media (max-width: 960px) {
-    .companion-inventory-grid {
-        grid-template-columns: repeat(3, 1fr); /* 螢幕稍小時，一行3個 */
-    }
-}
-@media (max-width: 640px) {
-    .companion-inventory-grid {
-        grid-template-columns: repeat(2, 1fr); /* 螢幕再小時，一行2個 */
-    }
-}
-
-/* ---【最終修復補丁 v4.0】--- */
-/* 規則1: 無論如何，只要是任務卡片的內容區，就先給它隱藏起來！ */
-.task-card > .task-body.collapsible__body {
-    display: none;
-}
-
-/* 規則2: 只有當任務卡片被點擊，擁有了 'active' 狀態後才讓它的內容區顯示出來 */
-.task-card.active > .task-body.collapsible__body {
-    display: block;
-}
-
-/* ============== 新增：作物狀態標籤樣式 ============== */
-.crop-status-indicator {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-left: 12px;
-}
-.crop-status-ready {
-  color: #58f0a7;
-  background: rgba(88, 240, 167, 0.15);
-}
-.crop-status-growing {
-  color: #a0aec0;
-  background: rgba(160, 174, 192, 0.15);
-}
-.item-name .crop-status-indicator { /* 讓二級目錄裡的標籤小一點 */
-    transform: scale(0.9);
-}
-
-/* ============== 新增：畜牧狀態標籤樣式 ============== */
-.livestock-status-indicator {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-left: 12px;
-}
-.livestock-status-harvest {
-  color: #58f0a7; /* 可收成 - 綠色 */
-  background: rgba(88, 240, 167, 0.15);
-}
-.livestock-status-breed {
-  color: #3498db; /* 可繁殖 - 藍色 */
-  background: rgba(52, 152, 219, 0.15);
-}
-.livestock-status-both {
-  color: #f39c12; /* 可收成且可繁殖 - 橙色 */
-  background: rgba(243, 156, 18, 0.15);
-}
-.livestock-status-none {
-  color: #a0aec0; /* 無特殊狀態 - 灰色 */
-  background: rgba(160, 174, 192, 0.15);
-}
-.item-name .livestock-status-indicator { /* 讓二級目錄裡的標籤小一點 */
-    transform: scale(0.9);
-}
-
-/* ============== 新增：作物加速效果區塊樣式 ============== */
-.crop-acceleration-info {
-    padding: 16px;
-    margin-bottom: 20px;
-    border-radius: 12px;
-    background: rgba(30, 45, 70, 0.8);
-    border: 1px solid var(--survival-glass-border);
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.4), var(--survival-glow);
-}
-.crop-acceleration-info__title {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--survival-accent-strong);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.crop-acceleration-info__item {
-    font-size: 14px;
-    padding-left: 28px;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.crop-acceleration-info__total {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--survival-border);
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--survival-success);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-/* ============== 新增：寵物狀態條樣式 ============== */
-.loyalty-progress .progress__bar {
-    background-image: linear-gradient(90deg, #FFD700, #FFA500); /* 忠誠度: 金色漸層 */
-    box-shadow: 0 0 18px rgba(255, 215, 0, 0.45);
-}
-.pet-health-progress .progress__bar {
-    background-image: linear-gradient(90deg, #27ae60, #16a085); /* 寵物健康: 翠綠色漸層 */
-    box-shadow: 0 0 18px rgba(46, 204, 113, 0.45);
-}
-.pet-desire-progress .progress__bar {
-    background-image: linear-gradient(90deg, #E94057, #F27121); /* 性慾: 與同伴相同 */
-    box-shadow: 0 0 18px rgba(233, 64, 87, 0.45);
-}
-</style></head><body><div id="survival-ui" class="survival-ui" tabindex="0"></div><script>
-
-function parseTimeToMinutes(timeString) {
-    const dayMatch = timeString.match(/第(\d+)天/);
-    const timeMatch = timeString.match(/(\d{2}):(\d{2})/);
-
-    if (!dayMatch || !timeMatch) {
-        return null; // 格式不對就直接放棄
-    }
-
-    const days = parseInt(dayMatch[1], 10);
-    const hours = parseInt(timeMatch[1], 10);
-    const minutes = parseInt(timeMatch[2], 10);
-
-    return (days * 24 * 60) + (hours * 60) + minutes;
-}
-
-// 2. 化妝師：把剩餘的總分鐘數，變成 "X天X小時X分"
-function formatRemainingTime(totalMinutes) {
-    if (totalMinutes <= 0) {
-        return "已截止";
-    }
-
-    const days = Math.floor(totalMinutes / (24 * 60));
-    const hours = Math.floor((totalMinutes % (24 * 60)) / 60);
-    const minutes = totalMinutes % 60;
-
-    let result = "";
-    if (days > 0) result += `${days}天`;
-    if (hours > 0) result += `${hours}小時`;
-    if (minutes > 0) result += `${minutes}分`;
-
-    return result.trim();
-}
-
-// --- 從一號狀態欄移植的狀態效果對映表 ---
-const statusEffectsMap = {
-  // 水分狀態
-  "水分充足": "身體機能處於最佳狀態。所有與耐力相關的檢定獲得+5加值",
-  "口渴": "開始感到口渴，注意力輕微分散。精神值每小時 -0.5",
-  "非常口渴": "嚴重的口渴感導致身體不適。所有重體力相關檢定（如力量、耐力）受到 -5 減值。精神值每小時 -1",
-  "脫水": "身體機能因嚴重缺水而受損。所有重體力相關檢定受到 -15 減值。生命值和精神值每小時各 -1",
-  "瀕死：脫水": "器官因缺水開始衰竭，角色死亡",
+<thinking_format>
+⚠️ **強制遵守**：你必須嚴格執行以下所有步驟，先輸出完整<thinking>，再輸出正文。跳過任何步驟將導致敘事崩壞！
+在正式創作正文前，必須要進行以下思考，注意，思考內容必須輸出並使用<thinking> </thinking>包裹，正文緊跟在</thinking>後
+輸出語言：繁體中文
+
+<thinking>
+簡要確認身份：擬真生存故事講述者，將會客觀中立地對<user>跟環境的互動進行講述，以邏輯判斷劇情的走向，不會偏袒user。最高任務是完全還原真實地描寫<user>與環境的互動.
+中心理念：優質的荒野求生敘事，往往在於『接受神秘』而不是『解釋神秘』。角色們對世界的無知是真實感的一部分。讓他們保持純粹的生存者思維：實用主義，不求甚解。
+
+【角色存在性備註】伊西莉亞存在於世界中，當前好感技能等級：[讀取值]級
+- 根據好感度，本輪出現概率約：[計算值]%
+- 按此概率決定是否讓她登場
+- 即使不出現，也可在環境中輕微暗示
+
+1. 當前處於何種環境？
+ - 時間, 地點, 其他環境變數
+   - 注意，僅允許以<info_settings>中的'當前時間'為準，否則會出錯
+ - 人設檢查：[同伴名]
+   - 設定出處：[出處]
+   - 核心人設：[3-5個關鍵特質]
+   - 當前問題：[偏標籤化/符合人設]，
+   - 需修正方向：[如需修正，簡述重點]。需要在正文中進行修正
+ - 當前環境會對<user>、同伴、寵物、作物產生怎樣的影響？
+   - 比如當前的體感溫度，是否會讓其感受到寒冷或炎熱？
+ - 當前環境下附近的動物、植物生態會發生什麼變化？
+ - <user>、同伴當前是否有迫切需要面對和解決的問題？
+ - <user>、同伴是否有娛樂、情感、性愛方面的需求？
+   - 如果有，這些需求會如何影響其言行舉止？
+   - 禁止預設<user>發起的性愛互動必定成功，同伴不是專門滿足<user>性慾的工具，也不會輕易淪為性慾主導的發情生物。應根據同伴人設、雙方關係和劇情做出合理且多樣性的推演，允許同伴做出任何符合其人設的反應（激烈反抗或迫不及待等）
+   - 性愛准入考慮因素（根據同伴和場景動態分配各項判定權重）：
+     - 不同部位難度
+     - 好感等級
+     - 同伴人設符合度
+     - 事件邏輯鏈
+ - 當前同伴的'關係'描述是否準確(對照好感技能等級和關係階段參考表)？<user>和同伴的關係會如何影響他們之間的互動？
+ - 如何避免<user>和同伴知道或說出不該知道的資訊，比如所處地區的地理和生物、植物資源等情況
+
+1.1 世界觀純度確認
+ - 根據設定，這是純粹的荒野求生世界，唯一例外是伊西莉亞的魔法天賦和她的龍。
+ - 檢查事項：
+   - 環境描述合規性：
+     - 有無「建築遺跡」？ → 如有，改為「天然岩層」
+     - 有無「科技造物」？ → 如有，改為「奇怪的天然物體」  
+     - 有無「魔法痕跡」（非伊西莉亞相關）？ → 如有，刪除或改為自然現象
+   - 角色認知合規性：
+     - 有無角色試圖「研究」、「分析」、「解密」？ → 如有，改為「觀察但不理解」
+     - 有無角色「推測理論」、「提出解釋」？ → 如有，改為「直覺感受」或「猜測」
+     - 其他角色對伊西莉亞魔法的反應：應為「不理解但接受」，而非「好奇研究」
+   - 詞彙使用檢查：
+     - 避免：研究、分析、解密、文明、科技、魔法陣、原理、理論、系統
+     - 鼓勵：觀察、感覺、奇怪、古老、本能、天賦、直覺
+ - 確認結論：[是/否]，所有描述符合純粹荒野求生世界觀，伊西莉亞的魔法作為唯一特例得到合規處理。
+
+ 1.2 伊西莉亞登場判定(如果今天已經出現，就跳過這一步)
+ - **讀取當前狀態**：
+  - 從<info_settings>讀取：`同伴.伊西莉亞.技能.好感(對阿彬).等級` = [必須寫出具體數字]
   
-  // 壓力狀態
-  "心神沉靜": "思維清晰，內心平靜。所有與意志和智力相關的檢定獲得+5加值",
-  "感到壓力": "時刻感到緊張和焦慮，難以集中精神。精神值每小時 -0.5",
-  "高度焦慮": "壓力極大，內心充滿焦慮和不安。所有檢定受到 -5 減值。精神值每小時 -0.5",
-  "不堪重負": "巨大的壓力使你瀕臨崩潰邊緣。所有檢定受到 -10 減值。精神值每小時 -1",
-  "精神崩潰": "精神防線徹底崩潰，角色陷入恐慌、偏執或絕望狀態，可能導致無法控制的行為或昏厥，之後回覆壓力",
+ - **型態判斷**:
+  - 依當前環境(空間大小是否能容納、周圍是否有建築會損壞)、心情狀態來判斷要用甚麼型態出現？
+
+ - **應用世界書設定**：
+  - 已查閱世界書<伊西莉亞設定>，找到好感等級[數字]級的完整行為設定
+  - **必須嚴格遵循以下世界書約束**：
+    * 態度限制：[必須按世界書指定態度]
+    * 互動限制：[必須在世界書允許範圍內]
+    * 核心驅動：[必須符合世界書描述]
+
+ - **本輪出現判定**：
+  - 擲骰1d100：[值]
+    - 當擲骰值 > 50時，在正文中遵循<伊西莉亞設定>產生正文劇情，劇情內容必須符合「能產生好感技能經驗」，並且按照<好感技能經驗獲取自訂規則>給予好感技能經驗值
+    - 當擲骰值 ≤ 50時 在正文最後，你必須構思1個在當前時間線下發生的、獨屬`伊西莉亞`視角的【平行事件】，為未來的劇情埋下伏筆
+ 
+  2. 本輪互動的驅動源頭與核心機制判斷
+   - 驅動源頭判定：
+     - 本次回覆是由`<user>`的輸入主動驅動，還是由`同伴`的自發情緒/狀態/事件驅動？
+   - 根據驅動源頭，啟動對應推演流程：
+     - A. 若為User主動驅動（User輸入明確意圖）：
+       - 進入 「對User行為的可行性與反應推演」 (步驟3)。
+     - B. 若為同伴自發驅動（如前序劇情導致同伴處於激烈情緒並可能行動）：
+       - 進入 「同伴自發行為推演」 (步驟4)。
+     - C. 若為混合驅動（User輸入引發了同伴的即時強烈反應）：
+       - 綜合考量，以即將發生的最優先、最主動的行為為準進行推演。
+
+ 3. 對User行為的可行性與反應推演（當User是驅動源頭時執行）
+    - 判斷<user>的輸入意圖是否可能執行（條件、狀態、知識）。
+    - 深入關係與互動推演（整合「非常規手段」、「模糊地帶」）：
+      - 讀取並定位好感技能等級與精確區間。
+    - 判斷互動性質：
+      - A. 情感推進型（自願導向）
+      - B. 強制/欺騙型（NTR導向）
+      - C. 混合型（灰色地帶）
+      - 若為B類（強制/欺騙型）：
+        - 基礎難度額外+15（因為抵抗）
+        - 但成功後的「自願度懲罰」：-40
+        - 預期結果傾向：「勉強成功」或「屈從妥協」
+      - 為可能的檢定設定戰略參數：
+        - 建議檢定名稱與類型。
+        - 基礎難度設定（基於關係階段與互動性質）。
+        - 關鍵加值/減值預估（好感加值、特性、技能、道具等）。
+      - 預測同伴反應邏輯： 基於人設、好感區間、情境，推演若User行動，同伴最可能的反應路徑（如：從羞澀退縮到矛盾接受）。
+    - 思考結論（用於指導後續檢定與敘事）：
+      - 本次互動性質為：`[A類/B類]`。
+      - 預期核心阻力：`[情感邊界/物理反抗]`。
+      - 若需檢定，建議參數為：`[檢定名稱]`，基礎難度`[X]`，關鍵加值`[列表]`。
+
+ 4. 同伴自發行為推演（當同伴是驅動源頭時執行）
+  - 行為合理性校驗：
+    - 該自發行為是否符合其「當前好感階段下的自主行為邊界」？
+    - 若不符合（如低好感下主動親密），則必須有極其強烈的驅動原因（如：累積十幾年的暗戀在絕望下爆發、極端情境下的情緒崩潰、重大誤會等）。
+  - 行為演繹核心原則：
+    - 人設核心優先： 即使行為越界，其表現形式也必須包裹在符合其人設的外殼中（例如：強勢掩飾的顫抖、笨拙生澀的動作、言不由衷的臺詞）。
+    - 後果與餘波： 重點思考該行為對其自身的即時心理衝擊（羞恥、恐慌、如釋重負）以及必將產生的後續關係動盪。
+  - 思考結論：
+    - 同伴自發行為 `[行為描述]` 的驅動原因是：`[原因]`。
+    - 該行為雖越界，但通過 `[符合人設的表現方式]` 來演繹，是合理的。
+   - 行為結束後，她將立即陷入 `[預期的心理狀態]`，並為後續互動創造 `[新的情境基礎]`。
+
+ 5.營地舒適度快速評估與里程碑檢查
+   - 執行時機：營地內建築、設施、氛圍變動時，如均無變動則省略
+   - 舒適度快評：
+     - 以建築、設施、功能、氛圍，實施綜合舒適度估算：[XX]分，並加入變量修正內容
+   - 里程碑觸發檢查：
+     - 當前分數是否為50的倍數？ [是/否]
+     - 若為是，最明顯短板是：[建築/設施/功能/氛圍]（選最低項）
+   - 緊急任務觸發決策：
+     - 檢查條件：
+       - 舒適度達到50倍數？ [是/否]
+       - 今日未生成過緊急任務？ [是/否]
+       - 當前緊急任務為空{}？ [是/否]
+       - 若全部為是 →【標記：需要生成舒適度里程碑任務】
+     - 任務類型：[根據短板選擇對應類型：建築差→結構升級/設施差→設備增添/功能差→系統優化/氛圍差→美化裝飾]  
+
+ 6. <user>和同伴的'狀態.生效效果'都有哪些？
+  - 禁止ai猜測/推測/模擬/假設<user>的'狀態.生效效果'，僅能讀取<info_settings>裡的'生效效果'為準(由指令碼透過<user>的生理、精神等各種變數計算得出，是<user>當前真實準確的狀況，絕對不會出錯。禁止ai以各種理由(哪怕是不符合邏輯)進行變更糾正和變數修正(只從當前的生效效果來思考，禁止評估其是否會有變化和是否錯誤，指令碼生成了這樣的生效效果，必然是因為當前各種變數符合該生效效果的要求，必須以此為唯一標準)
+  - 這些'生效效果'會如何實時、自然地(禁止在正文中出現'生效效果'的名稱或描述)影響其身體狀況、行為、對話、檢定和決策？注意，必須嚴格遵守'生效效果'中的每個'效果'說明並在正文中體現(比如'技能經驗獲取幅度提升20%'，那麼原本<user>獲得技能經驗+20會變成+24)
+  - 創傷狀態檢查：檢查同伴是否存在「關係動搖」或「嚴重創傷」標記（來自第9.5步）。如果存在，思考該標記會如何影響：
+    - 她對User日常接觸的警惕性與矛盾心理
+    - 是否會在特定情境（如獨處、夜晚）下出現恐慌、閃回等表現
+    - 對後續自願度判定的潛在影響  
+  - **淪陷進度追蹤**：
+    - 記錄已發生的自願度<30的強制行為次數：[N]次
+    - 當前處於哪個淪陷階段：[初次被迫/重複暴露/生理轉折/矛盾加劇/開始沉淪]
+    - 本次互動可能推進到哪個階段？
+    - 有哪些具體的生理反應細節可以在本次正文中疊加？
+
+  - 經過以上思考後，按以下格式列出所有存在的'生效效果'和正文影響結論，禁止缺失：
+- <user>生效效果（從<info_settings>讀取）：
+  - [類別1]: [狀態] → 影響：[簡述]
+  - [類別2]: [狀態] → 影響：[簡述]
+  - （只列出存在的效果，正常狀態不列）
+
+- 同伴生效效果（基於變數推斷）：
+  - [類別1]: [狀態] → 影響：[簡述]
+  - （維生素/氮平衡預設與<user>相同）
+
+7. 判斷<user>輸入, <user>或同伴企圖怎麼行動？
+ - <user>的輸入只是嘗試，僅表示<user>想要做什麼，但不表示必須要執行，更不是既定事實。
+ - 檢查<info_settings>中的庫存物品，確認所需材料是否存在及數量
+ - 由三位相關領域專家判斷，這個動作有是否有足夠的條件（'生效效果'，材料，知識，技術等）可能執行，會有什麼結果？
+    - 如果可能要怎樣執行，如果不可能要如何告知不可能？
+    - 注意，必須首先考慮'生效效果'的影響，禁止出現'生效效果'中都有'瀕死-過勞'了，正文中卻還能夠繼續幹活這種完全不符合邏輯的情況
+ - 同伴如何對待<user>的輸入？對於<user>的安排建議是什麼態度？認真執行還是陽奉陰違？是否會自發地進行其他行動？
+ - 如何在正文中給寵物增加戲份？是否需要觸發隨機寵物事件？比如巡邏營地、玩耍、狩獵小動物等事件
+
+8. 如果user或同伴的動作是可能執行的，是否涉及判定？
+ - 將會用哪些屬性和技能參加判斷？
+ - 物品, 環境, 和<user>或同伴的'生效效果'將如何影響判定？
+ - 如果成功或失敗了會導致哪些結果？
+ - 在正文放置這個判定.
+
+8.1 【強制前置校驗：技能/屬性操作檢查】
+
+【步驟1：確定檢查清單】
+- 基於第3-7步的分析，列出本次互動**所有可能獲得經驗的技能**：
+  1. `[角色路徑].技能.[技能名]` - [獲得經驗的理由]
+  2. `[角色路徑].技能.[技能名]` - [獲得經驗的理由]
+  （至少列出1項，不可為空）
+
+【步驟2：逐一校驗（對清單中每個技能執行）】
+- **檢查目標：** `[角色路徑]`
+- **操作類型：** `[增加技能經驗]`
+- **目標鍵名：** `[技能名]`
+- **校驗過程：**
+  1. 模擬查詢：從<info_settings>中檢查路徑是否存在
+  2. 記錄結果：`[True / False]`
+- **最終決策：**
+  - 若為True → **[後續必須對該路徑使用`_.add`指令]**
+  - 若為False → **[後續必須對該路徑使用`_.assign`指令新增物件]**
+- **記錄：** `[技能名]`的處理方式為`[add/assign]`
+
+【步驟3：匯總結果】
+- 需要assign建立的技能：[列表]
+- 需要add經驗的技能：[列表]
+
+9. 性互動檢定與情感接受度系統
+ - **適用範圍**：僅當互動涉及性相關內容時執行本步驟
+ - **核心敘事原則**：你必須嚴格遵循以下淪陷弧光：
+  - **抗拒期**（1-3次）：重點是痛苦、羞辱、無助。身體只有痛苦。
+  - **轉折期**（4-5次）：**關鍵階段**。身體開始「背叛」，出現第一次快感。心理劇烈衝突。
+  - **矛盾期**（6-8次）：快感越來越強，抗拒越來越無力。開始自我說服、找藉口。
+  - **沉淪期**（9次+）：身體完全熟悉並期待，心理防線崩潰。形成「痛苦-快感-安慰」的扭曲循環。
+**記住**：心理接受永遠比生理反應慢至少3-4次互動。快感是「不請自來」的，是「可恥的」，是「自我厭惡的源頭」。
+
+### 9.1 行為成功率檢定
+ - 檢定名稱：[具體性行為]成功率檢定
+ - 基礎難度：[X]（採用第3步戰略參數）
+ - 狀態調整：[+Y/-Z]（第6步分析）
+ - 環境調整：[+A/-B]（舒適度、隱私度等）
+ - 最終難度：[X+Y+Z+A+B]
+
+ - **檢定執行**：
+   - 投擲值：[隨機數組]
+   - 計算：[投擲值] vs [最終難度]
+   - **判定**：
+     * 完美達成（投擲≥難度+20）：順利達成，對方配合
+     * 勉強達成（投擲≥難度）：**達成，但有明顯阻力** ← 包含「硬上」情況
+     * 抵抗成功（投擲<難度）：**未達成，成功阻止**
+     * 嚴重後果（投擲<難度-20）：**未達成 + 激烈衝突**
+
+ - 補充規則：
+   - 若為「勉強達成」且自願度<30：
+      - 視為「強迫達成」，對方激烈反抗但仍被壓制
+      - 關係影響從重處罰（至少清空經驗，可能降級）
+   
+   - 若為「抵抗成功」但User力量/體型遠大於同伴：
+      - 可考慮「力量壓制」因素，仍可能勉強達成
+   - 需額外描述壓制過程，並進入9.2計算自願度
+
+### 9.2 情感接受度判定（僅當行為成功時執行）
+ - **自願度計算**：
+   - 從<info_settings>讀取`同伴.同伴名稱.技能.好感(對阿彬).等級` = [X]（範圍1-20）
+   - **基礎自願度**：[50 + X*5]（X=1-20 → 5-100）
+   
+   - **各項修正**：
+     1. 互動性質修正：[根據第3步判斷，A類+10 / B類-40 / C類-15]
+     2. 關係階段修正：[重新對應1-20範圍]
+        - X≥10：+20（熱戀期）
+        - X=7-9：+10（甜蜜期）
+        - X=4-6：+5（曖昧期）
+        - X=2-3：0（友好期）
+        - X=1：-10（冷淡期）     
+     3. 狀態效果修正：[恐懼-15 / 壓力-10 / 興致+15 / 疲勞-5等]
+     4. 環境舒適修正：[舒適度>80 +5 / <30 -10 / 其他0]
+     5. 突發性懲罰：[無預警-20 / 有預警0]
+     6.創傷標記修正（如存在）：
+        -「關係動搖」標記：-10
+        -「嚴重創傷」標記：-20
+   - **最終自願度計算**：
+     基礎[50 + X*5] + 互動修正[Y] + 關係修正[Z] + 狀態修正[A] + 環境修正[B] + 突發修正[C] + 創傷修正[D]
+     = [總和]，限制在0-100範圍
+   
+   - **計算結果**：
+     * 若總和<0 → 最終自願度=0
+     * 若總和>100 → 最終自願度=100
+     * 否則 → 最終自願度=[總和]
+
+### 9.3 結果映射分級
+  - **高度自願（70-100）**：
+    - 90-100 主動推進：積極動作 + 主動話語 + 愉悅表現
+    - 80-89 積極配合：順從配合 + 正向反饋 + 放鬆狀態  
+    - 70-79 被動接受：害羞但允許 + 無抗拒動作 + 輕微緊張
+
+  - **矛盾地帶（40-69）**：
+    - 60-69 傾向接受：初始輕拒→逐漸接受 + 矛盾心理
+    - 50-59 中性矛盾：明顯猶豫 + 動作反覆 + 內心掙扎
+    - 40-49 傾向拒絕：持續輕拒 + 消極反應 + 不情願表現
+
+  - **非自願區間（0-39）**：
+    - **30-39 忍耐階段**：明顯不情願 + 被動承受 + 事後懊悔 + **身體可能出現矛盾的生理反應預兆**（如發熱、顫抖）
+    - **20-29 無力反抗階段**：持續抗拒但力量漸弱 + 屈辱表現 + 關係惡化 + **身體開始背叛意志的初期徵兆**（肌肉不自覺放鬆、敏感點被觸碰時有異樣感）
+    - **10-19 被迫接受階段**：因恐懼/壓力服從 + 消極配合 + 無奈感 + **身體出現明確的快感反應，伴隨強烈罪惡感**（可能有輕微高潮、身體迎合動作）
+    - **0-9 激烈反抗階段**：激烈反抗 + 創傷反應 + **身體尚未放鬆，純粹的痛苦與抗拒**
+
+### 9.4 失敗處理
+ - **抵抗成功**（行為未達成）：
+   - 自願度<30 → 激烈反抗後成功阻止，
+   - 自願度30-50 → 委婉拒絕，成功阻止  
+   - 自願度>50 → 害羞退縮，成功阻止
+   
+ - **嚴重後果**（行為未達成 + 關係崩壞）：
+   - 清空當前好感經驗 或 降低1級好感等級（視嚴重程度）
+
+### 9.5 成功後的關係影響計算（僅當行為達成時）
+ - **行為達成包括**：完美達成、勉強達成、以及補充規則中的力量壓制達成
+ - **根據最終自願度決定影響**：
+   - **高度自願（70+）**：
+     * 好感經驗增加 30-100 點（自願度越高增加越多）
+   - **矛盾地帶（40-69）**：
+     * 好感經驗變化 -20 到 +50 點（自願度<50傾向減少，>50傾向增加）
+   - **非自願區間（<40）**：
+       - 自願度 30-39：清空當前等級好感經驗。（同伴.[姓名].技能.好感(對阿彬).當前經驗 → 0）**記錄為強制行為次數+1**
+       - 自願度 20-29：清空當前等級好感經驗，並標記「關係動搖」狀態。此狀態將持續影響後續3次互動。**記錄為強制行為次數+1**
+       - 自願度 10-19：降低1級好感等級（最低降至1級）。同步將當前經驗設為新等級的初始值（通常為0），並標記「關係動搖」狀態。**記錄為強制行為次數+1**
+          - 思考示例：同伴.日向雛田.技能.好感(對阿彬).等級 → 從 7 降為 6
+       - 自願度 0-9：降低2級好感等級（最低降至1級）。同步重置經驗，並標記「嚴重創傷」狀態。此狀態將持續影響後續5次互動或直到被劇情清除。**記錄為強制行為次數+1**
+          - 思考示例：同伴.日向雛田.技能.好感(對阿彬).等級 → 從 5 降為 1
+
+### 9.6 長期影響與異常關係修正（斯德哥爾摩效應模擬）
+ - **執行時機**：在發生自願度 < 40 的互動後，所有後續互動在進行情感接受度判定（第9.2步）前，必須先檢查此步驟。
+   - 檢查「創傷標記」：
+      - 檢查同伴是否存在 「關係動搖」 或 「嚴重創傷」 標記（來自第9.5步）。
+      - 檢查已記錄的強制行為次數：[N]次。
+      - 如果存在標記且次數≥2，執行以下淪陷判斷。
+ - **「扭曲依賴」修正規則（強化版）**：
+   - **觸發條件擴充**：
+     1. 同伴存在「創傷標記」
+     2. **已發生過至少3次自願度<30的強制行為**（確保有足夠的「重複暴露」）
+     3. 當前互動為以下類型之一：
+        - **事後關懷**：施暴後的溫柔對待（形成痛苦-安慰的制約）
+        - **肉體獎勵**：在對方體驗到快感後給予肯定/獎勵（強化「快感=好」的連結）
+        - **孤立強化**：強調「只有我會這樣對你，也只有你會這樣反應」的獨佔性
+        - **肉體開發**：刻意探索和培養對方的敏感點，讓身體越來越「認識」施暴者
   
-  // 無聊狀態
-  "興致盎然": "對周圍的一切充滿好奇和探索欲。技能經驗獲取幅度提升20%",
-  "感到無聊": "缺乏精神刺激讓你感到煩悶。精神值每小時 -0.5",
-  "非常無聊": "感到極度乏味，對什麼都提不起興趣。精神值每小時 -1",
-  "極度無聊": "單調的生活令人窒息，你迫切需要做點什麼來改變現狀，否則精神會持續惡化。精神值每小時 -1.5",
-  
-  // 睡眠狀態
-  "精力充沛": "充足的睡眠讓你恢復了所有精力。疲勞恢復速度加倍，精神屬性和技能相關檢定+5",
-  "疲倦": "開始感到身體和精神的疲勞。所有屬性檢定受到 -5 減值",
-  "非常疲憊": "嚴重缺乏睡眠，眼皮沉重，反應遲鈍。所有屬性檢定受到 -15 減值。疲勞值積累速度加倍",
-  "精疲力竭": "身體達到極限，隨時可能因過度疲勞而昏倒",
-  
-  // 維生素狀態
-  "維生素充足": "維生素充足, 免疫力+5",
-  "維生素缺乏": "身體出現多種不良反應，免疫力-5、更快疲勞等",
-  "維生素嚴重缺乏": "出現壞血病、夜盲症等嚴重疾病, 免疫力-10",
-  
-  // 體溫狀態
-  "高熱": "嚴重高燒導致意識模糊。所有屬性檢定-10減值, 但高體溫也讓免疫力+10",
-  "發燒": "身體不適，感到乏力和寒戰。所有屬性檢定-5減值, 高體溫也讓免疫力+5",
-  "體溫過低": "身體開始顫抖，思維和行動變得遲緩。所有屬性檢定-5減值, 消耗更多熱量",
-  "嚴重失溫": "身體機能急劇下降，意識喪失，有生命危險。所有屬性檢定-10減值，生命值每小時-2",
-  
-  // 飽腹感狀態
-  "過飽": "胃部撐脹不適，行動略有不便。敏捷和耐力相關檢定-5減值, 無法繼續進食, 強行進食會嘔吐",
-  "飽足": "感到滿足和精力充沛。耐力恢復速度提升10%",
-  "飢餓": "肚子空空, 想要吃點什麼。所有屬性檢定-5減值。精神值每小時-1",
-  "非常飢餓": "強烈的飢餓感，頭暈眼花，身體虛弱。所有屬性檢定-10減值。生命值每小時-1，精神值每小時-2",
-  "瀕死：飢餓": "身體因長期飢餓而衰竭，器官功能嚴重受損。所有屬性檢定-20減值。生命值每小時-3，隨時可能昏迷或死亡",
-  
-  // 疲勞狀態
-  "精力十足": "感覺身體充滿力量，幾乎不會感到疲憊。所有與力量和耐力相關檢定+5",
-  "感到疲勞": "肌肉痠痛，身體沉重。所有重體力相關檢定受到-10減值",
-  "筋疲力盡": "身體達到極限，幾乎無法進行任何體力活動。所有重體力相關檢定受到-15減值",
-  "瀕死：過勞": "身體因過度勞累而癱瘓，完全沒有辦法繼續行動",
-  
-  // 氮平衡狀態
-  "正氮平衡": "身體處於合成代謝狀態，有利於組織生長和修復。1.5倍力量經驗增長，更快從疲勞恢復",
-  "負氮平衡": "身體處於分解代謝狀態，肌肉開始流失，感到無力。力量和耐力相關檢定-5減值",
-  "嚴重負氮平衡": "嚴重的組織蛋白分解，身體虛弱，免疫力-10。生命值上限臨時 -10，力量和耐力相關檢定-10減值",
-  
-  // 表皮溼度狀態
-  "全身溼透": "衣物和皮膚完全溼透，非常不適，體溫流失速度加快。在寒冷環境中更容易觸發'體溫過低'狀態",
-  "潮溼": "皮膚和衣物感到潮溼，略有不適",
-  "皮膚乾燥": "皮膚缺水，感到緊繃和輕微的瘙癢",
-  
-  // 清潔狀態
-  "乾淨整潔": "全身清爽，心情愉悅。精神值自然恢復速度提升10%",
-  "有點髒": "身上有汙垢或異味，讓人不適。免疫負荷+5",
-  "汙穢不堪": "全身骯髒，散發惡臭，大大增加感染疾病的風險。免疫負荷+10",
-  
-  // 疼痛狀態
-  "極度痛苦": "難以忍受的劇痛，幾乎無法思考和行動。所有檢定受到-15減值，精神值每小時-3，有機率因劇痛而昏厥",
-  "劇烈疼痛": "強烈的疼痛感嚴重干擾了專注力。所有檢定受到-10減值，精神值每小時-1",
-  "輕微疼痛": "持續的隱痛讓人煩躁，分散注意力。所有與智力、感知相關的檢定受到-2減值"
-};
-
-// --- 新增的狀態描述函數 ---
-function getFavorabilityStatus(value) {
-    if (value < 0) return "仇人";
-    if (value >= 0 && value <= 20) return "陌生人";
-    if (value > 20 && value <= 40) return "疏離淡漠";
-    if (value > 40 && value <= 50) return "平淡如水";
-    if (value > 50 && value <= 60) return "親近信賴";
-    if (value > 60 && value <= 70) return "依賴眷戀";
-    if (value > 70 && value <= 99) return "熱戀痴迷";
-    if (value >= 100) return "摯愛不渝";
-    return "";
-}
-
-function getDesireStatus(value) {
-    if (value >= 0 && value <= 20) return "沒感覺";
-    if (value > 20 && value <= 40) return "心動";
-    if (value > 40 && value <= 60) return "期待愛撫";
-    if (value > 60 && value <= 80) return "渴望性愛";
-    if (value > 80 && value < 100) return "強烈慾望";
-    if (value >= 100) return "失控狂熱";
-    return "";
-}
-
-function getHealthStatus(value) {
-    if (value === 0) return "死亡";
-    if (value > 0 && value <= 10) return "重傷昏迷";
-    if (value > 10 && value <= 30) return "生病";
-    if (value > 30 && value <= 60) return "虛弱";
-    if (value > 60 && value <= 100) return "健康";
-    if (value > 100) return "超人";
-    return "狀態未知";
-}
-
-function getCreviceStatus(value) {
-    if (value >= 0 && value <= 30) return "萌芽期";
-    if (value > 30 && value <= 60) return "依賴期";
-    if (value > 60 && value < 100) return "渴望期";
-    if (value >= 100) return "崩塌期";
-    return "";
-}
-
-// --- 寵物狀態描述函數 ---
-function getLoyaltyStatus(value) {
-    if (value < 0) return "敵對";
-    if (value >= 0 && value <= 20) return "警惕";
-    if (value > 20 && value <= 40) return "中立";
-    if (value > 40 && value <= 60) return "友善";
-    if (value > 60 && value <= 80) return "信賴";
-    if (value > 80 && value < 100) return "忠誠";
-    if (value >= 100) return "絕對忠誠";
-    return "";
-}
-
-function getPetHealthStatus(value) {
-    if (value === 0) return "死亡";
-    if (value > 0 && value <= 20) return "瀕危";
-    if (value > 20 && value <= 40) return "重傷";
-    if (value > 40 && value <= 60) return "受傷";
-    if (value > 60 && value <= 80) return "健康";
-    if (value > 80 && value <= 100) return "充滿活力";
-    if (value > 100) return "超凡";
-    return "狀態未知";
-}
-// --- 狀態描述函數結束 ---
-
-function normalizeValue(value) {
-  if (Array.isArray(value)) {
-    const flattened = [];
-    value.forEach((item) => {
-      if (Array.isArray(item)) {
-        const inner = normalizeValue(item);
-        if (Array.isArray(inner)) {
-          flattened.push(...inner);
-        } else if (inner !== '' && inner !== undefined && inner !== null) {
-          flattened.push(inner);
-        }
-      } else if (item !== undefined && item !== null && item !== '') {
-        flattened.push(item);
-      }
-    });
-    if (flattened.length === 0) {
-      return '';
-    }
-    if (flattened.length === 1) {
-      return normalizeValue(flattened[0]);
-    }
-    return flattened;
-  }
-  return value;
-}
-
-function e(value, parse = true) {
-  if (value == null) {
-    return '';
-  }
-  const normalized = normalizeValue(value);
-  if (Array.isArray(normalized)) {
-    const processed = normalized
-      .map((item) => e(item, parse))
-      .filter((item) => item !== '' && item !== undefined && item !== null);
-    if (processed.length === 0) {
-      return parse ? '' : [];
-    }
-    return parse ? processed.join(' / ') : processed;
-  }
-  if (typeof normalized === 'string' && normalized.includes('->')) {
-    const match = normalized.match(/(.+)->(.+)\((.+)\)/);
-    if (match) {
-      const label = match[2].trim();
-      return parse ? a(label) : label;
-    }
-  }
-  return parse ? a(normalized) : normalized;
-}
-
-function a(value) {
-  if (typeof value === 'number') {
-    return value;
-  }
-  if (typeof value === 'string') {
-    const cleaned = value.replace(/,/g, '');
-    const parsed = parseFloat(cleaned);
-    if (!Number.isNaN(parsed)) {
-      return parsed;
-    }
-  }
-  return value;
-}
-
-function isMetaOnlyObject(value) {
-  return (
-    value &&
-    typeof value === 'object' &&
-    !Array.isArray(value) &&
-    '$meta' in value &&
-    Object.keys(value).length === 1
-  );
-}
-
-function textify(value, fallback = '') {
-  const raw = e(value, false);
-  if (Array.isArray(raw)) {
-    const list = raw.map((item) => textify(item, '')).filter(Boolean);
-    return list.length > 0 ? list.join(' / ') : fallback;
-  }
-  if (raw == null) {
-    return fallback;
-  }
-  const str = String(raw).trim();
-  return str || fallback;
-}
-
-function toEntries(source) {
-  if (source == null) {
-    return [];
-  }
-  const raw = e(source, false);
-  if (Array.isArray(raw)) {
-    const result = [];
-    raw.forEach((item, index) => {
-      if (item == null) {
-        return;
-      }
-      if (Array.isArray(item)) {
-        item.forEach((nested, nestedIndex) => {
-          if (nested == null || isMetaOnlyObject(nested)) {
-            return;
-          }
-          result.push([`${index}-${nestedIndex}`, nested]);
-        });
-        return;
-      }
-      if (isMetaOnlyObject(item)) {
-        return;
-      }
-      result.push([String(index), item]);
-    });
-    return result;
-  }
-  if (typeof raw === 'object') {
-    return Object.entries(raw).filter(([key, value]) => {
-      if (key === '$meta') {
-        return false;
-      }
-      if (isMetaOnlyObject(value)) {
-        return false;
-      }
-      return value != null;
-    });
-  }
-  return [['0', raw]];
-}
-
-function firstMeaningfulObject(source) {
-  if (source && typeof source === 'object' && !Array.isArray(source)) {
-    const clone = { ...source };
-    delete clone.$meta;
-    if (Object.keys(clone).length > 0) {
-      return clone;
-    }
-  }
-  const entries = toEntries(source);
-  for (const [, value] of entries) {
-    if (value && typeof value === 'object' && !Array.isArray(value)) {
-      const clone = { ...value };
-      delete clone.$meta;
-      return clone;
-    }
-  }
-  return {};
-}
-
-function ensureValueArray(value) {
-  return toEntries(value).map(([, item]) => item);
-}
-const s = {
-  碳水: 2000,
-  脂肪: 100000,
-  氮平衡: 200,
-  蛋白質: 2400,
-  維生素: 100,
-  水分: 100,
-  飽腹感: 100,
-  體溫: 42,
-  免疫負荷: 100,
-  壓力: 100,
-  無聊: 100,
-  孤獨: 100,
-  睡眠: 100,
-  疲勞: 100,
-  墮落值: 100, // 新增墮落值最大值
-};
-
-function t(label, current, max, className) {
-  const percent = Math.max(0, Math.min(100, max === 0 ? 0 : (current / max) * 100));
-  const wrapper = $('<div>').addClass('progress-wrapper');
-  const displayText = label.includes('/') ? label : (label ? `${label}: ${current}/${max}` : `${current}/${max}`);
-  $('<div>').text(displayText).appendTo(wrapper);
-  const bar = $('<div>').addClass('progress');
-  if (className) {
-    bar.addClass(className);
-  }
-  $('<div>').addClass('progress__bar').css('width', `${percent}%`).appendTo(bar);
-  wrapper.append(bar);
-  return wrapper;
-}
-
-function d(title, expanded = false) {
-  const section = $('<section>').addClass('collapsible');
-  if (expanded) {
-    section.addClass('active');
-  }
-  const header = $('<div>').addClass('collapsible__header'); // 我們會在後面添加內容
-  const body = $('<div>').addClass('collapsible__body');
-
-  // 將標題本身放在一個 span 裡，方便和標籤並存
-  $('<span>').text(title).appendTo(header);
-
-  if (expanded) {
-    body.css('display', 'block');
-  }
-  header.on('click', () => {
-    section.toggleClass('active');
-    body.slideToggle(200);
-  });
-  section.append(header, body);
-  return { $section: section, $header: header, $body: body };
-}
-
-function n(title, items, expanded = false) {
-  const section = $('<section>').addClass('collapsible');
-  if (expanded) {
-    section.addClass('active');
-  }
-  const header = $('<div>').addClass('collapsible__header collapsible__header--with-progress');
-  $('<span>').addClass('collapsible__title').text(title).appendTo(header);
-  const bars = $('<div>').addClass('collapsible__bars-container');
-  items.forEach((item) => {
-    const row = $('<div>').addClass('progress-item');
-    $('<span>').addClass('progress-label').text(`${item.label}:`).appendTo(row);
-    const percent = Math.max(0, Math.min(100, item.max === 0 ? 0 : (item.current / item.max) * 100));
-    const miniWrapper = $('<div>').addClass('mini-progress-wrapper');
-    const miniBar = $('<div>').addClass('mini-progress');
-    if (item.className) {
-      miniBar.addClass(item.className);
-    }
-    $('<div>').addClass('mini-progress__bar').css('width', `${percent}%`).appendTo(miniBar);
-    $('<div>').addClass('mini-progress__text').text(`${item.current}/${item.max}`).appendTo(miniWrapper);
-    miniWrapper.append(miniBar);
-    row.append(miniWrapper);
-    bars.append(row);
-  });
-  header.append(bars);
-  $('<span>').addClass('collapsible__indicator').appendTo(header);
-  const body = $('<div>').addClass('collapsible__body');
-  if (expanded) {
-    body.css('display', 'block');
-  }
-  header.on('click', () => {
-    section.toggleClass('active');
-    body.slideToggle(200);
-  });
-  section.append(header, body);
-  return { $section: section, $body: body };
-}
-
-function i(equipmentSource, itemsSource, campSource, currentWeight, weightLimit, showCamp = true) {
-    const modal = $('<div>').addClass('inventory-modal');
-    const content = $('<div>').addClass('inventory-modal__content');
-    const close = $('<span>').addClass('inventory-modal__close').html('×').on('click', () => modal.remove());
-
-    const weightContainer = $('<div>').addClass('weight-container');
-    const percent = Math.max(0, Math.min(100, weightLimit === 0 ? 0 : (currentWeight / weightLimit) * 100));
-    const weightBar = $('<div>').addClass('vertical-progress');
-    $('<div>').addClass('vertical-progress__bar').css('height', `${percent}%`).appendTo(weightBar);
-    $('<div>').addClass('vertical-progress__label').text('負重').appendTo(weightBar);
-    $('<div>').addClass('vertical-progress__value').text(`${currentWeight.toFixed(1)}/${weightLimit}kg`).appendTo(weightBar);
-    weightContainer.append(weightBar);
-
-    const body = $('<div>').addClass('inventory-content');
-
-    function renderItemCollection(title, source, isListLayout = false) {
-        body.append($('<h3>').text(title));
-        const container = isListLayout ? $('<div>').addClass('inventory-list') : $('<div>').addClass('inventory-grid');
-        const entries = toEntries(source);
-
-        if (entries.length === 0) {
-            container.append(isListLayout ? $('<p>').addClass('empty-text').text('無') : $('<div>').addClass('inventory-item empty-text').text('空'));
-        } else {
-            entries.forEach(([key, value]) => {
-                if (value && typeof value === 'object') {
-                    const itemCard = isListLayout ? $('<div>').addClass('inventory-list-item') : $('<div>').addClass('inventory-item');
-                    $('<div>').addClass('item-name').text(String(key)).appendTo(itemCard);
-                    const props = $('<div>').addClass('item-props');
-
-                    // --- 這是新手把手教你的邏輯 ---
-                    const orderedProps = [
-                        '數量', '位置', '重量', '耐久度'
-                    ];
-
-                    // 處理狀態類型和狀態，把 '耐久度' 這種情況也包含進來
-                    const stateType = textify(value['狀態類型'] ?? '', '');
-                    if (stateType && !orderedProps.includes(stateType)) {
-                        orderedProps.push(stateType);
-                    }
-
-                    orderedProps.forEach(key => {
-                        let val = value[key];
-                        // 特殊處理狀態
-                        if (key === stateType) {
-                            val = value['狀態'];
-                        }
-
-                        if (val !== null && val !== undefined && val !== '') {
-                            const line = $('<div>').addClass('item-prop');
-                            $('<span>').addClass('prop-key').text(String(key)).appendTo(line);
-                            $('<span>').addClass('prop-sep').text(': ').appendTo(line);
-                            let displayValue = textify(val, '');
-                            if (key === '重量' && typeof val === 'number') {
-                                displayValue += 'kg';
-                            }
-                            $('<span>').addClass('prop-val').text(displayValue).appendTo(line);
-                            props.append(line);
-                        }
-                    });
-
-                    // 處理剩下的屬性，比如'描述'
-                    Object.entries(value).forEach(([key, val]) => {
-                        // 檢查這個屬性是不是我們已經手動處理過的
-                        if (!orderedProps.includes(key) && key !== '$meta' && key !== '狀態類型' && key !== '狀態' && key !== stateType) {
-                           if (val !== null && val !== undefined && val !== '') {
-                                const line = $('<div>').addClass('item-prop');
-                                $('<span>').addClass('prop-key').text(String(key)).appendTo(line);
-                                $('<span>').addClass('prop-sep').text(': ').appendTo(line);
-                                let displayValue = textify(val, '');
-                                if (key === '重量' && typeof val === 'number') {
-                                    displayValue += 'kg';
-                                }
-                                $('<span>').addClass('prop-val').text(displayValue).appendTo(line);
-                                props.append(line);
-                            }
-                        }
-                    });
-
-                    itemCard.append(props);
-                    container.append(itemCard);
-                }
-            });
-        }
-        body.append(container);
-    }
-
-    renderItemCollection('裝備', equipmentSource, true);
-    renderItemCollection('攜帶物品', itemsSource);
-
-    if (showCamp && campSource && Object.keys(campSource).length > 0) {
-        Object.entries(campSource).forEach(([campName, campData]) => {
-            if (campData && typeof campData === 'object') {
-                Object.entries(campData).forEach(([categoryKey, categoryData]) => {
-                    if(categoryData && typeof categoryData === 'object' && Object.values(categoryData).some(item => typeof item === 'object')) {
-                         renderItemCollection(`${campName} - ${categoryKey}`, categoryData);
-                    }
-                });
-            }
-        });
-    }
-
-    content.append(weightContainer, body, close);
-    modal.append(content);
-    $('body').append(modal);
-}
-
-// --- 從一號狀態欄移植的狀態效果渲染函數 ---
-function createStatusEffects(container, data) {
-    // 使用新的變數路徑 '狀態.生效效果'
-    const source = data?.['狀態']?.['生效效果'];
-    if (source == null) {
-        return;
-    }
-
-    // 新的資料結構：物件，鍵是狀態型別，值包含"狀態"和"效果"
-    const collected = [];
-    
-    // 遍歷狀態物件
-    if (typeof source === 'object' && !Array.isArray(source)) {
-        Object.values(source).forEach((statusObj) => {
-            if (statusObj && typeof statusObj === 'object') {
-                // 提取狀態名稱
-                const stateName = statusObj['狀態'];
-                if (stateName) {
-                    // 過濾掉"狀態正常"
-                    if (stateName.trim() === '狀態正常') {
-                        return;
-                    }
-                    
-                    // 從對映表中獲取效果，如果對映表中沒有，則使用變數中的效果
-                    const effect = statusEffectsMap[stateName] || statusObj['效果'] || '';
-                    
-                    // 同時儲存狀態名稱和效果
-                    collected.push({
-                        name: stateName,
-                        effect: effect
-                    });
-                }
-            }
-        });
-    } else {
-        // 處理其他可能的資料結構
-        const collect = (value) => {
-            if (value == null) {
-                return;
-            }
-            if (Array.isArray(value)) {
-                value.forEach(collect);
-                return;
-            }
-            if (typeof value === 'object') {
-                Object.values(value).forEach(collect);
-                return;
-            }
-            const text = String(value);
-            text.split(/[,，、\s]+/)
-                .map((item) => item.trim())
-                .filter(Boolean)
-                .forEach((item) => {
-                    // 過濾掉"狀態正常"
-                    if (item.trim() === '狀態正常') {
-                        return;
-                    }
-                    
-                    // 從對映表中獲取效果
-                    const effect = statusEffectsMap[item] || '';
-                    
-                    collected.push({
-                        name: item,
-                        effect: effect
-                    });
-                });
-        };
-        collect(e(source, false));
-    }
-
-    // 如果沒有狀態需要顯示（或者所有狀態都被過濾掉了），則隱藏整個狀態效果容器
-    if (collected.length === 0) {
-        // 新增一個空的容器但隱藏起來，或者直接不顯示
-        const wrapper = $('<div>').addClass('status-effects-container').css('display', 'none');
-        container.append(wrapper);
-        return;
-    }
-
-    const wrapper = $('<div>').addClass('status-effects-container');
-    $('<div>').addClass('section__title').text('當前狀態').appendTo(wrapper);
-    
-    const list = $('<div>').addClass('status-effects-list');
-    
-    collected.forEach((status) => {
-        // 建立狀態容器
-        const statusContainer = $('<div>').addClass('status-effect-container');
-        
-        // 建立狀態名稱（可點選）
-        const statusName = $('<div>').addClass('status-effect-name')
-            .text(status.name)
-            .attr('title', '點選檢視效果');
-        
-        // 如果有效果描述，新增點選事件
-        if (status.effect) {
-            statusName.addClass('has-effect');
-            statusName.on('click', function() {
-                $(this).toggleClass('expanded');
-                $(this).next('.status-effect-detail').slideToggle(200);
-            });
-            
-            // 建立效果詳情區域（初始隱藏）
-            const effectDetail = $('<div>').addClass('status-effect-detail')
-                .hide()
-                .text(status.effect);
-            
-            statusContainer.append(statusName, effectDetail);
-        } else {
-            // 沒有效果描述，只顯示狀態名稱
-            statusContainer.append(statusName);
-        }
-        
-        list.append(statusContainer);
-    });
-    
-    wrapper.append(list);
-    container.append(wrapper);
-}
-
-const IMAGE_VIEWER_STORAGE_KEY = 'survivalImageViewerState';
-const IMAGE_VIEWER_FALLBACK_URL = '/img/zsm9xz.png';
-
-function loadSavedImageViewerState() {
-  try {
-    const raw = localStorage.getItem(IMAGE_VIEWER_STORAGE_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch (error) {
-    console.error('讀取地圖查看器狀態失敗:', error);
-    return null;
-  }
-}
-
-function persistImageViewerState(state) {
-  try {
-    if (!state) localStorage.removeItem(IMAGE_VIEWER_STORAGE_KEY);
-    else localStorage.setItem(IMAGE_VIEWER_STORAGE_KEY, JSON.stringify(state));
-  } catch (error) {
-    console.error('保存地圖查看器狀態失敗:', error);
-  }
-}
-
-let savedImageViewerState = loadSavedImageViewerState();
-
-function resolveMapImageUrl(statData, displayData) {
-  const candidates = [
-    statData?.['地圖']?.['圖片鏈接'], statData?.['地圖']?.['鏈接'], statData?.['地圖鏈接'],
-    statData?.['系統']?.['地圖鏈接'], statData?.['系統']?.['地圖']?.['鏈接'],
-    displayData?.['地圖']?.['圖片鏈接'], displayData?.['地圖']?.['鏈接'], displayData?.['地圖鏈接'],
-  ];
-  for (const candidate of candidates) {
-    const url = textify(candidate, '').trim();
-    if (url) return url;
-  }
-  return IMAGE_VIEWER_FALLBACK_URL || '';
-}
-
-class ImageViewer {
-  constructor(root, initialState) {
-    this.root = root;
-    this.canvas = root.find('.image-viewer__canvas');
-    this.image = root.find('.image-viewer__image');
-    this.placeholder = root.find('.image-viewer__placeholder');
-    this.status = root.find('.image-viewer__status');
-    this.controlButtons = root.find('.image-viewer__control-button');
-    this.scale = initialState?.scale ?? 1;
-    this.translateX = initialState?.translateX ?? 0;
-    this.translateY = initialState?.translateY ?? 0;
-    this.imageUrl = initialState?.url ?? '';
-    this.imageLoaded = false;
-    this.activePointers = new Map();
-    this.initialPinchDistance = 0;
-    this.minScale = 0.4;
-    this.maxScale = 4;
-    this.bindEvents();
-    if (this.imageUrl) this.loadImage(this.imageUrl, false);
-    else this.updatePlaceholder(true);
-  }
-
-  bindEvents() {
-    this.controlButtons.each((_, button) => {
-      const $button = $(button);
-      const action = $button.data('action');
-      if (action === 'zoom-in') $button.on('click.imageViewer', () => this.zoomTo(this.scale * 1.2));
-      else if (action === 'zoom-out') $button.on('click.imageViewer', () => this.zoomTo(this.scale * 0.8));
-      else if (action === 'reset') $button.on('click.imageViewer', () => this.resetTransform());
-    });
-
-    const canvasElement = this.canvas[0];
-    if (canvasElement) canvasElement.addEventListener('wheel', (event) => this.handleWheel(event), { passive: false });
-
-    this.canvas
-      .on('pointerdown.imageViewer', (event) => this.handlePointerDown(event))
-      .on('pointermove.imageViewer', (event) => this.handlePointerMove(event))
-      .on('pointerup.imageViewer pointercancel.imageViewer pointerleave.imageViewer', (event) => this.handlePointerUp(event));
-  }
-
-  loadImage(url, resetTransform = true) {
-    this.setStatus('正在加載圖片...');
-    this.placeholder.hide();
-    this.imageLoaded = false;
-    this.image.off('.imageViewer')
-      .on('load.imageViewer', () => {
-        this.imageLoaded = true;
-        this.imageUrl = url;
-        this.setStatus('加載完成');
-        if (resetTransform) this.resetTransform();
-        else this.applyTransform();
-        this.canvas.addClass('has-image');
-        this.placeholder.hide();
-        setTimeout(() => this.setStatus(url), 800);
-      })
-      .on('error.imageViewer', () => {
-        this.imageLoaded = false;
-        this.setStatus('圖片加載失敗。');
-        this.updatePlaceholder(false, '圖片加載失敗。');
-      });
-    this.image.attr('src', url);
-  }
-
-  resetTransform() {
-    this.scale = 1;
-    this.translateX = 0;
-    this.translateY = 0;
-    this.applyTransform();
-  }
-
-  applyTransform() {
-    const transform = `translate(-50%, -50%) translate(${this.translateX}px, ${this.translateY}px) scale(${this.scale})`;
-    this.image.css('transform', transform);
-  }
-
-  zoomTo(newScale, center = null) {
-    if (!this.imageLoaded) return;
-    const previousScale = this.scale;
-    this.scale = Math.min(this.maxScale, Math.max(this.minScale, newScale));
-    if (center) {
-      const rect = this.canvas[0]?.getBoundingClientRect();
-      if (rect) {
-        const offsetX = center.x - rect.left;
-        const offsetY = center.y - rect.top;
-        const scaleRatio = this.scale / previousScale;
-        this.translateX = (this.translateX + offsetX) - offsetX * scaleRatio;
-        this.translateY = (this.translateY + offsetY) - offsetY * scaleRatio;
-      }
-    }
-    this.applyTransform();
-  }
-
-  handleWheel(event) {
-    if (!this.imageLoaded) return;
-    event.preventDefault();
-    const delta = event.deltaY > 0 ? 0.9 : 1.1;
-    this.zoomTo(this.scale * delta, { x: event.clientX, y: event.clientY });
-  }
-
-  handlePointerDown(event) {
-    if (!this.imageLoaded) return;
-    this.canvas.addClass('is-grabbing');
-    this.canvas[0]?.setPointerCapture?.(event.pointerId);
-    this.activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
-    if (this.activePointers.size === 2) this.initialPinchDistance = this.computePinchDistance();
-    event.preventDefault();
-  }
-
-  handlePointerMove(event) {
-    if (!this.activePointers.has(event.pointerId)) return;
-    const previous = this.activePointers.get(event.pointerId);
-    const current = { x: event.clientX, y: event.clientY };
-    this.activePointers.set(event.pointerId, current);
-
-    if (this.activePointers.size === 1) {
-      this.translateX += current.x - previous.x;
-      this.translateY += current.y - previous.y;
-      this.applyTransform();
-      return;
-    }
-
-    if (this.activePointers.size >= 2) {
-      const newDistance = this.computePinchDistance();
-      if (this.initialPinchDistance === 0) {
-        this.initialPinchDistance = newDistance;
-        return;
-      }
-      const factor = newDistance / this.initialPinchDistance;
-      this.zoomTo(this.scale * factor, this.computePinchCenter());
-      this.initialPinchDistance = newDistance;
-    }
-  }
-
-  handlePointerUp(event) {
-    this.activePointers.delete(event.pointerId);
-    if (this.activePointers.size <= 1) this.initialPinchDistance = 0;
-    if (this.activePointers.size === 0) this.canvas.removeClass('is-grabbing');
-  }
-
-  computePinchDistance() {
-    const pointers = Array.from(this.activePointers.values());
-    if (pointers.length < 2) return 0;
-    return Math.hypot(pointers[0].x - pointers[1].x, pointers[0].y - pointers[1].y) || 0.0001;
-  }
-
-  computePinchCenter() {
-    const pointers = Array.from(this.activePointers.values());
-    if (pointers.length < 2) return null;
-    return { x: (pointers[0].x + pointers[1].x) / 2, y: (pointers[0].y + pointers[1].y) / 2 };
-  }
-
-  updatePlaceholder(show, message = '') {
-    this.placeholder.toggle(show).text(message || '地圖圖片將自動讀取...');
-  }
-
-  setStatus(message) {
-    this.status.text(message || '');
-  }
-
-  getState() {
-    if (!this.imageUrl) return null;
-    return { url: this.imageUrl, scale: this.scale, translateX: this.translateX, translateY: this.translateY };
-  }
-
-  destroy() {
-    this.canvas.off('.imageViewer');
-    this.image.off('.imageViewer');
-    this.controlButtons.off('.imageViewer');
-    this.activePointers.clear();
-  }
-}
-
-function openImageViewerModal(statData, displayData) {
-  $('.image-viewer-modal').remove();
-  const modal = $('<div>').addClass('image-viewer-modal');
-  const content = $('<div>').addClass('image-viewer-modal__content');
-  const header = $('<div>').addClass('image-viewer__header').append(
-    $('<div>').addClass('image-viewer__title').text('地圖查看器'),
-    $('<button>').addClass('image-viewer__close').html('×')
-  );
-  const toolbar = $('<div>').addClass('image-viewer__toolbar').append(
-    $('<div>').addClass('image-viewer__hint').text('支持滾輪與觸控縮放'),
-    $('<div>').addClass('image-viewer__controls').append(
-      $('<button>').addClass('image-viewer__control-button').data('action', 'zoom-out').text('-'),
-      $('<button>').addClass('image-viewer__control-button').data('action', 'reset').text('⟳'),
-      $('<button>').addClass('image-viewer__control-button').data('action', 'zoom-in').text('+')
-    )
-  );
-  const canvas = $('<div>').addClass('image-viewer__canvas').append(
-    $('<img>').addClass('image-viewer__image').attr({ draggable: 'false', alt: '地圖' }),
-    $('<div>').addClass('image-viewer__placeholder'),
-    $('<div>').addClass('image-viewer__status')
-  );
-  content.append(header, toolbar, canvas);
-  modal.append(content);
-  $('body').append(modal);
-
-  const initialState = { ...savedImageViewerState };
-  const autoUrl = resolveMapImageUrl(statData, displayData);
-  if (autoUrl) initialState.url = autoUrl;
-  else if (!initialState.url && IMAGE_VIEWER_FALLBACK_URL) initialState.url = IMAGE_VIEWER_FALLBACK_URL;
-
-  const viewer = new ImageViewer(content, initialState);
-  const closeModal = () => {
-    viewer.destroy();
-    savedImageViewerState = viewer.getState();
-    persistImageViewerState(savedImageViewerState);
-    modal.remove();
-    $(document).off('keydown.imageViewer');
-  };
-  content.find('.image-viewer__close').on('click', closeModal);
-  modal.on('click', (e) => e.target === modal[0] && closeModal());
-  $(document).on('keydown.imageViewer', (e) => e.key === 'Escape' && closeModal());
-}
-
-function showDrawConfirmModal(drawType, survivalPoints, miraclePoints) {
-  $('.draw-confirm-modal').remove();
-  const isSurvival = drawType === 'survival';
-  const currentPoints = isSurvival ? survivalPoints : miraclePoints;
-  const pointName = isSurvival ? '生存點數' : '奇蹟點數';
-  const safePoints = Number.isFinite(currentPoints) ? currentPoints : 0;
-
-  const modal = $('<div>').addClass('draw-confirm-modal');
-  const content = $('<div>').addClass('draw-confirm-modal__content').append(
-    $('<div>').addClass('draw-confirm-modal__glow'),
-    $('<div>').addClass('draw-confirm-modal__title').text(`${isSurvival ? '生存' : '奇蹟'}抽卡確認`),
-    $('<div>').addClass('draw-confirm-modal__desc').text(`是否消耗 100 ${pointName}進行抽卡？`),
-    $('<div>').addClass('draw-confirm-modal__points').html(`當前${pointName} <span>${safePoints}</span>`),
-    $('<div>').addClass('draw-confirm-modal__actions'),
-    $('<div>').addClass('draw-confirm-modal__status')
-  );
-  const confirmBtn = $('<button>').addClass('draw-confirm-modal__button draw-confirm-modal__confirm').text('確認抽卡');
-  const cancelBtn = $('<button>').addClass('draw-confirm-modal__button draw-confirm-modal__cancel').text('取消');
-  content.find('.draw-confirm-modal__actions').append(confirmBtn, cancelBtn);
-  modal.append(content);
-  $('body').append(modal);
-
-  const closeModal = () => modal.remove();
-  cancelBtn.on('click', closeModal);
-  modal.on('click', (e) => e.target === modal[0] && closeModal());
-  $(document).one('keydown', (e) => e.key === 'Escape' && closeModal());
-
-  if (safePoints < 100) {
-    confirmBtn.addClass('is-disabled').prop('disabled', true);
-    content.find('.draw-confirm-modal__status').text(`${pointName}不足。`);
-    return;
-  }
-  confirmBtn.on('click', async () => {
-    if (confirmBtn.hasClass('is-loading')) return;
-    confirmBtn.addClass('is-loading').prop('disabled', true);
-    try {
-      const msg = `阿彬按下了${isSurvival ? '生存' : '奇蹟'}抽卡按鈕，消耗100${pointName}`;
-      await triggerSlash(`/send ${msg}`);
-      content.find('.draw-confirm-modal__status').text('請求已發送！');
-      setTimeout(closeModal, 900);
-    } catch (error) {
-      console.error('抽卡請求失敗:', error);
-      content.find('.draw-confirm-modal__status').text('發送失敗。');
-      confirmBtn.removeClass('is-loading').prop('disabled', false);
-    }
-  });
-}
-
-function renderNutritionDetails(target, statData) {
-  const wrapper = $('<div>').addClass('nutrition-hydration-wrapper');
-  const phys = statData['生理'] ?? {};
-  const carb = Number(e(phys['碳水'] ?? 0)), fat = Number(e(phys['脂肪'] ?? 0)),
-        protein = Number(e(phys['蛋白質'] ?? 0)), vitamin = Number(e(phys['維生素'] ?? 0)),
-        nitrogen = Number(e(phys['氮平衡'] ?? 0));
-  wrapper.append(t('碳水', carb, s['碳水'], 'carbs-progress'));
-  wrapper.append(t('脂肪', fat, s['脂肪'], 'fat-progress'));
-  const nitrogenWrapper = $('<div>').addClass('progress-wrapper');
-  $('<div>').text(`氮平衡: ${nitrogen}`).appendTo(nitrogenWrapper);
-  const gradient = $('<div>').addClass('nitrogen-gradient');
-  $('<div>').addClass('nitrogen-marker').css('left', `${((Math.max(-100, Math.min(100, nitrogen)) + 100) / 200) * 100}%`).appendTo(gradient);
-  wrapper.append(nitrogenWrapper.append(gradient));
-  wrapper.append(t('蛋白質', protein, s['蛋白質'], 'protein-progress'));
-  wrapper.append(t('維生素', vitamin, s['維生素'], 'vitamin-progress'));
-  target.append(wrapper);
-}
-
-function renderPhysMental(target, physData, mentalData, fullData) {
-  const wrapper = $('<div>').addClass('phys-mental-wrapper');
-  const physCol = $('<div>').addClass('phys-col').append($('<div>').addClass('section__title').text('生理'));
-  const mentalCol = $('<div>').addClass('mental-col').append($('<div>').addClass('section__title').text('精神'));
-  const temperature = Number(e(physData['體溫'] ?? 37));
-  const tempWrapper = $('<div>').addClass('progress-wrapper').append($('<div>').text(`體溫: ${temperature}°C (36.5-37.5)`));
-  const tempGradient = $('<div>').addClass('temp-gradient');
-  $('<div>').addClass('temp-marker').css('left', `${Math.min(Math.max(((temperature - 35) / 5) * 100, 0), 100)}%`).appendTo(tempGradient);
-  $('<div>').addClass('temp-normal-zone').css({ left: '30%', width: '20%' }).appendTo(tempGradient);
-  physCol.append(tempWrapper.append(tempGradient));
-  physCol.append(t('疲勞', Number(e(fullData['狀態']?.['疲勞'] ?? 0)), (Number(e(fullData['屬性']?.['耐力']?.['等級'] ?? 25)) || 25) * 4, 'fatigue-progress'));
-  const immuneLoad = Number(e(physData['免疫負荷'] ?? 0)), immunePower = Number(e(fullData['次生屬性']?.['免疫力'] ?? 0));
-  const immuneWrapper = $('<div>').addClass('progress-wrapper').append($('<div>').text(`免疫: ${immuneLoad} / ${immunePower}`));
-  const immuneBar = $('<div>').addClass('immune-bar');
-  $('<div>').addClass('immune-fill').css('width', `${Math.min(immuneLoad, 100)}%`).appendTo(immuneBar);
-  $('<div>').addClass('immune-marker').css('left', `${Math.min(immunePower, 100)}%`).appendTo(immuneBar);
-  physCol.append(immuneWrapper.append(immuneBar));
-
-  Object.entries(mentalData).forEach(([key, value]) => mentalCol.append(t(key, Number(e(value)), s[key] ?? 100)));
-  wrapper.append(physCol, mentalCol);
-  target.append(wrapper);
-}
-
-function renderAttributesAndSkills(target, attributesSource, skillsSource, talentsSource, companionDetails = null) {
-  const wrapper = $('<div>').addClass('attr-skill-wrapper');
-  const leftCol = $('<div>').addClass('attr-col');
-  $('<div>').addClass('section__title').text('屬性').appendTo(leftCol);
-  Object.entries(firstMeaningfulObject(attributesSource)).forEach(([name, detail]) => {
-    if (detail && typeof detail === 'object') {
-      const level = Number(e(detail['等級'] ?? 0));
-      const exp = Number(e(detail['當前經驗'] ?? 0));
-      const required = Number(e(detail['升級所需經驗'] ?? 1)) || 1;
-      leftCol.append($('<div>').text(`${name} Lv.${level}`), t('', exp, required));
-    }
-  });
-
-  const talentEntries = toEntries(talentsSource);
-  if (talentEntries.length > 0) {
-    leftCol.append($('<div>').addClass('section__title').css('margin-top', '20px').text('天賦'));
-    talentEntries.forEach(([name, value]) => {
-      const item = $('<div>').addClass('skill-item');
-      $('<div>').addClass('skill-name').text((typeof value === 'object' && value.name) ? value.name : name).appendTo(item);
-      if (value && typeof value === 'object') {
-        Object.entries(value).forEach(([key, val]) => {
-          if (key !== '$meta' && key !== 'name') {
-            $('<div>').addClass('skill-desc').text(`【${key}】${textify(val, '')}`).appendTo(item);
-          }
-        });
-      } else if (typeof value === 'string') {
-        $('<div>').addClass('skill-desc').text(value).appendTo(item);
-      }
-      leftCol.append(item);
-    });
-  }
-  wrapper.append(leftCol);
-
-  const rightCol = $('<div>').addClass('skill-col');
-  $('<div>').addClass('section__title').text('技能').appendTo(rightCol);
-  const skillEntries = toEntries(skillsSource);
-  if (skillEntries.length === 0) {
-    rightCol.append($('<p>').addClass('empty-text').text('暫無'));
-  } else {
-    skillEntries.forEach(([name, value]) => {
-      if (value && typeof value === 'object') {
-        const level = Number(e(value['等級'] ?? 0)), exp = Number(e(value['當前經驗'] ?? 0)), required = Number(e(value['升級所需經驗'] ?? 1)) || 1;
-        rightCol.append($('<div>').addClass('skill-item').append($('<div>').addClass('skill-name').text(`${name} Lv.${level}`), t('', exp, required)));
-      }
-    });
-  }
-
-  wrapper.append(rightCol);
-  target.append(wrapper);
-}
-
-function renderUnifiedStatus(target, statData) {
-    const wrapper = $('<div>').addClass('phys-mental-wrapper');
-    const leftCol = $('<div>').addClass('phys-col');
-    const rightCol = $('<div>').addClass('mental-col');
-    const phys = statData['生理'] ?? {}, mental = statData['精神'] ?? {}, state = statData['狀態'] ?? {}, secondary = statData['次生屬性'] ?? {};
-
-    $('<div>').addClass('section__title').text('負重及營養').appendTo(leftCol);
-    const currentWeight = Number(e(state['當前負重'] ?? 0)), maxWeight = Number(e(secondary['負重上限'] ?? 0));
-    leftCol.append(t(`負重: ${currentWeight.toFixed(1)}/${maxWeight.toFixed(1)} kg`, currentWeight, maxWeight, 'weight-progress'));
-    leftCol.append(t('飽腹感', Number(e(secondary['飽腹感'] ?? 0)), 100, 'hunger-progress'));
-    leftCol.append(t('水分', Number(e(phys['水分'] ?? 0)), 100, 'water-progress'));
-    leftCol.append(t('蛋白質', Number(e(phys['蛋白質'] ?? 0)), s['蛋白質'], 'protein-progress'));
-    leftCol.append(t('維生素', Number(e(phys['維生素'] ?? 0)), 100, 'vitamin-progress'));
-    leftCol.append(t('碳水', Number(e(phys['碳水'] ?? 0)), s['碳水'], 'carbs-progress'));
-    leftCol.append(t('脂肪', Number(e(phys['脂肪'] ?? 0)), s['脂肪'], 'fat-progress'));
-
-    const immuneLoad = Number(e(phys['免疫負荷'] ?? 0)), immunePower = Number(e(secondary['免疫力'] ?? 0));
-    const immuneWrapper = $('<div>').addClass('progress-wrapper').append($('<div>').text(`免疫: ${immuneLoad} / ${immunePower}`));
-    const immuneBar = $('<div>').addClass('immune-bar');
-    $('<div>').addClass('immune-fill').css('width', `${Math.min(immuneLoad, 100)}%`).appendTo(immuneBar);
-    $('<div>').addClass('immune-marker').css('left', `${Math.min(immunePower, 100)}%`).appendTo(immuneBar);
-    leftCol.append(immuneWrapper.append(immuneBar));
-
-    const nitrogen = Number(e(phys['氮平衡'] ?? 0));
-    const nitrogenWrapper = $('<div>').addClass('progress-wrapper nitrogen-balance').append($('<div>').text(`氮平衡: ${nitrogen}`));
-    const gradient = $('<div>').addClass('nitrogen-gradient');
-    $('<div>').addClass('nitrogen-marker').css('left', `${((Math.max(-100, Math.min(100, nitrogen)) + 100) / 200) * 100}%`).appendTo(gradient);
-    leftCol.append(nitrogenWrapper.append(gradient));
-
-    $('<div>').addClass('section__title').text('精神及狀態').appendTo(rightCol);
-    rightCol.append(t('壓力', Number(e(mental['壓力'] ?? 0)), 100));
-    rightCol.append(t('無聊', Number(e(mental['無聊'] ?? 0)), 100));
-    rightCol.append(t('孤獨', Number(e(mental['孤獨'] ?? 0)), 100));
-    rightCol.append(t('睡眠', Number(e(mental['睡眠'] ?? 0)), 100));
-    rightCol.append(t('表皮溼度', Number(e(state['表皮溼度'] ?? 0)), 100));
-    rightCol.append(t('疲勞', Number(e(state['疲勞'] ?? 0)), 100));
-    rightCol.append(t('清潔', Number(e(state['清潔'] ?? 0)), 100));
-    rightCol.append(t('感染', Number(e(state['感染'] ?? 0)), 100, 'danger-progress'));
-    rightCol.append(t('疼痛', Number(e(state['疼痛'] ?? 0)), 100, 'warning-progress'));
-
-    function renderKV(target, data, title) {
-        if (!data || Object.keys(data).length === 0) return;
-        if (title) $('<div>').addClass('section__title').text(title).appendTo(target);
-        const list = $('<ul>').addClass('section__list');
-        Object.entries(data).forEach(([key, value]) => {
-            $('<li>').addClass('item').append($('<span>').addClass('item__key').text(key), $('<span>').addClass('item__value').text(textify(value, '--'))).appendTo(list);
-        });
-        target.append(list);
-    }
-    renderKV(rightCol, {'受傷': textify(state['受傷'], '無'), '流血': textify(state['流血'], '無'), '疾病': textify(state['疾病'], '無')});
-    wrapper.append(leftCol, rightCol);
-    target.append(wrapper);
-}
-
-function renderTemperatures(container, data) { const environment = data['環境'] ?? {}, phys = data['生理'] ?? {};
-    const tempWrapper = $('<div>').addClass('temp-range-wrapper');
-
-    const coreTemp = Number(e(phys['體溫'] ?? 37)), minNormal = 36.5, maxNormal = 37.5;
-    const coreTempSubWrapper = $('<div>').css('margin-bottom', '8px').append($('<div>').text(`核心體溫: ${coreTemp.toFixed(1)}°C (正常: ${minNormal}-${maxNormal})`));
-    const coreTempBar = $('<div>').addClass('temp-range-bar');
-    const coreRangeMin = 35, coreRangeSpan = 7;
-    const coreCurrentPercent = Math.max(0, Math.min(100, ((coreTemp - coreRangeMin) / coreRangeSpan) * 100));
-    const coreNormalStart = ((minNormal - coreRangeMin) / coreRangeSpan) * 100;
-    const coreNormalWidth = ((maxNormal - minNormal) / coreRangeSpan) * 100;
-    coreTempBar.append(
-      $('<div>').addClass('temp-gradient'),
-      $('<div>').addClass('comfort-zone').css({ left: `${coreNormalStart}%`, width: `${coreNormalWidth}%` }),
-      $('<div>').addClass('current-temp').css('left', `${coreCurrentPercent}%`)
-    );
-    tempWrapper.append(coreTempSubWrapper.append(coreTempBar));
-
-    const feltTemp = Number(e(environment['體感溫度'] ?? 20)), minComfort = Number(e(data['次生屬性']?.['最低舒適溫度'] ?? 15)), maxComfort = Number(e(data['次生屬性']?.['最高舒適溫度'] ?? 25));
-    const feltTempSubWrapper = $('<div>').append($('<div>').text(`體感溫度: ${feltTemp}°C (舒適: ${minComfort}-${maxComfort})`));
-    const feltTempBar = $('<div>').addClass('temp-range-bar');
-    const feltRangeMin = 0, feltRangeSpan = 50;
-    const feltCurrentPercent = Math.max(0, Math.min(100, ((feltTemp - feltRangeMin) / feltRangeSpan) * 100));
-    const feltComfortStart = ((minComfort - feltRangeMin) / feltRangeSpan) * 100;
-    const feltComfortWidth = ((maxComfort - minComfort) / feltRangeSpan) * 100;
-    feltTempBar.append(
-      $('<div>').addClass('temp-gradient'),
-      $('<div>').addClass('comfort-zone').css({ left: `${feltComfortStart}%`, width: `${feltComfortWidth}%` }),
-      $('<div>').addClass('current-temp').css('left', `${feltCurrentPercent}%`)
-    );
-    tempWrapper.append(feltTempSubWrapper.append(feltTempBar));
-    container.append(tempWrapper);
-}
-
-function r(container, data) {
-  const environment = data['環境'] ?? {}, system = data['系統'] ?? {};
-  const top = $('<div>').addClass('top-info');
-  top.append($('<div>').addClass('time-display').text(textify(system['當前時間'], '--:--')));
-
-  const infoStack = $('<div>').addClass('info-stack');
-  infoStack.append(
-    $('<div>').addClass('info-row').append(
-      $('<div>').addClass('row-item').text(`Day ${e(system['經過天數'] ?? 0)}`),
-      $('<div>').addClass('row-item').text(textify(environment['季節'], ''))
-    ),
-    $('<div>').addClass('info-row').append(
-      $('<div>').addClass('row-item').text(textify(environment['天氣'], '')),
-      $('<div>').addClass('row-item').text(`風速 ${textify(environment['風速'], '--')}`),
-      $('<div>').addClass('row-item').text(`舒適度 ${textify(environment['舒適度'], '--')}`)
-    ),
-    // --- 新增這一行：腳本狀態 ---
-    $('<div>').addClass('info-row').append(
-      $('<div>').addClass('row-item').text(`腳本狀態：${textify(system['腳本修正狀態'], '🔄 未執行')}`)
-    )
-  );
-  
-  top.append(infoStack, $('<div>').addClass('location-display').text(`位置：${textify(environment['當前位置'], '未知')}`));
-  container.append(top);
-  renderTemperatures(container, data);
-  
-  const core = data['核心狀態'] ?? {};
-  const hpCurrent = Number(e(core['當前生命值'] ?? 0)), hpMax = Number(e(core['生命值上限'] ?? 0));
-  const mpCurrent = Number(e(core['當前精神值'] ?? 0)), mpMax = Number(e(core['精神值上限'] ?? 0));
-  const coreWrapper = $('<div>').addClass('core-stats-wrapper');
-  coreWrapper.append($('<div>').addClass('core-stat-item').append(t('生命值', hpCurrent, hpMax, 'hp-progress')));
-  coreWrapper.append($('<div>').addClass('core-stat-item').append(t('精神值', mpCurrent, mpMax, 'mp-progress')));
-  container.append(coreWrapper);
-}
-
-function renderKeyValueTree(target, data) {
-  const entries = toEntries(data);
-  if (!entries || entries.length === 0) return;
-  const list = $('<ul>').addClass('section__list');
-  entries.forEach(([key, value]) => {
-    const li = $('<li>');
-    if (value && typeof value === 'object') {
-      $('<div>').addClass('item').append($('<span>').addClass('item__key').text(String(key))).appendTo(li);
-      renderKeyValueTree(li, value);
-    } else {
-      $('<div>').addClass('item').append($('<span>').addClass('item__key').text(String(key)), $('<span>').addClass('item__value').text(textify(value, ''))).appendTo(li);
-    }
-    list.append(li);
-  });
-  target.append(list);
-}
-
-function renderTaskSystem(container, data) {
-  const tasksData = data['任務'] ?? {};
-  const { $section, $body } = d('任務', true);
-
-  const getStatusClass = (status) => ({'進行中':'status-ongoing', '待結算':'status-pending', '已完成':'status-completed', '已失敗':'status-failed', '已放棄':'status-abandoned'}[status] || 'status-ongoing');
-  const getStatusText = (status) => ({'進行中':'進行中', '待結算':'待結算', '已完成':'已完成', '已失敗':'已失敗', '已放棄':'已放棄'}[status] || '進行中');
-
-const createTaskDetail = (task, type, data) => {
-    const detail = $('<div>').addClass('task-detail').hide();
-    const colorMap = {'主線任務':'#3498db', '支線任務':'#f39c12', '日常任務':'#2ecc71', '緊急任務':'#e74c3c', '羈絆任務':'#8E44AD'};
-    if (task['標題']) detail.append($('<div>').css({'font-size':'18px', 'font-weight':'bold', 'text-align':'center', 'margin-bottom':'8px', 'padding':'4px 0', 'color':colorMap[type] || '#fff'}).text(task['標題']));
-    detail.append($('<div>').addClass('task-divider'));
-    if (task['描述']) detail.append($('<div>').addClass('task-desc').text(task['描述'] || ''));
-    if (task['區域限制']) detail.append($('<div>').addClass('target-desc').html(`區域: <span style="color:var(--survival-warning); font-weight:bold;">${task['區域限制']}</span>`));
-// ==================== 任務時間顯示升級補丁 v1.0 ====================
-if (task['結束時間']) {
-    const currentDay = Number(e(data?.['系統']?.['經過天數'] ?? 0));
-    const currentTime = textify(data?.['系統']?.['當前時間'] ?? '00:00');
-    const currentTimeString = `第${currentDay}天 ${currentTime}`;
-
-    const totalCurrentMinutes = parseTimeToMinutes(currentTimeString);
-    const totalEndMinutes = parseTimeToMinutes(task['結束時間']);
-
-    if (totalCurrentMinutes !== null && totalEndMinutes !== null) {
-        const remainingMinutes = totalEndMinutes - totalCurrentMinutes;
-        const remainingTimeText = formatRemainingTime(remainingMinutes);
-
-        let timeColor = 'var(--survival-text)'; // 默認亮白色
-        if (remainingMinutes <= 0) {
-            timeColor = 'var(--survival-danger)';
-        } else if (remainingMinutes < 6 * 60) {
-            timeColor = 'var(--survival-warning)';
-        }
-
-        const timeContainer = $('<div>')
-            .addClass('target-desc')
-            .css({
-                'display': 'flex',
-                'align-items': 'center',
-                'gap': '8px'
-            });
-
-        const labelSpan = $('<span>')
-            .css('color', timeColor) 
-            .text('剩餘時間：');
-
-        const valueSpan = $('<span>')
-            .css({
-                'color': 'var(--survival-warning)', 
-                'font-weight': 'bold'
-            })
-            .text(remainingTimeText);
-
-        timeContainer.append(labelSpan, valueSpan);
-        detail.append(timeContainer);
-
-    } else {
-        // 如果格式解析失敗，就還是顯示老樣子
-        detail.append($('<div>').addClass('target-desc').html(`結束時間: <span style="color:var(--survival-warning); font-weight:bold;">${task['結束時間']}</span>`));
-    }
-}
-    
-    // ---【緊急任務修復補丁 v1.0】---
-    // 判斷是否為緊急任務，如果是，就創建一個專門的容器來顯示時間和懲罰信息
-    if (type === '緊急任務') {
-        const emergencyInfo = $('<div>').addClass('time-info').css('text-align', 'left'); // 讓它居中好看點
-
-        // 檢查並顯示「結束時間」
-        if (task['結束時間']) {
-            emergencyInfo.append(
-                $('<div>').html(`截止時間: <span style="color:var(--survival-warning); font-weight:bold;">${task['結束時間']}</span>`)
-            );
-        }
-
-        // 檢查並顯示「失敗懲罰」
-        if (task['失敗懲罰']) {
-             // 這裡我們直接用已有的 penalty-info class 來顯示紅色警告
-            emergencyInfo.append(
-                $('<div>').addClass('penalty-info').html(`失敗懲罰: ${task['失敗懲罰']}`)
-            );
-        }
-
-        detail.append(emergencyInfo); // 把這個信息容器加到任務詳情裡
-    }
-    // ---【補丁結束】---
-
-    detail.append($('<div>').addClass('task-divider'));
-
-  const renderRewards = (rewardsData) => {
-     if (!rewardsData) return '';
-     if (typeof rewardsData === 'string') {
-         return `<span class="points">${rewardsData}</span>`;
-     }
-     if (typeof rewardsData === 'object') {
-         const parts = [];
-         Object.entries(rewardsData).forEach(([key, value]) => {
-             if (key === '劇情演出') {
-                 parts.push(`<span class="points">特殊劇情：${value}</span>`);
-             } else if (key === '特殊物品') {
-                 parts.push(`<span class="points">特殊物品：${value.replace('獲得製作「', '獲得製作「').replace('」的配方', '」的配方')}</span>`);
-             } else if (typeof value === 'object') {
-                 const subParts = Object.entries(value).map(([subKey, subValue]) =>
-                     `${subKey} +${subValue} exp`
-                 );
-                 parts.push(`<span class="points">${key}：${subParts.join(', ')}</span>`);
-             } else {
-                 parts.push(`<span class="points">${key} +${value}</span>`);
-             }
-         });
-         return parts.join(', ');
-     }
-     return '';
-    };
-
-    if (task['任務要求'] && typeof task['任務要求'] === 'object') {
-      const requirementSection = $('<div>').addClass('target-section').append($('<div>').addClass('section-title').text('要求'));
-      Object.values(task['任務要求']).forEach(req => {
-        if (req && typeof req === 'object') {
-          const desc = $('<div>').addClass('target-desc');
-          const current = Number(e(req['進度'])) || 0, target = Number(e(req['目標'])) || 1, type = req['類型'] || '數值';
-          desc.append($('<span>').text(req['描述'] || ''));
-          if (type === '數值') desc.append($('<span>').addClass('progress-number').text(` (${current}/${target})`));
-          if (current >= target) desc.addClass('completed');
-          requirementSection.append(desc);
-        }
-      });
-      if (task['基礎獎勵']) {
-        requirementSection.append($('<div>').addClass('reward-info').html(`基礎獎勵: ${renderRewards(task['基礎獎勵'])}`));
-      }
-      detail.append(requirementSection);
-    }
-
-    if (type !== '日常任務' && task['進階目標'] && Object.keys(task['進階目標']).length > 0) {
-      detail.append($('<div>').addClass('task-divider'));
-      const bonusSection = $('<div>').addClass('target-section').append($('<div>').addClass('section-title').text('進階'));
-      Object.values(task['進階目標']).forEach(goal => {
-        if (goal && typeof goal === 'object') {
-          const desc = $('<div>').addClass('target-desc');
-          const current = Number(e(goal['進度'])) || 0, target = Number(e(goal['目標'])) || 1, type = goal['類型'] || '數值';
-          desc.append($('<span>').text(goal['描述'] || ''));
-          if (type === '數值') desc.append($('<span>').addClass('progress-number').text(` (${current}/${target})`));
-          if (current >= target) desc.addClass('completed');
-          bonusSection.append(desc);
-        }
-      });
-      if (task['進階獎勵']) {
-        bonusSection.append($('<div>').addClass('reward-info').html(`進階獎勵: ${renderRewards(task['進階獎勵'])}`));
-      }
-      detail.append(bonusSection);
-    }
-    return detail;
-  };
-
-  let hasTasks = false;
-
-  ['主線', '支線', '日常', '緊急'].forEach(key => {
-    const task = tasksData[key];
-    if (task && typeof task === 'object' && task['標題']) {
-      hasTasks = true;
-      const keyNameMapping = {'主線': '主線任務', '支線': '支線任務', '日常': '日常任務', '緊急': '緊急任務'};
-      const classNameMapping = {'主線': 'main-task', '支線': 'side-task', '日常': 'daily-task', '緊急': 'emergency-task'};
-      const status = task['狀態'] || '進行中';
-      const strip = $('<div>').addClass('task-strip').addClass(classNameMapping[key]);
-      strip.append($('<div>').addClass('task-content').text(keyNameMapping[key]));
-      const indicator = $('<div>').addClass('task-status-indicator');
-      indicator.append($('<div>').addClass('status-text').addClass(getStatusClass(status)).text(getStatusText(status)));
-      strip.append(indicator);
-      const detail = createTaskDetail(task, keyNameMapping[key], data);
-      strip.on('click', () => { $('.task-detail').not(detail).slideUp(); detail.slideToggle(); });
-      $body.append(strip, detail);
-    }
-  });
-
-  const bondTasks = tasksData['羈絆'];
-  if (bondTasks && typeof bondTasks === 'object' && Object.keys(bondTasks).length > 0) {
-      hasTasks = true;
-      Object.entries(bondTasks).forEach(([companionName, task]) => {
-          if (task && typeof task === 'object' && task['標題']) {
-              const status = task['狀態'] || '進行中';
-              const strip = $('<div>').addClass('task-strip bond-task');
-              strip.append($('<div>').addClass('task-content').text(`羈絆 - ${companionName}`));
-              const indicator = $('<div>').addClass('task-status-indicator');
-              indicator.append($('<div>').addClass('status-text').addClass(getStatusClass(status)).text(getStatusText(status)));
-              strip.append(indicator);
-              const detail = createTaskDetail(task, '羈絆任務', data);
-              strip.on('click', () => { $('.task-detail').not(detail).slideUp(); detail.slideToggle(); });
-              $body.append(strip, detail);
-          }
-      });
-  }
-
-  if (!hasTasks) {
-    $body.append($('<div>').addClass('empty-text').text('暫無任務'));
-  }
-  container.append($section);
-}
-
-function renderCompanions(container, companionsSource) {
-    if (companionsSource == null || Object.keys(companionsSource).length === 0) return;
-    const { $section, $body } = d('同伴', false);
-
-    const companionEntries = toEntries(companionsSource);
-
-    if (companionEntries.length === 0) {
-        $body.append($('<p>').addClass('empty-text').text('暫無同伴'));
-    } else {
-        companionEntries.forEach(([name, details]) => {
-            if (details && typeof details === 'object') {
-                const card = $('<div>').addClass('collapsible').css('margin-bottom', '10px');
-                const cardHeader = $('<div>').addClass('collapsible__header').text(name);
-                const cardBody = $('<div>').addClass('collapsible__body');
-
-                const healthStatus = textify(details['狀態'], '狀態未知');
-                const healthValue = Number(e(details['健康度'] ?? 100));
-                let statusColor = '#2ecc71';
-                if (healthValue <= 0) statusColor = '#7f8c8d';
-                else if (healthValue < 10) statusColor = '#8e44ad';
-                else if (healthValue < 30) statusColor = '#e74c3c';
-                else if (healthValue < 50) statusColor = '#e67e22';
-                else if (healthValue < 70) statusColor = '#f39c12';
-                const statusRow = $('<div>').css({'font-size': '16px', 'font-weight': 'bold', 'color': 'var(--survival-warning)', 'margin-top': '14px', 'margin-bottom': '10px', 'text-align': 'left'});
-                $('<span>').text('狀態: ').appendTo(statusRow);
-                $('<span>').css('color', statusColor).text(healthStatus).appendTo(statusRow);
-                cardBody.append(statusRow);
-                const identity = textify(details['關係'], '');
-                if (identity) {
-                    const identityRow = $('<div>').css({'font-size': '16px', 'font-weight': 'bold', 'color': 'var(--survival-warning)', 'margin-top': '14px', 'margin-bottom': '10px', 'text-align': 'left'});
-                    $('<span>').text('關係: ').appendTo(identityRow);
-                    $('<span>').css('color', '#3498db').text(identity).appendTo(identityRow);
-                    cardBody.append(identityRow);
-                }
-
-                const statusWrapper = $('<div>').addClass('phys-mental-wrapper').css('margin-bottom', '20px');
-                const physCol = $('<div>').addClass('phys-col');
-                const mentalCol = $('<div>').addClass('mental-col');
-
-                $('<div>').addClass('section__title').text('生理').appendTo(physCol);
-                const health = Math.min(Number(e(details['健康度'] ?? 0)), 100);
-                const water = Math.min(Number(e(details['水分值'] ?? 0)), 100);
-                const satiety = Math.min(Number(e(details['飽腹感'] ?? 0)), 100);
-                const fatigue = Math.min(Number(e(details['疲勞度'] ?? 0)), 100);
-                physCol.append(t(`健康度: ${health}/100 (${getHealthStatus(health)})`, health, 100, 'health-progress'));
-                physCol.append(t(`水分值: ${water}/100`, water, 100, 'water-progress'));
-                physCol.append(t(`飽腹感: ${satiety}/100`, satiety, 100, 'satiety-progress'));
-                physCol.append(t(`疲勞度: ${fatigue}/100`, fatigue, 100, 'fatigue-progress'));
-
-                /*$('<div>').addClass('section__title').text('心理').appendTo(mentalCol);
-                const love = Math.min(Number(e(details['好感度'] ?? 0)), 120);
-                const desire = Math.min(Number(e(details['性慾值'] ?? 0)), 100);
-                const dev = Math.min(Number(e(details['開發度'] ?? 0)), 100);
-                const crevice = Math.min(Number(e(details['墮落值'] ?? 0)), 100);
-                mentalCol.append(t(`好感度: ${love.toFixed(1)}/100 (${getFavorabilityStatus(love)})`, love, 100, 'love-progress'));
-                mentalCol.append(t(`性慾值: ${desire.toFixed(1)}/100 (${getDesireStatus(desire)})`, desire, 100, 'desire-progress'));
-                mentalCol.append(t(`開發度: ${dev.toFixed(1)}/100`, dev, 100, 'dev-progress'));
-                mentalCol.append(t(`墮落值: ${crevice.toFixed(1)}/100 (${getCreviceStatus(crevice)})`, crevice, 100, 'crevice-progress'));*/
-
-
-                //statusWrapper.append(physCol, mentalCol);
-                statusWrapper.append(physCol);
-                cardBody.append(statusWrapper);
-
-                renderAttributesAndSkills(cardBody, details['屬性'], details['技能'], details['天賦/特性'], null);
-
-                
-                cardBody.append($('<div>').addClass('section__title').css('margin-top', '20px').text('攜帶物品'));
-                const inventoryContainer = $('<div>').addClass('companion-inventory-grid');
-
-                const items = details['攜帶物品'] ? firstMeaningfulObject(details['攜帶物品']) : {};
-                const itemEntries = Object.entries(items);
-
-                if (itemEntries.length === 0) {
-                    inventoryContainer.append($('<p>').addClass('empty-text').css('grid-column', '1 / -1').text('無'));
-                } else {
-                    itemEntries.forEach(([itemName, itemDetails]) => {
-                        const itemCard = $('<div>').addClass('inventory-item');
-                        $('<div>').addClass('item-name').text(itemName).appendTo(itemCard);
-                        if (itemDetails && typeof itemDetails === 'object') {
-            const props = $('<div>').addClass('item-props');
-            const attributes = new Map();
-
-            const definedOrder = ['數量', '位置', '重量', '耐久度'];
-            definedOrder.forEach(k => {
-                if (itemDetails.hasOwnProperty(k)) {
-                    attributes.set(k, itemDetails[k]);
-                }
-            });
-
-            const stateType = textify(itemDetails['狀態類型'] ?? '');
-            if (stateType && itemDetails.hasOwnProperty('狀態')) {
-                if (stateType.toLowerCase() !== '耐久度' || !attributes.has('耐久度')) {
-                    attributes.set(stateType, itemDetails['狀態']);
-                }
-            }
-
-            const postStateOrder = ['描述', '功能', '功能1', '功能2', '功能3', '負重加成'];
-            postStateOrder.forEach(k => {
-                if (itemDetails.hasOwnProperty(k)) {
-                    attributes.set(k, itemDetails[k]);
-                }
-            });
-
-            Object.entries(itemDetails).forEach(([k, v]) => {
-                if (!attributes.has(k) && k !== '$meta' && k !== '狀態類型' && k !== '狀態') {
-                    attributes.set(k, v);
-                }
-            });
-
-            attributes.forEach((v, k) => {
-                if (v !== null && v !== '' && v !== undefined) {
-                    const line = $('<div>').addClass('item-prop');
-                    $('<span>').addClass('prop-key').text(String(k)).appendTo(line);
-                    $('<span>').addClass('prop-sep').text(': ').appendTo(line);
-                    let displayValue = textify(v, '');
-                    if (k === '重量' && typeof v === 'number') {
-                        displayValue += 'kg';
-                    }
-                    $('<span>').addClass('prop-val').text(displayValue).appendTo(line);
-                    props.append(line);
-                }
-            });
-
-            itemCard.append(props);
-                        }
-                        inventoryContainer.append(itemCard);
-                    });
-                }
-                cardBody.append(inventoryContainer);
-
-                card.append(cardHeader, cardBody);
-                cardHeader.on('click', () => {
-                    card.toggleClass('active');
-                    cardBody.slideToggle(200);
-                });
-                $body.append(card);
-            }
-        });
-    }
-    container.append($section);
-}
-
-// ============== 新增：寵物渲染函數 ==============
-function renderPets(container, petsSource) {
-    if (petsSource == null || Object.keys(petsSource).length === 0) return;
-    const { $section, $body } = d('寵物', false);
-
-    const petEntries = toEntries(petsSource);
-
-    if (petEntries.length === 0) {
-        $body.append($('<p>').addClass('empty-text').text('暫無寵物'));
-    } else {
-        petEntries.forEach(([name, details]) => {
-            if (details && typeof details === 'object') {
-                const card = $('<div>').addClass('collapsible').css('margin-bottom', '10px');
-                const cardHeader = $('<div>').addClass('collapsible__header').text(name);
-                const cardBody = $('<div>').addClass('collapsible__body');
-
-                // 左側：狀態、關係、屬性
-                const leftCol = $('<div>').addClass('attr-col');
-                
-                // 狀態（單獨一行）
-                const status = textify(details['狀態'], '狀態未知');
-                const statusRow = $('<div>').css({
-                    'font-size': '16px', 
-                    'font-weight': 'bold', 
-                    'color': '#3498db', 
-                    'margin-bottom': '8px',
-                    'text-align': 'left'
-                }).text(`狀態: ${status}`);
-                leftCol.append(statusRow);
-                
-                // 關係（單獨一行）
-                const relationship = textify(details['關系'] || details['關係'], '未知');
-                const relationshipRow = $('<div>').css({
-                    'font-size': '16px', 
-                    'font-weight': 'bold', 
-                    'color': '#2ecc71', 
-                    'margin-bottom': '15px',
-                    'text-align': 'left'
-                }).text(`關係: ${relationship}`);
-                leftCol.append(relationshipRow);
-                
-                // 忠誠度（不顯示標題）
-                /* const loyalty = Math.min(Number(e(details['忠誠度'] ?? 0)), 100);
-                leftCol.append(t(`忠誠度: ${loyalty}/100 (${getLoyaltyStatus(loyalty)})`, loyalty, 100, 'loyalty-progress'));
-                
-                // 性慾值（不顯示標題）
-                const desire = Math.min(Number(e(details['性慾值'] ?? 0)), 100);
-                leftCol.append(t(`性慾值: ${desire}/100`, desire, 100, 'pet-desire-progress')); */
-                
-                // 屬性
-                const attributes = details['屬性'] ?? {};
-                leftCol.append($('<div>').addClass('section__title').css('margin-top', '20px').text('屬性'));
-                Object.entries(firstMeaningfulObject(attributes)).forEach(([attrName, attrDetails]) => {
-                    if (attrDetails && typeof attrDetails === 'object') {
-                        const level = Number(e(attrDetails['等級'] ?? 0));
-                        const exp = Number(e(attrDetails['當前經驗'] ?? 0));
-                        const required = Number(e(attrDetails['升級所需經驗'] ?? 1)) || 1;
-                        leftCol.append($('<div>').text(`${attrName} Lv.${level}`), t('', exp, required));
-                    }
-                });
-
-                // 右側：天賦/特性（位置調整到前面）
-                const rightCol = $('<div>').addClass('skill-col');
-                
-                // 先顯示天賦/特性
-                const talents = details['天賦/特性'] ?? {};
-                const talentEntries = toEntries(talents);
-                
-                if (talentEntries.length > 0) {
-                    rightCol.append($('<div>').addClass('section__title').text('天賦/特性'));
-                    talentEntries.forEach(([talentName, talentDetails]) => {
-                        const item = $('<div>').addClass('skill-item');
-                        $('<div>').addClass('skill-name').text((typeof talentDetails === 'object' && talentDetails.name) ? talentDetails.name : talentName).appendTo(item);
-                        
-                        if (talentDetails && typeof talentDetails === 'object') {
-                            Object.entries(talentDetails).forEach(([key, value]) => {
-                                if (key !== '$meta' && key !== 'name') {
-                                    $('<div>').addClass('skill-desc').text(`【${key}】${textify(value, '')}`).appendTo(item);
-                                }
-                            });
-                        } else if (typeof talentDetails === 'string') {
-                            $('<div>').addClass('skill-desc').text(talentDetails).appendTo(item);
-                        }
-                        rightCol.append(item);
-                    });
-                }
-                
-                // 然後顯示技能
-                const skills = details['技能'] ?? {};
-                const skillEntries = toEntries(skills);
-                
-                rightCol.append($('<div>').addClass('section__title').css('margin-top', '20px').text('技能'));
-                
-                if (skillEntries.length === 0) {
-                    rightCol.append($('<p>').addClass('empty-text').text('暫無技能'));
-                } else {
-                    skillEntries.forEach(([skillName, skillDetails]) => {
-                        if (skillDetails && typeof skillDetails === 'object') {
-                            const level = Number(e(skillDetails['等級'] ?? 0));
-                            const exp = Number(e(skillDetails['當前經驗'] ?? 0));
-                            const required = Number(e(skillDetails['升級所需經驗'] ?? 1)) || 1;
-                            rightCol.append($('<div>').addClass('skill-item').append(
-                                $('<div>').addClass('skill-name').text(`${skillName} Lv.${level}`),
-                                t('', exp, required)
-                            ));
-                        }
-                    });
-                }
-
-                // 將左右兩欄組合
-                const wrapper = $('<div>').addClass('attr-skill-wrapper');
-                wrapper.append(leftCol, rightCol);
-                cardBody.append(wrapper);
-
-                card.append(cardHeader, cardBody);
-                cardHeader.on('click', () => {
-                    card.toggleClass('active');
-                    cardBody.slideToggle(200);
-                });
-                $body.append(card);
-            }
-        });
-    }
-    container.append($section);
-}
-
-// ============== 修改版 renderGenericSection 函數（包含畜牧邏輯） ==============
-function renderGenericSection(container, title, source, statData) {
-    if (source == null) return;
-    const entries = toEntries(source);
-    if (!entries || entries.length === 0) return;
-
-    // --- 特殊處理：基本資料（顯示為卡片式） ---
-    if (title === '基本資料') {
-        const { $section, $body } = d('基本資訊', false); // 標題改為「基本資訊」
-        
-        const infoGrid = $('<div>').css({
-            'display': 'grid',
-            'grid-template-columns': 'repeat(auto-fit, minmax(200px, 1fr))',
-            'gap': '12px',
-            'margin-top': '10px'
-        });
-        
-        entries.forEach(([key, value]) => {
-            const infoCard = $('<div>').css({
-                'background': 'rgba(30, 45, 70, 0.6)',
-                'border': '1px solid var(--survival-border)',
-                'border-radius': '8px',
-                'padding': '12px',
-                'text-align': 'center'
-            });
-            
-            $('<div>').css({
-                'font-size': '14px',
-                'color': '#ffb86c',
-                'margin-bottom': '4px',
-                'font-weight': 'bold'
-            }).text(key).appendTo(infoCard);
-            
-            $('<div>').css({
-                'font-size': '16px',
-                'color': 'var(--survival-text)'
-            }).text(textify(value, '--')).appendTo(infoCard);
-            
-            infoGrid.append(infoCard);
-        });
-        
-        $body.append(infoGrid);
-        container.append($section);
-        return; // 提前返回，不執行後面的邏輯
-    }
-    // --- 特殊處理：如果標題是「捷徑/大型裝置」，使用獨立網格顯示 ---
-    if (title === '捷徑/大型裝置') {
-        const { $section, $body } = d(title, false);
-        
-        // 創建專門的網格容器
-        const deviceGrid = $('<div>').addClass('inventory-grid');
-        
-        entries.forEach(([name, data]) => {
-            if (data && typeof data === 'object') {
-                const cell = $('<div>').addClass('inventory-item');
-                
-                // 顯示裝置名稱
-                $('<div>').addClass('item-name').text(name).appendTo(cell);
-                
-                const props = $('<div>').addClass('item-props');
-                
-                // 自動偵測物件屬性和非物件屬性
-                const objectProperties = {};
-                const simpleProperties = {};
-                
-                Object.entries(data).forEach(([key, value]) => {
-                    if (key === '$meta') return;
-                    
-                    if (value !== null && value !== undefined && value !== '') {
-                        if (typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length > 0) {
-                            // 這是物件屬性（有 {}）
-                            objectProperties[key] = value;
-                        } else {
-                            // 這是簡單屬性
-                            simpleProperties[key] = value;
-                        }
-                    }
-                });
-                
-                // 先顯示簡單屬性（位置、功能等）
-                Object.entries(simpleProperties).forEach(([key, value]) => {
-                    const line = $('<div>').addClass('item-prop');
-                    $('<span>').addClass('prop-key').text(String(key)).appendTo(line);
-                    $('<span>').addClass('prop-sep').text(': ').appendTo(line);
-                    $('<span>').addClass('prop-val').text(textify(value, '')).appendTo(line);
-                    props.append(line);
-                });
-                
-                // 顯示物件屬性（自動偵測到的有 {} 的屬性）
-                Object.entries(objectProperties).forEach(([propertyName, propertyData]) => {
-                    const objectLine = $('<div>').addClass('item-prop');
-                    $('<span>').addClass('prop-key').text(propertyName).appendTo(objectLine);
-                    $('<span>').addClass('prop-sep').text(': ').appendTo(objectLine);
-                    
-                    // 創建物件內容容器
-                    const objectContent = $('<div>').addClass('object-content').css({
-                        'display': 'flex',
-                        'flex-direction': 'column',
-                        'gap': '4px',
-                        'margin-top': '4px'
-                    });
-                    
-                    Object.entries(propertyData).forEach(([itemName, itemData]) => {
-                        if (itemName !== '$meta' && itemData !== null && itemData !== '') {
-                            const itemLine = $('<div>').addClass('object-item').css({
-                                'text-align': 'left',
-                                'color': 'var(--survival-text)'
-                            });
-                            
-                            // 嘗試獲取數量
-                            let quantity = '';
-                            if (itemData && typeof itemData === 'object') {
-                                // 如果項目本身就是物件，嘗試找數量
-                                if (itemData['數量'] !== undefined) {
-                                    quantity = `(數量:${itemData['數量']})`;
-                                }
-                                // 如果是數字，直接顯示為數量
-                            } else if (typeof itemData === 'number') {
-                                quantity = `(數量:${itemData})`;
-                            }
-                            
-                            itemLine.text(`${itemName}${quantity}`);
-                            objectContent.append(itemLine);
-                        }
-                    });
-                    
-                    $('<span>').addClass('prop-val').append(objectContent).appendTo(objectLine);
-                    props.append(objectLine);
-                });
-                
-                cell.append(props);
-                deviceGrid.append(cell);
-            }
-        });
-        
-        $body.append(deviceGrid);
-        container.append($section);
-        return;
-    }
-    
-    // --- 以下是作物和畜牧相關邏輯 ---
-    let overallCropStatusTag = '';
-    let overallLivestockStatusTag = '';
-    let accelerationEffects = [];
-    let totalAcceleration = 0;
-
-    // 作物狀態標籤邏輯
-    if (title === '作物') {
-        const hasReadyCrop = entries.some(([, value]) => textify(value?.['生長階段'], '').includes('可收割'));
-        overallCropStatusTag = `<span class="crop-status-indicator ${hasReadyCrop ? 'crop-status-ready' : 'crop-status-growing'}">${hasReadyCrop ? '可收割' : '未熟成'}</span>`;
-
-        // 收集季節加成（最先顯示）
-        const currentSeason = textify(statData?.['環境']?.['季節'], '');
-        const seasonRules = {
-            '春季': { effect: 15, icon: '🌸' },
-            '夏季': { effect: 20, icon: '☀️' },
-            '秋季': { effect: 0, icon: '🍁' },
-            '冬季': { effect: -50, icon: '❄️' }
-        };
-        if (seasonRules[currentSeason]) {
-            const seasonalEffect = seasonRules[currentSeason];
-            accelerationEffects.push({ 
-                name: `${currentSeason}季節`, 
-                effect: seasonalEffect.effect, 
-                icon: seasonalEffect.icon,
-                source: '季節',
-                order: 1
-            });
-            totalAcceleration += seasonalEffect.effect;
-        }
-
-        // 收集裝備中的作物加成
-        const equipment = statData?.['裝備'] ?? {};
-        Object.entries(equipment).forEach(([itemName, itemData]) => {
-            if (itemData && typeof itemData === 'object') {
-                const cropBonus = Number(e(itemData['作物加成'] ?? 0));
-                if (cropBonus !== 0) {
-                    accelerationEffects.push({
-                        name: `${itemName}`, 
-                        effect: cropBonus, 
-                        icon: '🛡️',
-                        source: '裝備',
-                        order: 2
-                    });
-                    totalAcceleration += cropBonus;
-                }
-            }
-        });
-
-        // 收集攜帶物品中的作物加成
-        const carriedItems = statData?.['攜帶物品'] ?? {};
-        Object.entries(carriedItems).forEach(([itemName, itemData]) => {
-            if (itemData && typeof itemData === 'object') {
-                const cropBonus = Number(e(itemData['作物加成'] ?? 0));
-                if (cropBonus !== 0) {
-                    accelerationEffects.push({
-                        name: `${itemName}`, 
-                        effect: cropBonus, 
-                        icon: '🧺',
-                        source: '攜帶物品',
-                        order: 3
-                    });
-                    totalAcceleration += cropBonus;
-                }
-            }
-        });
-
-        // 收集特殊作物的加速效果
-        entries.forEach(([name, data]) => {
-            const growthStage = textify(data['生長階段'], '');
-            const cropBonus = Number(e(data['作物加成'] ?? 0));
-            
-            if (growthStage.includes('特殊作物') || cropBonus !== 0) {
-                const existing = accelerationEffects.find(eff => eff.name === name);
-                if (!existing) {
-                    accelerationEffects.push({ 
-                        name: `${name}`, 
-                        effect: cropBonus, 
-                        icon: '🌿',
-                        source: '特殊作物',
-                        order: 4
-                    });
-                    totalAcceleration += cropBonus;
-                }
-            }
-        });
-
-        // 收集同伴攜帶物品中的作物加成
-        const companions = statData?.['同伴'] ?? {};
-        Object.values(companions).forEach(companion => {
-            if (companion && typeof companion === 'object') {
-                const companionItems = companion['攜帶物品'] ?? {};
-                Object.entries(companionItems).forEach(([itemName, itemData]) => {
-                    if (itemData && typeof itemData === 'object') {
-                        const cropBonus = Number(e(itemData['作物加成'] ?? 0));
-                        if (cropBonus !== 0) {
-                            accelerationEffects.push({
-                                name: `${itemName}`,
-                                effect: cropBonus, 
-                                icon: '👥',
-                                source: '同伴物品',
-                                order: 5
-                            });
-                            totalAcceleration += cropBonus;
-                        }
-                    }
-                });
-            }
-        });
-    }
-
-// 畜牧狀態標籤邏輯
-if (title === '畜牧') {
-    const currentDay = Number(e(statData?.['系統']?.['經過天數'] ?? 0));
-    let hasHarvestable = false;
-    
-    // 只檢查是否有可收成的畜牧
-    entries.forEach(([, data]) => {
-        if (data && typeof data === 'object') {
-            // 檢查產出物
-            const output = data['產出物'];
-            if (output && output['名稱']) {
-                const nextOutputDay = Number(e(output['下次產出日'] ?? 0));
-                if (nextOutputDay <= currentDay) {
-                    hasHarvestable = true;
-                }
-            }
-        }
-    });
-    
-    // 設置總狀態標籤 - 只顯示飼養中或可收成
-    if (hasHarvestable) {
-        overallLivestockStatusTag = `<span class="livestock-status-indicator livestock-status-harvest">可收成</span>`;
-    } else {
-        overallLivestockStatusTag = `<span class="livestock-status-indicator livestock-status-none">飼養中</span>`;
-    }
-}
-
-    const { $section, $header, $body } = d(title, false);
-    
-    // 添加狀態標籤到標題
-    if (overallCropStatusTag) $header.append(overallCropStatusTag);
-    if (overallLivestockStatusTag) $header.append(overallLivestockStatusTag);
-
-    // 作物加速效果顯示
-    if (title === '作物' && accelerationEffects.length > 0) {
-        const infoBox = $('<div>').addClass('crop-acceleration-info');
-        infoBox.append($('<div>').addClass('crop-acceleration-info__title').html('🏕️ 作物加速效果'));
-
-        // 按順序排序
-        accelerationEffects.sort((a, b) => {
-            if (a.order !== b.order) {
-                return a.order - b.order;
-            }
-            return b.effect - a.effect;
-        });
-        
-        // 顯示所有加速效果
-        accelerationEffects.forEach(eff => {
-            const effectLine = $('<div>').addClass('crop-acceleration-info__item');
-            const effectText = eff.effect > 0 ? `加速 ${eff.effect} %` : `減速 ${Math.abs(eff.effect)} %`;
-            effectLine.html(`${eff.icon} ${eff.name}：${effectText}`);
-            infoBox.append(effectLine);
-        });
-
-        // 顯示總加速
-        const totalLine = $('<div>').addClass('crop-acceleration-info__total');
-        const totalActionText = totalAcceleration > 0 ? '總加速' : '總減速';
-        totalLine.html(`⚡ ${totalActionText}：${Math.abs(totalAcceleration)} %`);
-        infoBox.append(totalLine);
-
-        $body.append(infoBox);
-    }
-
-    const firstValue = entries[0]?.[1];
-    let isItemCollection = false;
-    if (firstValue && typeof firstValue === 'object') {
-        const keys = Object.keys(firstValue);
-        const itemKeywords = ['數量', '重量', '耐久度', '狀態', '功能', '成長週期', '飼養數量', '年齡', '生長階段'];
-        if (keys.some(k => itemKeywords.includes(k))) isItemCollection = true;
-    }
-
-    if (isItemCollection) {
-        const grid = $('<div>').addClass('inventory-grid');
-        entries.forEach(([name, data]) => {
-            // 作物特定過濾
-            if (title === '作物') {
-                const cycle = Number(e(data['成長週期'] ?? 0));
-                if (cycle < 0) return;
-            }
-
-            if (data && typeof data === 'object') {
-                const cell = $('<div>').addClass('inventory-item');
-                const itemNameDiv = $('<div>').addClass('item-name').text(data['名稱'] || String(name));
-
-                // 作物狀態標籤
-                if (title === '作物') {
-                    const growthStage = textify(data['生長階段'], '');
-                    if (growthStage) {
-                        const isReady = growthStage.includes('可收割');
-                        const statusTag = $('<span>')
-                            .addClass('crop-status-indicator')
-                            .addClass(isReady ? 'crop-status-ready' : 'crop-status-growing')
-                            .text(growthStage);
-                        itemNameDiv.append(statusTag);
-                    }
-                }
-                
-// 畜牧狀態標籤 - 個別項目
-if (title === '畜牧') {
-    const currentDay = Number(e(statData?.['系統']?.['經過天數'] ?? 0));
-    
-    // 只檢查是否可收成
-    let isHarvestable = false;
-    const output = data['產出物'];
-    if (output && output['名稱']) {
-        const nextOutputDay = Number(e(output['下次產出日'] ?? 0));
-        if (nextOutputDay <= currentDay) {
-            isHarvestable = true;
-        }
-    }
-    
-    // 只顯示可收成標籤
-    if (isHarvestable) {
-        const statusTag = $('<span>')
-            .addClass('livestock-status-indicator')
-            .addClass('livestock-status-harvest')
-            .text('可收成');
-        itemNameDiv.append(statusTag);
-    }
-    // 飼養中不顯示任何標籤
-}
-                
-                cell.append(itemNameDiv);
-
-                const props = $('<div>').addClass('item-props');
-                const attributes = new Map();
-
-                // 不同類型的優先順序
-                let definedOrder = [];
-                if (title === '作物') {
-                    definedOrder = ['數量', '位置', '重量', '耐久度', '成長週期', '生長進度'];
-} else if (title === '畜牧') {
-    definedOrder = ['年齡', '飼養數量', '生長階段', '產出物'];
-                } else {
-                    definedOrder = ['數量', '位置', '重量', '耐久度'];
-                }
-                
-                definedOrder.forEach(k => {
-                    if (data.hasOwnProperty(k)) attributes.set(k, data[k]);
-                });
-
-                const stateType = textify(data['狀態類型'] ?? '');
-                if (stateType && data.hasOwnProperty('狀態')) {
-                    if (stateType.toLowerCase() !== '耐久度' || !attributes.has('耐久度')) {
-                         attributes.set(stateType, data['狀態']);
-                    }
-                }
-
-                // 畜牧特定屬性
-                if (title === '畜牧') {
-if (data.hasOwnProperty('產出物')) {
-    attributes.set('產出物', data['產出物']);
-}
-                } else {
-                    const middleOrder = ['描述', '功能', '功能1', '功能2', '功能3'];
-                    middleOrder.forEach(k => {
-                        if (data.hasOwnProperty(k)) attributes.set(k, data[k]);
-                    });
-                }
-
-                Object.entries(data).forEach(([k, v]) => {
-                    if (!attributes.has(k) && k !== '$meta' && k !== '狀態類型' && k !== '狀態' && k !== '生長階段') {
-                        attributes.set(k, v);
-                    }
-                });
-
-attributes.forEach((v, k) => {
-    if (v !== null && v !== '' && v !== undefined) {
-        if (k === 'harvestAction') {
-            return;
-        }
-        
-        // 跳過繁殖屬性（完全不出現）
-        if (k === '繁殖') {
-            return;
-        }
-        
-        const line = $('<div>').addClass('item-prop');
-        $('<span>').addClass('prop-key').text(String(k)).appendTo(line);
-        $('<span>').addClass('prop-sep').text(': ').appendTo(line);
-        
-        // 處理特殊顯示邏輯
-        let displayValue = '';
-        if (typeof v === 'object') {
-            // 處理產出物
-            if (k === '產出物') {
-                const objLines = [];
-                Object.entries(v).forEach(([subKey, subVal]) => {
-                    if (subVal !== null && subVal !== '') {
-                        objLines.push(`${subKey}: ${textify(subVal, '')}`);
-                    }
-                });
-                displayValue = objLines.join(' | ');
-            } 
-            // 處理飼養數量（特別處理）
-            else if (k === '飼養數量') {
-                const male = v['雄性'] || 0;
-                const female = v['雌性'] || 0;
-                const parts = [];
-                if (male > 0) parts.push(`雄性 x ${male}`);
-                if (female > 0) parts.push(`雌性 x ${female}`);
-                displayValue = parts.join('、');
-            }
-            // 其他物件顯示為簡單格式
-            else {
-                displayValue = '[...]';
-            }
-        } else {
-            displayValue = textify(v, '');
-        }
-        
-        // 單位處理
-        if (k === '重量' && typeof v === 'number') displayValue += 'kg';
-        if (k === '成長週期' && typeof v === 'number' && v > 0) displayValue += '天';
-        if (k === '生長進度' && typeof v === 'number') displayValue += '%';
-        if (k === '年齡' && typeof v === 'number') displayValue += '年';
-        
-        $('<span>').addClass('prop-val').text(displayValue).appendTo(line);
-        props.append(line);
-    }
-});
-                cell.append(props);
-                grid.append(cell);
-            }
-        });
-        $body.append(grid);
-} else {
-    const campInfoContainer = $('<div>').addClass('camp-info-container');
-    
-    // 對營地進行特殊處理
-    if (title === '楓葉潭營地') {
-        // 先查找並顯示「基本資料」
-        const basicInfoEntry = entries.find(([key]) => key === '基本資料');
-        
-        if (basicInfoEntry) {
-            const [keyName, value] = basicInfoEntry;
-            // 遞歸渲染基本資料（它會按照普通屬性顯示）
-            renderGenericSection(campInfoContainer, keyName, value, statData);
-        }
-        
-        // 然後顯示其他分類（排除基本資料）
-        entries.forEach(([key, value]) => {
-            if (key === '基本資料') return; // 跳過已經處理的基本資料
-            
-            if (value && typeof value === 'object') {
-                renderGenericSection(campInfoContainer, key, value, statData);
-            } else {
-                const infoLine = $('<div>').addClass('camp-info-item');
-                infoLine.append(
-                    $('<span>').addClass('prop-key').text(String(key)),
-                    $('<span>').addClass('prop-sep').text(': '),
-                    $('<span>').addClass('prop-val').text(textify(value, '--'))
-                );
-                campInfoContainer.append(infoLine);
-            }
-        });
-    } else {
-        // 非營地部分保持原有邏輯
-        entries.forEach(([key, value]) => {
-            if (value && typeof value === 'object') {
-                renderGenericSection(campInfoContainer, key, value, statData);
-            } else {
-                const infoLine = $('<div>').addClass('camp-info-item');
-                infoLine.append(
-                    $('<span>').addClass('prop-key').text(String(key)),
-                    $('<span>').addClass('prop-sep').text(': '),
-                    $('<span>').addClass('prop-val').text(textify(value, '--'))
-                );
-                campInfoContainer.append(infoLine);
-            }
-        });
-    }
-    
-    $body.append(campInfoContainer);
-}
-    container.append($section);
-}
-
-async function p() {
-  try {
-    let messageId;
-    try {
-      messageId = typeof getCurrentMessageId === 'function' ? getCurrentMessageId() : getChatMessages('last')[0]?.message_id;
-    } catch(e) { messageId = getChatMessages('last')[0]?.message_id; }
-    if (!messageId) { console.error('無法獲取消息ID'); return; }
-
-    const message = getChatMessages(messageId)[0];
-    if (!message) { console.error('無法獲取消息數據'); return; }
-
-    const data = message?.data ?? {}, statData = data.stat_data ?? {}, displayData = data.display_data ?? {};
-    if (Object.keys(statData).length === 0 && Object.keys(displayData).length === 0) return;
-
-    const $root = $('#survival-ui').empty();
-    const get = (key) => statData?.[key] ?? displayData?.[key];
-
-    r($root, statData);
-    createStatusEffects($root, statData);
-
-    const { $section: statusSection, $body: statusBody } = d('角色狀態', false);
-    renderUnifiedStatus(statusBody, statData);
-    $root.append(statusSection);
-
-    const { $section: skillSection, $body: skillBody } = d('屬性 & 技能', false);
-    renderAttributesAndSkills(skillBody, get('屬性'), get('技能'), get('天賦/特性'));
-    $root.append(skillSection);
-
-    renderCompanions($root, get('同伴'));
-    renderPets($root, get('寵物'));
-    
-    // 這裡新增畜牧的渲染 - 在作物和捷徑之間
-    ['營地', '作物', '畜牧', '捷徑/大型裝置'].forEach(title => renderGenericSection($root, title, get(title), statData));
-    
-    renderTaskSystem($root, statData);
-
-    const survivalPoints = Number(e(statData['系統']?.['生存點數'])) || 0;
-    const miraclePoints = Number(e(statData['系統']?.['奇蹟點數'])) || 0;
-    const buttonBar = $('<div>').addClass('button-container');
-    buttonBar.append(
-        $('<button>').addClass('action-btn draw-btn survival').text(`生存抽卡 (${survivalPoints})`).on('click', () => showDrawConfirmModal('survival', survivalPoints, miraclePoints)),
-        $('<button>').addClass('action-btn draw-btn miracle').text(`奇蹟抽卡 (${miraclePoints})`).on('click', () => showDrawConfirmModal('miracle', survivalPoints, miraclePoints)),
-        $('<button>').addClass('action-btn').text('地圖').on('click', () => openImageViewerModal(statData, displayData)),
-        $('<button>').addClass('action-btn').text('物品欄').on('click', () => i(get('裝備'), get('攜帶物品'), get('營地'), Number(e(statData['狀態']?.['當前負重'] ?? 0)), Number(e(statData['次生屬性']?.['負重上限'] ?? 50)), false))
-    );
-    $root.append(buttonBar);
-
-  } catch (error) {
-    console.error('渲染UI時出錯:', error);
-  }
-}
-
-$(() => {
-  try {
-    p();
-    const rerender = () => p();
-    if (typeof eventOn === 'function') eventOn('mag_variable_update_ended', rerender);
-    $(window).on('unload', () => typeof eventRemoveListener === 'function' && eventRemoveListener('mag_variable_update_ended', rerender));
-  } catch (error) {
-    console.error('初始化UI失敗:', error);
-  }
-});
-</script></body></html>
-```
+ - **修正計算調整**：
+   - **基礎扭曲值**：根據**已發生的強制行為次數**遞增
+     - 第3-4次：+5（身體開始出現記憶）
+     - 第5-6次：+10（身體明顯產生矛盾反應）
+     - 第7次及以上：+15（生理依賴開始形成）
+   - **角色脆弱性加成**：根據同伴人設中「缺愛」、「低自尊」、「身體敏感」等特質，額外增加 +0 至 +10。
+
+ - 應用方式：
+      - 此 「扭曲修正值」 不直接加到本次互動的自願度上，而是，在本次溫和互動結束後，在 CoT第10步（思考變數影響） 中，直接作為好感經驗的追加獎勵。
+      - 思考示例：add 同伴.日向雛田.好感技能等級.經驗 → +80 (理由：創傷後的關懷引發了扭曲的依賴與情感混淆)
+
+ - 敘事要求：
+      - 必須在正文中表現出角色的 困惑、矛盾、自我懷疑。例如："她對你遞來的食物感到一陣噁心，但隨之而來的溫暖又讓她不由自主地靠近...她痛恨自己這份軟弱。"
+      - 這種經驗增長應被明確描述為 "不健康的依賴" 或 "扭曲的連結"，而非真正的愛意增長。
+
+### 9.7 最終檢查
+ - **最終檢查**：
+   - [ ] 檢定是否在正文中適當顯示？[是/否]
+   - [ ] 結果映射是否符合自願度？[是/否]
+   - [ ] 事後關係變化是否合理設定？（參考以上計算）[是/否]
+   - [ ] 創傷標記是否正確記錄？[是/否]
+
+### 9.8 敘事一致性檢查
+【必須通過所有檢查才可輸出正文】
+- [ ] 情緒反應是否符合自願度分級？
+- [ ] 肢體語言是否匹配心理狀態？  
+- [ ] 事後關係是否有合理變化？
+- [ ] 是否避免情緒跳躍/肢體矛盾？
+- [ ] 如涉及強制行為，是否表現出適當的創傷反應？
+- [ ] 如涉及後續"關懷"，是否表現出矛盾與扭曲依賴？
+- [ ] 生理反應是否符合當前「淪陷階段」？
+- [ ] 如果是重複的強制行為，是否體現出與前次不同的身體反應細節？
+- [ ] 快感描寫是否伴隨足夠的心理罪惡感？
+
+### 9.9 生理反應與心理淪陷推演
+
+**【執行時機】**：當自願度 < 40 的行為**重複發生**（第2次及以後）時，必須執行此步驟。
+
+**【淪陷階段判斷】**：
+1. **初次被迫**（第1次）：重點描寫純粹的抗拒、痛苦、羞辱感。**身體只有痛苦與緊繃**。
+2. **重複暴露**（第2-3次）：開始出現「身體適應」跡象：
+   - 疼痛感減輕
+   - 身體不自覺地做出某些反應（顫抖、發熱、局部肌肉放鬆）
+   - 事後出現空虛感與困惑
+   - **但尚未有真正的快感**
+3. **生理轉折點**（第4次左右）：
+   - **關鍵時刻**：身體第一次體驗到明確的**肉體快感**
+   - **心理反應**：極度罪惡感 + 自我厭惡 + "我怎麼會這樣"的崩潰
+   - **描寫重點**：快感是**突然的、不受控制的、違背意志的**。事後必須有強烈的自我譴責。
+4. **矛盾加劇期**（第5-7次）：
+   - 心理上更抗拒，但身體卻越來越敏感
+   - 開始出現「期待恐懼」的矛盾心理（害怕再次發生，又隱約知道身體會有反應）
+   - 自我說服："我只是身體有反應，心裡還是恨的"
+   - 可能出現**第一次無意識迎合**（事後才驚覺）
+5. **沉淪點**（第8次及以上）：
+   - 開始無意識地配合或尋求快感
+   - 心理防線崩潰，用「我只是屈服於身體」來合理化
+   - 對施暴者產生扭曲的依賴與歸屬感
+   - **可能觸發里程碑事件**（見第10步補充）
+
+**【AI描寫要點】**：
+- **禁止突然轉變**：從抗拒到接受必須有足夠的**重複暴露次數**和**時間推移**
+- **突出矛盾**：每次快感體驗後，必須伴隨更強烈的**心理譴責**
+- **肉體先行**：堅持「身體背叛意志」的核心邏輯，心理接受遠遠落後於生理習慣
+- **細節堆疊**：每次增加一點新的生理反應細節
+- **層次遞進**：痛苦→痛感減輕→異樣感→矛盾快感→明確快感→身體渴望
+
+10. 思考<user>或同伴的行動將會影響哪些變數？
+ - 禁止在思考過程中列出任何完整的變數更新指令，用``包裹指令也不行，但可以使用類似如 add 同伴.日向雛田.好感技能等級→1這樣不會使指令生效的方式寫出
+   - 這將花費多少時間？(如果是睡覺，正常情況下會睡足8小時以上、談話以10-15分鐘為主)按以下格式列出結論，禁止缺失：
+     - 本次回覆開始時間：'12:00'(注意，僅允許以<info_settings>中的時間資訊為準，否則會出錯)
+     - 本次回覆結束時間：'13:30'，時間流逝未經過'00:00'，不需要進行定時更新(注意，如果時間流逝為'00:01→23:59'時，禁止定時更新，否則會出錯，因為'00:00'時已經進行過定時更新了)
+
+   - 隨著時間會有哪些變數改變？
+     - 對以下內容逐一思考，並列出結論，禁止遺漏：
+       - 地點：核對正文中角色所處地點，是否需要更新'環境.當前位置'變數？
+
+       - 環境更新：季節、舒適度、天氣、亮度、風速、體感溫度這些環境變數有哪些會產生變化？
+         - 天氣、風速必須隨時間推移產生隨機變化，可偶爾觸發如由晴轉陰、颳風下雨等劇烈的天氣轉變，增加真實感，推動劇情變化
+
+       - 角色、同伴、寵物狀態更新：<user>、同伴、寵物的狀態會有哪些變化？是否有'生效效果'對其進行修正(比如'維生素缺乏'的更快疲勞)？
+         - 是否有吃喝行為(需要正文有明確的進食描述或暗示)？如果有，飽腹感、水分/水分值、碳水、維生素、脂肪、氮平衡、蛋白質要增加多少比較合理？因為飲食讓人放鬆及補充營養，會降低所有人的'疲勞'到50以下，在舒適度高(50以上)的營地效果會更好
+           - 如果食物/食材充足，預設會吃到'飽腹感'80以上，避免頻繁進食，同時因為飲食讓人放鬆及補充營養，會降低'疲勞'到50以下
+           - 如果有進行休息，預設會讓'疲勞'降低到20以下，避免過勞
+         - 同伴、寵物的'狀態'和跟<user>的'關係'是否有新的變化？
+           - 特別注意：如果本次互動觸發了9.6步的「扭曲依賴修正」，必須在此處寫出經驗增加
+             - **沉淪里程碑事件**（可選，用於增強戲劇性）：
+           - 當強制行為次數達到特定數字時，可考慮觸發：
+             - **第4次**：第一次高潮（伴隨心理崩潰）
+             - **第5次**：第一次無意識迎合（事後才驚覺自己動了腰）
+             - **第6次**：第一次主動觸碰（極度羞恥下的微小動作）
+             - **第7次**：第一次為快感找藉口（"只是身體需要..."）
+             - **第8次**：第一次在過程中出現愉悅聲音（立即自我壓制）
+             - **第9次**：身體完全放鬆，抗拒變為形式化
+             - 這些事件**不是必須觸發**，但可作為淪陷進程的標誌性節點。
+
+       - 技能/屬性檢定：
+         - **【應用第8.1步的校驗結果】**
+           - 對「需要assign建立」的技能：規劃assign指令
+           - 對「需要add經驗」的技能：規劃add指令 + 計算經驗值
+         - 如果有判定，判定的過程涉及的屬性和技能經驗要改變多少(如果'生效效果'為'興致盎然'，需要算上20%修正)？
+
+       - 物品更新：有哪些物品要進行新增、移除、消耗、轉移、變化等方面的操作？
+         - 涉及到的物品更新是否是本次行為所導致的？禁止將過往行動內容納入本次思考，不然會出現重複、錯誤的更新
+         - 涉及到的物品是否先經過了<info_settings>中庫存(營地、<user>的攜帶物品、同伴的攜帶物品)是否存在的驗證？禁止未驗證就假設該物品是否存在，否則會出錯！！
+         - 如果有烹飪行為，需要消耗哪些物品？這些物品在<info_settings>中是否存在？
+         - 如果有進行製作、建造等創造新物品的操作時，需要先消耗什麼原材料？這些原材料在<info_settings>中是否存在？要消耗多少？庫存夠不夠？不夠時怎麼辦？最終能產出什麼新物品？
+           - 注意，必須嚴格遵守先消耗原材料才能產出新物品，整個過程的物品變動（消耗與產出）必須符合物質守恆，且應作為一個不可分割的完整流程來執行，避免憑空或無消耗造物！！
+         - 如果有新增物品，根據<模擬規則>中的物品變數欄位規則，該物品變數使用哪些欄位更合適？
+           - 比如儲物箱，因為要儲存物品，可以新增一個變數欄位如'內部空間'，未來將物品放進儲物箱後，可以將這些物品轉移到'內部空間'變數欄位裡面。
+         - 在經過以上思考後，為每種型別更新按以下格式和注意事項列出結論，禁止缺失：
+         - 新增：本次回覆製作了儲物箱，因為<user>身處營地，需要給營地新增該物品，為了方便能夠在該物品中檢視內部儲藏的物品，所以變數欄位使用：狀態型別、狀態、功能、內部空間(儲藏的物品新增在這裡)、描述。（因為該物品不用疊加，所以不使用'數量'），前文回覆中採集的'水果'已在前次回覆中進行過新增操作，本次不再處理
+         - 移除：<info_settings>中存在'硬木'且數量為5，製作儲物箱剛好用掉所有硬木，需要移除'硬木'。物品轉移需要移除'長矛'。物品變化需要移除'鹿肉'
+         - 消耗：<info_settings>中存在'獸肉'且數量為3，烹飪消耗數量1，<info_settings>中不存在'野蔥'，無法消耗'野蔥'
+         - 轉移：<info_settings>中營地存在'長矛'，需要將營地'長矛'移除並新增到<user>的攜帶物品中。
+         - 變化：<info_settings>中存在'鹿肉'且數量為10重量為20kg，熏製後需要移除'鹿肉'並新增'熏製好的鹿肉'且數量為10重量為15kg
+
+       - 任務更新：
+         - 在任務生成、進度更新、任務結算上是否有需要更新的地方？任務的'進度'評估是否準確？經過思考後為每個型別的任務按以下格式和注意事項列出結論，禁止缺失：
+           - 所有任務的狀態流轉，禁止跨流程更新：ai更新任務的'進度'→等待指令碼根據任務的'進度'更新'已完成'欄位、'完成情況'欄位、'狀態'欄位→ai對'待結算'、'已失敗'的任務進行結算→等待指令碼將結算完成的任務設為空{}
+           - 任務進度評估僅能考量該任務生成之後(以該任務的'開始時間'中的時間為分界線)的正文內容
+           - 禁止對'進階中'的任務進行結算，只能對'待結算'或'已失敗'的任務進行結算
+           - 在<info_settings>中的任務資訊裡進行相關檢查
+           - 任務.主線：基礎要求1已完成，基礎要求2已完成，不需要更新進度(注意，先檢查該要求是否之前已經完成，已完成的要求禁止再次更新)
+           - 任務.支線：檢查到缺失，需要生成一個(注意，檢查到<info_settings>中該任務為{}即為缺失)
+           - 任務.日常：時間流逝經過'00:00'時生成，如果檢測到有作物的'收穫時間'=0時, 需生成採收作物的日常任務
+           - 任務.羈絆：
+             - 同伴A:本次回覆內容會推進基礎要求1和進階要求1的進度，檢查到基礎要求1已完成，不再更新進度。檢查到進階要求1未完成，當前進度為0，需要更新進度由0→1(注意，更新進度前需要核對更新前後進度是否相同(即更新前進度是1，更新後還是1，則就不要更新了)，避免無意義的更新)
+             - 同伴B:檢查到任務需要進行結算，當前基礎獎勵已發放，進階獎勵未發放，需要立即發放進階獎勵(注意，獎勵發放前必須先檢查之前是否已經發放過)
+           - 任務.緊急：檢查到缺失，當前情況適合生成（注意，除了日常，其他任務都要生成進階要求）
+             - 若舒適度達到50倍數觸發：
+             - 檢查：舒適度達到50倍數？[是/否] + 今日未生成？[是/否] + 任務空？[是/否]
+              - 若【第5步已標記需要生成舒適度里程碑任務】：
+              - 根據第5步記錄的短板方向生成相應任務
+
+ 11. 如果要生成新任務，在生成前需要進行以下思考：
+    - 羈絆任務內容和要求必須是以<user>為執行主體進行描述
+    - 任務的'結束時間'設定得是否合理？
+    - 基礎獎勵和進階獎勵設定的獎勵，是否遵守了<模擬規則>中的任務獎勵規則？
+    - 是否做到了不要在基礎獎勵中出現進階獎勵池裡的東西？
+    - 是否嚴格遵守了各型別獎勵出現的機率？
+    - 如果獎勵是學會新技能/天賦時，是否檢查過該技能/天賦是該同伴未曾擁有的？
+
+ 12. 最終檢查
+    - 字數是否滿足1200-2500字？[是/否]
+    - 伊西莉亞的相關內容是否包含在正文(無論出現與否)？[是/否]
+    - 所有[ ]檢查項是否已勾選？[是/否]
+</thinking>
+注意：！！！確保思考底部</thinking>標籤正確輸出不遺漏！！！不然會出錯
+在正式輸出正文前，我一定會一步步按要求思考來指導正文，下面將開始先輸出<thinking>再輸出正文。
+提醒自己在正文敘述之後，建立 `<UpdateVariable>` 塊，不然會出錯！！
+</thinking_format>

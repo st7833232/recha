@@ -2,14 +2,13 @@
   "spider": "./jar/xiaosa-0116.jar;md5;8c3eedbb006f276c9b47aeebeb1bdb29",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.01.10.ver_1\n 新增韓劇",
+  "notice": "115.01.16.ver_1\n 新增木瓜跟一大堆",
   "sites": [
 
 
 {"key":"木瓜","name":"📱｜木瓜｜APP","type":3,"changeable":0,"api":"csp_AppFox","ext":{"host":"http://www.yezitv.top/dtym.json","ver":2}},
 {"key":"花柳","name":"📱｜花柳｜APP","type":3,"changeable":0,"api":"csp_AppFox","ext":{"host":"http://nico.oiio.fun","ver":2}},
 {"key":"麒麟","name":"📱｜麒麟｜APP","type":3,"changeable":0,"api":"csp_AppFox","ext":{"host":"https://qh.70qh.top","ver":2}},
-{"key":"粉象","name":"📱｜粉象｜APP","type":3,"changeable":0,"api":"csp_AppFox","ext":{"host":"http://121.40.131.51:2556/host.json","ver":2}},
 {"key":"爆炸","name":"📱｜爆炸｜APP","type":3,"api":"csp_AppQi","changeable":"1","quickSearch":1,"filterable":1,"ext":{"site":"https://daen-1256234123.cos.ap-shanghai.myqcloud.com/MuQi/mqxh.txt","dataKey":"37kj83zs1q16jk6t","dataIv":"37kj83zs1q16jk6t","search":"searchList4","init":"initV122","ua":"okhttp/3.10.0"}},
 {"key":"橘子","name":"📱｜橘子｜APP","type":3,"api":"csp_AppQi","changeable":"1","quickSearch":1,"filterable":1,"ext":{"url":"https://juziapp.tpmbt.cn","dataKey":"K3h6YvSU8BTUfEcb","dataIv":"K3h6YvSU8BTUfEcb","version":"305","ua":"okhttp/3.10.0"}},
 {"key":"鲸鱼","name":"📱｜鯨魚｜APP","type":3,"quickSearch":1,"api":"csp_AppQi","ext":{"site":"https://jingyu4k-1312635929.cos.ap-nanjing.myqcloud.com/1.json","dataKey":"AAdgrdghjfgswerA","dataIv":"AAdgrdghjfgswerA"}},

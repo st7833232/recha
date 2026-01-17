@@ -14,8 +14,8 @@
     },        
     {
       "name": "港台大陆频道",
-      "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E6%B8%AF%E5%8F%B0%E5%A4%A7%E9%99%86%E6%97%A018%E5%86%85%E5%AE%B9"
-    },
+      "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E6%B8%AF%E5%8F%B0%E5%A4%A7%E9%99%86"
+    },      
     {
       "name": "海豚直播",
       "url": "http://hufa.zabc.net:8080/iptvpro.txt",
@@ -65,6 +65,10 @@
       "url" : "https://live.catvod.com/tv.m3u",
       "ua"  : "catvod.com"
     },
+    {
+      "name": "港台頻道",
+      "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E6%B8%AF%E5%8F%B0%E5%A4%A7%E9%99%86%E6%97%A018%E5%86%85%E5%AE%B9"
+    },    
     {
       "name": "立方直播",
       "url": "http://breezy-audrie-zspace-7524863c.koyeb.app/sub?type=m3u&token=leifeng",
@@ -139,11 +143,7 @@
       "epg": "https://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Hong_Kong",
       "logo": "https://epg.112114.xyz/logo/{name}.png",
       "pass": true
-    },
-    {
-      "name": "港台大陆频道(含18+)",
-      "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E6%B8%AF%E5%8F%B0%E5%A4%A7%E9%99%86"
-    },        
+    },  
     {
       "name": "海角色區(18+)",
       "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E6%B5%B7%E8%A7%92%E7%A4%BE%E5%8C%BA%E5%8D%9A%E4%B8%BB(%E5%85%8D%E7%95%AA%E5%BC%BA)"

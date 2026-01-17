@@ -5,25 +5,6 @@
   "notice": "115.01.16.ver_1\n 新增木瓜跟一大堆",
   "sites": [
 
-
-{"key":"木瓜","name":"📱｜木瓜｜APP","type":3,"changeable":0,"api":"csp_AppFox","ext":{"host":"http://www.yezitv.top/dtym.json","ver":2}},
-{"key":"花柳","name":"📱｜花柳｜APP","type":3,"changeable":0,"api":"csp_AppFox","ext":{"host":"http://nico.oiio.fun","ver":2}},
-{"key":"麒麟","name":"📱｜麒麟｜APP","type":3,"changeable":0,"api":"csp_AppFox","ext":{"host":"https://qh.70qh.top","ver":2}},
-{"key":"爆炸","name":"📱｜爆炸｜APP","type":3,"api":"csp_AppQi","changeable":"1","quickSearch":1,"filterable":1,"ext":{"site":"https://daen-1256234123.cos.ap-shanghai.myqcloud.com/MuQi/mqxh.txt","dataKey":"37kj83zs1q16jk6t","dataIv":"37kj83zs1q16jk6t","search":"searchList4","init":"initV122","ua":"okhttp/3.10.0"}},
-{"key":"鲸鱼","name":"📱｜鯨魚｜APP","type":3,"quickSearch":1,"api":"csp_AppQi","ext":{"site":"https://jingyu4k-1312635929.cos.ap-nanjing.myqcloud.com/1.json","dataKey":"AAdgrdghjfgswerA","dataIv":"AAdgrdghjfgswerA"}},
-{"key":"天峰","name":"📱｜天峰｜APP","type":3,"api":"csp_AppGet","ext":{"url":"http://zxy-ys.810211.dpdns.org","dataKey":"1234567890123456","dataIv":"1234567890123456"}},
-{"key":"气球","name":"📱｜汽球｜APP","type":3,"api":"csp_AppGet","ext":{"url":"https://vv.229d.cn","dataKey":"8888888888888888","dataIv":"8888888888888888"}},
-{"key":"白鸽","name":"📱｜白鴿｜APP","type":3,"searchable":1,"changeable":1,"api":"csp_AppGet","ext":{"url":"https://cy.baige.asia","dataKey":"599D0FE5178642FD","dataIv":"599D0FE5178642FD"}},
-{"key":"剧梦","name":"📱｜劇夢｜APP","type":3,"searchable":1,"changeable":1,"api":"csp_AppGet","ext":{"url":"https://www.jumengwu.com","dataKey":"1f0a873caf2550a5","dataIv":"1f0a873caf2550a5"}},
-{"key":"魔方","name":"📱｜魔方｜APP","type":3,"searchable":1,"changeable":1,"api":"csp_AppGet","ext":{"site":"https://snysw.xyz/mf4kzs327.txt","dataKey":"1234567887654321","dataIv":"1234567887654321"}},
-{"key":"甜圈短剧","name":"📱｜甜圈｜短劇","type":3,"api":"csp_TianquanDJ","searchable":1,"changeable":1,"quickSearch":1,"filterable":1},
-{"key":"锦鲤短剧","name":"📱｜錦鯉｜短劇","type":3,"api":"csp_JinliDJ","searchable":1,"changeable":1,"quickSearch":1,"filterable":1},
-{"key":"七猫短剧","name":"📱｜七猫｜短劇","type":3,"api":"csp_QiMaoDJ","searchable":1,"changeable":1,"quickSearch":1,"filterable":1},
-{"key":"星阁短剧","name":"📱｜星閣｜短劇","type":3,"api":"csp_XinggeDJ","searchable":1,"changeable":1,"quickSearch":1,"filterable":1},
-{"key":"星芽短剧","name":"📱｜星芽｜短劇","type":3,"api":"https://git.yylx.win/raw.githubusercontent.com/PizazzGY/NewTVBox/main/movie/py/XYDJ.py","searchable":1,"changeable":1,"quickSearch":1,"filterable":1},
-{"key":"剧王短剧","name":"📱｜劇王｜短劇","type":3,"api":"https://git.yylx.win/raw.githubusercontent.com/PizazzGY/NewTVBox/main/movie/py/JWDJ.py","searchable":1,"changeable":1,"quickSearch":1,"filterable":1},
-
-
     {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",
@@ -1156,6 +1137,15 @@
         "version" : "105"
       }
     },
+{"key":"木瓜","name":"📱｜木瓜｜APP","type":3,"changeable":0,"api":"csp_AppFox","ext":{"host":"http://www.yezitv.top/dtym.json","ver":2}},
+{"key":"花柳","name":"📱｜花柳｜APP","type":3,"changeable":0,"api":"csp_AppFox","ext":{"host":"http://nico.oiio.fun","ver":2}},
+{"key":"麒麟","name":"📱｜麒麟｜APP","type":3,"changeable":0,"api":"csp_AppFox","ext":{"host":"https://qh.70qh.top","ver":2}},
+{"key":"爆炸","name":"📱｜爆炸｜APP","type":3,"api":"csp_AppQi","changeable":"1","quickSearch":1,"filterable":1,"ext":{"site":"https://daen-1256234123.cos.ap-shanghai.myqcloud.com/MuQi/mqxh.txt","dataKey":"37kj83zs1q16jk6t","dataIv":"37kj83zs1q16jk6t","search":"searchList4","init":"initV122","ua":"okhttp/3.10.0"}},
+{"key":"鲸鱼","name":"📱｜鯨魚｜APP","type":3,"quickSearch":1,"api":"csp_AppQi","ext":{"site":"https://jingyu4k-1312635929.cos.ap-nanjing.myqcloud.com/1.json","dataKey":"AAdgrdghjfgswerA","dataIv":"AAdgrdghjfgswerA"}},
+{"key":"天峰","name":"📱｜天峰｜APP","type":3,"api":"csp_AppGet","ext":{"url":"http://zxy-ys.810211.dpdns.org","dataKey":"1234567890123456","dataIv":"1234567890123456"}},
+{"key":"气球","name":"📱｜汽球｜APP","type":3,"api":"csp_AppGet","ext":{"url":"https://vv.229d.cn","dataKey":"8888888888888888","dataIv":"8888888888888888"}},
+{"key":"剧梦","name":"📱｜劇夢｜APP","type":3,"searchable":1,"changeable":1,"api":"csp_AppGet","ext":{"url":"https://www.jumengwu.com","dataKey":"1f0a873caf2550a5","dataIv":"1f0a873caf2550a5"}},
+{"key":"魔方","name":"📱｜魔方｜APP","type":3,"searchable":1,"changeable":1,"api":"csp_AppGet","ext":{"site":"https://snysw.xyz/mf4kzs327.txt","dataKey":"1234567887654321","dataIv":"1234567887654321"}},    
     {
       "key": "鲸鱼11",
       "name": "📱｜鯨鱼｜高清◎順播(無廣告+APP)",
@@ -1589,6 +1579,12 @@
         "dataiv" : "123456789abcdefg"
       }
     },    
+    {"key":"甜圈短剧","name":"📺｜甜圈短劇","type":3,"api":"csp_TianquanDJ","searchable":1,"changeable":1,"quickSearch":1,"filterable":1},
+{"key":"锦鲤短剧","name":"📺｜錦鯉短劇","type":3,"api":"csp_JinliDJ","searchable":1,"changeable":1,"quickSearch":1,"filterable":1},
+{"key":"七猫短剧","name":"📺｜七猫短劇","type":3,"api":"csp_QiMaoDJ","searchable":1,"changeable":1,"quickSearch":1,"filterable":1},
+{"key":"星阁短剧","name":"📺｜星閣短劇","type":3,"api":"csp_XinggeDJ","searchable":1,"changeable":1,"quickSearch":1,"filterable":1},
+{"key":"星芽短剧","name":"📺｜星芽短劇","type":3,"api":"https://git.yylx.win/raw.githubusercontent.com/PizazzGY/NewTVBox/main/movie/py/XYDJ.py","searchable":1,"changeable":1,"quickSearch":1,"filterable":1},
+{"key":"剧王短剧","name":"📺｜劇王短劇","type":3,"api":"https://git.yylx.win/raw.githubusercontent.com/PizazzGY/NewTVBox/main/movie/py/JWDJ.py","searchable":1,"changeable":1,"quickSearch":1,"filterable":1},
     {
       "key": "喜马拉雅",
       "name": "🎖︎｜喜馬拉雅｜有聲書",

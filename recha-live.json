@@ -4,6 +4,15 @@
   "wallpaper": "https://tv.nxog.top/m/t/",
   "lives": [
 
+
+
+
+
+    {
+      "name": "Dream",
+      "url": "http://hufa.zabc.net:8080/dream.txt",
+      "ua":"okhttp/5.1.0"
+    },    
      {
       "name": "斯馬特1",
       "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E6%96%AF%E7%8E%9B%E7%89%B9%E7%9B%B4%E6%92%AD%E6%BA%90666"

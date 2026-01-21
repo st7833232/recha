@@ -4,10 +4,30 @@
   "wallpaper": "https://tv.nxog.top/m/t/",
   "lives": [
 
-
-
-
-
+        {
+            "name": "🐬xxx视频资源",
+            "type": 0,
+            "ua": "okhttp/5.3.2",
+            "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/xxx视频资源"
+        },
+       {
+            "name": "🐬台湾TV(梯子)",
+            "type": 0,
+            "ua": "okhttp/5.3.2",
+            "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/台湾TV"
+        }, 
+        {
+            "name": "🐬anboxtv(免翻)",
+            "type": 0,
+            "ua": "okhttp/5.3.2",
+            "url": "https://tv.anboxtv.online/tv"
+        },
+        {
+            "name": "🐬jackTV(梯子)",
+            "type": 0,
+            "ua": "okhttp/5.3.2",
+            "url": "https://php.946985.filegear-sg.me/jackTV.m3u"
+        },
     {
       "name": "Dream",
       "url": "http://hufa.zabc.net:8080/dream.txt",
@@ -24,7 +44,7 @@
     {
       "name": "港台大陆频道",
       "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E6%B8%AF%E5%8F%B0%E5%A4%A7%E9%99%86"
-    },      
+    },         
     {
       "name": "海豚直播",
       "url": "http://hufa.zabc.net:8080/iptvpro.txt",

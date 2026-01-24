@@ -2,7 +2,7 @@
   "spider": "./jar/xiaosa-0116.jar;md5;8c3eedbb006f276c9b47aeebeb1bdb29",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.01.16.ver_1\n 新增木瓜跟一大堆",
+  "notice": "115.01.24.ver_1\n 新增酷狗音樂",
   "sites": [
 
 
@@ -15,6 +15,18 @@
       "searchable":1,
       "filterable":1,
       "quickSearch":1,
+      "changeable":0
+    },
+    {
+      "key":"GoConfig",
+      "name":"💬嗷嗚｜彈幕",
+      "type":3,
+      "api":"csp_GoConfigAmns",
+      "jar": "./jar/aowu.jar;md5;fcc09f550e9f258777aec188677937df",
+      "indexs":1,
+      "searchable":0,
+      "filterable":0,
+      "quickSearch":0,
       "changeable":0
     },
     {

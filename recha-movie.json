@@ -8,7 +8,7 @@
 
     {
       "key":"KuGou",
-      "name":"🎸酷狗|音樂",
+      "name":"🎸酷狗｜音樂",
       "type":3,
       "api":"csp_KuGouAmns",
       "jar": "./jar/aowu.jar;md5;fcc09f550e9f258777aec188677937df",

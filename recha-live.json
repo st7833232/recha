@@ -3,7 +3,12 @@
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://tv.nxog.top/m/t/",
   "lives": [
-
+    {
+    "name": "🌂jackTV⭕️",
+    "ua": "okhttp/5.0.0-alpha.14",
+    "img": "https://gitee.com/liu-jiahe20230908/ico/raw/master/drl2vtp/jack.jpg",
+    "url": "https://php.946985.filegear-sg.me/jackTV.m3u"
+    },
        {
             "name": "🐬台湾TV(梯子)",
             "type": 0,

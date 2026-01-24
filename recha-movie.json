@@ -2,9 +2,39 @@
   "spider": "./jar/xiaosa-0116.jar;md5;8c3eedbb006f276c9b47aeebeb1bdb29",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.01.24.ver_3\n 新增酷狗音樂",
+  "notice": "115.01.24.ver_4\n 新增酷狗音樂",
   "sites": [
-
+        {
+			"key": "网易云音乐",
+			"name": "🐙网易云｜音乐",
+			"type": 3,
+			"api": "https://xn--fjq53n.xyz/Ting/yinyue/网易云音乐.py"
+		},
+		{
+			"key": "网易云音乐1",
+			"name": "🐙网易云1｜音乐",
+			"type": 3,
+			"api": "https://xn--fjq53n.xyz/Ting/yinyue/网易云音乐1.py"
+		},
+        {
+             "key": "hipy_js_酷我听书[听]",
+             "name": "🐙酷我听书｜听书",
+              "type": 3,
+              "api": "https://gitee.com/abiubiud/xxs/raw/main/lib/drpy2.min.js",
+              "searchable": 1,
+              "quickSearch": 1,
+              "filterable": 1,
+              "ext": "https://gitee.com/abiubiud/xxs/raw/main/dr2/酷我听书[听].js"
+        },
+        {
+              "key": "hipy_js_爱上你听书",
+              "name": "🐙爱上听书｜听书",
+              "type": 3,
+              "api": "https://gitee.com/abiubiud/xxs/raw/main/lib/drpy2.min.js",
+              "searchable": 1,
+              "quickSearch": 1,
+              "ext": "https://gitee.com/abiubiud/xxs/raw/main/dr2/爱上你听书网[听].js"
+        },
     {
       "key":"KuGou",
       "name":"🎸酷狗｜音樂",

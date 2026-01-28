@@ -2,68 +2,10 @@
   "spider": "./jar/xiaosa-0129.jar;md5;1436485f44519aab2e55abdbc0d96bf0",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.01.29.ver_1\n 重整app源，有空的幫忙測試一下",
+  "notice": "115.01.29.ver_2\n 重整app源，有空的幫忙測試一下",
   "sites": [
 
 
-
-    {
-      "key": "py_鲸鱼_APP",
-      "name": "📱｜鲸鱼",
-      "type": 3,
-      "api": "./py/app/qijiapp.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "host": "https://jingyu4k-1312635929.cos.ap-nanjing.myqcloud.com/1.json",
-        "api": "/api.php/qijiappapi",
-        "datakey": "AAdgrdghjfgswerA",
-        "dataiv": "AAdgrdghjfgswerA"
-      }
-    },
-{"key":"鲸鱼","name":"📱｜鯨魚｜APP","type":3,"quickSearch":1,"api":"csp_AppQi","ext":{"site":"https://jingyu4k-1312635929.cos.ap-nanjing.myqcloud.com/1.json","dataKey":"AAdgrdghjfgswerA","dataIv":"AAdgrdghjfgswerA"}},
-    {
-      "key": "鲸鱼1",
-      "name": "🏆｜鲸鱼｜藍光◎秒播(無廣告)",
-      "quickSearch": 0,
-      "searchable": 1,
-      "type": 3,
-      "api": "./py/getapp3.4.2.py",
-      "jar": "./jar/mi-0815.png;md5;66623623fe5ae34dad253ae2e0802416",
-      "ext": {
-        "host": "https://jingyu4k-1312635929.cos.ap-nanjing.myqcloud.com/1.json",
-        "url": "http://103.217.207.75:1122",
-        "dataKey": "AAdgrdghjfgswerA",
-        "datakey": "AAdgrdghjfgswerA",
-        "api": 2
-      }
-    },
-    {
-      "key": "鲸鱼2",
-      "name": "🏆｜影視｜藍光◎順播(無廣告+APP)",
-      "type": 3,
-      "quickSearch": 1,
-      "api": "csp_AppQi",
-      "ext": {
-        "site": "https://jingyu4k-1312635929.cos.ap-nanjing.myqcloud.com/1.json",
-        "url": "http://111.180.190.158:1122",
-        "dataKey": "AAdgrdghjfgswerA",
-        "dataIv": "AAdgrdghjfgswerA",
-        "deviceId": "",
-        "version": ""
-      }
-    },
-    {
-      "key": "鲸鱼11",
-      "name": "📱｜鯨鱼｜高清◎順播(無廣告+APP)",
-      "quickSearch": 0,
-      "searchable": 1,
-      "type": 3,
-      "api": "csp_AppQi",
-      "jar": "./jar/xmky.jar;md5;11e752cb8cd0c47a0804c70ed965be67",
-      "ext": "https://jingyu4k-1312635929.cos.ap-nanjing.myqcloud.com/1.json|AAdgrdghjfgswerA|okhttp/3.10.0"
-    },
 {"key":"火狐","name":"📱｜火狐｜APP","type":3,"searchable":1,"changeable":1,"api":"csp_AppGet","ext":{"site":"http://122.114.171.79:568/huohushipin.txt","dataKey":"huohushipingetap","dataIv":"huohushipingetap"}},
 
     {

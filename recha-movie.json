@@ -2,7 +2,7 @@
   "spider": "./jar/xiaosa-0129.jar;md5;1436485f44519aab2e55abdbc0d96bf0",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.01.29.ver_2\n 重整app源，有空的幫忙測試一下",
+  "notice": "115.01.29.ver_3\n 重整app源，有空的幫忙測試一下",
   "sites": [
 
 
@@ -24,19 +24,12 @@
         "ua"      : ""
       }
     },
-{"key":"爆炸","name":"📱｜爆炸｜APP","type":3,"api":"csp_AppQi","changeable":"1","quickSearch":1,"filterable":1,"ext":{"site":"https://daen-1256234123.cos.ap-shanghai.myqcloud.com/MuQi/mqxh.txt","dataKey":"37kj83zs1q16jk6t","dataIv":"37kj83zs1q16jk6t","search":"searchList4","init":"initV122","ua":"okhttp/3.10.0"}},
-{"key":"天峰","name":"📱｜天峰｜APP","type":3,"api":"csp_AppGet","ext":{"url":"http://zxy-ys.810211.dpdns.org","dataKey":"1234567890123456","dataIv":"1234567890123456"}},
 {"key":"魔方","name":"📱｜魔方｜APP","type":3,"searchable":1,"changeable":1,"api":"csp_AppGet","ext":{"site":"https://snysw.xyz/mf4kzs327.txt","dataKey":"1234567887654321","dataIv":"1234567887654321"}},
-{"key":"木瓜","name":"📱｜木瓜｜APP","type":3,"api":"csp_AppFox","searchable":1,"changeable":1,"ext":{"host":"http://www.yezitv.top/dtym.json","ver":2}},
 {"key":"花柳","name":"📱｜花柳｜APP","type":3,"api":"csp_AppFox","searchable":1,"changeable":1,"ext":{"host":"http://nico.oiio.fun","ver":2}},
 {"key":"麒麟","name":"📱｜麒麟｜APP","type":3,"api":"csp_AppFox","searchable":1,"changeable":1,"ext":{"host":"https://qh.70qh.top","ver":2}},
-{"key":"粉象","name":"📱｜粉象｜APP","type":3,"api":"csp_AppFox","searchable":1,"changeable":1,"ext":{"host":"http://host1.sopython.top/host.json","ver":2}},
 {"key":"搜搜","name":"📱｜搜搜｜APP","type":3,"api":"csp_AppFox","searchable":1,"changeable":1,"ext":"https://www.zjcvod.com"},
-{"key":"火花","name":"📱｜火花｜APP","type":3,"api":"csp_AppFox","searchable":1,"changeable":1,"ext":{"host":"http://huohua.itcxo.cn"}},
 {"key":"顾我","name":"📱｜顧我｜APP","type":3,"api":"csp_AppQi","searchable":1,"changeable":1,"ext":{"site":"https://daen-1256234123.cos.ap-shanghai.myqcloud.com/MuQi/pgqj.json","dataKey":"kj37zs29q22jk96t","dataIv":"kj37zs29q22jk96t","init":"initV122","ua":"okhttp/3.10.0"}},
 {"key":"爱盈","name":"📱｜愛盈｜APP","type":3,"api":"csp_AppQi","searchable":1,"changeable":1,"ext":{"site":"https://rxysyyds.oss-cn-chengdu.aliyuncs.com/qiji.txt","dataKey":"sjvlwnhk6h9znl61","dataIv":"sjvlwnhk6h9znl61","version":"305","ua":"okhttp/3.10.0"}},
-{"key":"金牌","name":"📱｜金牌｜APP","type":3,"api":"csp_AppQi","searchable":1,"changeable":1,"ext":{"site":"https://dtqj.ggtvb.cc/dtjp.txt","dataKey":"eecbio48dsq131ee","dataIv":"eecbio48dsq131ee","search":"searchList4","version":"305","init":"initV122","ua":"okhttp/3.10.0"}},
-{"key":"小猪","name":"📱｜小豬丨APP","type":3,"api":"csp_AppQi","searchable":1,"changeable":1,"ext":{"site":"https://tiantangyoulu.oss-cn-beijing.aliyuncs.com/tengxunyun.txt","dataKey":"seb5tq9mykp2w9ry","dataIv":"seb5tq9mykp2w9ry","search":"qearchList","init":"initV122","ua":"okhttp/3.10.0"}},
 {"key":"奇奇","name":"📱｜奇奇｜APP","type":3,"api":"csp_AppQi","searchable":1,"changeable":1,"ext":{"url":"http://110.42.67.221:8007","dataKey":"123456789abcdefg","dataIv":"123456789abcdefg","search":"searchList7","init":"initV122","ua":"okhttp/3.10.0"}},
 {"key":"芬奇","name":"📱｜芬奇｜APP","type":3,"searchable":1,"changeable":1,"api":"csp_AppGet","ext":{"site":"https://wsapi.dafenqi.mom/yuming.txt","dataKey":"bH5mI8iK0tK7aQ5x","dataIv":"bH5mI8iK0tK7aQ5x"}},
 {"key":"优兔","name":"📱｜優兔｜APP","type":3,"api":"csp_AppQi","searchable":1,"changeable":1,"ext":{"site":"https://uututv-1319209748.cos.ap-shanghai.myqcloud.com/uutuv4.txt","dataKey":"UrWKPnmQWJA8AQzd","dataIv":"UrWKPnmQWJA8AQzd"}},
@@ -48,7 +41,6 @@
 {"key":"气球","name":"📱｜氣球｜APP","type":3,"searchable":1,"changeable":1,"api":"csp_AppGet","ext":{"url":"https://vv.229d.cn","dataKey":"8888888888888888","dataIv":"8888888888888888"}},
 {"key":"白鸽","name":"📱｜白鴿｜APP","type":3,"searchable":1,"changeable":1,"api":"csp_AppGet","ext":{"url":"https://cy.baige.asia","dataKey":"599D0FE5178642FD","dataIv":"599D0FE5178642FD"}},
 {"key":"剧梦","name":"📱｜劇夢｜APP","type":3,"searchable":1,"changeable":1,"api":"csp_AppGet","ext":{"url":"https://www.jumengwu.com","dataKey":"1f0a873caf2550a5","dataIv":"1f0a873caf2550a5"}},
-{"key":"瑞奇","name":"📱｜瑞奇｜APP","type":3,"searchable":1,"changeable":1,"api":"csp_AppGet","ext":{"url":"http://rqxk.gdata.fun","dataKey":"yangruiqiYsapp00","dataIv":"yangruiqiYsapp00"}},
 {"key":"茉莉","name":"📱｜茉莉｜APP","type":3,"searchable":1,"changeable":1,"api":"csp_AppGet","ext":{"site":"https://gitee.com/wmmoliill/wimg/raw/master/img/bk/9.txt","dataKey":"88689667dce61725","dataIv":"88689667dce61725"}},
 {"key":"驿站","name":"📱｜驛站丨APP","type":3,"searchable":1,"changeable":1,"api":"csp_AppGet","ext":{"site":"https://dyyztvappapigoodgx.68.gy:12689/ciwk28vu38io8/apiurl.txt","dataKey":"dyyztvapiappyyds","dataIv":"dyyztvapiappyyds"}},
 {"key":"灵虎","name":"📱｜靈虎｜APP","type":3,"searchable":1,"changeable":1,"api":"csp_AppGet","ext":{"site":"https://bind.315999.xyz/89.txt","dataKey":"#getapp@TMD@2025","dataIv":"#getapp@TMD@2025","version":"120"}},

@@ -152,14 +152,16 @@
       "changeable": 1
     },
     {
-      "key": "瓜子影视",
-      "name": "🏆｜銀牌｜藍光◎秒播(無廣告)",
+      "key": "🍈爱瓜",
+      "name": "🏆｜銀牌｜高清◎秒播(無廣告)",
       "type": 3,
-      "api": "csp_Gz360",
+      "api": "csp_AiGuaAmns",
+      "jar": "./jar/aowu.jar;md5;aaf6e104b096112ad8baf14b61108a6e",
       "searchable": 1,
+      "filterable": 1,
       "quickSearch": 1,
-      "filterable": 1
-    },
+      "changeable": 1
+    },    
     {
       "key": "🏭廠長",
       "name": "🏆｜銅牌｜高清◎秒播(無廣告)",
@@ -273,7 +275,7 @@
     },
     {
       "key": "🎬瓜子",
-      "name": "🏆｜瓜子｜特清◎秒播(備用1)",
+      "name": "🏆｜瓜子｜特清◎秒播(故障中2/1)",
       "type": 3,
       "api": "csp_GuaziAmns",
       "jar": "./jar/aowu.jar;md5;aaf6e104b096112ad8baf14b61108a6e",
@@ -283,6 +285,15 @@
       "changeable": 1,
       "ext": "./json/guazi.json"
     },
+    {
+      "key": "瓜子影视",
+      "name": "🏆｜瓜子｜特清◎秒播(故障中2/1)",
+      "type": 3,
+      "api": "csp_Gz360",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1
+    },    
     {
       "key": "py_非凡资源无广",
       "name": "🏆｜非凡｜高清◎秒播(無廣告)",
@@ -338,17 +349,6 @@
       "searchable": 1,
       "quickSearch": 0,
       "filterable": 0,
-      "changeable": 1
-    },
-    {
-      "key": "🍈爱瓜",
-      "name": "🏆｜愛瓜｜高清◎秒播(無廣告+嗷烏版)",
-      "type": 3,
-      "api": "csp_AiGuaAmns",
-      "jar": "./jar/aowu.jar;md5;aaf6e104b096112ad8baf14b61108a6e",
-      "searchable": 1,
-      "filterable": 1,
-      "quickSearch": 1,
       "changeable": 1
     },
     {

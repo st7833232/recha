@@ -12,6 +12,20 @@
   "wallpaper": "https://picsum.photos/1080/",
   "notice": "版本：115.01.05.Ver.B",
   "sites": [
+
+
+
+
+        {
+            "key": "性细胞|AV",
+            "name": "性细胞｜🔞",
+            "type": 1,
+            "api": "https://www.xxibaozyw.com/api.php/provide/vod/",
+            "quickSearch": 1,
+            "searchable": 1,
+            "filterable": 0
+        },
+
     {
       "key": "麻豆",
       "name": "🇹🇼【老王成人專區】🇹🇼",

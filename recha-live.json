@@ -9,17 +9,11 @@
     "img": "https://gitee.com/liu-jiahe20230908/ico/raw/master/drl2vtp/jack.jpg",
     "url": "https://php.946985.filegear-sg.me/jackTV.m3u"
     },
-       {
-            "name": "🐬台湾TV(梯子)",
-            "type": 0,
-            "ua": "okhttp/5.3.2",
-            "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/台湾TV"
-        }, 
         {
-            "name": "🐬anboxtv(免翻)",
+            "name": "安博",
             "type": 0,
             "ua": "okhttp/5.3.2",
-            "url": "https://tv.anboxtv.online/tv"
+            "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E5%AE%89%E5%8D%9A"
         },
     {
       "name": "Dream",

@@ -4,27 +4,35 @@
   "wallpaper": "https://tv.nxog.top/m/t/",
   "lives": [
     {
-    "name": "🌂jackTV⭕️",
+    "name": "JackTV",
     "ua": "okhttp",
     "img": "https://gitee.com/liu-jiahe20230908/ico/raw/master/drl2vtp/jack.jpg",
     "url": "https://php.946985.filegear-sg.me/jackTV.m3u"
     },
+    {
+      "name": "安博",
+      "type": 0,
+      "ua": "okhttp",
+      "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E5%AE%89%E5%8D%9A"
+    },
         {
-            "name": "安博",
+            "name": "台湾频道",
             "type": 0,
             "ua": "okhttp",
-            "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E5%AE%89%E5%8D%9A"
-        },
+            "url": "https://epg.pw/test_channels_taiwan.m3u"
+        },    
     {
       "name": "Dream",
       "url": "http://hufa.zabc.net:8080/dream.txt",
       "ua":"okhttp/5.1.0"
     },    
-     {
+    {
       "name": "斯馬特1",
-      "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E6%96%AF%E7%8E%9B%E7%89%B9%E7%9B%B4%E6%92%AD%E6%BA%90666"
-    },    
-     {
+      "type": 0,
+      "ua": "okhttp",
+      "url": "https://tv.anboxtv.online/tv"
+    },
+    {
       "name": "斯馬特2",
       "url": "http://52xinghe.top/smmmt.php"
     },        

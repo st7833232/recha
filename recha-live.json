@@ -5,14 +5,14 @@
   "lives": [
     {
     "name": "🌂jackTV⭕️",
-    "ua": "okhttp/5.0.0-alpha.14",
+    "ua": "okhttp",
     "img": "https://gitee.com/liu-jiahe20230908/ico/raw/master/drl2vtp/jack.jpg",
     "url": "https://php.946985.filegear-sg.me/jackTV.m3u"
     },
         {
             "name": "安博",
             "type": 0,
-            "ua": "okhttp/5.3.2",
+            "ua": "okhttp",
             "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E5%AE%89%E5%8D%9A"
         },
     {

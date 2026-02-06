@@ -2,11 +2,66 @@
   "spider": "./jar/xiaosa-0129.jar;md5;1436485f44519aab2e55abdbc0d96bf0",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.02.01.ver_1\n 銀牌更換為愛瓜",
+  "notice": "115.02.07.ver_1\n 試修瓜子",
   "sites": [
       
+		{
 
-
+			"key": "月佬瓜子影视",
+			"name": "瓜子｜(試修-月佬版)",
+			"type": 4,
+			"api": "https://newtv.ggff.net/guazi?token=fhJadO1R"
+    },
+		{
+			"key": "T4-guazi",
+			"name": "瓜子｜(試修-T4版)",
+			"type": 4,
+			"api": "https://catbox.n13.club/ai/%E7%93%9C%E5%AD%90%E5%BD%B1%E8%A7%86.php"
+		},  
+		{
+			"key": "T4-jumeng",
+			"name": "聚梦｜(T4)",
+			"type": 4,
+			"api": "https://catbox.n13.club/t9/jumeng.php"
+		},      
+		{
+			"key": "T4-bulei111",
+			"name": "布雷｜(T4)",
+			"type": 4,
+			"api": "https://catbox.n13.club/t9/bulei.php"
+		},
+		{
+			"key": "T4-huaxiaozhu111",
+			"name": "花小猪｜(T4)",
+			"type": 4,
+			"api": "https://catbox.n13.club/t9/huaxiaozhu.php"
+		},
+		{
+			"key": "T4-hongguo",
+			"name": "紅果｜(T4)",
+			"type": 4,
+			"api": "https://catbox.n13.club/ai/%E7%BA%A2%E6%9E%9C%E7%9F%AD%E5%89%A7.php"
+		},    
+		{
+			"key": "T4-xingzhige",
+			"name": "短劇｜(T4)",
+			"type": 4,
+			"api": "https://catbox.n13.club/t9/xingzhige.php"
+		},    
+		{
+			"key": "php集合",
+			"name": "php集合",
+			"type": 4,
+			"api": "http://zhangqun1818.serv00.net/php.php"
+		},
+		{
+			"key": "python集合",
+			"name": "python集合",
+			"type": 4,
+			"api": "http://zhangqun1818.serv00.net/py.php"
+		},   
+    
+    
     {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",

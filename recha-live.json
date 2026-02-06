@@ -3,14 +3,7 @@
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://tv.nxog.top/m/t/",
   "lives": [
-		{
-			"name": "🔞秘密花园",
-			"type": 0,
-			"url": "https://down.nigx.cn/mmhy.zzong6599.workers.dev",
-			"playerType": 1,
-			"epg": "http://diyp5.112114.xyz/?ch={name}&date={date}",
-			"logo": "http://diyp5.112114.xyz/{name}.png"
-		},    
+    
     {
     "name": "JackTV",
     "ua": "okhttp",
@@ -176,8 +169,16 @@
       "logo": "https://epg.112114.xyz/logo/{name}.png",
       "pass": true
     },  
+		{
+			"name": "🔞秘密花园",
+			"type": 0,
+			"url": "https://down.nigx.cn/mmhy.zzong6599.workers.dev",
+			"playerType": 1,
+			"epg": "http://diyp5.112114.xyz/?ch={name}&date={date}",
+			"logo": "http://diyp5.112114.xyz/{name}.png"
+		},    
     {
-      "name": "海角色區(18+)",
+      "name": "🔞海角色區",
       "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E6%B5%B7%E8%A7%92%E7%A4%BE%E5%8C%BA%E5%8D%9A%E4%B8%BB(%E5%85%8D%E7%95%AA%E5%BC%BA)"
     },
     {

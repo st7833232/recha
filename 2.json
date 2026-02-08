@@ -2,9 +2,17 @@
   "spider": "./jar/xiaosa-0129.jar;md5;1436485f44519aab2e55abdbc0d96bf0",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.02.07.ver_1\n 試修瓜子",
+  "notice": "115.02.07.ver_2\n 試修瓜子",
   "sites": [
-      
+    {
+      "key": "csp_123TV",
+      "name": "123TV｜隨手寫的py測試",
+      "type": 3,
+      "api": "./py/123TV.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 0
+    },   
     {
       "key": "csp_123TV",
       "name": "123TV｜測試",

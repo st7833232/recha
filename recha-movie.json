@@ -2,14 +2,14 @@
   "spider": "./jar/xiaosa-0129.jar;md5;1436485f44519aab2e55abdbc0d96bf0",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.02.08.ver_3\n 試修瓜子",
+  "notice": "115.02.08.ver_4\n 隨手弄了一個123TV，請反饋使用情形",
   "sites": [
       
 
     
     {
       "key": "csp_123TV",
-      "name": "123TV｜隨手寫的py測試",
+      "name": "123TV｜好多線路",
       "type": 3,
       "api": "./py/123TV.py",
       "searchable": 1,

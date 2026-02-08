@@ -7,7 +7,15 @@
       
 
     
-    
+    {
+      "key": "csp_123TV",
+      "name": "123TV｜隨手寫的py測試",
+      "type": 3,
+      "api": "./py/123TV.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 0
+    },   
     {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",

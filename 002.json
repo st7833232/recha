@@ -14,7 +14,8 @@
             "searchable": 1,
             "quickSearch": 1,
             "filterable": 0,
-            "changeable": 1
+            "changeable": 1,
+            "ext": "0"
         },
         {
             "key": "采集合集py-1",

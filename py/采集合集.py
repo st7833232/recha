@@ -40,7 +40,7 @@ class Spider(Spider):
             except: pass
 
         # 加载站点配置
-        default_path = "./cj.json"
+        default_path = "https://gitlab.com/tenrecha/recha/-/raw/main/cj.json"
         self.mode = "0" 
         json_path = default_path
 

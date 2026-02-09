@@ -13,18 +13,29 @@
   "notice": "版本：115.01.05.Ver.B",
   "sites": [
 
+    {
+      "key": "小红书",
+      "name": "⏭｜Pornhub(嗷嗚)｜PYTHON",
+      "type": 3,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "api": "./py/py_Phub.py",
+      "playerType": 2,
+      "filterable": 1
+    },
+    {
+      "key": "禁片天堂",
+      "name": "⏭｜禁片天堂(恰逢)｜PYTHON",
+      "type": 3,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "api": "./py/py_禁片天堂.py",
+      "filterable": 1
+    },
 
 
-
-        {
-            "key": "性细胞|AV",
-            "name": "性细胞｜🔞",
-            "type": 1,
-            "api": "https://www.xxibaozyw.com/api.php/provide/vod/",
-            "quickSearch": 1,
-            "searchable": 1,
-            "filterable": 0
-        },
 
     {
       "key": "麻豆",
@@ -124,32 +135,7 @@
       "playerType": 2,
       "filterable": 1
     },
-    {
-      "key": "小黄书",
-      "name": "🔞小黄书",
-      "type": 3,
-      "jar": "./jar/xyqxbpq.jar",
-      "api": "csp_XBPQ",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "请求头"  : "User-Agent$MOBILE_UA",
-        "过滤词"  : "https://upload.xchina.io",
-        "主页url": "https://xchina.fit/categories.html",
-        "数组"   : "item video\">&&</a",
-        "图片"   : "background-image:url('&&')",
-        "标题"   : "title=\"&&\"",
-        "简介"   : "twitter:title\" content=\"&&\"",
-        "链接"   : "href=\"&&\"",
-        "搜索模式" : "1",
-        "搜索url": "https://xchina.fit/videos/series-id/{pg}.html?wd={wd}",
-        "分类数组" : "<a&&</a",
-        "分类标题" : "title\">&&<",
-        "分类ID" : "/videos/series-&&.html",
-        "分类url": "https://xchina.fit/videos/series-{cateId}/{catePg}.html;;z"
-      }
-    },
+
     {
       "key": "py_MissAv",
       "name": "⏭｜MissAv(沐辰)｜PYTHON",
@@ -681,6 +667,41 @@
         "分类": "女神$21#美女直播$22#人妻$23#动漫$35#无码$30#有码$31#中文字幕$32#三级伦理$36"
       }
     },
+    {
+      "key": "小黄书",
+      "name": "🔞小黄书",
+      "type": 3,
+      "jar": "./jar/xyqxbpq.jar",
+      "api": "csp_XBPQ",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": {
+        "请求头"  : "User-Agent$MOBILE_UA",
+        "过滤词"  : "https://upload.xchina.io",
+        "主页url": "https://xchina.fit/categories.html",
+        "数组"   : "item video\">&&</a",
+        "图片"   : "background-image:url('&&')",
+        "标题"   : "title=\"&&\"",
+        "简介"   : "twitter:title\" content=\"&&\"",
+        "链接"   : "href=\"&&\"",
+        "搜索模式" : "1",
+        "搜索url": "https://xchina.fit/videos/series-id/{pg}.html?wd={wd}",
+        "分类数组" : "<a&&</a",
+        "分类标题" : "title\">&&<",
+        "分类ID" : "/videos/series-&&.html",
+        "分类url": "https://xchina.fit/videos/series-{cateId}/{catePg}.html;;z"
+      }
+    },
+        {
+            "key": "性细胞|AV",
+            "name": "性细胞｜🔞",
+            "type": 1,
+            "api": "https://www.xxibaozyw.com/api.php/provide/vod/",
+            "quickSearch": 1,
+            "searchable": 1,
+            "filterable": 0
+        },       
     {
       "key": "hipy_js_avtoday[密]",
       "name": "🔞AVtoday",

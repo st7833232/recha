@@ -97,15 +97,6 @@
       "style": {"type": "rect", "ratio": 1.597}
     },
     {
-      "key": "py_lav.py",
-      "name": "⏭｜LAV(嗷嗚)｜PYTHON",
-      "type": 3,
-      "api": "./py/lav.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1
-    },
-    {
       "key": "py_推特",
       "name": "⏭｜推特(嗷嗚)｜PYTHON",
       "type": 3,
@@ -113,32 +104,10 @@
       "style": {"type": "rect", "ratio": 1.5}
     },
     {
-      "key": "py_Xhm",
-      "name": "⏭｜py_Xhm",
-      "type": 4,
-      "api": "https://learnpython.ggff.net/py_Xhm"
-    },
-    {
-      "key": "py_stripchat",
-      "name": "⏭｜py_stripchat",
-      "type": 4,
-      "api": "https://learnpython.ggff.net/py_stripchat"
-    },
-    {
       "key": "py_好色",
       "name": "⏭｜好色(恰逢)｜PYTHON",
       "type": 3,
       "api": "./py/好色tv.py",
-      "searchable": 1,
-      "quickSearch": 0,
-      "filterable": 0,
-      "changeable": 0
-    },
-    {
-      "key": "py_rou",
-      "name": "⏭｜Rou(沐辰)｜PYTHON",
-      "type": 3,
-      "api": "./py/py_rou.py",
       "searchable": 1,
       "quickSearch": 0,
       "filterable": 0,
@@ -154,16 +123,6 @@
       "api": "./py/py_小红薯.py",
       "playerType": 2,
       "filterable": 1
-    },
-    {
-      "key": "Xhm",
-      "name": "⏭｜小黃書(嗷嗚)",
-      "type": 3,
-      "api": "./py/py_xhm.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 1
     },
     {
       "key": "小黄书",
@@ -236,29 +195,6 @@
       "filterable": 1
     },
     {
-      "key": "csp_pornhub",
-      "name": "⏭｜Pornhub｜PYTHON",
-      "type": 3,
-      "api": "csp_XYQHiker",
-      "searchable": 1,
-      "quickSearch": 0,
-      "filterable": 0,
-      "ext": "./json/pornhub.json",
-      "style": {"type": "rect", "ratio": 1.6}
-    },
-    {
-      "key": "csp_pornhub",
-      "name": "🔞91Pornhub",
-      "type": 3,
-      "api": "csp_XYQHiker",
-      "jar": "./jar/xyqxbpq.jar",
-      "searchable": 1,
-      "quickSearch": 0,
-      "filterable": 0,
-      "ext": "./json/pornhub.json",
-      "style": {"type": "rect", "ratio": 1.6, "proxy": "proxy"}
-    },
-    {
       "key": "pornhub",
       "name": "⏭｜91Pornhub｜PYTHON",
       "type": 3,
@@ -279,26 +215,6 @@
       "filterable": 1,
       "timeout": 60,
       "ext": "proxy"
-    },
-    {
-      "key": "avdb",
-      "name": "⏭｜avdb(老張)｜GO",
-      "type": 4,
-      "api": "http://zhangqun1818.serv00.net/228_1.php",
-      "searchable": 0,
-      "changeable": 0
-    },
-    {
-      "key": "lf_js_p2p",
-      "name": "⏭路飞｜PG磁力搜索",
-      "type": 3,
-      "searchable": 1,
-      "changeable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "api": "./drpy_js/lf_p2p2_min.js",
-      "jar": "./jar/pg.jar",
-      "ext": "18+"
     },
     {
       "key": "lf_js_p2p",
@@ -346,20 +262,6 @@
       "filterable": 0,
       "ext": "./json/njav.com.json",
       "style": {"type": "rect", "ratio": 1.6}
-    },
-    {
-      "key": "Netflav",
-      "name": "🔞Netflav｜",
-      "type": 3,
-      "searchable": 1,
-      "changeable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "recordable": 0,
-      "api": "csp_Netflav",
-      "jar": "./jar/netflav.jar",
-      "ext": "proxy",
-      "timeout": 60
     },
     {
       "key": "javDay.app",
@@ -1013,17 +915,6 @@
       "quickSearch": 0,
       "filterable": 0,
       "ext": "./json/hdpornmovies.json",
-      "style": {"type": "rect", "ratio": 1.6}
-    },
-    {
-      "key": "csp_XYQHiker_pornhub",
-      "name": "🔞伊甸園(pornhub)",
-      "type": 3,
-      "api": "csp_XYQHiker",
-      "searchable": 1,
-      "quickSearch": 0,
-      "filterable": 0,
-      "ext": "./json/pornhub.json",
       "style": {"type": "rect", "ratio": 1.6}
     },
     {

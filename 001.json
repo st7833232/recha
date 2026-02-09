@@ -2,25 +2,52 @@
   "spider": "./jar/xiaosa-0129.jar;md5;1436485f44519aab2e55abdbc0d96bf0",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.02.07.ver_2\n 試修瓜子",
+  "notice": "115.02.08.ver_4\n 隨手弄了一個123TV，請反饋使用情形",
   "sites": [
+      
+
+    {
+            "key": "采集合集py-0",
+            "name": "采集合集py-0",
+            "type": 3,
+            "api": "./py/采集合集.py",
+            "searchable": 1,
+            "quickSearch": 1,
+            "filterable": 0,
+            "changeable": 1,
+            "ext": "0"
+        },
+        {
+            "key": "采集合集py-1",
+            "name": "采集合集py-1",
+            "type": 3,
+            "api": "./py/采集合集.py",
+            "searchable": 1,
+            "quickSearch": 1,
+            "filterable": 0,
+            "changeable": 1,
+            "ext": "1"
+        },
+        {
+            "key": "采集合集py-2",
+            "name": "采集合集py-2",
+            "type": 3,
+            "api": "./py/采集合集.py",
+            "searchable": 1,
+            "quickSearch": 1,
+            "filterable": 0,
+            "changeable": 1,
+            "ext": "2"
+        },
     {
       "key": "csp_123TV",
-      "name": "123TV｜隨手寫的py測試",
+      "name": "123TV｜好多線路",
       "type": 3,
       "api": "./py/123TV.py",
       "searchable": 1,
       "filterable": 0,
       "changeable": 0
     },   
-		{
-			"key": "python集合",
-			"name": "python集合",
-			"type": 4,
-			"api": "http://zhangqun1818.serv00.net/py.php"
-		},
-    
-    
     {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",
@@ -737,6 +764,13 @@
         }
       }
     },
+
+		{
+			"key": "python集合",
+			"name": "🏆｜python集合｜(老張)",
+			"type": 4,
+			"api": "http://zhangqun1818.serv00.net/py.php"
+		},       
     {
       "key": "🥇伊外",
       "name": "🥇｜伊外｜高清◎秒播",

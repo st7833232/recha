@@ -40,7 +40,7 @@ class Spider(Spider):
             except: pass
 
         # 加载站点配置
-        default_path = "/storage/emulated/0/lz/cj.json"
+        default_path = "./cj.json"
         self.mode = "0" 
         json_path = default_path
 

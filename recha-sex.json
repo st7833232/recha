@@ -34,7 +34,16 @@
       "api": "./py/py_禁片天堂.py",
       "filterable": 1
     },
-
+    {
+      "key": "月佬好色",
+      "name": "⏭｜好色(月佬)｜PYTHON",
+      "type": 3,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "api": "./py/py_月佬-好色tv.py",
+      "filterable": 1
+    },
 
 
     {

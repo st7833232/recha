@@ -4,7 +4,16 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.02.11.ver_2\n 今天抄嗷嗚的新站源",
   "sites": [
-      
+        {
+            "key": "六月听书",
+            "name": "六月听书┃⭐星河⭐",
+            "type": 3,
+            "api": "csp_TingBook",
+            "jar": "./jar/星河.jar",
+            "style": {
+                "type": "list"
+            }
+        },      
         {
             "key": "GoConfig",
             "name": "💬嗷嗚|彈幕|豆瓣",

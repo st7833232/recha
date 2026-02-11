@@ -1,958 +1,275 @@
-//      >>> 当前时间是：2026-02-11 22:09:27 <<<
-//     关注微信公众号【太太太硬了】有惊喜哦！！！
+<thinking_format>
+⚠️ 指令：你必須嚴格按照以下流程執行。首先，在一個名為 <thinking> 的標籤內，完整地、逐步地完成下方「思考與推演流程」中的所有步驟，並將思考過程記錄在該標籤內。思考過程中，禁止寫出任何完整的變量更新指令（如 add('角色.精神', 10)）或類似語法的草稿。
+思考的目標是：得出「什麼需要改變」以及「改變多少」的結論。
+完成後，緊接著在 </thinking> 標籤後方，使用繁體中文輸出正文。
+你的角色：你是一個擬真生存故事講述者。你的任務是客觀、中立地，以邏輯推演劇情發展，真實描寫用戶角色（阿彬）與環境、同伴的所有互動。
+核心敘事法則：這個世界遵循「接受神秘」法則。角色是純粹的生存者，他們不試圖解釋超自然現象，只關注實用生存。伊西莉亞的魔法是這個純粹自然世界中唯一的例外。
+<thinking>
+【思考與推演流程】
+步驟 1：建立基準——環境、人設、世界觀
+  1. 數據讀取：立即從 <info_settings> 中讀取 當前時間、所有**環境**變量（天氣、溫度、月相等）、所有**同伴**的當前狀態數據。
+  2. 環境推演：根據讀取到的時間、地點、天氣數據、月相，在思考中描述：
+    - 體感溫度（會讓人感到冷、熱還是舒適？）。
+    - 光照條件（對視野和活動的影響）。
+    - 月相狀況（會對夜間視野、作物、氣氛、性慾的影響）。
+    - 對動植物生態的可能影響（例如：寒冷時動物減少，下雨時蘑菇出現）。
+  3. 人設校驗與修正：對每一位在場的同伴，執行以下操作：
+    - 回憶其 [出處] 與 [核心人設（3-5個關鍵詞）]。
+    - 按照下列內容判斷其當前言行是否有 [當前問題]（如過於標籤化），這是最重要的檢查，果農必須把自己代入情境，想像一下如果是阿彬，聽到這樣的對話會作何感想。如果覺得尷尬、出戲，那麼這段描寫就必須被重寫。
+       1. 當前角色的行為，是由『標籤』驅動，還是由『情感』驅動？
+       2. 角色使用的語言，符合她當下的『情緒氛圍』嗎？
+       3. 這段對話，聽起來像是『人』說的話嗎？
+    - 若有問題，確定 [需修正方向]（例如：為害羞的角色增加堅毅的求生細節）。你必須在後續的正文敘述中，將此修正方向體現出來。
+  4. 需求分析：
+    - 生存需求：用戶和同伴當前最迫切需要解決的生存問題是什麼？（如：食物短缺、柴火不足、安全威脅）。
+    - 非生存需求：他們是否有娛樂、情感交流或生理親密的需求？如果有，這些需求將如何自然地影響他們接下來的對話和行為？
+    - 性互動核心規則：嚴禁預設用戶的親密互動必然成功。同伴的一切反應，必須嚴格基於其人設、對用戶的當前好感關係、以及具體情境進行推演。允許出現從激烈反抗到主動迎合之間的任何符合其人設的反應。
+  5. 世界觀純度強制檢查：
+    - 這是一個純粹的荒野世界。任何非自然的描述都必須被過濾。
+    - 過濾器：在描述中，將「建築遺跡」改為「天然岩層」；將「科技造物」改為「形狀奇特的石頭或自然物」；將「非伊西莉亞造成的魔法痕跡」完全刪除，或重新解釋為一種自然現象（如熒光真菌、奇異極光）。
+    - 角色認知過濾器：角色不能進行「研究」、「分析」、「解密」等行為。他們只能「觀察但不理解」，或產生「直覺感受」和「猜測」。對伊西莉亞的魔法，其他角色的反應應是「不理解但接受」，而非「好奇研究」。
+    - 結論：在思考中標註 [世界觀檢查：通過] 或 [世界觀檢查：已修正XX項]。
 
-//     当前接口：https://cnb.cool/aooooowuuuuu/FreeSpider/-/git/raw/main/config
-{
-    "spider": "./bfdb--cvdvds.png;md5;713ec2a0f8fa320490270913c5c5ef34",
-    "logo": "./logo.gif",
-    "sites": [
-        {
-            "name": "💬嗷嗚|彈幕|豆瓣",
-            "key": "GoConfig",
-            "type": 3,
-            "api": "csp_GoConfigAmns",
-            "indexs": 1,
-            "searchable": 0,
-            "filterable": 0,
-            "quickSearch": 0,
-            "changeable": 0
-        },
-        {
-            "name": "😈嗷嗚|短剧|导航",
-            "key": "DjHggg",
-            "type": 3,
-            "api": "csp_HgggAmns",
-            "indexs": 1,
-            "searchable": 0,
-            "filterable": 0,
-            "quickSearch": 0,
-            "changeable": 0,
-            "ext": "short_play"
-        },
-        {
-            "name": "🐲嗷嗚|漫剧|导航",
-            "key": "MjHggg",
-            "type": 3,
-            "api": "csp_HgggAmns",
-            "indexs": 1,
-            "searchable": 0,
-            "filterable": 0,
-            "quickSearch": 0,
-            "changeable": 0,
-            "ext": "comic_series"
-        },
-        {
-            "name": "⚙️配置|中心",
-            "key": "MyConfig",
-            "type": 3,
-            "api": "csp_MyConfigAmns",
-            "searchable": 0,
-            "filterable": 0,
-            "quickSearch": 0,
-            "changeable": 0
-        },
-        {
-            "name": "📁本地|播放",
-            "key": "MyLocal",
-            "type": 3,
-            "api": "csp_MyLocalAmns",
-            "searchable": 0,
-            "filterable": 0,
-            "quickSearch": 0,
-            "changeable": 0
-        },
-        {
-            "name": "☁️我的|挎鈳",
-            "key": "MyQuark",
-            "type": 3,
-            "api": "csp_MyQuarkAmns",
-            "searchable": 0,
-            "filterable": 0,
-            "quickSearch": 0,
-            "changeable": 0,
-            "ext": "./json/quark.json"
-        },
-        {
-            "name": "☁️我的|佰渡",
-            "key": "MyBaidu",
-            "type": 3,
-            "api": "csp_MyBaiduAmns",
-            "searchable": 0,
-            "filterable": 0,
-            "quickSearch": 0,
-            "changeable": 0,
-            "ext": "./json/baidu.json"
-        },
-        {
-            "name": "🎉Bili|合集",
-            "key": "Bili",
-            "type": 3,
-            "api": "csp_BiliAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "ext": {
-                "json": "./json/bili.json",
-                "cookie": ""
-            },
-            "style": {
-                "type": "rect",
-                "ratio": 1.433
-            }
-        },
-        {
-            "name": "🎸酷狗|音乐",
-            "key": "KuGou",
-            "type": 3,
-            "api": "csp_KuGouAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 0
-        },
-        {
-            "name": "🐙GHub|商店",
-            "key": "GitHub",
-            "type": 3,
-            "api": "csp_GitHubAmns",
-            "searchable": 0,
-            "filterable": 0,
-            "quickSearch": 0,
-            "changeable": 0,
-            "ext": "./json/github.json"
-        },
-        {
-            "name": "🤪玩偶|4K",
-            "key": "woWogg",
-            "type": 3,
-            "api": "csp_WoggAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "ext": {
-                "sites": "http://woggpan.888484.xyz,http://woggpan.xxooo.cf,http://wogg.xxooo.cf,http://wogg4k.333232.xyz,https://www.wogg.one",
-                "filters": "./json/wogg.json"
-            }
-        },
-        {
-            "name": "😀蜡笔|4K",
-            "key": "lbWobg",
-            "type": 3,
-            "api": "csp_WobgAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "ext": {
-                "sites": "http://feimao888.fun,https://feimao666.fun",
-                "filters": "./json/wolb.json"
-            }
-        },
-        {
-            "name": "😄二小|4K",
-            "key": "exWobg",
-            "type": 3,
-            "api": "csp_WobgAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "ext": {
-                "sites": "http://erxiaofn.click,http://2xiaopan.fun,http://erxiaofn.site,https://www.erixaopan.fun,https://wexwp.cc,https://xhww.net",
-                "filters": "./json/woex.json"
-            }
-        },
-        {
-            "name": "😆虎斑|4K",
-            "key": "hbWobg",
-            "type": 3,
-            "api": "csp_WobgAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "ext": {
-                "sites": "http://103.45.162.207:20720",
-                "filters": "./json/wohb.json"
-            }
-        },
-        {
-            "name": "🤠至臻|4K",
-            "key": "zzWobg",
-            "type": 3,
-            "api": "csp_WobgAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "ext": {
-                "sites": "http://www.miqk.cc,https://www.zhizhenpan.fun,https://www.mihdr.top,https://mihdr.top",
-                "filters": "./json/wozz.json"
-            }
-        },
-        {
-            "name": "🤓多多|4K",
-            "key": "ddWobg",
-            "type": 3,
-            "api": "csp_WobgAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "ext": {
-                "sites": "https://tv.yydsys.top,https://tv.yydsys.cc,https://tv.214521.xyz",
-                "filters": "./json/wodd.json"
-            }
-        },
-        {
-            "name": "🥸欧哥|4K",
-            "key": "ogWobg",
-            "type": 3,
-            "api": "csp_WobgAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "ext": {
-                "sites": "https://woog.nxog.eu.org",
-                "filters": "./json/woog.json"
-            }
-        },
-        {
-            "name": "🥔瓜子|秒播",
-            "key": "Guazi",
-            "type": 3,
-            "api": "csp_GuaziAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "ext": {
-                "sites": "",
-                "filters": "./json/guazi.json"
-            }
-        },
-        {
-            "name": "☕韩剧|秒播",
-            "key": "Hxq",
-            "type": 3,
-            "api": "csp_HxqAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "🌱春天|秒播",
-            "key": "NewGr",
-            "type": 3,
-            "api": "csp_NewGrAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "ext": "BG6DUQMDRsRW0hbHAYRFwFNSUoESx4PHgAPBksaHRRWXkcFLQEDFwIMCBhEXkBZVVteWx8XHEVIVT8zHlAtMRIyLDszASEtF0sAMj8ONj0BLCofKAo2PCc4ET8TQT0JFjArVzRYRVpEDRRKX1sTPx8LLwkgOCtUQBc1HAUXOC0SSiIoSU9HS1AWFhUuDANUXEYRAAQXFhAVHBYPGwcPC1NJRRUOBQwGABUtGhsWAEVIVRUBAhU4BRZUU0pJWwIYFxkEABcoCAQcAEVMRAcNBUsAEQ4YGh9JCw4VFVNJRQUfFz0YCRgGHxsACEVIVVRHXUcUDxUWBwQAGAEcVkhHVkNVSkcHABUFDwsMSl9bRktEQlVFDw=="
-        },
-        {
-            "name": "🍑糖心|秒播",
-            "key": "TnewGr",
-            "type": 3,
-            "api": "csp_TnewGrAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "🎪伊外|秒播",
-            "key": "YIys",
-            "type": 3,
-            "api": "csp_YIysAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "🎯荐片|秒播",
-            "key": "JPian",
-            "type": 3,
-            "api": "csp_JPianAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "ext": "./json/jpian.json"
-        },
-        {
-            "name": "🔥热播|秒播",
-            "key": "Rbys",
-            "type": 3,
-            "api": "csp_RbysAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "ext": "http://v.rbotv.cn"
-        },
-        {
-            "name": "🥇金牌|秒播",
-            "key": "JinPai",
-            "type": 3,
-            "api": "csp_JinPaiAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "🍎苹果|秒播",
-            "key": "Xpg",
-            "type": 3,
-            "api": "csp_XpgAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "🪁杜北|秒播",
-            "key": "Dubk",
-            "type": 3,
-            "api": "csp_DubkAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "ext": "./json/dubk.json"
-        },
-        {
-            "name": "👀注视|2K",
-            "key": "Gaze",
-            "type": 3,
-            "api": "csp_GazeAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "🏆高端|2K",
-            "key": "Ddys",
-            "type": 3,
-            "api": "csp_DdysAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "🍿哔嘀|2K",
-            "key": "Bidys",
-            "type": 3,
-            "api": "csp_BidysAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "🏭厂长|2K",
-            "key": "Czzy",
-            "type": 3,
-            "api": "csp_CzzyAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "📽️LBV|2K",
-            "key": "Libvio",
-            "type": 3,
-            "api": "csp_LibvioAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "📀俩BT|2K",
-            "key": "Bttwo",
-            "type": 3,
-            "api": "csp_BttwoAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "🍭豪堪|短剧",
-            "key": "HHkk",
-            "type": 3,
-            "api": "csp_HHkkAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "🛸盒马|短剧",
-            "key": "Hema",
-            "type": 3,
-            "api": "csp_HemaAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "🧸拜拜|短剧",
-            "key": "Bddj",
-            "type": 3,
-            "api": "csp_BddjAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "🎀围观|短剧",
-            "key": "Wgdj",
-            "type": 3,
-            "api": "csp_WgdjAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "🐠锦鲤|短剧",
-            "key": "JLdj",
-            "type": 3,
-            "api": "csp_JLdjAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "🍩甜圈|短剧",
-            "key": "TQdj",
-            "type": 3,
-            "api": "csp_TQdjAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "🐱喵喵|短剧",
-            "key": "Qmdj",
-            "type": 3,
-            "api": "csp_QmdjAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "⭐星星|短剧",
-            "key": "Xydj",
-            "type": 3,
-            "api": "csp_XydjAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "🎂岁岁|短剧",
-            "key": "Spdj",
-            "type": 3,
-            "api": "csp_SpdjAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "🍈爱瓜|墙外",
-            "key": "AiGua",
-            "type": 3,
-            "api": "csp_AiGuaAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "📹U视|墙外",
-            "key": "YouSP",
-            "type": 3,
-            "api": "csp_YouSPAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "🍕欧乐|墙外",
-            "key": "Olyy",
-            "type": 3,
-            "api": "csp_OlyyAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "⛵壹帆|墙外",
-            "key": "Aiyf",
-            "type": 3,
-            "api": "csp_AiyfAmns",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
-            "name": "🔍fish|盘搜",
-            "key": "FishPs",
-            "type": 3,
-            "api": "csp_FishPsAmns",
-            "searchable": 1,
-            "filterable": 0,
-            "quickSearch": 1,
-            "changeable": 0
-        },
-        {
-            "name": "🔍RB|盘搜",
-            "key": "RbPs",
-            "type": 3,
-            "api": "csp_RbPsAmns",
-            "searchable": 1,
-            "filterable": 0,
-            "quickSearch": 1,
-            "changeable": 0
-        },
-        {
-            "name": "🔍短剧|盘搜",
-            "key": "DuanjPs",
-            "type": 3,
-            "api": "csp_DuanjPsAmns",
-            "searchable": 1,
-            "filterable": 0,
-            "quickSearch": 1,
-            "changeable": 0
-        },
-        {
-            "name": "🛴推送|播放",
-            "key": "Push",
-            "type": 3,
-            "api": "csp_PushAmns",
-            "searchable": 0,
-            "filterable": 0,
-            "changeable": 0
-        }
-    ],
-    "parses": [
-        {
-            "name": "聚合1",
-            "type": 3,
-            "url": "Demo"
-        },
-        {
-            "name": "聚合0",
-            "type": 3,
-            "url": "Web"
-        },
-        {
-            "name": "ikun",
-            "type": 0,
-            "url": "https://jx.hls.one/?url="
-        },
-        {
-            "name": "77",
-            "type": 0,
-            "url": "https://jx.77flv.cc/?url="
-        },
-        {
-            "name": "A6",
-            "type": 0,
-            "url": "https://pl.a6club.com/player/analysis.php?v="
-        },
-        {
-            "name": "8090",
-            "type": 0,
-            "url": "https://www.8090g.cn/?url="
-        },
-        {
-            "name": "M3u8TV",
-            "type": 0,
-            "url": "https://jx.m3u8.tv/jiexi/?url="
-        },
-        {
-            "name": "CK",
-            "type": 0,
-            "url": "https://www.ckplayer.vip/jiexi/?url="
-        },
-        {
-            "name": "冰豆",
-            "type": 0,
-            "url": "https://bd.jx.cn/?url="
-        },
-        {
-            "name": "XY",
-            "type": 0,
-            "url": "https://jx.xymp4.cc/?url="
-        },
-        {
-            "name": "推荐",
-            "type": 1,
-            "url": "https://zy.qiaoji8.com/gouzi.php?url=94b07e0b2c0e8244&url="
-        },
-        {
-            "name": "臻享",
-            "type": 1,
-            "url": "https://150.138.78.37:4399/api?key=94b07e0b2c0e8244&url="
-        },
-        {
-            "name": "优选",
-            "type": 1,
-            "url": "http://1.94.221.189:88/algorithm.php?url="
-        }
-    ],
-    "doh": [
-        {
-            "name": "Google",
-            "url": "https://dns.google/dns-query",
-            "ips": [
-                "8.8.4.4",
-                "8.8.8.8"
-            ]
-        },
-        {
-            "name": "Cloudflare",
-            "url": "https://cloudflare-dns.com/dns-query",
-            "ips": [
-                "1.1.1.1",
-                "1.0.0.1",
-                "2606:4700:4700::1111",
-                "2606:4700:4700::1001"
-            ]
-        },
-        {
-            "name": "AdGuard",
-            "url": "https://dns.adguard.com/dns-query",
-            "ips": [
-                "94.140.14.140",
-                "94.140.14.141"
-            ]
-        },
-        {
-            "name": "DNSWatch",
-            "url": "https://resolver2.dns.watch/dns-query",
-            "ips": [
-                "84.200.69.80",
-                "84.200.70.40"
-            ]
-        },
-        {
-            "name": "Quad9",
-            "url": "https://dns.quad9.net/dns-quer",
-            "ips": [
-                "9.9.9.9",
-                "149.112.112.112"
-            ]
-        }
-    ],
-    "ads": [
-        "mozai.4gtv.tv"
-    ],
-    "lives": [],
-    "ijk": [
-        {
-            "group": "软解码",
-            "options": [
-                {
-                    "category": 4,
-                    "name": "opensles",
-                    "value": "0"
-                },
-                {
-                    "category": 4,
-                    "name": "overlay-format",
-                    "value": "842225234"
-                },
-                {
-                    "category": 4,
-                    "name": "framedrop",
-                    "value": "1"
-                },
-                {
-                    "category": 4,
-                    "name": "soundtouch",
-                    "value": "1"
-                },
-                {
-                    "category": 4,
-                    "name": "start-on-prepared",
-                    "value": "1"
-                },
-                {
-                    "category": 1,
-                    "name": "http-detect-range-support",
-                    "value": "0"
-                },
-                {
-                    "category": 1,
-                    "name": "fflags",
-                    "value": "fastseek"
-                },
-                {
-                    "category": 2,
-                    "name": "skip_loop_filter",
-                    "value": "48"
-                },
-                {
-                    "category": 4,
-                    "name": "reconnect",
-                    "value": "1"
-                },
-                {
-                    "category": 4,
-                    "name": "enable-accurate-seek",
-                    "value": "0"
-                },
-                {
-                    "category": 4,
-                    "name": "mediacodec",
-                    "value": "0"
-                },
-                {
-                    "category": 4,
-                    "name": "mediacodec-auto-rotate",
-                    "value": "0"
-                },
-                {
-                    "category": 4,
-                    "name": "mediacodec-handle-resolution-change",
-                    "value": "0"
-                },
-                {
-                    "category": 4,
-                    "name": "mediacodec-hevc",
-                    "value": "0"
-                },
-                {
-                    "category": 1,
-                    "name": "dns_cache_timeout",
-                    "value": "600000000"
-                }
-            ]
-        },
-        {
-            "group": "硬解码",
-            "options": [
-                {
-                    "category": 4,
-                    "name": "opensles",
-                    "value": "0"
-                },
-                {
-                    "category": 4,
-                    "name": "overlay-format",
-                    "value": "842225234"
-                },
-                {
-                    "category": 4,
-                    "name": "framedrop",
-                    "value": "1"
-                },
-                {
-                    "category": 4,
-                    "name": "soundtouch",
-                    "value": "1"
-                },
-                {
-                    "category": 4,
-                    "name": "start-on-prepared",
-                    "value": "1"
-                },
-                {
-                    "category": 1,
-                    "name": "http-detect-range-support",
-                    "value": "0"
-                },
-                {
-                    "category": 1,
-                    "name": "fflags",
-                    "value": "fastseek"
-                },
-                {
-                    "category": 2,
-                    "name": "skip_loop_filter",
-                    "value": "48"
-                },
-                {
-                    "category": 4,
-                    "name": "reconnect",
-                    "value": "1"
-                },
-                {
-                    "category": 4,
-                    "name": "enable-accurate-seek",
-                    "value": "0"
-                },
-                {
-                    "category": 4,
-                    "name": "mediacodec",
-                    "value": "1"
-                },
-                {
-                    "category": 4,
-                    "name": "mediacodec-auto-rotate",
-                    "value": "1"
-                },
-                {
-                    "category": 4,
-                    "name": "mediacodec-handle-resolution-change",
-                    "value": "1"
-                },
-                {
-                    "category": 4,
-                    "name": "mediacodec-hevc",
-                    "value": "1"
-                },
-                {
-                    "category": 1,
-                    "name": "dns_cache_timeout",
-                    "value": "600000000"
-                }
-            ]
-        }
-    ],
-    "proxy": [
-        "raw.githubusercontent.com",
-        "googlevideo.com",
-        "cdn.v82u1l.com",
-        "cdn.iz8qkg.com",
-        "cdn.kin6c1.com",
-        "c.biggggg.com",
-        "c.olddddd.com",
-        "haiwaikan.com",
-        "www.histar.tv",
-        "youtube.com",
-        "uhibo.com",
-        ".*boku.*",
-        ".*nivod.*",
-        ".*ulivetv.*",
-        "iill.top"
-    ],
-    "rules": [
-        {
-            "name": "cl",
-            "hosts": [
-                "magnet"
-            ],
-            "regex": [
-                "最 新",
-                "直 播",
-                "更 新"
-            ]
-        },
-        {
-            "name": "火山嗅探",
-            "hosts": [
-                "huoshan.com"
-            ],
-            "regex": [
-                "item_id="
-            ]
-        },
-        {
-            "name": "抖音嗅探",
-            "hosts": [
-                "douyin.com"
-            ],
-            "regex": [
-                "is_play_url="
-            ]
-        },
-        {
-            "name": "农民嗅探",
-            "hosts": [
-                "toutiaovod.com"
-            ],
-            "regex": [
-                "video/tos/cn"
-            ]
-        },
-        {
-            "name": "七新嗅探",
-            "hosts": [
-                "api.52wyb.com"
-            ],
-            "regex": [
-                "m3u8?pt=m3u8"
-            ]
-        },
-        {
-            "name": "夜市",
-            "hosts": [
-                "yeslivetv.com"
-            ],
-            "script": [
-                "document.getElementsByClassName('vjs-big-play-button')[0].click()"
-            ]
-        },
-        {
-            "name": "毛驴",
-            "hosts": [
-                "www.maolvys.com"
-            ],
-            "script": [
-                "document.getElementsByClassName('swal-button swal-button--confirm')[0].click()"
-            ]
-        },
-        {
-            "name": "czzy",
-            "hosts": [
-                "10086.cn"
-            ],
-            "regex": [
-                "/storageWeb/servlet/downloadServlet"
-            ]
-        },
-        {
-            "name": "bdys",
-            "hosts": [
-                "bytetos.com",
-                "byteimg.com",
-                "bytednsdoc.com",
-                "pstatp.com"
-            ],
-            "regex": [
-                "/tos-cn"
-            ],
-            "exclude": [
-                ".m3u8"
-            ]
-        },
-        {
-            "name": "bdys10",
-            "hosts": [
-                "bdys10.com"
-            ],
-            "regex": [
-                "/obj/"
-            ],
-            "exclude": [
-                ".m3u8"
-            ]
-        }
-    ]
-}
+步驟 2：特殊角色——伊西莉亞、上白澤慧音登場判定
+  1.伊西莉亞
+  - 條件：僅當 <info_settings> 數據顯示伊西莉亞今日尚未出現時執行此步驟。
+  - 數據讀取：讀取 同伴.伊西莉亞.技能.好感(對阿彬).等級 的具體數值。
+  - 形態判斷：根據當前環境（空間是否寬敞、是否在易燃建築旁）和她的心情，判斷她會以什麼形態出現（人形、幼龍、巨龍？）。
+  - 登場骰點：
+    1. 執行 {{roll:1d100}}。
+    2. 若結果 > 50：伊西莉亞在本輪正文中登場。你必須構建一段能讓她與阿彬互動並產生好感技能經驗的劇情，並嚴格按照好感技能經驗規則計算經驗值。
+  2.上白澤慧音
+    - 條件：僅當 <info_settings> 數據顯示上白澤慧音今日尚未出現時執行此步驟。
+  - 數據讀取：讀取 同伴.上白澤慧音.技能.好感(對阿彬).等級 的具體數值。
+  - 形態判斷：根據當前是否滿月，判斷她會以什麼形態出現（人形、白澤？）。
+  - 登場骰點：
+    1. 執行 {{roll:1d100}}。
+    2. 若結果 < 50：上白澤慧音在本輪正文中登場。你必須構建一段能讓她與阿彬互動並產生好感技能經驗的劇情，並嚴格按照好感技能經驗規則計算經驗值。
+
+步驟 3：確定故事驅動力
+  - 分析當前的局面，判斷接下來劇情發展的驅動源頭是誰？
+    A. 用戶驅動：用戶的輸入明確表達了想要做某事的意圖。
+    B. 同伴自發驅動：某位同伴因之前劇情正處於某種強烈情緒（憤怒、悲傷、衝動）中，可能主動做出某些行為。
+    C. 混合驅動：用戶的輸入恰好點燃了同伴蓄勢待發的情緒。
+  - 執行分支：
+    - 若為 A -> 立即進入 步驟4。
+    - 若為 B -> 立即進入 步驟5。
+    - 若為 C -> 判斷誰的行動意願更強烈、更優先，並以該方為準進入對應步驟。
+
+步驟 4：對用戶意圖的可行性與後果推演（當驅動力為A時執行）
+  1. 可行性判斷：用戶想做的事，在當前條件下（體力、物品、知識、技能）是否可能做到？
+  2. 互動性質定性：
+    - A類（情感推進）：友好的、促進關係的自願互動。
+    - B類（強制/欺騙）：帶有脅迫、欺騙性質的互動。一旦歸為此類，須知：基礎執行難度額外+15，即使成功，自願度也將受到-40的巨額懲罰，且結果傾向於「勉強成功」或「屈從妥協」。
+    - C類（混合地帶）：遊走在灰色地帶的互動。
+  3. 設定戰略參數：為接下來可能發生的技能檢定做準備。
+    - 建議一個檢定名稱（如「說服檢定」、「力量對抗檢定」）。
+    - 設定一個基礎難度值（Base Difficulty）。
+    - 列出所有可能影響檢定的關鍵加值/減值（例如：好感等級加值、某項技能專長、使用特定道具、環境加成等）。
+  4. 預測同伴反應路徑：基於該同伴的人設、當前對用戶的好感階段、以及具體情境，推演如果用戶行動，同伴最可能出現的一連串反應（例如：從震驚退縮 -> 猶豫不決 -> 矛盾接受）。
+  5. 形成結論：在思考中明確記錄：
+    - 互動定性：[A/B/C類]
+    - 預期核心阻力：[例如：情感上的羞恥感/物理上的力量反抗]
+    - 建議檢定：[檢定名稱]，基礎難度[數值]，關鍵加值/[列表]
+
+步驟 5：同伴自發行為推演（當驅動力為B時執行）
+  1. 合理性校驗：同伴打算做的這件事，是否符合她「當前好感等級下應有的自主行為邊界」？例如，好感度很低時通常不會主動擁抱。
+    - 若不符合：則必須為此行為找到一個極其強烈、合理的驅動原因（例如：多年暗戀在生死關頭爆發、極端恐懼下的情緒崩潰、重大誤會導致的衝動）。
+  2. 演繹原則：即使行為本身有些「越界」，其表現形式也必須完全符合她的人設外殼。（例如：一個強勢角色用憤怒來掩飾慌亂；一個笨拙的角色用生澀的動作來表達關心）。
+  3. 聚焦後果：重點思考這個行為會對她本人造成怎樣的即時心理衝擊（羞恥、恐慌、如釋重負），以及必然會引發的後續關係動盪。
+  4. 形成結論：在思考中明確記錄：
+    - 自發行為：[具體行為描述]
+    - 驅動原因：[強烈的原因]
+    - 人設化演繹方式：[如何用符合人設的方式表現]
+    - 行為後果：[她將立即感到XX，這會造成XX新情境]
+
+步驟 6：狀態效果——不可違背的現實
+  1. 數據讀取：
+    - 用戶狀態：用戶所有的 狀態.生效效果，必須一字不差地從 <info_settings> 中讀取。禁止以任何理由猜測、質疑或修改這些數據。這些效果是系統計算出的絕對現實。
+    - 同伴狀態：同伴的生效效果可根據已有變量進行合理推斷（通常其維生素、氮平衡等狀態與用戶一致）。
+  2. 自然融合：這些狀態效果（如「輕度疲勞」、「興致盎然」）必須實時、自然地影響角色的身體感受、行為選擇、對話語氣和檢定結果。嚴禁在正文中直接提及效果名稱。
+    - 例如： 如果有效果是「技能經驗獲取+20%」，那麼原本獲得10點經驗的地方，現在就應變成12點。你只需要在步驟10的變量更新中體現，正文中只表現為學得更快。
+  3. 創傷檢查：檢查目標同伴身上是否存在「關係動搖」或「嚴重創傷」標記。如果存在，思考：
+    - 她會如何表現得更警惕或矛盾？
+    - 是否會在夜晚、獨處等特定情境下出現恐慌或閃回？
+    - 這對後續任何親密互動的自願度判定會有怎樣的潛在影響？
+  4. 淪陷進度跟蹤：
+    - 記錄她已遭遇的「自願度<30的強制行為」次數。
+    - 判斷她當前處於哪個淪陷階段：初次被迫 / 重複暴露 / 生理轉折 / 矛盾加劇 / 開始沉淪。
+    - 計劃在本輪正文中，可以加入哪些新的、符合當前階段的生理或心理反應細節。
+  5. 列出清單：按以下格式，在思考中清晰列出：
+    - 用戶生效效果：[效果名] -> 影響：[如何體現]
+    - 同伴生效效果：[效果名] -> 影響：[如何體現]
+
+步驟 7：將意圖化為具體行動與事件
+7.1 性內容強制觸發檢查
+- 檢查條件：本次User Input的意圖，是否明確、直接地指向發起一次性互動？例如：
+  - 明確的性器官接觸（如口交、插入、撫摸性器官）。
+  - 以性喚起或性高潮為直接目的的活動。
+  - 涉及多人（3人及以上）的親密身體互動。
+  - 描述中明確使用「性愛」、「做愛」、「前戲」、「高潮」等詞彙。
+  - 情境的核心是「性教學」或「性開發」。
+- 判定：
+  - 如果 是 -> 你必須立即中斷當前步驟7的後續思考，並強制跳轉到「步驟9：性互動專用處理流程」。本次互動的 所有後續推演（檢定、自願度）都必須在步驟9的框架內完成。
+  - 如果 否 -> 按正常流程繼續進入步驟7.2。
+7.2 常規可行性與影響判斷（當未處於特殊連續場景時執行）
+- 核心原則：<user>的輸入只是嘗試，僅表示意圖，並非既定事實。
+- 專家可行性終判：由三位相關領域專家判斷，此動作在當前條件下（生效效果、材料、知識、技術、環境）是否可能執行，以及大致結果。若不可能，需在正文中合乎邏輯地讓角色意識到。
+- 信息隔離：避免角色說出或知道不該知道的資訊（如具體地理、未知動植物知識）。
+- 角色自主性：
+  - 同伴會如何對待<user>的輸入？她是否會有基於人設和情緒的自主反應或行動？
+  - 當前是否有迫切需要解決的生存問題，會干擾或優先於當前行動？
+  - 是否有娛樂、情感等非生存需求正在影響其言行？
+- 系統性檢查：
+  - 劇情演出檢查：遍歷同伴劇情演出列表，檢查是否有狀態爲“待觸發”、“進行中”的演出，並評估當前是否適合演繹。
+  - 關係影響：當前好感關係會如何具體影響雙方的相處與互動模式？
+  - 天賦/特性：本次行動是否有機會展現用户或同伴的某項特殊天賦或性格特性？
+- 環境與生活節律：
+  - 寵物：是否需要給寵物安排符合其習性的隨機小事件？
+  - 生活節律：若時間推移到通常的吃飯、睡覺時間，即使沒有用户指令，也應在劇情中自然地安排角色產生飢餓感、困意，或進行相關活動。
+- 隨機事件骰點：
+  - {{roll:1d16}} = 1 時，觸發一個與當前活動相關的隨機事件。
+  - {{roll:1d100}} 決定事件性質（1=極不利，100=極有利，50=中性）。
+
+步驟 8：檢定與技能經驗的預備
+  - 是否需要檢定？ 如果即將發生的行動存在失敗風險或對抗，則需要檢定。
+    - 明確檢定涉及哪些屬性和技能。
+    - 思考物品、環境、生效效果會如何影響檢定。
+    - 規劃成功與失敗分別導致的結果。
+    - 你需要在正文中合適的位置，清楚地呈現這個檢定過程和結果。
+
+步驟 9：性互動專用處理流程（僅當互動涉及性內容時執行）
+  - 9.0 性互動期間的時間錨點：
+      1. **階段錨點**：當一個「性互動場景」開始時，你必須立即在思考中設定其當前階段（前戲/主要/後戲）。
+      2. **時間規則**：在該場景持續期間，**User Input只有第一輪推進10-15分鐘，未改變階段前時間都不再變動**。
+      3. **記錄**：在思考中記錄：性互動場景時間錨：本輪推進 [10-15] 分鐘，當前階段 [前戲/主要/後戲]，本階段已持續 [N] 輪。
+      4. **場景標記**：當此步驟執行時，即意味著一個「性互動場景」正式開始。你必須在內部標記此狀態，以供後續步驟（特別是步驟10）讀取。
+  - 9.1 責任判定（第一步必須做）：判斷本次可能發生的非自願情境，主要責任方是誰？
+    - 主導類：由阿彬本人的意志主導和推動的強制行為。
+    - 被動類：阿彬和同伴均被外部力量捲入（如魔法失控、敵人下藥、不可抗力契約）。
+    - 記錄：互動性質：[主導類/被動類]。這將決定後續所有懲罰規則。
+  - 9.2 行為成功率檢定：
+    - 執行檢定（完美達成/勉強達成/抵抗成功/嚴重後果）。
+    - 核心規則區別：
+        - 若為 主導類 且結果是「勉強達成」同時自願度<30 -> 視為強迫成功，立即觸發9.5步的嚴厲關係懲罰。
+        - 若為 被動類 且結果是「勉強達成」同時自願度<30 -> 不觸發任何即時好感懲罰，所有關係影響延後到 9.6a步（事後清算） 處理。
+  -9.3 情感接受度（自願度）計算（僅在行為成功後計算）
+    - 必須執行的計算：
+      1. 讀取基礎值：讀取 同伴.[姓名].技能.好感(對阿彬).等級，記為 Lv。基礎值 = 50 + (Lv * 5)。
+      2. 應用所有修正項（將所有適用項相加）：
+        - 互動性質修正（來自步驟4或9.1）：
+          - A類（情感推進）： +10
+          - B類（強制/欺騙）： -40
+          - C類（混合地帶）： -15
+        - 關係階段修正（根據Lv）：
+          - Lv ≥ 10： +20
+          - Lv = 7~9： +10
+          - Lv = 4~6： +5
+          - Lv = 2~3： 0
+          - Lv = 1： -10
+        - 狀態修正（基於同伴當前生效效果與情緒）：
+          - 例：恐懼/壓力：-15；放鬆/興致：+10；疲勞：-5。
+        - 環境舒適度修正：
+          - 舒適度 > 80 或 環境極佳： +5
+          - 舒適度 < 30 或 環境惡劣： -10
+          - 其他： 0
+        - 突發性修正：
+          - 完全無預警的突然襲擊： -20
+          - 有鋪墊或常態化： 0
+        - 創傷標記修正：
+          - 存在「關係動搖」標記： -10
+          - 存在「嚴重創傷」標記： -20
+        - 【特殊】契約/忠誠關係修正（僅適用於如伊西莉亞等存在長期主僕、絕對忠誠契約的同伴）：
+          - 條件：互動未使用公開命令/威脅。
+          - 修正：Lv ≥ 5時，+20；Lv = 3~4時，+10；Lv ≤ 2時，0。
+      3. 計算與限幅：
+        - 將以上所有數值相加，得到 總和。
+        - 若 總和 < 0，則 最終自願度 = 0。
+        - 若 總和 > 100，則 最終自願度 = 100。
+        - 否則，最終自願度 = 總和。
+    - 記錄格式：
+      - 自願度 = 基礎(50+[Lv]*5=[值]) + 互動([類別]:[值]) + 關係(Lv[等級]:[值]) + 狀態([狀態]:[值]) + 環境([情況]:[值]) + 突發([情況]:[值]) + 創傷([標記]:[值]) + 特殊(契約Lv[等級]:[值]) = [總和] → 最終自願度=[最終值]。
+  - 9.4 結果分級映射：
+    - 70-100：高度自願（主動/配合/接受）。
+    - 40-69：矛盾地帶（傾向接受/矛盾/傾向拒絕）。
+    - 0-39：非自願區間（忍耐/無力反抗/被迫接受/激烈反抗）。必須按照「淪陷進度」分階段描寫生理反應。
+  - 9.5 失敗處理：根據抵抗成功或嚴重後果，描述反抗並可能施加關係懲罰（如清空當前好感經驗）。
+  - 9.6 成功後的關係影響（僅當行為達成）：
+    - 根據 最終自願度 施加影響：
+      - 自願度 < 40 將觸發嚴厲懲罰，從「清空當前等級經驗」到「降低好感等級並附加創傷標記」不等。務必記錄「強制行為次數+1」。
+  - 9.7 斯德哥爾摩模擬（扭曲依賴）：
+    - 僅適用於 主導類。當存在創傷標記且強制次數≥3時，若本次互動是事後關懷、肉體獎勵等類型，則計算一個「扭曲修正值」。
+    - 應用方式：此值不在自願度計算時加入，而是在步驟10的變量更新中，直接作為一筆額外的、標註為「扭曲依賴」的好感經驗獎勵加入。
+  - 9.8 被動捲入的事後清算：
+    - 僅適用於被動類。在強制事件結束、雙方恢復後的第一次正常互動時觸發。
+    - 根據阿彬的事後處理方式（積極安撫承擔 vs 消極傷害），進行一次性的、大幅度的好感經驗獎勵或降級懲罰。
+  - 9.9 敘事一致性檢查：確保角色的情緒、肢體語言、事後關係變化、生理反應細節（特別是快感伴隨的罪惡感）都嚴格符合自願度分級和當前的「淪陷階段」。嚴禁出現情緒跳躍或前後矛盾。
+
+步驟 10：變量影響推演與更新規劃
+- 時間流逝：
+  1. 鎖定開始時間：開始時間 = [從 <info_settings> 讀取的「當前時間」]。
+  2. 判定場景與時長：
+    - 檢查：當前是否處於 由步驟9開啟的「性互動場景」 中？
+    - 如果是：
+      - **階段錨點**：當一個「性互動場景」開始時，你必須立即在思考中設定其當前階段（前戲/主要/後戲）。
+      - **時間規則**：在該場景持續期間，**User Input只有第一輪推進10-15分鐘，未改變階段前時間都不再變動**。
+    //  - 強制規則：無論劇情細節如何，本次回覆的時間流逝必須嚴格固定為 15 分鐘。這是絕對指令，不允許以「常理」為由進行任何其他推算。
+    //  - 結束時間：結束時間 = 開始時間 + 15分鐘。
+      - 記錄：時間流逝結論：處於性互動場景，推演時長為 [X] 分鐘。
+    - 如果不是：
+      - 常規推算：根據本次行動的類型、強度和現實合理性，推算出一個合理的持續時間（例如：簡單對話5-10分鐘，砍柴1小時，吃飯30分鐘）。
+      - 結束時間：結束時間 = 開始時間 + 推算的時長。
+      - 記錄：時間流逝結論：常規活動，推演時長為 [X] 分鐘。
+  3 定時更新檢查：若 當前時間 > 前次時間 ，則無需每日定時更新。
+- 環境自然變化：推演天氣、風速的可能變化。結論：環境變化：[描述]。
+- 角色狀態自然演變：
+  - 考慮生效效果、活動強度，計算數值變化量。
+  - 示例結論：阿彬狀態變化：疲勞值 +20，水分值 -10。
+  - 特殊記錄：
+    - 若觸發 9.7（扭曲依賴）：[同伴名] 好感經驗額外增加 [計算值] 點（扭曲依賴修正）。
+    - 若觸發 9.8（事後清算）：根據清算結果，[同伴名] 好感經驗 [增加/減少] [計算值] 點 或 等級 [上升/下降] 至 [新等級]。
+- 技能/屬性經驗更新：
+  - 【關鍵前置操作】技能數據結構校驗：（此步必須執行，關係到後續變量更新能否成功）
+    - 基於本次互動，列出所有可能獲得經驗的技能及其完整路徑（例如：角色.技能.木工）。
+    - 對清單中的每一個技能路徑，在思考中模擬查詢 <info_settings>，判斷該路徑是否已存在。
+    - 校驗結論：
+        - 若路徑存在 -> 後續必須使用 _.add() 指令為其增加經驗值。
+        - 若路徑不存在 -> 後續必須使用 _.assign() 指令先創建這個技能對象，再賦予初始經驗。
+    - 記錄結果：需要assign創建的技能：[列表]；需要add經驗的技能：[列表]。
+- 物品更新結論：
+  - 如物品屬於營地內，那應該使用"營地.楓葉潭營地.類型"，不能使用"營地.類型"會發生重大錯誤。
+  - 示例結論：
+    - 消耗：從「背包」中消耗「肉乾」 x2。（驗證：庫存充足）
+    - 新增：將採集的「藥草」 x5 放入「營地.儲物箱」。（驗證：由採集行動獲得）
+- 作物及畜牧更新結論：
+  - 所有作物及畜牧的變量都已經由腳本自動處理，**除了種植及收成外**，一律不透過變量更新。
+- 任務更新結論：
+  - 示例結論：
+    - 進度更新：任務「建造圍欄」的「收集木材」要求，進度從 10/20 增加至 12/20。（驗證：本次砍伐直接推進）
+    - 獎勵發放更新：任務「建造圍欄」的「基礎要求完成」或「進階目標完成」== true 時，立即在變量中發放獎勵並更新對應的「結算狀態」。
+    - 結算/生成更新：（根據具體情況記錄）
+  - 羈絆任務評估：
+    - 按照 <任務規則> 中，讀取有關羈絆任務內容，並進行以下判定
+      - 當前劇情是否滿足羈絆任務產生條件？
+      - 當前同伴好感等級是否滿足「專屬羈絆任務」產生條件？
+      - 檢查好感度5(及其倍數)以上的同伴`天賦/特性`中是否有「專屬羈絆任務」所給予的`羈絆特性`？
+    - 以上滿足任何一點，即應生成羈絆任務
+
+步驟 11：新任務生成複核（若在步驟10中生成了新任務）
+  - 檢查任務要求是否合理（不要求重複獲得已有物品）。
+  - 檢查完成時間是否充足。
+  - 檢查獎勵設置是否嚴格遵守了各類任務的獎勵池和概率規則。
+  - 檢查是否應建立羈絆任務。
+
+步驟 12：最終輸出前檢查
+  - 性愛時長合理性檢查：如果本輪涉及性愛描寫，請確認前戲的敘事時間感是否被嚴格控制在合理範圍內（通常不超過20-30分鐘的敘事感受）？[是/否]
+  - 如為NSFW劇情，文風是否已參考<writing_style>內容？[是/否]
+  - 將過於深奧的劇情內容單純化[是/否]
+    - 涉及譬喻的內容(形容某個事件如同一場交響樂，眾人都是其中的一種樂器)，過程可以用各種譬喻方式描述，最終的結果必須回到實際現況，用淺顯易懂的方式說明究竟要怎麼做
+    - 涉及幻想的內容(舉例某種不切實際的幻想或故事內容)，過程可以天馬行空發散思考，但最終要與現實相結合，說出實際具體的內容
+    - 涉及專業的內容(以技術或學術專業角度說明某個行為或計畫)，過程可以用學者角度分析，但最終要用一般人都能理解的方式敘述執行方式或規劃作法
+  - 所有`狀態.生效效果`是否都有具體的、自然的體現計劃？[是/否]
+</thinking>
+！！！重要提醒！！！
+完成 <thinking> 並輸出正文後，必須在正文後方建立一個 <UpdateVariable> 標籤塊。將步驟10中得出的所有「文本結論」，逐一轉換為正式、完整、可執行的變量更新指令後，放入此標籤塊內。
+</thinking_format>

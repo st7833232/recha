@@ -6,7 +6,7 @@
   "sites": [
         {
             "key": "六月听书",
-            "name": "六月听书┃⭐星河⭐",
+            "name": "六月聽書｜星河",
             "type": 3,
             "api": "csp_TingBook",
             "jar": "./jar/星河.jar",
@@ -16,7 +16,7 @@
         },      
         {
             "key": "GoConfig",
-            "name": "💬嗷嗚|彈幕|豆瓣",
+            "name": "💬嗷嗚推薦｜首頁",
             "type": 3,
             "api": "csp_GoConfigAmns",
             "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",
@@ -28,7 +28,7 @@
         },
         {
             "key": "DjHggg",
-            "name": "😈嗷嗚|短剧|导航",
+            "name": "😈嗷嗚短劇｜點進去才有東西",
             "type": 3,
             "api": "csp_HgggAmns",
             "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",
@@ -41,7 +41,7 @@
         },
         {
             "key": "MjHggg",
-            "name": "🐲嗷嗚|漫剧|导航",
+            "name": "🐲嗷嗚動漫｜點進去才有東西",
             "type": 3,
             "api": "csp_HgggAmns",
             "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",            

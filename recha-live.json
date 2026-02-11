@@ -28,13 +28,16 @@
       "ua":"okhttp/5.1.0"
     },    
     {
-      "name": "斯馬特1",
+      "name": "福利",
+      "url": "./live/福利.txt",
       "type": 0,
-      "ua": "okhttp",
-      "url": "https://tv.anboxtv.online/tv"
+      "timeout": 10,
+      "ua": "okhttp/3.8.1 okhttp/3.15 okhttp/4.12.0 Herissmon/2016 judy/5.2.1 RobYang/5.2.1 Lavf/58.12.100 catvod.com Goiptv/8.8.8 Goiptv/0.0.1 xieanqishiwoerzi/0.0.1 okHttp/Mod-1.0.0",
+      "logo": "https://epg.112114.xyz/logo/{name}.png",
+      "epg": "http://epg.112114.xyz/?ch={name}&date={date}"
     },
     {
-      "name": "斯馬特2",
+      "name": "斯馬特",
       "url": "http://52xinghe.top/smmmt.php"
     },        
     {

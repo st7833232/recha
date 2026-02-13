@@ -4,19 +4,13 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.02.11.ver_2\n 今天抄嗷嗚的新站源",
   "sites": [
-        {
-            "key": "六月听书",
-            "name": "六月聽書｜星河",
-            "type": 3,
-            "api": "csp_TingBook",
-            "jar": "./jar/星河.jar",
-            "style": {
-                "type": "list"
-            }
-        },      
+
+
+
+
         {
             "key": "GoConfig",
-            "name": "💬嗷嗚推薦｜首頁",
+            "name": "🇹🇼｜熱播排行榜｜自動切換",
             "type": 3,
             "api": "csp_GoConfigAmns",
             "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",
@@ -25,33 +19,7 @@
             "filterable": 0,
             "quickSearch": 0,
             "changeable": 0
-        },
-        {
-            "key": "DjHggg",
-            "name": "😈嗷嗚短劇｜點進去才有東西",
-            "type": 3,
-            "api": "csp_HgggAmns",
-            "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",
-            "indexs": 1,
-            "searchable": 0,
-            "filterable": 0,
-            "quickSearch": 0,
-            "changeable": 0,
-            "ext": "short_play"
-        },
-        {
-            "key": "MjHggg",
-            "name": "🐲嗷嗚動漫｜點進去才有東西",
-            "type": 3,
-            "api": "csp_HgggAmns",
-            "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",            
-            "indexs": 1,
-            "searchable": 0,
-            "filterable": 0,
-            "quickSearch": 0,
-            "changeable": 0,
-            "ext": "comic_series"
-        },
+        },        
     {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",
@@ -111,6 +79,19 @@
       "api": "./drpy_js/聚合短剧.js",
       "changeable": 1
     },
+        {
+            "key": "DjHggg",
+            "name": "📺｜嗷嗚短劇｜點進去才有東西",
+            "type": 3,
+            "api": "csp_HgggAmns",
+            "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",
+            "indexs": 1,
+            "searchable": 0,
+            "filterable": 0,
+            "quickSearch": 0,
+            "changeable": 0,
+            "ext": "short_play"
+        },    
     {
       "key": "网盘配置",
       "name": "🇹🇼｜Youtube、网盘、弹幕配置",
@@ -674,6 +655,16 @@
       "quickSearch": 1,
       "changeable": 1
     },
+        {
+            "key": "六月听书",
+            "name": "🏆｜六月｜聽書",
+            "type": 3,
+            "api": "csp_TingBook",
+            "jar": "./jar/星河.jar",
+            "style": {
+                "type": "list"
+            }
+        },          
     {
       "key": "mqtv",
       "name": "🏆｜一號｜高清◎秒播(無廣告)",
@@ -1991,6 +1982,19 @@
       "quickSearch": 1,
       "changeable": 1
     },    
+        {
+            "key": "MjHggg",
+            "name": "🎡｜嗷嗚動漫｜點進去才有東西",
+            "type": 3,
+            "api": "csp_HgggAmns",
+            "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",            
+            "indexs": 1,
+            "searchable": 0,
+            "filterable": 0,
+            "quickSearch": 0,
+            "changeable": 0,
+            "ext": "comic_series"
+        },    
     {
       "key": "csp_Dm84Guard",
       "name": "🎡｜动漫巴士",

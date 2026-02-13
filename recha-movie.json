@@ -6,7 +6,24 @@
   "sites": [
 
 
-
+        {
+            "key": "麻雀",
+            "name": "🐦麻雀┃1080P-5",
+            "type": 4,
+            "api": "http://115.191.55.109:8080/video/qqqys?token=47f318660fa5ca46",
+            "jar": "./jar/mi-0213.jar;md5;c4def4496c2e1a0959c8fedfaff41488",
+            "searchable": 1,
+            "quickSearch": 1,
+            "changeable": 1,
+            "filterable": 1
+        },
+        {
+            "key": "csp_TingBook",
+            "name": "📕有声┃听书",
+            "type": 3,
+            "api": "csp_TingBook",
+            "jar": "./jar/mi-0213.jar;md5;c4def4496c2e1a0959c8fedfaff41488"
+        },        
 
         {
             "key": "GoConfig",

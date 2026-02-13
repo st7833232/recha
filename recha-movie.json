@@ -10,7 +10,7 @@
 
         {
             "key": "GoConfig",
-            "name": "🇹🇼｜熱播排行榜｜自動切換",
+            "name": "🇹🇼｜熱播排行榜｜自動切換1",
             "type": 3,
             "api": "csp_GoConfigAmns",
             "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",
@@ -22,7 +22,7 @@
         },        
     {
       "key": "豆瓣",
-      "name": "🇹🇼｜熱播排行榜｜自動切換",
+      "name": "🇹🇼｜熱播排行榜｜自動切換2",
       "type": 3,
       "api": "csp_Douban",
       "searchable": 0,
@@ -30,20 +30,8 @@
       "changeable": 1
     },
     {
-      "key": "GoConfig",
-      "name": "🇹🇼｜點播搜索｜可選站1",
-      "type": 3,
-      "api": "csp_GoConfigAmns",
-      "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",
-      "indexs": 1,
-      "searchable": 0,
-      "filterable": 0,
-      "quickSearch": 0,
-      "changeable": 0
-    },
-    {
       "key": "🍉找短劇",
-      "name": "🇹🇼｜點播搜索｜可選站2",
+      "name": "🇹🇼｜點播搜索｜可選站1",
       "type": 3,
       "api": "csp_HgggAmns",
       "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",
@@ -55,7 +43,7 @@
     },    
     {
       "key": "豆瓣2",
-      "name": "🇹🇼｜點播搜索｜可選站3",
+      "name": "🇹🇼｜點播搜索｜可選站2",
       "type": 3,
       "api": "csp_Douban",
       "spider": "./jar/pg.jar;md5;7840d0b61f9641a47728e3a92020f35a",

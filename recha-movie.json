@@ -29,18 +29,7 @@
       "quickSearch": 0,
       "changeable": 1
     },
-    {
-      "key": "🍉找短劇",
-      "name": "🇹🇼｜點播搜索｜可選站1",
-      "type": 3,
-      "api": "csp_HgggAmns",
-      "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",
-      "indexs": 1,
-      "searchable": 0,
-      "filterable": 0,
-      "quickSearch": 0,
-      "changeable": 0
-    },    
+  
     {
       "key": "豆瓣2",
       "name": "🇹🇼｜點播搜索｜可選站2",
@@ -60,17 +49,21 @@
       "api": "csp_YGP",
       "searchable": 0
     },
-
     {
-      "key": "聚合短剧",
-      "name": "📺｜聚合短劇",
+      "key": "🍉找短劇",
+      "name": "📺｜短片搜索1｜點進去才有東西",
       "type": 3,
-      "api": "./drpy_js/聚合短剧.js",
-      "changeable": 1
-    },
+      "api": "csp_HgggAmns",
+      "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",
+      "indexs": 1,
+      "searchable": 0,
+      "filterable": 0,
+      "quickSearch": 0,
+      "changeable": 0
+    }, 
         {
             "key": "DjHggg",
-            "name": "📺｜嗷嗚短劇｜點進去才有東西",
+            "name": "📺｜短片搜索2｜點進去才有東西",
             "type": 3,
             "api": "csp_HgggAmns",
             "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",
@@ -80,14 +73,22 @@
             "quickSearch": 0,
             "changeable": 0,
             "ext": "short_play"
-        },    
+        },       
+    {
+      "key": "聚合短剧",
+      "name": "📺｜聚合短劇",
+      "type": 3,
+      "api": "./drpy_js/聚合短剧.js",
+      "changeable": 1
+    },
+ 
     {
       "key": "网盘配置",
       "name": "🇹🇼｜Youtube、网盘、弹幕配置",
       "type": 3,
       "jar": "./jar/pg.jar;md5;7840d0b61f9641a47728e3a92020f35a",
       "api": "csp_Config",
-      "searchable": 0,
+      "searchable": 1,
       "changeable": 0,
       "ext": "./json/tokenm.json",
       "style": {"type": "rect", "ratio": 1.5}

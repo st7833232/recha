@@ -787,30 +787,6 @@
       "changeable": 1
     },
     {
-      "key": "🍏小苹果",
-      "name": "🥇｜青蘋果｜藍光◎秒播(浮水印廣告)",
-      "type": 3,
-      "api": "csp_XpgAmns",
-      "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",
-      "searchable": 1,
-      "filterable": 1,
-      "quickSearch": 1,
-      "changeable": 1
-    },
-    {
-      "key": "小苹果影视",
-      "name": "🥇｜紅蘋果｜藍光◎秒播(？廣告)",
-      "type": 3,
-      "jar": "http://oss4liview.moji.com/thd_file/2025/12/18/824279901a5b5dac85e113e9dd930d4c.jpg;md5;2c813218abd7613d4147c0ab11c08fdf",
-      "api": "csp_XpgGuard",
-      "searchable": 1,
-      "quickSearch": 1,
-      "changeable": 1,
-      "filterable": 1,
-      "ext": {"danmu": true},
-      "timeout": 10
-    },
-    {
       "key": "csp_Jiaozi",
       "name": "🥇｜餃子｜高清◎秒播(無廣告)",
       "type": 3,
@@ -2004,6 +1980,17 @@
       "changeable": 1,
       "filterable": 0
     },
+    {
+      "key": "🍏小苹果",
+      "name": "🥇｜青蘋果｜藍光◎秒播(停用)",
+      "type": 3,
+      "api": "csp_XpgAmns",
+      "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",
+      "searchable": 1,
+      "filterable": 1,
+      "quickSearch": 1,
+      "changeable": 1
+    },    
     {
       "key": "csp_Dm84Guard",
       "name": "🎡｜动漫巴士",

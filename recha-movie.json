@@ -6,24 +6,8 @@
   "sites": [
 
 
-        {
-            "key": "麻雀",
-            "name": "🐦麻雀┃1080P-5",
-            "type": 4,
-            "api": "http://115.191.55.109:8080/video/qqqys?token=47f318660fa5ca46",
-            "jar": "./jar/mi-0213.jar;md5;c4def4496c2e1a0959c8fedfaff41488",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "filterable": 1
-        },
-        {
-            "key": "csp_TingBook",
-            "name": "📕有声┃听书",
-            "type": 3,
-            "api": "csp_TingBook",
-            "jar": "./jar/mi-0213.jar;md5;c4def4496c2e1a0959c8fedfaff41488"
-        },        
+
+     
 
         {
             "key": "GoConfig",
@@ -195,36 +179,21 @@
       "filterable": 0,
       "changeable": 0
     },
-    {"key":"NewGr","name":"🏆｜春天｜高清◎瞬播","type":3,"api":"csp_NewGrAmns","jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34","searchable":1,"filterable":1,"quickSearch":1,"changeable":1,"ext":"BG6DUQMDRsRW0hbHAYRFwFNSUoESx4PHgAPBksaHRRWXkcFLQEDFwIMCBhEXkBZVVteWx8XHEVIVT8zHlAtMRIyLDszASEtF0sAMj8ONj0BLCofKAo2PCc4ET8TQT0JFjArVzRYRVpEDRRKX1sTPx8LLwkgOCtUQBc1HAUXOC0SSiIoSU9HS1AWFhUuDANUXEYRAAQXFhAVHBYPGwcPC1NJRRUOBQwGABUtGhsWAEVIVRUBAhU4BRZUU0pJWwIYFxkEABcoCAQcAEVMRAcNBUsAEQ4YGh9JCw4VFVNJRQUfFz0YCRgGHxsACEVIVVRHXUcUDxUWBwQAGAEcVkhHVkNVSkcHABUFDwsMSl9bRktEQlVFDw=="},
-    {"key":"TnewGr","name":"🏆｜糖心｜高清◎瞬播","type":3,"api":"csp_TnewGrAmns","jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34","searchable":1,"filterable":1,"quickSearch":1,"changeable":1},
-    {"key":"Hxq","name":"🏆｜韓劇｜高清◎瞬播","type":3,"api":"csp_HxqAmns","jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34","searchable":1,"filterable":1,"quickSearch":1,"changeable":1},
-    {
-      "key": "独播",
-      "name": "🏆｜獨播｜藍光◎秒播(無廣告)",
-      "type": 3,
-      "jar": "./jar/7哥.jar",
-      "api": "csp_DubkAmns",
-      "searchable": 1,
-      "filterable": 1,
-      "quickSearch": 1,
-      "changeable": 1,
-      "ext": "./json/獨播庫.json"
-    },
-    {
-      "key": "🎭杜北",
-      "name": "🏆｜獨播｜藍光◎秒播(備用)",
-      "type": 3,
-      "api": "csp_DubkAmns",
-      "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",
-      "searchable": 1,
-      "filterable": 1,
-      "quickSearch": 1,
-      "changeable": 1,
-      "ext": "./json/獨播庫.json"
-    },
+        {
+            "key": "麻雀",
+            "name": "🏆｜麻雀｜藍光◎秒播",
+            "type": 4,
+            "api": "http://115.191.55.109:8080/video/qqqys?token=47f318660fa5ca46",
+            "jar": "./jar/mi-0213.jar;md5;c4def4496c2e1a0959c8fedfaff41488",
+            "searchable": 1,
+            "quickSearch": 1,
+            "changeable": 1,
+            "filterable": 1
+        },    
+
     {
       "key": "📹YOU视",
-      "name": "🏆｜優视頻｜藍光◎秒播",
+      "name": "🏆｜優視｜藍光◎秒播",
       "type": 3,
       "api": "csp_YouSPAmns",
       "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",
@@ -235,7 +204,7 @@
     },
     {
       "key": "csp_Uvod",
-      "name": "🏆｜優视頻｜藍光◎秒播(備用)",
+      "name": "🏆｜優視｜藍光◎秒播(備用)",
       "type": 3,
       "api": "csp_Uvod",
       "jar": "./jar/lem0106.jar;md5;8A3F412E42E8B36750E238B066AC4D7A",
@@ -631,17 +600,7 @@
       "filterable": 1,
       "quickSearch": 1,
       "changeable": 1
-    },
-        {
-            "key": "六月听书",
-            "name": "🏆｜六月｜聽書",
-            "type": 3,
-            "api": "csp_TingBook",
-            "jar": "./jar/星河.jar",
-            "style": {
-                "type": "list"
-            }
-        },          
+    },         
     {
       "key": "mqtv",
       "name": "🏆｜一號｜高清◎秒播(無廣告)",
@@ -742,7 +701,34 @@
 			"name": "🏆｜python集合｜(老張)",
 			"type": 4,
 			"api": "http://zhangqun1818.serv00.net/py.php"
-		},       
+		},    
+    {"key":"NewGr","name":"🥇｜春天｜高清◎瞬播","type":3,"api":"csp_NewGrAmns","jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34","searchable":1,"filterable":1,"quickSearch":1,"changeable":1,"ext":"BG6DUQMDRsRW0hbHAYRFwFNSUoESx4PHgAPBksaHRRWXkcFLQEDFwIMCBhEXkBZVVteWx8XHEVIVT8zHlAtMRIyLDszASEtF0sAMj8ONj0BLCofKAo2PCc4ET8TQT0JFjArVzRYRVpEDRRKX1sTPx8LLwkgOCtUQBc1HAUXOC0SSiIoSU9HS1AWFhUuDANUXEYRAAQXFhAVHBYPGwcPC1NJRRUOBQwGABUtGhsWAEVIVRUBAhU4BRZUU0pJWwIYFxkEABcoCAQcAEVMRAcNBUsAEQ4YGh9JCw4VFVNJRQUfFz0YCRgGHxsACEVIVVRHXUcUDxUWBwQAGAEcVkhHVkNVSkcHABUFDwsMSl9bRktEQlVFDw=="},
+    {"key":"TnewGr","name":"🥇｜糖心｜高清◎瞬播","type":3,"api":"csp_TnewGrAmns","jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34","searchable":1,"filterable":1,"quickSearch":1,"changeable":1},
+    {"key":"Hxq","name":"🥇｜韓劇｜高清◎瞬播","type":3,"api":"csp_HxqAmns","jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34","searchable":1,"filterable":1,"quickSearch":1,"changeable":1},
+    {
+      "key": "独播",
+      "name": "🥇｜獨播｜藍光◎秒播(無廣告)",
+      "type": 3,
+      "jar": "./jar/7哥.jar",
+      "api": "csp_DubkAmns",
+      "searchable": 1,
+      "filterable": 1,
+      "quickSearch": 1,
+      "changeable": 1,
+      "ext": "./json/獨播庫.json"
+    },
+    {
+      "key": "🎭杜北",
+      "name": "🏆｜獨播｜藍光◎秒播(備用)",
+      "type": 3,
+      "api": "csp_DubkAmns",
+      "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",
+      "searchable": 1,
+      "filterable": 1,
+      "quickSearch": 1,
+      "changeable": 1,
+      "ext": "./json/獨播庫.json"
+    },       
     {
       "key": "🥇伊外",
       "name": "🥇｜伊外｜高清◎秒播",
@@ -1490,6 +1476,23 @@
       "style": {"type": "rect", "ratio": 1.333},
       "ext": ""
     },
+        {
+            "key": "六月听书",
+            "name": "🎖︎｜六月｜有聲書",
+            "type": 3,
+            "api": "csp_TingBook",
+            "jar": "./jar/星河.jar",
+            "style": {
+                "type": "list"
+            }
+        },     
+        {
+            "key": "csp_TingBook",
+            "name": "🎖︎｜有声｜有聲書",
+            "type": 3,
+            "api": "csp_TingBook",
+            "jar": "./jar/mi-0213.jar;md5;c4def4496c2e1a0959c8fedfaff41488"
+        },       
     {
       "key": "bilitingshu",
       "name": "🎖︎｜bili聽書趣",

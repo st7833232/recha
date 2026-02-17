@@ -751,22 +751,6 @@
       "filterable": 1
     },
     {
-      "key": "小猪",
-      "name": "🥇｜小豬｜高清◎秒播(無廣告+APP)",
-      "type": 3,
-      "quickSearch": 1,
-      "api": "csp_AppQi",
-      "ext": {
-        "url": "",
-        "site": "https://tiantangyoulu.oss-cn-beijing.aliyuncs.com/tengxunyun.txt",
-        "dataKey": "seb5tq9mykp2w9ry",
-        "dataIv": "seb5tq9mykp2w9ry",
-        "deviceId": "",
-        "version": "",
-        "ua": "okhttp/3.10.0"
-      }
-    },
-    {
       "key": "csp_看片狂人",
       "name": "🥇｜狂人｜藍光◎秒播(超多線路)",
       "type": 3,

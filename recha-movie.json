@@ -751,18 +751,6 @@
       "filterable": 1
     },
     {
-      "key": "爱影",
-      "name": "🥇｜愛影｜特清◎秒播(無廣告+APP)",
-      "type": 3,
-      "quickSearch": 1,
-      "api": "csp_AppQi",
-      "ext": {
-        "site"   : "https://aysappto.oss-cn-chengdu.aliyuncs.com/qj2.txt",
-        "dataKey": "sada21321sdq231d",
-        "dataIv" : "sada21321sdq231d"
-      }
-    },
-    {
       "key": "小猪",
       "name": "🥇｜小豬｜高清◎秒播(無廣告+APP)",
       "type": 3,
@@ -1962,8 +1950,20 @@
       "filterable": 0
     },
     {
+      "key": "爱影",
+      "name": "❌｜愛影｜特清◎秒播(停用中)",
+      "type": 3,
+      "quickSearch": 1,
+      "api": "csp_AppQi",
+      "ext": {
+        "site"   : "https://aysappto.oss-cn-chengdu.aliyuncs.com/qj2.txt",
+        "dataKey": "sada21321sdq231d",
+        "dataIv" : "sada21321sdq231d"
+      }
+    },    
+    {
       "key": "🍏小苹果",
-      "name": "🥇｜青蘋果｜藍光◎秒播(停用)",
+      "name": "❌｜青蘋果｜藍光◎秒播(停用)",
       "type": 3,
       "api": "csp_XpgAmns",
       "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",

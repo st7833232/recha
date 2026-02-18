@@ -1219,21 +1219,6 @@
       }
     },
     {
-      "key": "py_小猪_APP",
-      "name": "📱｜小猪",
-      "type": 3,
-      "api": "./py/app/qijiapp.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "host": "https://tiantangyoulu.oss-cn-beijing.aliyuncs.com/tengxunyun.txt",
-        "api": "/api.php/qijiappapi",
-        "datakey": "seb5tq9mykp2w9ry",
-        "dataiv": "seb5tq9mykp2w9ry"
-      }
-    },
-    {
       "key": "py_云云_APP",
       "name": "📱｜云云",
       "type": 3,
@@ -1943,6 +1928,21 @@
         "site"   : "https://aysappto.oss-cn-chengdu.aliyuncs.com/qj2.txt",
         "dataKey": "sada21321sdq231d",
         "dataIv" : "sada21321sdq231d"
+      }
+    },
+    {
+      "key": "py_小猪_APP",
+      "name": "❌｜小猪",
+      "type": 3,
+      "api": "./py/app/qijiapp.py",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": {
+        "host": "https://tiantangyoulu.oss-cn-beijing.aliyuncs.com/tengxunyun.txt",
+        "api": "/api.php/qijiappapi",
+        "datakey": "seb5tq9mykp2w9ry",
+        "dataiv": "seb5tq9mykp2w9ry"
       }
     },    
     {

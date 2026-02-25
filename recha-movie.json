@@ -2,29 +2,11 @@
   "spider": "./jar/xiaosa-0226.jar;md5;b0d474e0fccf3b40c5394d72dbbdf7d4",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.02.26\n 暫停使用，維護中",
+  "notice": "115.02.26_Ver.2\n 暫停使用，維護中",
   "sites": [
 
 
-        {
-            "key": "韩圈",
-            "name": "韩圈｜APP",
-            "type": 3,
-            "api": "csp_Hxq",
-            "ext": "https://fishapi.wya6.com/fish/fishhxq.php"
-        },
-        {
-            "key": "麒麟",
-            "name": "麒麟｜APP",
-            "type": 3,
-            "api": "csp_AppFox",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "host": "https://qh.70qh.top",
-                "ver": 2
-            }
-        },     
+ 
         {
             "key": "咕噜",
             "name": "咕噜｜APP",
@@ -39,7 +21,7 @@
             }
         },
         {
-            "key": "顾我",
+            "key": "顾我1",
             "name": "顾我｜APP",
             "type": 3,
             "api": "csp_AppQi",
@@ -54,41 +36,69 @@
                 "ua": "okhttp/3.10.0"
             }
         },
+    {
+      "key": "顾我2",
+      "name": "📱｜顧我｜高清◎秒播(無廣告)",
+      "type": 3,
+      "api": "csp_AppQi",
+      "searchable": 1,
+      "changeable": 1,
+      "ext": {
+        "site": "https://daen-1256234123.cos.ap-shanghai.myqcloud.com/MuQi/pgqj.json",
+        "dataKey": "kj37zs29q22jk96t",
+        "dataIv": "kj37zs29q22jk96t",
+        "init": "initV122",
+        "ua": "okhttp/3.10.0"
+      }
+    },
+
+    {
+      "key": "爱影视",
+      "name": "🏆｜愛影｜藍光◎順播(無廣告+PY)",
+      "quickSearch": 0,
+      "searchable": 1,
+      "type": 3,
+      "api": "./py/getapp3.4.2.py",
+      "jar": "./jar/mi-0815.png;md5;66623623fe5ae34dad253ae2e0802416",
+      "ext": {
+        "host": "https://aysappto.oss-cn-chengdu.aliyuncs.com/qj1.txt",
+        "url": "http://app.mgtv.co",
+        "datakey": "dksvndkaAjekakcE",
+        "api": 2
+      }
+    },
         {
-            "key": "爱盈",
-            "name": "爱盈｜APP",
+            "key": "爱影",
+            "name": "愛影｜APP",
             "type": 3,
             "api": "csp_AppQi",
             "searchable": 1,
             "changeable": 1,
             "ext": {
-                "site": "https://rxysyyds.oss-cn-chengdu.aliyuncs.com/qiji.txt",
-                "dataKey": "sjvlwnhk6h9znl61",
-                "dataIv": "sjvlwnhk6h9znl61",
-                "version": "305",
-                "ua": "okhttp/3.10.0"
+                "site": "https://aysappto.oss-cn-chengdu.aliyuncs.com/q16.txt",
+                "dataKey": "dj382hsyqp98kqn8",
+                "dataIv": "dj382hsyqp98kqn8",
+                "search": "mineInfo"
             }
-        },
-        {
-            "key": "金牌",
-            "name": "金牌｜APP",
-            "type": 3,
-            "api": "csp_AppQi",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "site": "https://dtqj.ggtvb.cc/dtjp.txt",
-                "dataKey": "eecbio48dsq131ee",
-                "dataIv": "eecbio48dsq131ee",
-                "search": "searchList4",
-                "version": "305",
-                "init": "initV122",
-                "ua": "okhttp/3.10.0"
-            }
-        },
+        },    
+    {
+      "key": "爱盈",
+      "name": "📱｜愛盈｜高清◎秒播(無廣告)",
+      "type": 3,
+      "api": "csp_AppQi",
+      "searchable": 1,
+      "changeable": 1,
+      "ext": {
+        "site"   : "https://rxysyyds.oss-cn-chengdu.aliyuncs.com/qiji.txt",
+        "dataKey": "sjvlwnhk6h9znl61",
+        "dataIv" : "sjvlwnhk6h9znl61",
+        "version": "305",
+        "ua"     : "okhttp/3.10.0"
+      }
+    },        
         {
             "key": "小猪",
-            "name": "小猪｜APP",
+            "name": "小豬｜APP",
             "type": 3,
             "api": "csp_AppQi",
             "searchable": 1,
@@ -104,7 +114,7 @@
         },
         {
             "key": "鲸鱼",
-            "name": "鲸鱼｜APP",
+            "name": "鯨魚｜APP",
             "type": 3,
             "api": "csp_AppQi",
             "searchable": 1,
@@ -115,20 +125,6 @@
                 "dataIv": "AAdgrdghjfgsABC1",
                 "init": "initV122",
                 "ua": "okhttp/3.10.0"
-            }
-        },
-        {
-            "key": "爱影",
-            "name": "爱影｜APP",
-            "type": 3,
-            "api": "csp_AppQi",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "site": "https://aysappto.oss-cn-chengdu.aliyuncs.com/q16.txt",
-                "dataKey": "dj382hsyqp98kqn8",
-                "dataIv": "dj382hsyqp98kqn8",
-                "search": "mineInfo"
             }
         },
         {
@@ -148,20 +144,6 @@
             }
         },
         {
-            "key": "优兔",
-            "name": "优兔｜APP",
-            "type": 3,
-            "api": "csp_AppQi",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "site": "https://uututv-1319209748.cos.ap-shanghai.myqcloud.com/uutuv4.txt",
-                "dataKey": "UrWKPnmQWJA8AQzd",
-                "dataIv": "UrWKPnmQWJA8AQzd",
-                "ua": "okhttp/3.10.0"
-            }
-        },
-        {
             "key": "七壹",
             "name": "七壹｜APP",
             "type": 3,
@@ -172,19 +154,6 @@
                 "url": "https://qiyiys.cc",
                 "dataKey": "45452893929B40D9",
                 "dataIv": "45452893929B40D9"
-            }
-        },
-        {
-            "key": "缘梦",
-            "name": "缘梦｜APP",
-            "type": 3,
-            "api": "csp_AppGet",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "url": "http://165.99.42.137:5432",
-                "dataKey": "1234567890987654",
-                "dataIv": "1234567890987654"
             }
         },
         {
@@ -202,7 +171,7 @@
         },
         {
             "key": "小猫",
-            "name": "小猫｜APP",
+            "name": "小貓｜APP",
             "type": 3,
             "api": "csp_AppGet",
             "searchable": 1,
@@ -228,7 +197,7 @@
         },
         {
             "key": "白鸽",
-            "name": "白鸽｜APP",
+            "name": "白鴿｜APP",
             "type": 3,
             "api": "csp_AppGet",
             "searchable": 1,
@@ -241,7 +210,7 @@
         },
         {
             "key": "魔方",
-            "name": "魔方｜APP",
+            "name": "📱｜魔方｜高清◎秒播(浮水印廣告)",
             "type": 3,
             "api": "csp_AppGet",
             "searchable": 1,
@@ -251,7 +220,7 @@
                 "dataKey": "1234567887654321",
                 "dataIv": "1234567887654321"
             }
-        },
+        },       
         {
             "key": "瑞奇",
             "name": "瑞奇｜APP",
@@ -280,7 +249,7 @@
         },
         {
             "key": "驿站",
-            "name": "驿站丨APP",
+            "name": "驛站丨APP",
             "type": 3,
             "api": "csp_AppGet",
             "searchable": 1,
@@ -325,7 +294,7 @@
         },
         {
             "key": "橘猫",
-            "name": "橘猫｜APP",
+            "name": "橘貓｜APP",
             "type": 3,
             "api": "csp_AppNox",
             "ext": {
@@ -357,7 +326,7 @@
         },
         {
             "key": "火猫",
-            "name": "火猫｜APP",
+            "name": "火貓｜APP",
             "type": 3,
             "api": "csp_AppNox",
             "ext": {
@@ -421,7 +390,7 @@
         },
         {
             "key": "回响",
-            "name": "回响｜APP",
+            "name": "回響｜APP",
             "type": 3,
             "api": "csp_AppNox",
             "ext": {
@@ -435,18 +404,7 @@
                 }
             }
         },
-        {
-            "key": "苹果影视",
-            "name": "苹果｜影视",
-            "type": 3,
-            "api": "csp_LiteApple"
-        },
-        {
-            "key": "瓜子影视",
-            "name": "瓜子｜影视",
-            "type": 3,
-            "api": "csp_Gz360"
-        },
+
         
         
 
@@ -778,22 +736,7 @@
       "quickSearch": 0,
       "filterable": 0,
       "changeable": 1
-    },
-    {
-      "key": "爱影视",
-      "name": "🏆｜爱盈｜藍光◎順播(無廣告)",
-      "quickSearch": 0,
-      "searchable": 1,
-      "type": 3,
-      "api": "./py/getapp3.4.2.py",
-      "jar": "./jar/mi-0815.png;md5;66623623fe5ae34dad253ae2e0802416",
-      "ext": {
-        "host": "https://aysappto.oss-cn-chengdu.aliyuncs.com/qj1.txt",
-        "url": "http://app.mgtv.co",
-        "datakey": "dksvndkaAjekakcE",
-        "api": 2
-      }
-    },
+    },    
     {
       "key": "py_aidianying",
       "name": "🏆｜愛電影｜藍光◎秒播(無廣告)",
@@ -1212,18 +1155,7 @@
         "地区": "中国大陆&香港&台湾&日本&韩国&泰国&美国&英国&德国&法国||中国大陆&韩国&香港&台湾&日本&美国&泰国&英国&新加坡&其他||香港&台湾&韩国&中国大陆&英国&美国&日本&加拿大&泰国&其它||日本&大陆&中国大陆&中国&美国&台湾&韩国&法国&英国&加拿大"
       }
     },
-    {
-      "key": "AppGET",
-      "name": "🥇｜魔方｜藍光◎秒播(有廣告)",
-      "type": 3,
-      "api": "csp_AppGet",
-      "jar": "./jar/xmky.jar;md5;11e752cb8cd0c47a0804c70ed965be67",
-      "timeout": 25,
-      "changeable": "1",
-      "quickSearch": 0,
-      "filterable": 1,
-      "ext": "https://www.mfsp4k.top|1234567887654321|okhttp/3.10.0"
-    },
+
     {
       "key": "py_feifanziyuan",
       "name": "🥇｜非凡｜藍光◎秒播(有廣告)",
@@ -1393,19 +1325,7 @@
         "ua"      : ""
       }
     },
-    {
-      "key": "魔方",
-      "name": "📱｜魔方｜高清◎秒播(浮水印廣告)",
-      "type": 3,
-      "searchable": 1,
-      "changeable": 1,
-      "api": "csp_AppGet",
-      "ext": {
-        "site"   : "https://snysw.xyz/mf4kzs327.txt",
-        "dataKey": "1234567887654321",
-        "dataIv" : "1234567887654321"
-      }
-    },
+
     {
       "key": "麒麟",
       "name": "📱｜麒麟｜高清◎秒播(無廣告)",
@@ -1424,36 +1344,7 @@
       "changeable": 1,
       "ext": "https://www.zjcvod.com"
     },
-    {
-      "key": "顾我",
-      "name": "📱｜顧我｜高清◎秒播(無廣告)",
-      "type": 3,
-      "api": "csp_AppQi",
-      "searchable": 1,
-      "changeable": 1,
-      "ext": {
-        "site": "https://daen-1256234123.cos.ap-shanghai.myqcloud.com/MuQi/pgqj.json",
-        "dataKey": "kj37zs29q22jk96t",
-        "dataIv": "kj37zs29q22jk96t",
-        "init": "initV122",
-        "ua": "okhttp/3.10.0"
-      }
-    },
-    {
-      "key": "爱盈",
-      "name": "📱｜愛盈｜高清◎秒播(無廣告)",
-      "type": 3,
-      "api": "csp_AppQi",
-      "searchable": 1,
-      "changeable": 1,
-      "ext": {
-        "site"   : "https://rxysyyds.oss-cn-chengdu.aliyuncs.com/qiji.txt",
-        "dataKey": "sjvlwnhk6h9znl61",
-        "dataIv" : "sjvlwnhk6h9znl61",
-        "version": "305",
-        "ua"     : "okhttp/3.10.0"
-      }
-    },
+
     {
       "key": "奇奇",
       "name": "📱｜奇奇｜高清◎秒播(無廣告)",
@@ -1523,6 +1414,21 @@
         "dataIv" : "1234567890987654"
       }
     },
+    {
+      "key": "py_缘梦_APP",
+      "name": "📱｜緣夢｜高清◎秒播(無廣告+PY)",
+      "type": 3,
+      "api": "./py/app/getapp.py",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": {
+        "host"   : "https://www.zipfve.cn",
+        "api"    : "/api.php/getappapi",
+        "datakey": "1234567890987654",
+        "dataiv" : "1234567890987654"
+      }
+    },    
     {
       "key": "小白",
       "name": "📱｜小白｜高清◎秒播(無廣告)",
@@ -1674,21 +1580,6 @@
         "api": "/api.php/qijiappapi",
         "datakey": "staraugust123456",
         "dataiv": "staraugust123456"
-      }
-    },
-    {
-      "key": "py_缘梦_APP",
-      "name": "📱｜缘梦",
-      "type": 3,
-      "api": "./py/app/getapp.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "host"   : "https://www.zipfve.cn",
-        "api"    : "/api.php/getappapi",
-        "datakey": "1234567890987654",
-        "dataiv" : "1234567890987654"
       }
     },
     {
@@ -2361,18 +2252,7 @@
       "changeable": 1,
       "filterable": 0
     },
-    {
-      "key": "爱影",
-      "name": "❌｜愛影｜特清◎秒播(停用中)",
-      "type": 3,
-      "quickSearch": 1,
-      "api": "csp_AppQi",
-      "ext": {
-        "site"   : "https://aysappto.oss-cn-chengdu.aliyuncs.com/qj2.txt",
-        "dataKey": "sada21321sdq231d",
-        "dataIv" : "sada21321sdq231d"
-      }
-    },  
+ 
     {
       "key": "🍏小苹果",
       "name": "❌｜青蘋果｜藍光◎秒播(停用)",

@@ -2,14 +2,14 @@
   "spider": "./jar/xiaosa-0226.jar;md5;b0d474e0fccf3b40c5394d72dbbdf7d4",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.02.26_Ver.2\n 暫停使用，維護中",
+  "notice": "115.02.26_Ver.3\n 重新修復站台，待測試",
   "sites": [
 
 
  
         {
             "key": "咕噜",
-            "name": "咕噜｜APP",
+            "name": "📱｜咕噜｜待測試",
             "type": 3,
             "api": "csp_AppFox",
             "searchable": 1,
@@ -22,7 +22,7 @@
         },
         {
             "key": "顾我1",
-            "name": "顾我｜APP",
+            "name": "📱｜故我｜待測試",
             "type": 3,
             "api": "csp_AppQi",
             "searchable": 1,
@@ -36,40 +36,9 @@
                 "ua": "okhttp/3.10.0"
             }
         },
-    {
-      "key": "顾我2",
-      "name": "📱｜顧我｜高清◎秒播(無廣告)",
-      "type": 3,
-      "api": "csp_AppQi",
-      "searchable": 1,
-      "changeable": 1,
-      "ext": {
-        "site": "https://daen-1256234123.cos.ap-shanghai.myqcloud.com/MuQi/pgqj.json",
-        "dataKey": "kj37zs29q22jk96t",
-        "dataIv": "kj37zs29q22jk96t",
-        "init": "initV122",
-        "ua": "okhttp/3.10.0"
-      }
-    },
-
-    {
-      "key": "爱影视",
-      "name": "🏆｜愛影｜藍光◎順播(無廣告+PY)",
-      "quickSearch": 0,
-      "searchable": 1,
-      "type": 3,
-      "api": "./py/getapp3.4.2.py",
-      "jar": "./jar/mi-0815.png;md5;66623623fe5ae34dad253ae2e0802416",
-      "ext": {
-        "host": "https://aysappto.oss-cn-chengdu.aliyuncs.com/qj1.txt",
-        "url": "http://app.mgtv.co",
-        "datakey": "dksvndkaAjekakcE",
-        "api": 2
-      }
-    },
         {
             "key": "爱影",
-            "name": "愛影｜APP",
+            "name": "📱｜愛影｜待測試",
             "type": 3,
             "api": "csp_AppQi",
             "searchable": 1,
@@ -81,24 +50,10 @@
                 "search": "mineInfo"
             }
         },    
-    {
-      "key": "爱盈",
-      "name": "📱｜愛盈｜高清◎秒播(無廣告)",
-      "type": 3,
-      "api": "csp_AppQi",
-      "searchable": 1,
-      "changeable": 1,
-      "ext": {
-        "site"   : "https://rxysyyds.oss-cn-chengdu.aliyuncs.com/qiji.txt",
-        "dataKey": "sjvlwnhk6h9znl61",
-        "dataIv" : "sjvlwnhk6h9znl61",
-        "version": "305",
-        "ua"     : "okhttp/3.10.0"
-      }
-    },        
+      
         {
             "key": "小猪",
-            "name": "小豬｜APP",
+            "name": "📱｜小豬｜待測試",
             "type": 3,
             "api": "csp_AppQi",
             "searchable": 1,
@@ -113,39 +68,8 @@
             }
         },
         {
-            "key": "鲸鱼",
-            "name": "鯨魚｜APP",
-            "type": 3,
-            "api": "csp_AppQi",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "site": "https://jingyu4k-1312635929.cos.ap-nanjing.myqcloud.com/juyu3.json",
-                "dataKey": "AAdgrdghjfgsABC1",
-                "dataIv": "AAdgrdghjfgsABC1",
-                "init": "initV122",
-                "ua": "okhttp/3.10.0"
-            }
-        },
-        {
-            "key": "橘子",
-            "name": "橘子｜APP",
-            "type": 3,
-            "api": "csp_AppQi",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "site": "https://juziapp-1319209748.cos.ap-chengdu.myqcloud.com/juzi.txt",
-                "dataKey": "jasaFBcdV3zrUDf2",
-                "dataIv": "jasaFBcdV3zrUDf2",
-                "version": "305",
-                "init": "initV122",
-                "ua": "okhttp/3.10.0"
-            }
-        },
-        {
             "key": "七壹",
-            "name": "七壹｜APP",
+            "name": "📱｜七壹｜待測試",
             "type": 3,
             "api": "csp_AppGet",
             "searchable": 1,
@@ -158,7 +82,7 @@
         },
         {
             "key": "王子",
-            "name": "王子｜APP",
+            "name": "📱｜王子｜待測試",
             "type": 3,
             "api": "csp_AppGet",
             "searchable": 1,
@@ -170,34 +94,8 @@
             }
         },
         {
-            "key": "小猫",
-            "name": "小貓｜APP",
-            "type": 3,
-            "api": "csp_AppGet",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "site": "http://xywlkj.oss-cn-beijing.aliyuncs.com/wp-content/uploads/2024/12/1.txt",
-                "dataKey": "xmyxmyxywlkjxywl",
-                "dataIv": "xmyxmyxywlkjxywl"
-            }
-        },
-        {
-            "key": "气球",
-            "name": "气球｜APP",
-            "type": 3,
-            "api": "csp_AppGet",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "url": "https://vv.229d.cn",
-                "dataKey": "8888888888888888",
-                "dataIv": "8888888888888888"
-            }
-        },
-        {
             "key": "白鸽",
-            "name": "白鴿｜APP",
+            "name": "📱｜白鴿｜待測試",
             "type": 3,
             "api": "csp_AppGet",
             "searchable": 1,
@@ -222,47 +120,8 @@
             }
         },       
         {
-            "key": "瑞奇",
-            "name": "瑞奇｜APP",
-            "type": 3,
-            "api": "csp_AppGet",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "url": "http://rqxk.gdata.fun",
-                "dataKey": "yangruiqiYsapp00",
-                "dataIv": "yangruiqiYsapp00"
-            }
-        },
-        {
-            "key": "茉莉",
-            "name": "茉莉｜APP",
-            "type": 3,
-            "api": "csp_AppGet",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "site": "https://gitee.com/wmmoliill/wimg/raw/master/img/bk/9.txt",
-                "dataKey": "88689667dce61725",
-                "dataIv": "88689667dce61725"
-            }
-        },
-        {
-            "key": "驿站",
-            "name": "驛站丨APP",
-            "type": 3,
-            "api": "csp_AppGet",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "site": "https://dyyztvappapigoodgx.68.gy:12689/ciwk28vu38io8/apiurl.txt",
-                "dataKey": "dyyztvapiappyyds",
-                "dataIv": "dyyztvapiappyyds"
-            }
-        },
-        {
             "key": "零度",
-            "name": "零度｜APP",
+            "name": "📱｜零度｜待測試",
             "type": 3,
             "api": "csp_AppNox",
             "ext": {
@@ -278,7 +137,7 @@
         },
         {
             "key": "粉象",
-            "name": "粉象｜APP",
+            "name": "📱｜粉象｜待測試",
             "type": 3,
             "api": "csp_AppNox",
             "ext": {
@@ -294,7 +153,7 @@
         },
         {
             "key": "橘猫",
-            "name": "橘貓｜APP",
+            "name": "📱｜橘貓｜待測試",
             "type": 3,
             "api": "csp_AppNox",
             "ext": {
@@ -310,7 +169,7 @@
         },
         {
             "key": "片喵",
-            "name": "片喵｜APP",
+            "name": "📱｜片喵｜待測試",
             "type": 3,
             "api": "csp_AppNox",
             "ext": {
@@ -326,7 +185,7 @@
         },
         {
             "key": "火猫",
-            "name": "火貓｜APP",
+            "name": "📱｜火貓｜待測試",
             "type": 3,
             "api": "csp_AppNox",
             "ext": {
@@ -342,7 +201,7 @@
         },
         {
             "key": "幕悦",
-            "name": "幕悦｜APP",
+            "name": "📱｜幕悦｜待測試",
             "type": 3,
             "api": "csp_AppNox",
             "ext": {
@@ -358,7 +217,7 @@
         },
         {
             "key": "随看",
-            "name": "随看｜APP",
+            "name": "📱｜随看｜待測試",
             "type": 3,
             "api": "csp_AppNox",
             "ext": {
@@ -374,7 +233,7 @@
         },
         {
             "key": "星影",
-            "name": "星影｜APP",
+            "name": "📱｜星影｜待測試",
             "type": 3,
             "api": "csp_AppNox",
             "ext": {
@@ -390,7 +249,7 @@
         },
         {
             "key": "回响",
-            "name": "回響｜APP",
+            "name": "📱｜回響｜待測試",
             "type": 3,
             "api": "csp_AppNox",
             "ext": {

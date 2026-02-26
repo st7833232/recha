@@ -13,15 +13,17 @@
   "notice": "版本：115.02.26.Ver.2",
   "sites": [
 
-    {
-      "key": "hanime",
-      "name": "⏭｜hanime｜PYTHON",
-      "type": 3,
-      "searchable": 1,
-      "changeable": 1,
-      "quickSearch": 1,
-      "api": "./py/hanime.py"
-    },
+{
+            "name": "hanime",
+            "key": "hanime",
+            "type": 3,
+            "api": "./py/hanime.py",
+            "ext": "",
+            "searchable": 1,
+            "filterable": 1,
+            "quickSearch": 1,
+            "changeable": 0
+        },
     {
       "key": "小红书",
       "name": "⏭｜Pornhub(嗷嗚)｜PYTHON",

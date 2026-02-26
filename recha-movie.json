@@ -1825,7 +1825,7 @@
       "name": "🧲｜索隆｜高清◎秒播(浮水印廣告)",
       "type": 4,
       "api": "http://zhangqun66.com/sn.php",
-      "jar": "./jar/fm.jar;md5;41c87635d7592069884a5dafa12acabe",
+      "jar": "./jar/fm.jar",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1
@@ -2012,7 +2012,7 @@
       "name": "🧲｜黑隆｜高清◎秒播(各種廣告)",
       "type": 4,
       "api": "http://zhangqun66.com/225.php",
-      "jar": "./jar/fm.jar;md5;41c87635d7592069884a5dafa12acabe",
+      "jar": "./jar/fm.jar",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,

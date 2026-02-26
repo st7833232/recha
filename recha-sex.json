@@ -14,6 +14,16 @@
   "sites": [
 
     {
+      "key": "hanime",
+      "name": "⏭｜hanime｜PYTHON",
+      "type": 3,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "api": "./py/hanime.py",
+      "filterable": 1
+    },
+    {
       "key": "小红书",
       "name": "⏭｜Pornhub(嗷嗚)｜PYTHON",
       "type": 3,
@@ -4285,17 +4295,6 @@
         "分类url": "https://www.ttdm.me/vod-show/{cateId}--{by}-{class}--{letter}---{catePg}---/",
         "分类": "🇨🇳中国动漫$1#🇯🇵日本动漫$2#🇺🇸欧美动漫$3#🍑其他动漫$4#🌏动画电影$5"
       }
-    },
-    {
-      "key": "csp_XYQHiker_hanimi1",
-      "name": "🔞Hanime1(XYQHiker)",
-      "type": 3,
-      "api": "csp_XYQHiker",
-      "searchable": 1,
-      "quickSearch": 0,
-      "filterable": 0,
-      "ext": "./json/hanime1.json",
-      "style": {"type": "rect", "ratio": 1.6}
     },
     {
       "key": "csp_XYQHiker_jiedm",

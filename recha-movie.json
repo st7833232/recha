@@ -2,24 +2,12 @@
   "spider": "./jar/xiaosa-0226.jar;md5;b0d474e0fccf3b40c5394d72dbbdf7d4",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.02.26_Ver.3\n 重新修復站台，待測試",
+  "notice": "115.02.26_Ver.4\n 刪除已知有廣告站源",
   "sites": [
 
 
  
-        {
-            "key": "咕噜",
-            "name": "📱｜咕噜｜待測試",
-            "type": 3,
-            "api": "csp_AppFox",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "host": "http://www.yingsw.top",
-                "key": "guluyinghua_123",
-                "sign": "679543610991810f19698c187e5e106e"
-            }
-        },
+
         {
             "key": "顾我1",
             "name": "📱｜故我｜待測試",
@@ -65,32 +53,6 @@
                 "search": "searchList9",
                 "init": "initV122",
                 "ua": "okhttp/3.10.0"
-            }
-        },
-        {
-            "key": "七壹",
-            "name": "📱｜七壹｜待測試",
-            "type": 3,
-            "api": "csp_AppGet",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "url": "https://qiyiys.cc",
-                "dataKey": "45452893929B40D9",
-                "dataIv": "45452893929B40D9"
-            }
-        },
-        {
-            "key": "王子",
-            "name": "📱｜王子｜待測試",
-            "type": 3,
-            "api": "csp_AppGet",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "url": "https://app.95112475.xyz",
-                "dataKey": "5a9w6x58dsq6z3a6",
-                "dataIv": "5a9w6x58dsq6z3a6"
             }
         },
         {
@@ -518,27 +480,6 @@
 			"type": 4,
 			"api": "https://catbox.n13.club/ai/%E7%93%9C%E5%AD%90%E5%BD%B1%E8%A7%86.php"
 		},      
-    {
-      "key": "🎬瓜子",
-      "name": "🏆｜瓜子｜特清◎秒播(故障中-嗷嗚版)",
-      "type": 3,
-      "api": "csp_GuaziAmns",
-      "jar": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",
-      "searchable": 1,
-      "filterable": 1,
-      "quickSearch": 1,
-      "changeable": 1,
-      "ext": "./json/guazi.json"
-    },
-    {
-      "key": "瓜子影视",
-      "name": "🏆｜瓜子｜特清◎秒播(故障中-摸魚版)",
-      "type": 3,
-      "api": "csp_Gz360",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1
-    },    
     {
       "key": "py_非凡资源无广",
       "name": "🏆｜非凡｜高清◎秒播(無廣告)",

@@ -228,7 +228,17 @@
 
         
         
-
+        {
+            "name": "hanime",
+            "key": "hanime",
+            "type": 3,
+            "api": "./py/hanime.py",
+            "ext": "",
+            "searchable": 1,
+            "filterable": 1,
+            "quickSearch": 1,
+            "changeable": 0
+        },
 
 
         {

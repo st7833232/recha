@@ -1,6 +1,5 @@
 {
-  //"spider": "./jar/xyqxbpq.jar",
-  "spider": "./jar/aowu.jar;md5;713ec2a0f8fa320490270913c5c5ef34",
+  "spider": "./jar/xyqxbpq.jar",
   "headers": [
     {
       "host": "aosikazy.com",

@@ -12,7 +12,6 @@ class Spider(Spider):
     def init(self, extend=""):
         self.host = "https://hanime1.me"
         # 定义你的本地过盾代理地址
-        self.proxy = "http://127.0.0.1:2525?single=true&url="
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             'Referer': f'{self.host}/',

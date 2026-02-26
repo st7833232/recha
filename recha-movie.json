@@ -224,24 +224,8 @@
                     "x-app-version-name": "2.2.0"
                 }
             }
-        },
-
+        },      
         
-        
-        {
-            "name": "hanime",
-            "key": "hanime",
-            "type": 3,
-            "api": "./py/hanime.py",
-            "jar": "./jar/aowu.jar;md5;29ee0730017660db62f57a585cd1aeb6",
-            "ext": "",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 0
-        },
-
-
         {
             "key": "GoConfig",
             "name": "🇹🇼｜熱播排行榜｜自動切換1",

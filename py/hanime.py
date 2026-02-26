@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# by @嗷呜 & Perplexity (Updated 2025-12-03 修复时间时长筛选)
+# by @嗷呜 & Perplexity (Updated 2025-12-04 修復解析問題)
 import json
 import sys
 import threading
@@ -20,7 +20,10 @@ class Spider(Spider):
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             'Referer': f'{self.host}/',
-            'Origin': self.host
+            'Origin': self.host,
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'zh-TW,zh;q=0.9,en;q=0.8',
+            'Connection': 'keep-alive'
         }
 
     def getName(self):
@@ -90,7 +93,8 @@ class Spider(Spider):
             content = self.fetch(url, headers=self.getheaders()).text
             vods = self.parse_vod_list(content)
             return {'list': vods}
-        except Exception:
+        except Exception as e:
+            print(f"homeVideoContent error: {e}")
             return {'list': []}
 
     def categoryContent(self, tid, pg, filter, extend):
@@ -99,122 +103,153 @@ class Spider(Spider):
         date = extend.get('date', '')
         duration = extend.get('duration', '')
 
-        # 参数映射，严格对应网页支持值
+        # 參數映射
         valid_dates = {"": "", "24": "24", "2": "2", "7": "7", "30": "30", "90": "90"}
         valid_durations = {"": "", "1": "1", "5": "5", "10": "10", "20": "20", "30": "30", "60": "60", "0-10": "0-10", "0-20": "0-20"}
 
         date = valid_dates.get(date, "")
         duration = valid_durations.get(duration, "")
 
+        # 構建URL
         if tid == 'latest':
-            url = f"{self.host}/search?sort=最新上市&page={page}"
+            sort = '最新上市'
+            url = f"{self.host}/search?sort={quote(sort)}&page={page}"
         elif tid == 'daily_rank':
-            url = f"{self.host}/search?sort=本日排行&page={page}"
+            sort = '本日排行'
+            url = f"{self.host}/search?sort={quote(sort)}&page={page}"
         elif tid == 'weekly_rank':
-            url = f"{self.host}/search?sort=本週排行&page={page}"
+            sort = '本週排行'
+            url = f"{self.host}/search?sort={quote(sort)}&page={page}"
         elif tid == 'monthly_rank':
-            url = f"{self.host}/search?sort=本月排行&page={page}"
+            sort = '本月排行'
+            url = f"{self.host}/search?sort={quote(sort)}&page={page}"
         else:
-            param_list = [f"query={quote(tid)}", f"page={page}"]
+            # 普通分類搜索
+            url = f"{self.host}/search?query={quote(tid)}&page={page}"
             if sort:
-                param_list.append(f"sort={quote(sort)}")
+                url += f"&sort={quote(sort)}"
             if date:
-                param_list.append(f"date={quote(date)}")
+                url += f"&date={quote(date)}"
             if duration:
-                param_list.append(f"duration={quote(duration)}")
-            url = f"{self.host}/search?" + "&".join(param_list)
+                url += f"&duration={quote(duration)}"
 
         try:
+            print(f"categoryContent url: {url}")
             content = self.fetch(url, headers=self.getheaders()).text
             vods = self.parse_vod_list(content)
+            
+            # 判斷是否有下一頁
+            has_next = '下一頁' in content or '下一頁' in content
+            
             return {
                 'list': vods,
                 'page': page,
-                'pagecount': page + 1 if len(vods) > 0 else page,
+                'pagecount': page + 1 if has_next else page,
                 'limit': 30,
                 'total': 9999
             }
-        except Exception:
-            return {'list': []}
+        except Exception as e:
+            print(f"categoryContent error: {e}")
+            return {'list': [], 'page': page, 'pagecount': page}
 
     def detailContent(self, ids):
         vid = ids[0]
         url = f"{self.host}/watch?v={vid}"
 
         try:
+            print(f"detailContent url: {url}")
             html = self.fetch(url, headers=self.getheaders()).text
 
+            # 提取標題
             title_match = re.search(r'<meta property="og:title" content="(.*?)"', html)
             title = title_match.group(1) if title_match else vid
 
+            # 提取圖片
             pic_match = re.search(r'<meta property="og:image" content="(.*?)"', html)
             pic = pic_match.group(1) if pic_match else ""
 
+            # 提取描述
             desc_match = re.search(r'<meta property="og:description" content="(.*?)"', html)
             desc = desc_match.group(1) if desc_match else ""
 
+            # 提取標籤
             vod_tag_list = []
             rich_tags = []
 
-            tag_matches = re.findall(r'<div class="single-video-tag"[^>]*>\s*<a[^>]*>(.*?)</a>', html, re.S)
-            seen_tags = set()
-            for inner_html in tag_matches:
-                name = re.sub(r'<[^>]+>', '', inner_html).strip()
-                name = re.sub(r'\([^)]*\)', '', name)
-                name = re.sub(r'\s*\d+$', '', name).strip()
-                if '#' in name:
-                    name = name.split('#')[0].strip()
-                name = html_parser.unescape(name).replace('&nbsp;', '').strip()
-                if name and name not in seen_tags:
-                    seen_tags.add(name)
-                    vod_tag_list.append(name)
-                    target = json.dumps({'id': name, 'name': name}, ensure_ascii=False)
-                    rich_tags.append(f'[a=cr:{target}/]{name}[/a]')
+            # 從meta關鍵詞提取
+            keywords_match = re.search(r'<meta name="keywords" content="(.*?)"', html)
+            if keywords_match:
+                keywords = keywords_match.group(1).split(',')
+                for keyword in keywords[:10]:
+                    keyword = keyword.strip()
+                    if keyword and len(keyword) < 30:
+                        vod_tag_list.append(keyword)
+                        target = json.dumps({'id': keyword, 'name': keyword}, ensure_ascii=False)
+                        rich_tags.append(f'[a=cr:{target}/]{keyword}[/a]')
 
-            vod_tag_str = ",".join(vod_tag_list)
-            vod_content = f"{desc}\n\n🏷️ 标签: {' '.join(rich_tags)}" if rich_tags else desc
-
+            # 從頁面提取視頻源
+            play_parts = []
+            
+            # 方法1: 查找video標籤中的source
             sources = re.findall(r'<source[^>]+src="([^"]+)"', html)
+            
+            # 方法2: 查找mp4鏈接
             if not sources:
                 sources = re.findall(r'src="([^"]+\.mp4[^"]*)"', html)
+            
+            # 方法3: 查找m3u8鏈接
+            if not sources:
+                sources = re.findall(r'(https?://[^\'"]+\.m3u8[^\'"]*)', html)
+            
+            # 方法4: 查找data-src屬性
+            if not sources:
+                sources = re.findall(r'data-src="([^"]+)"', html)
 
-            decoded_sources = [html_parser.unescape(s).replace('&amp;', '&') for s in sources]
+            if sources:
+                # 解碼並清理URL
+                decoded_sources = []
+                for s in sources:
+                    s = html_parser.unescape(s).replace('&amp;', '&')
+                    if s.startswith('//'):
+                        s = 'https:' + s
+                    decoded_sources.append(s)
 
-            quality_map = {}
-            for s in decoded_sources:
-                if '4k' in s.lower() or '2160' in s:
-                    quality_map.setdefault('4K', []).append(s)
-                elif '2k' in s.lower() or '1440' in s:
-                    quality_map.setdefault('2K', []).append(s)
-                elif '1080' in s:
-                    quality_map.setdefault('1080p', []).append(s)
-                elif '720' in s:
-                    quality_map.setdefault('720p', []).append(s)
-                elif '480' in s:
-                    quality_map.setdefault('480p', []).append(s)
-                else:
-                    quality_map.setdefault('标清', []).append(s)
+                # 按質量分組
+                quality_map = {}
+                for s in decoded_sources:
+                    s_lower = s.lower()
+                    if '4k' in s_lower or '2160' in s_lower:
+                        quality_map.setdefault('4K', []).append(s)
+                    elif '2k' in s_lower or '1440' in s_lower:
+                        quality_map.setdefault('2K', []).append(s)
+                    elif '1080' in s_lower:
+                        quality_map.setdefault('1080p', []).append(s)
+                    elif '720' in s_lower:
+                        quality_map.setdefault('720p', []).append(s)
+                    elif '480' in s_lower:
+                        quality_map.setdefault('480p', []).append(s)
+                    else:
+                        quality_map.setdefault('標清', []).append(s)
 
-            quality_order = ['4K', '2K', '1080p', '720p', '480p', '标清']
-            play_parts = []
-            for q in quality_order:
-                if q in quality_map and quality_map[q]:
-                    best_url = quality_map[q][0]
-                    play_url_with_dm = f"{vid}_dm_{best_url}"
-                    play_parts.append(f"{q}${play_url_with_dm}")
+                # 按質量順序添加播放鏈接
+                quality_order = ['4K', '2K', '1080p', '720p', '480p', '標清']
+                for q in quality_order:
+                    if q in quality_map and quality_map[q]:
+                        best_url = quality_map[q][0]
+                        play_url_with_dm = f"{vid}_dm_{best_url}"
+                        play_parts.append(f"{q}${play_url_with_dm}")
 
+            # 如果沒有找到視頻源，使用頁面URL作為備用
             if not play_parts:
-                m3u8_match = re.search(r'source\s*=\s*[\'"](https?://[^\'"]+\.m3u8[^\'"]*)[\'"]', html)
-                if m3u8_match:
-                    best_url = m3u8_match.group(1).replace('&amp;', '&')
-                    play_url_with_dm = f"{vid}_dm_{best_url}"
-                    play_parts.append(f"自动${play_url_with_dm}")
+                play_parts.append(f"網頁播放${url}")
 
-            if not play_parts:
-                play_parts.append(f"网页播放${url}")
-
-            line_name = "书生玩剣ⁱ·*₁＇"
+            # 構建播放字符串
+            line_name = "Hanime1"
             vod_play_url = f"{line_name}$" + "#".join(play_parts)
+
+            # 構建vod_content
+            vod_tag_str = ",".join(vod_tag_list)
+            vod_content = f"{desc}\n\n🏷️ 標籤: {' '.join(rich_tags)}" if rich_tags else desc
 
             vod = {
                 "vod_id": vid,
@@ -232,42 +267,35 @@ class Spider(Spider):
                 "vod_play_url": vod_play_url
             }
             return {'list': [vod]}
-        except Exception:
+            
+        except Exception as e:
+            print(f"detailContent error: {e}")
             return {'list': []}
 
     def searchContent(self, key, quick, pg="1", extend=None):
         page = int(pg)
-        base_url = f"{self.host}/search?"
-        param_list = [f"page={page}"]
-        if key:
-            param_list.append(f"query={quote(key)}")
-
+        
+        # 構建搜索URL
+        url = f"{self.host}/search?query={quote(key)}&page={page}"
+        
         if extend:
-            tags = extend.get("tags", [])
-            if isinstance(tags, list) and tags:
-                for t in tags:
-                    param_list.append(f"tags[]={quote(t)}")
             sort = extend.get("sort", "")
             if sort:
-                param_list.append(f"sort={quote(sort)}")
+                url += f"&sort={quote(sort)}"
             date = extend.get("date", "")
-            date_map = {"": "", "24": "24", "2": "2", "7": "7", "30": "30", "90": "90"}
-            if date and date in date_map:
-                param_list.append(f"date={date_map[date]}")
+            if date:
+                url += f"&date={quote(date)}"
             duration = extend.get("duration", "")
-            duration_map = {"": "", "1": "1", "5": "5", "10": "10", "20": "20", "30": "30", "60": "60"}
-            if duration and duration in duration_map:
-                param_list.append(f"duration={duration_map[duration]}")
-            genre = extend.get("genre", "")
-            if genre:
-                param_list.append(f"genre={quote(genre)}")
+            if duration:
+                url += f"&duration={quote(duration)}"
 
-        url = base_url + "&".join(param_list)
         try:
+            print(f"searchContent url: {url}")
             html = self.fetch(url, headers=self.getheaders()).text
             vods = self.parse_vod_list(html)
             return {'list': vods, 'page': page}
-        except Exception:
+        except Exception as e:
+            print(f"searchContent error: {e}")
             return {'list': [], 'page': page}
 
     def playerContent(self, flag, id, vipFlags):
@@ -276,11 +304,18 @@ class Spider(Spider):
             'Referer': 'https://hanime1.me/',
             'Origin': 'https://hanime1.me'
         }
+        
         if '_dm_' in id:
             vid, url = id.split('_dm_', 1)
             threading.Thread(target=self._preload_danmaku, args=(vid, url)).start()
         else:
             url = id
+
+        # 處理相對路徑
+        if url.startswith('//'):
+            url = 'https:' + url
+        elif url.startswith('/'):
+            url = self.host + url
 
         if '.mp4' in url or '.m3u8' in url:
             return {'parse': 0, 'url': url, 'header': header}
@@ -289,53 +324,84 @@ class Spider(Spider):
     def parse_vod_list(self, html):
         vods = []
         seen = set()
-        parts = re.split(r'class="[^"]*search-doujin-videos[^"]*"', html)
-        for i in range(1, len(parts)):
-            block = parts[i][:4000]
-            try:
-                url_match = re.search(r'<a[^>]+href="([^"]+)"', block)
-                if not url_match: continue
-                url = url_match.group(1)
-                id_match = re.search(r'v=(\d+)', url)
-                if not id_match: continue
-                vid = id_match.group(1)
-                if vid in seen: continue
-                seen.add(vid)
+        
+        try:
+            # 方法1: 查找視頻卡片
+            # 使用更靈活的匹配方式
+            card_pattern = r'<div[^>]*class="[^"]*col-xs-[^"]*"[^>]*>.*?<a[^>]*href="([^"]+watch\?v=(\d+))"[^>]*>.*?<img[^>]*src="([^"]+)".*?<div[^>]*class="[^"]*card-mobile-title[^"]*"[^>]*>(.*?)</div>.*?<div[^>]*class="[^"]*duration[^"]*"[^>]*>(.*?)</div>'
+            
+            matches = re.findall(card_pattern, html, re.S | re.I)
+            
+            for match in matches:
+                try:
+                    if len(match) >= 5:
+                        url, vid, pic, title, duration = match[0], match[1], match[2], match[3], match[4]
+                    else:
+                        continue
+                        
+                    if vid in seen:
+                        continue
+                    seen.add(vid)
+                    
+                    # 清理標題
+                    title = re.sub(r'<[^>]+>', '', title).strip()
+                    title = html_parser.unescape(title)
+                    
+                    # 清理圖片URL
+                    pic = pic.strip()
+                    if pic.startswith('//'):
+                        pic = 'https:' + pic
+                    
+                    # 清理時長
+                    duration = re.sub(r'<[^>]+>', '', duration).strip()
+                    
+                    vods.append({
+                        "vod_id": vid,
+                        "vod_name": title[:100],  # 限制標題長度
+                        "vod_pic": pic,
+                        "vod_remarks": duration
+                    })
+                except Exception as e:
+                    print(f"parse_vod_list item error: {e}")
+                    continue
+            
+            # 方法2: 如果方法1沒找到，使用更簡單的匹配
+            if not vods:
+                # 查找所有watch鏈接
+                watch_links = re.findall(r'<a[^>]*href="([^"]*watch\?v=(\d+))"[^>]*>', html)
+                for link, vid in watch_links:
+                    if vid in seen:
+                        continue
+                    seen.add(vid)
+                    
+                    # 查找對應的圖片
+                    pic = ""
+                    img_pattern = f'<img[^>]*src="([^"]+)"[^>]*>.*?{vid}'
+                    img_match = re.search(img_pattern, html, re.S)
+                    if img_match:
+                        pic = img_match.group(1)
+                        if pic.startswith('//'):
+                            pic = 'https:' + pic
+                    
+                    # 查找標題
+                    title = f"視頻 {vid}"
+                    title_pattern = f'<div[^>]*class="[^"]*title[^"]*"[^>]*>(.*?)</div>.*?{vid}'
+                    title_match = re.search(title_pattern, html, re.S)
+                    if title_match:
+                        title = re.sub(r'<[^>]+>', '', title_match.group(1)).strip()
+                    
+                    vods.append({
+                        "vod_id": vid,
+                        "vod_name": html_parser.unescape(title[:100]),
+                        "vod_pic": pic,
+                        "vod_remarks": ""
+                    })
+            
+        except Exception as e:
+            print(f"parse_vod_list error: {e}")
+        
+        return vods[:50]  # 限制返回數量
 
-                title = vid
-                title_match = re.search(r'class="[^"]*card-mobile-title[^"]*"[^>]*>(.*?)</div>', block)
-                if title_match:
-                    title = title_match.group(1).strip()
-
-                pic = ""
-                img_matches = re.findall(r'<img[^>]+src="([^"]+)"', block)
-                found_thumb = False
-                for img_src in img_matches:
-                    if 'thumbnail' in img_src:
-                        pic = img_src
-                        found_thumb = True
-                        break
-                if not found_thumb and len(img_matches) > 1:
-                    pic = img_matches[1]
-                elif not found_thumb and len(img_matches) > 0:
-                    pic = img_matches[0]
-
-                remarks = ""
-                dur_match = re.search(r'class="[^"]*card-mobile-duration[^"]*"[^>]*>(.*?)</div>', block)
-                if dur_match:
-                    remarks = dur_match.group(1).strip()
-
-                vods.append({
-                    "vod_id": vid,
-                    "vod_name": title,
-                    "vod_pic": pic,
-                    "vod_remarks": remarks
-                })
-            except Exception:
-                pass
-        return vods
-
-    # 弹幕处理保持不变
     def localProxy(self, param):
         try:
             xtype = param.get('type', '')
@@ -345,7 +411,8 @@ class Spider(Spider):
                 comments = self._fetch_comments(vid)
                 return self._generate_danmaku_xml(comments, times)
             return [404, 'text/plain', b'']
-        except Exception:
+        except Exception as e:
+            print(f"localProxy error: {e}")
             return [500, 'text/plain', b'']
 
     def _fetch_comments(self, vid):
@@ -356,35 +423,38 @@ class Spider(Spider):
             data = res.json()
             comments_html = data.get('comments', '')
             if not comments_html:
-                return ["欢迎观看", "Hanime1"]
+                return ["歡迎觀看", "Hanime1"]
 
             comment_blocks = re.findall(
-                r'<div[^>]*class="comment-index-text"[^>]*>(?:[^<]|<[^>]*>)*?</div>\s*<div[^>]*class="comment-index-text"[^>]*>(.*?)</div>',
+                r'<div[^>]*class="comment-index-text"[^>]*>(.*?)</div>',
                 comments_html, re.S
             )
             for block in comment_blocks:
                 text = re.sub(r'<[^>]+>', '', block).strip()
-                if len(text) > 2 and len(text) < 100 and not any(x in text for x in ['加载中', '查看', '回复', '登录', '发表']):
+                if len(text) > 2 and len(text) < 100 and not any(x in text for x in ['加載中', '查看', '回覆', '登錄', '發表']):
                     comments.append(text)
+            
+            # 去重並限制數量
             seen = set()
             clean_comments = []
             for c in comments:
                 if c not in seen and len(clean_comments) < 60:
                     seen.add(c)
                     clean_comments.append(c)
-            return clean_comments if clean_comments else ["欢迎观看", "精彩内容"]
-        except Exception:
-            return ["欢迎观看", "Hanime1"]
+            return clean_comments if clean_comments else ["歡迎觀看", "精彩內容"]
+        except Exception as e:
+            print(f"_fetch_comments error: {e}")
+            return ["歡迎觀看", "Hanime1"]
 
     def _generate_danmaku_xml(self, comments, duration):
         if duration <= 0:
             duration = 600
         xml = ['<?xml version="1.0" encoding="UTF-8"?>', '<i>']
-        xml.append('<d p="0,5,25,16711680,0">弹幕加载成功</d>')
+        xml.append('<d p="0,5,25,16711680,0">彈幕加載成功</d>')
         if not comments:
             xml.extend([
-                '<d p="5,1,25,16777215,0">暂无评论，欢迎补充~</d>',
-                '<d p="15,1,25,16777215,0">Hanime1 高清无码</d>'
+                '<d p="5,1,25,16777215,0">暫無評論，歡迎補充~</d>',
+                '<d p="15,1,25,16777215,0">Hanime1 高清無碼</d>'
             ])
         else:
             for i, c in enumerate(comments):
@@ -397,7 +467,7 @@ class Spider(Spider):
                 safe_text = html_parser.escape(c)
                 xml.append(f'<d p="{t},1,25,{color},0">{safe_text}</d>')
         xml.append('</i>')
-        return [200, 'text/xml', '\n'.join(xml)]
+        return [200, 'text/xml', '\n'.join(xml).encode('utf-8')]
 
     def _preload_danmaku(self, vid, url):
         try:
@@ -408,4 +478,4 @@ class Spider(Spider):
             pass
 
     def getheaders(self, param=None):
-        return self.headers
+        return self.headers.copy()

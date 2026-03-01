@@ -2,12 +2,25 @@
   "spider": "./jar/xiaosa-0226.jar;md5;b0d474e0fccf3b40c5394d72dbbdf7d4",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.02.26_Ver.4\n 刪除已知有廣告站源",
+  "notice": "115.03.01_Ver.1\n 刪除廣告及失效站源",
   "sites": [
 
 
  
-
+        {
+            "key": "老鹰",
+            "name": "📱｜老鷹｜待測試",
+            "type": 3,
+            "api": "csp_AppQi",
+            "searchable": 1,
+            "changeable": 1,
+            "ext": {
+                "site": "https://maotouyinghubei.oss-cn-wuhan-lr.aliyuncs.com/maotouyinghb.txt",
+                "dataKey": "zxPtEUDGVllIUhDB",
+                "dataIv": "zxPtEUDGVllIUhDB",
+                "ua": "okhttp/3.10.0"
+            }
+        },
         {
             "key": "顾我1",
             "name": "📱｜故我｜待測試",
@@ -23,22 +36,7 @@
                 "init": "initV122",
                 "ua": "okhttp/3.10.0"
             }
-        },
-        {
-            "key": "爱影",
-            "name": "📱｜愛影｜待測試",
-            "type": 3,
-            "api": "csp_AppQi",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "site": "https://aysappto.oss-cn-chengdu.aliyuncs.com/q16.txt",
-                "dataKey": "dj382hsyqp98kqn8",
-                "dataIv": "dj382hsyqp98kqn8",
-                "search": "mineInfo"
-            }
-        },    
-      
+        },     
         {
             "key": "小猪",
             "name": "📱｜小豬｜待測試",

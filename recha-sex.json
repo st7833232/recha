@@ -34,6 +34,17 @@
       "api": "./py/hanime.py",
       "filterable": 1
     },
+{
+      "key": "py_hanime",
+      "name": "⏭｜hanime(沐辰)｜PYTHON",
+      "type": 3,
+      "api": "./py/py_hanime.min.py",
+      "searchable": 1,
+      "quickSearch": 0,
+      "filterable": 0,
+      "changeable": 0,
+      "ext": {}
+    }    
     {
       "key": "小红书",
       "name": "⏭｜Pornhub(嗷嗚)｜PYTHON",

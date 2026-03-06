@@ -2,108 +2,12 @@
   "spider": "./jar/xiaosa-0306.jar;md5;f027984f04ff6dfec61d21f3db26389f",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.03.06_Ver.7\n 換個思路，再改一次app源",
+  "notice": "115.03.06_Ver.8\n 測試完畢",
   "sites": [
 
 
  
-        {
-            "key": "三秋影视",
-            "name": "三秋｜APP",
-            "type": 3,
-            "api": "csp_App3Q"
-        },
-        {
-            "key": "坚果影视",
-            "name": "坚果｜APP",
-            "type": 3,
-            "api": "csp_AppJg"
-        },
-        {
-            "key": "韩圈",
-            "name": "韩圈｜APP",
-            "type": 3,
-            "api": "csp_Hxq",
-            "ext": "https://fishapi.wya6.com/fish/fishhxq.php"
-        },
-        {
-            "key": "闪影",
-            "name": "闪影｜APP",
-            "type": 3,
-            "api": "csp_AppYsV2",
-            "searchable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "ext": "http://38.47.213.61:41271/mogai_api.php/v1.vod"
-        },
-        {
-            "key": "爱盈",
-            "name": "爱盈｜APP",
-            "type": 3,
-            "api": "csp_AppQi",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "site": "https://rxysyyds.oss-cn-chengdu.aliyuncs.com/qiji.txt",
-                "dataKey": "sjvlwnhk6h9znl61",
-                "dataIv": "sjvlwnhk6h9znl61",
-                "version": "305",
-                "ua": "okhttp/3.10.0"
-            }
-        },
-        {
-            "key": "爱影",
-            "name": "爱影｜APP",
-            "type": 3,
-            "api": "csp_AppQi",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "site": "https://aysappto.oss-cn-chengdu.aliyuncs.com/q19.txt",
-                "dataKey": "fff32466kkfff616",
-                "dataIv": "fff32466kkfff616",
-                "ua": "okhttp/3.10.0"
-            }
-        },
-        {
-            "key": "蓝鹰",
-            "name": "蓝鹰｜APP",
-            "type": 3,
-            "api": "csp_AppQi",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "site": "https://lanyinghz.oss-cn-hangzhou.aliyuncs.com/lanyingxmy.txt",
-                "dataKey": "ca94b06ca359d80e",
-                "dataIv": "ca94b06ca359d80e",
-                "init": "initV120",
-                "ua": "okhttp/3.10.0"
-            }
-        },
-        {
-            "key": "小羊",
-            "name": "小羊｜APP",
-            "type": 3,
-            "api": "csp_AppGet",
-            "ext": {
-                "site": "https://xy4k.com/url.txt",
-                "dataKey": "7SDWjknU34zqFbVr",
-                "dataIv": "7SDWjknU34zqFbVr"
-            }
-        },
-        {
-            "key": "黑猫",
-            "name": "黑猫｜APP",
-            "type": 3,
-            "api": "csp_AppGet",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "url": "http://app1-0-0.87333.cc",
-                "dataKey": "VwsHxkCViDXEExWa",
-                "dataIv": "VwsHxkCViDXEExWa"
-            }
-        },        
+ 
         {
             "key": "GoConfig",
             "name": "🇹🇼｜熱播排行榜｜自動切換1",
@@ -408,6 +312,52 @@
       "filterable": 0,
       "changeable": 0
     },
+        {
+            "key": "爱盈",
+            "name": "🏆｜愛盈｜高清◎秒播(無廣告)",
+            "type": 3,
+            "api": "csp_AppQi",
+            "searchable": 1,
+            "changeable": 1,
+            "ext": {
+                "site": "https://rxysyyds.oss-cn-chengdu.aliyuncs.com/qiji.txt",
+                "dataKey": "sjvlwnhk6h9znl61",
+                "dataIv": "sjvlwnhk6h9znl61",
+                "version": "305",
+                "ua": "okhttp/3.10.0"
+            }
+        },
+        {
+            "key": "爱影",
+            "name": "🏆｜愛影｜高清◎秒播(無廣告)",
+            "type": 3,
+            "api": "csp_AppQi",
+            "searchable": 1,
+            "changeable": 1,
+            "ext": {
+                "site": "https://aysappto.oss-cn-chengdu.aliyuncs.com/q19.txt",
+                "dataKey": "fff32466kkfff616",
+                "dataIv": "fff32466kkfff616",
+                "ua": "okhttp/3.10.0"
+            }
+        },
+        {
+            "key": "三秋影视",
+            "name": "🏆｜三秋｜高清◎秒播",
+            "type": 3,
+            "api": "csp_App3Q"
+        },
+        {
+            "key": "小羊",
+            "name": "🏆｜小羊｜高清◎秒播",
+            "type": 3,
+            "api": "csp_AppGet",
+            "ext": {
+                "site": "https://xy4k.com/url.txt",
+                "dataKey": "7SDWjknU34zqFbVr",
+                "dataIv": "7SDWjknU34zqFbVr"
+            }
+        },          
     {
       "key": "椰子",
       "name": "🏆｜椰子｜高清◎秒播",

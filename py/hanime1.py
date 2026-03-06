@@ -46,7 +46,7 @@ class Spider(M):
         return False
 
     def homeContent(D,filter):
-        # 合并第二个spider的完整分类
+        # 只添加分类，不加筛选
         classes = [
             {'type_id': '裏番', 'type_name': '裏番'},
             {'type_id': '泡麵番', 'type_name': '泡麵番'},
@@ -56,82 +56,41 @@ class Spider(M):
             {'type_id': 'AI生成', 'type_name': 'AI生成'},
             {'type_id': 'MMD', 'type_name': 'MMD'},
             {'type_id': 'Cosplay', 'type_name': 'Cosplay'},
-            {'type_id': 'latest_rank', 'type_name': '最新上市'},
-            {'type_id': 'daily_rank', 'type_name': '本日排行'},
-            {'type_id': 'weekly_rank', 'type_name': '本週排行'},
-            {'type_id': 'monthly_rank', 'type_name': '本月排行'}
         ]
-        
-        # 添加排序筛选选项
-        sort_options = [
-            {"n": "最新上市", "v": "最新上市"},
-            {"n": "最新上傳", "v": "最新上傳"},
-            {"n": "本日排行", "v": "本日排行"},
-            {"n": "本週排行", "v": "本週排行"},
-            {"n": "本月排行", "v": "本月排行"},
-            {"n": "觀看次數", "v": "觀看次數"}
-        ]
-        
+        # 保持原有的filters为空
         filters = {}
-        for item in classes:
-            filters[item['type_id']] = [{"key": "sort", "name": "排序", "value": sort_options}]
-            
         return {'class': classes, 'filters': filters}
 
     def homeVideoContent(A):
-        # 获取首页内容（最新视频）- 保持原有的首页逻辑
+        # 完全保持原有的首页内容逻辑
         return {B:[], C:0, D:0}
 
     def categoryContent(E, cid, page, filter, ext):
-        # 获取排序参数
-        sort = ext.get('sort', '最新上市') if ext else '最新上市'
-        
-        # 根据分类类型构建URL
-        if 'rank' in cid or cid == 'latest_rank':
-            rank_map = {'latest_rank': '最新上市', 'daily_rank': '本日排行', 'weekly_rank': '本週排行', 'monthly_rank': '本月排行'}
-            url = f"{E.home_url}/search?sort={parse.quote(rank_map.get(cid, '最新上市'))}&page={page}"
-        else:
-            url = f"{E.home_url}/search?genre={parse.quote(cid)}&sort={parse.quote(sort)}&page={page}"
-        
-        M = E.get(url)
+        # 完全保持原有的URL构建方式，不加任何排序参数
+        O = E.home_url + f"/search?genre={parse.quote(cid)}&page={page}"
+        M = E.get(O)
         result = {B:[], C:0, D:0}
         
         if M:
             P = G(M)
-            # 保持原有的PyQuery解析方式
+            # 保持原有的解析方式
             for F in P('div.home-rows-videos-wrapper a').items():
                 N = F.attr('href')
                 if E.home_url not in N:
                     continue
-                # 保持原有的数据格式
                 result[B].append({
                     I: N.split('watch?v=')[-1],
                     J: F('div.home-rows-videos-title').text(),
                     'vod_pic': F('img').attr(L),
-                    K: A  # 保持原有的remarks为空
+                    K: A
                 })
-            
-            # 尝试获取总页数
-            try:
-                # 通过PyQuery查找分页信息
-                page_text = P('.pagination').text()
-                if page_text:
-                    import re
-                    pages = re.findall(r'/(\d+)', page_text)
-                    if pages:
-                        result[D] = int(pages[-1])
-                    else:
-                        result[D] = page + 1
-                else:
-                    result[D] = page + 1
-            except:
-                result[D] = page + 1
-            
+            # 保持原有的分页逻辑
             result[C] = page
-            
+            result[D] = page + 1
         return result
 
     def detailContent(L, did):
+        # 完全保持原有的详情页逻辑
         G = did[0]
         H = [{
             E: A,
@@ -149,30 +108,13 @@ class Spider(M):
         return {B: H, C:0, D:0}
 
     def searchContent(A, key, quick, page='1'):
-        # 实现搜索功能
-        url = f"{A.home_url}/search?k={key}&page={page}&os=pc"
-        M = A.get(url)
-        result = {B:[], C:0, D:0}
-        
-        if M:
-            P = G(M)
-            for F in P('div.home-rows-videos-wrapper a').items():
-                N = F.attr('href')
-                if A.home_url not in N:
-                    continue
-                result[B].append({
-                    I: N.split('watch?v=')[-1],
-                    J: F('div.home-rows-videos-title').text(),
-                    'vod_pic': F('img').attr(L),
-                    K: A
-                })
-            
-            result[C] = int(page)
-            result[D] = int(page) + 1  # 简化处理，实际可能需要解析总页数
-            
-        return result
+        # 完全保持原有的搜索逻辑
+        E = f"{A.home_url}/search?k={key}&page={page}&os=pc"
+        F = []
+        return {B:[], C:0, D:0}
 
     def playerContent(E, flag, pid, vipFlags):
+        # 完全保持原有的播放逻辑
         B='url'
         A = {B:[], C:0, D:0, 'header':{H:'okhttp/5.0.0'}}
         F = E.get(E.home_url+'/watch?v='+pid)

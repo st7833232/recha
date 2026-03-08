@@ -2,7 +2,7 @@
   "spider": "./jar/xiaosa-0306.jar;md5;f027984f04ff6dfec61d21f3db26389f",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.03.06_Ver.8\n 測試完畢",
+  "notice": "115.03.08_Ver.8\n 狂賀！獨播庫畫質又回到高清！！！",
   "sites": [
 
 
@@ -189,7 +189,30 @@
             "changeable": 1,
             "filterable": 1
         },    
-
+   {
+      "key": "独播",
+      "name": "🏆｜獨播｜藍光◎秒播(無廣告)",
+      "type": 3,
+      "jar": "./jar/7哥.jar",
+      "api": "csp_DubkAmns",
+      "searchable": 1,
+      "filterable": 1,
+      "quickSearch": 1,
+      "changeable": 1,
+      "ext": "./json/獨播庫.json"
+    },
+    {
+      "key": "🎭杜北",
+      "name": "🏆｜獨播｜藍光◎秒播(備用)",
+      "type": 3,
+      "api": "csp_DubkAmns",
+      "jar": "./jar/aowu.jar;md5;29ee0730017660db62f57a585cd1aeb6",
+      "searchable": 1,
+      "filterable": 1,
+      "quickSearch": 1,
+      "changeable": 1,
+      "ext": "./json/獨播庫.json"
+    },
     {
       "key": "📹YOU视",
       "name": "🏆｜優視｜藍光◎秒播",
@@ -703,30 +726,6 @@
     {"key":"NewGr","name":"🥇｜春天｜高清◎瞬播","type":3,"api":"csp_NewGrAmns","jar": "./jar/aowu.jar;md5;29ee0730017660db62f57a585cd1aeb6","searchable":1,"filterable":1,"quickSearch":1,"changeable":1,"ext":"BG6DUQMDRsRW0hbHAYRFwFNSUoESx4PHgAPBksaHRRWXkcFLQEDFwIMCBhEXkBZVVteWx8XHEVIVT8zHlAtMRIyLDszASEtF0sAMj8ONj0BLCofKAo2PCc4ET8TQT0JFjArVzRYRVpEDRRKX1sTPx8LLwkgOCtUQBc1HAUXOC0SSiIoSU9HS1AWFhUuDANUXEYRAAQXFhAVHBYPGwcPC1NJRRUOBQwGABUtGhsWAEVIVRUBAhU4BRZUU0pJWwIYFxkEABcoCAQcAEVMRAcNBUsAEQ4YGh9JCw4VFVNJRQUfFz0YCRgGHxsACEVIVVRHXUcUDxUWBwQAGAEcVkhHVkNVSkcHABUFDwsMSl9bRktEQlVFDw=="},
     {"key":"TnewGr","name":"🥇｜糖心｜高清◎瞬播","type":3,"api":"csp_TnewGrAmns","jar": "./jar/aowu.jar;md5;29ee0730017660db62f57a585cd1aeb6","searchable":1,"filterable":1,"quickSearch":1,"changeable":1},
     {"key":"Hxq","name":"🥇｜韓劇｜高清◎瞬播","type":3,"api":"csp_HxqAmns","jar": "./jar/aowu.jar;md5;29ee0730017660db62f57a585cd1aeb6","searchable":1,"filterable":1,"quickSearch":1,"changeable":1},
-    {
-      "key": "独播",
-      "name": "🥇｜獨播｜藍光◎秒播(無廣告)",
-      "type": 3,
-      "jar": "./jar/7哥.jar",
-      "api": "csp_DubkAmns",
-      "searchable": 1,
-      "filterable": 1,
-      "quickSearch": 1,
-      "changeable": 1,
-      "ext": "./json/獨播庫.json"
-    },
-    {
-      "key": "🎭杜北",
-      "name": "🏆｜獨播｜藍光◎秒播(備用)",
-      "type": 3,
-      "api": "csp_DubkAmns",
-      "jar": "./jar/aowu.jar;md5;29ee0730017660db62f57a585cd1aeb6",
-      "searchable": 1,
-      "filterable": 1,
-      "quickSearch": 1,
-      "changeable": 1,
-      "ext": "./json/獨播庫.json"
-    },       
     {
       "key": "🥇伊外",
       "name": "🥇｜伊外｜高清◎秒播",

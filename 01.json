@@ -1,213 +1,2627 @@
-<!-- End of The ECoT -->
-<content>
-午後的陽光溫暖和煦，將庭院裡的木屑都染上了一層金色。在所有人的努力下，一件件充滿個性的家具終於從一堆堆木料變成了現實。
+// ==================== 人物羈絆卡片狀態欄 ====================
+// 完整版 - 包含催眠暗示顯示
 
-「大家快來試試新衣服！」
+console.log('🎬 加載人物羈絆卡片狀態欄...');
 
-娜莉抱著一疊鞣製柔軟、縫合精細的獸皮衣，從一樓的工坊裡走了出來，臉上洋溢著開心的笑容。那台神奇的「自動縫紉人偶」效率驚人，僅僅一個下午，就為我們每個人都量身打造了一套嶄新的衣物。
+// ==================== 配置 ====================
+window.CHARACTER_CONFIG = {
+    cardStyle: 1  // 默認樣式1
+};
 
-大家歡呼著圍了上去，各自領取了自己的新衣。女孩們迫不及待地換上，合身的剪裁完美地勾勒出她們各自不同的身材曲線。娜莉的開朗、招招的英氣、林檎的清冷、徽因的典雅、妹紅的率直、慧音的知性、珠世的溫婉，都在這樸素卻精良的獸皮衣襯托下，展現出別樣的魅力。就連一直沉默寡言的燼，換上新衣後整個人的氣質似乎也柔和了幾分。
+// ==================== SVG 圖標定義 ====================
+const ICONS = {
+    pin: `<svg class="card-icon-svg" viewBox="0 0 24 24"><path d="M16 9V4h1c.55 0 1-.45 1-1s-.45-1-1-1H7c-.55 0-1 .45-1 1s.45 1 1 1h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z"/></svg>`,
+    pinFilled: `<svg class="card-icon-svg" viewBox="0 0 24 24"><path d="M16 9V4h1c.55 0 1-.45 1-1s-.45-1-1-1H7c-.55 0-1 .45-1 1s.45 1 1 1h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z" fill="currentColor"/></svg>`,
+    paintbrush: `<svg class="card-icon-svg" viewBox="0 0 24 24"><path d="M20.71 4.63l-1.34-1.34c-.39-.39-1.02-.39-1.41 0L9 12.25 11.75 15l8.96-8.96c.39-.39.39-1.02 0-1.41z"/><path d="M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3z"/></svg>`,
+    refresh: `<svg class="card-icon-svg" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>`,
+    forceDesire: `<svg class="card-icon-svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#ff4757"/></svg>`,
+    forceCrush: `<svg class="card-icon-svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#ff6b9d"/><circle cx="6" cy="6" r="1" fill="#ffd700"/><circle cx="18" cy="6" r="1" fill="#ffd700"/><circle cx="4" cy="12" r="0.8" fill="#ffd700"/><circle cx="20" cy="12" r="0.8" fill="#ffd700"/></svg>`
+};
 
-我們幾個男人也換上了新衣，龍飛那身衣服將他本就魁梧的身材襯托得更加挺拔，而梁朝陽也終於脫下了那件破爛的格子襯衫，換上新衣後整個人看起來精神煥發，多了幾分陽光帥氣。
+// ==================== 樣式 ====================
+const styles = `
+<style id="character-status-styles">
+/* ==================== 全局動畫 ==================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-換好衣服後便到了最激動人心的環節——搬運家具。
+@keyframes heartbeat-dash-anim {
+    72.5% {
+        opacity: 0;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
+}
 
-眾人七手八腳地將一件件承載著自己夢想的家具搬進各自的房間。龍飛小心翼翼地將那個巨大的武器架固定在牆上，掛上自己的戰斧和長弓，臉上露出了滿意的神色。
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
 
-*徽因她…好像真的很開心。能讓她發揮才能，這樣真好。招招也是…雖然害羞，但工作起來很認真。我…我這樣做，是對的嗎？* 他看著忙碌的眾人，心中閃過一絲複雜的情緒。
+/* ==================== 倉鼠跑輪加載動畫 ==================== */
+.wheel-and-hamster {
+    --dur: 1s;
+    position: relative;
+    width: 12em;
+    height: 12em;
+    font-size: 14px;
+    margin: 0 auto 20px;
+}
 
-慧音和梁朝陽則一起，將那個巨大的書架搬進了三樓的圖書室，緊挨著那扇剛剛安裝好的玻璃窗。陽光透過玻璃灑在空蕩蕩的書架上，彷彿在期待著被知識填滿。
+.wheel,
+.hamster,
+.hamster div,
+.spoke {
+    position: absolute;
+}
 
-珠世則帶著一絲得意的微笑，將她的專屬實驗台安置在房間的角落。她輕輕撫摸著光潔的檯面和一排排整齊的藥材櫃，紫色的眼眸中閃爍著莫名的光芒。
+.wheel,
+.spoke {
+    border-radius: 50%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
 
-*阿彬否決了啊…也好，太急躁了反而會引起不必要的警惕。燼的身體…就像一座未被發掘的寶庫，總會有辦法的。慢慢來…不急。*
+.wheel {
+    background: radial-gradient(100% 100% at center,hsla(0,0%,60%,0) 47.8%,hsl(0,0%,60%) 48%);
+    z-index: 2;
+}
 
-當最後一件家具擺放到位，夕陽的餘暉也染紅了西邊的天空。整個三層木屋被一種名為「家」的溫馨氣氛徹底填滿。每個房間都擁有了自己的靈魂，不再是空曠的木盒子，而是真正屬於每個人的小小天地。
+.hamster {
+    animation: hamster var(--dur) ease-in-out infinite;
+    top: 50%;
+    left: calc(50% - 3.5em);
+    width: 7em;
+    height: 3.75em;
+    transform: rotate(4deg) translate(-0.8em,1.85em);
+    transform-origin: 50% 0;
+    z-index: 1;
+}
 
-忙碌了一整天，所有人都飢腸轆轆。娜莉、招招和林檎早已在廚房裡忙活開了。新安裝的自來水系統極大地提升了效率，清澈的溪水順著陶管流淌而出，省去了去河邊提水的辛苦。
+.hamster__head {
+    animation: hamsterHead var(--dur) ease-in-out infinite;
+    background: hsl(30,90%,55%);
+    border-radius: 70% 30% 0 100% / 40% 25% 25% 60%;
+    box-shadow: 0 -0.25em 0 hsl(30,90%,80%) inset,
+        0.75em -1.55em 0 hsl(30,90%,90%) inset;
+    top: 0;
+    left: -2em;
+    width: 2.75em;
+    height: 2.5em;
+    transform-origin: 100% 50%;
+}
 
-很快，豐盛的晚餐就擺上了餐桌。烤得滋滋冒油的獸肉、清炒的野菜、香噴噴的玉米糊，還有娜莉特製的漿果醬。大家圍坐在一起，分享著一天的勞動成果，氣氛歡快而熱烈。
+.hamster__ear {
+    animation: hamsterEar var(--dur) ease-in-out infinite;
+    background: hsl(0,90%,85%);
+    border-radius: 50%;
+    box-shadow: -0.25em 0 hsl(30,90%,55%) inset;
+    top: -0.25em;
+    right: -0.25em;
+    width: 0.75em;
+    height: 0.75em;
+    transform-origin: 50% 75%;
+}
 
-晚餐後疲憊的眾人終於可以好好放鬆一下。溫泉是最好的去處，溫熱的泉水洗去了一身的疲憊和汗水。女孩們在溫泉裡嬉笑打鬧，龍飛和梁朝陽則在一旁默默地泡著，享受著難得的寧靜。
+.hamster__eye {
+    animation: hamsterEye var(--dur) linear infinite;
+    background-color: hsl(0,0%,0%);
+    border-radius: 50%;
+    top: 0.375em;
+    left: 1.25em;
+    width: 0.5em;
+    height: 0.5em;
+}
 
-我靠在池邊，看著眼前這幅和樂融融的景象，心中前所未有地感到安寧與滿足。這就是我想要的家，一個可以讓所有人都感到幸福和安全的地方。
+.hamster__nose {
+    background: hsl(0,90%,75%);
+    border-radius: 35% 65% 85% 15% / 70% 50% 50% 30%;
+    top: 0.75em;
+    left: 0;
+    width: 0.2em;
+    height: 0.25em;
+}
 
-泡完溫泉，大家各自散去。有人回房休息，有人則在庭院裡散步消食。
+.hamster__body {
+    animation: hamsterBody var(--dur) ease-in-out infinite;
+    background: hsl(30,90%,90%);
+    border-radius: 50% 30% 50% 30% / 15% 60% 40% 40%;
+    box-shadow: 0.1em 0.75em 0 hsl(30,90%,55%) inset,
+        0.15em -0.5em 0 hsl(30,90%,80%) inset;
+    top: 0.25em;
+    left: 2em;
+    width: 4.5em;
+    height: 3em;
+    transform-origin: 17% 50%;
+    transform-style: preserve-3d;
+}
 
-我繞著新家走了一圈，最後一次檢查著門窗是否牢固。一切都很好，這個家，固若金湯。
+.hamster__limb--fr,
+.hamster__limb--fl {
+    clip-path: polygon(0 0,100% 0,70% 80%,60% 100%,0% 100%,40% 80%);
+    top: 2em;
+    left: 0.5em;
+    width: 1em;
+    height: 1.5em;
+    transform-origin: 50% 0;
+}
 
-回到我們三人的房間，珠世和娜莉已經在等我了。她們換上了柔軟的睡衣，正坐在床邊，興致勃勃地討論著什麼。
+.hamster__limb--fr {
+    animation: hamsterFRLimb var(--dur) linear infinite;
+    background: linear-gradient(hsl(30,90%,80%) 80%,hsl(0,90%,75%) 80%);
+    transform: rotate(15deg) translateZ(-1px);
+}
 
-「老公你回來啦！」娜莉看到我，開心地撲了上來。
+.hamster__limb--fl {
+    animation: hamsterFLLimb var(--dur) linear infinite;
+    background: linear-gradient(hsl(30,90%,90%) 80%,hsl(0,90%,85%) 80%);
+    transform: rotate(15deg);
+}
 
-「今天真是太棒了！」珠世也笑著迎了上來，「我們的家，終於有家的樣子了。」
+.hamster__limb--br,
+.hamster__limb--bl {
+    border-radius: 0.75em 0.75em 0 0;
+    clip-path: polygon(0 0,100% 0,100% 30%,70% 90%,70% 100%,30% 100%,40% 90%,0% 30%);
+    top: 1em;
+    left: 2.8em;
+    width: 1.5em;
+    height: 2.5em;
+    transform-origin: 50% 30%;
+}
 
-我們三人躺在寬大舒適的床上，分享著彼此的喜悅。夜色漸深，窗外傳來陣陣蟲鳴，屋內一片溫馨。
+.hamster__limb--br {
+    animation: hamsterBRLimb var(--dur) linear infinite;
+    background: linear-gradient(hsl(30,90%,80%) 90%,hsl(0,90%,75%) 90%);
+    transform: rotate(-25deg) translateZ(-1px);
+}
 
-「對了，親愛」珠世忽然想起了什麼，她側過身，看著我認真地說道，「關於三樓的『天堂』，我有些新的想法。既然是娛樂和放鬆的空間，除了書架和休息區，我們是不是還可以增加一些……更有趣的設施？」
+.hamster__limb--bl {
+    animation: hamsterBLLimb var(--dur) linear infinite;
+    background: linear-gradient(hsl(30,90%,90%) 90%,hsl(0,90%,85%) 90%);
+    transform: rotate(-25deg);
+}
 
-🏡楓葉潭營地
-東:迴響松林(30分鐘)，西:巨人沉睡之地(30分鐘)，南:陽光溪谷(30分鐘)，北:漿果園丘(30分鐘)
-</content>
-<UpdateVariable>
-========檢查修正結果=========
-變量路徑完整性檢查：通過
-指令生成正確性檢查：通過
-更新邏輯一致性檢查：通過
-========變量更新指令=========
-時間、環境更新：
-_.set('系統.當前時間', '19:00');
-_.set('系統.前次時間', '14:00');
-_.set('環境.亮度', '黃昏');
-_.set('環境.體感溫度', 18);
-_.set('環境.舒適度', 130);
-阿彬、同伴狀態更新：
-_.add('生理.碳水', -500);
-_.add('生理.氮平衡', -5);
-_.add('生理.維生素', -2.5);
-_.add('生理.水分', -7.5);
-_.add('精神.睡眠', -10);
-_.add('次生屬性.飽腹感', -20);
-_.set('生理.水分', 100);
-_.set('次生屬性.飽腹感', 80);
-_.add('生理.碳水', 600);
-_.add('生理.脂肪', 100);
-_.add('生理.蛋白質', 40);
-_.add('生理.維生素', 10);
-_.set('同伴.珠世.水分值', 80);
-_.set('同伴.珠世.飽腹感', 80);
-_.set('同伴.娜莉.水分值', 80);
-_.set('同伴.娜莉.飽腹感', 80);
-_.set('同伴.龍飛.水分值', 80);
-_.set('同伴.龍飛.飽腹感', 80);
-_.set('同伴.林檎.水分值', 80);
-_.set('同伴.林檎.飽腹感', 80);
-_.set('同伴.林徽因.水分值', 80);
-_.set('同伴.林徽因.飽腹感', 80);
-_.set('同伴.李招招.水分值', 80);
-_.set('同伴.李招招.飽腹感', 80);
-_.set('同伴.燼.水分值', 80);
-_.set('同伴.燼.飽腹感', 80);
-_.set('同伴.上白澤慧音.水分值', 80);
-_.set('同伴.上白澤慧音.飽腹感', 80);
-_.set('同伴.藤原妹紅.水分值', 80);
-_.set('同伴.藤原妹紅.飽腹感', 80);
-_.set('同伴.梁朝陽.水分值', 80);
-_.set('同伴.梁朝陽.飽腹感', 80);
-技能/屬性更新：
-物品更新：
-_.remove('營地.楓葉潭營地.物品', '獸皮衣');
-任務更新：
-_.add('系統.求生點數', 50);
-_.add('技能.好感(對娜莉).當前經驗', 75); // 共同完成主線任務
-_.add('技能.好感(對伊西莉亞).當前經驗', 75); // 共同完成主線任務
-_.add('技能.好感(對李招招).當前經驗', 75); // 共同完成主線任務
-_.add('技能.好感(對上白澤慧音).當前經驗', 75); // 共同完成主線任務
-_.add('技能.好感(對林徽因).當前經驗', 75); // 共同完成主線任務
-_.add('技能.好感(對龍飛).當前經驗', 75); // 共同完成主線任務
-_.add('技能.好感(對林檎).當前經驗', 75); // 共同完成主線任務
-_.add('技能.好感(對燼).當前經驗', 75); // 共同完成主線任務
-_.add('技能.好感(對藤原妹紅).當前經驗', 75); // 共同完成主線任務
-_.add('技能.好感(對珠世).當前經驗', 75); // 共同完成主線任務
-_.add('技能.好感(對梁朝陽).當前經驗', 75); // 共同完成主線任務
-_.add('技能.製作/工匠.當前經驗', 150); // 技能存在
-_.set('任務.主線.結算狀態.基礎獎勵已發放', true);
-_.set('任務.主線.結算狀態.進階獎勵已發放', true);
-_.add('系統.求生點數', 40);
-_.add('技能.好感(對林徽因).當前經驗', 50); // 共同完成支線任務
-_.add('技能.好感(對上白澤慧音).當前經驗', 50); // 共同完成支線任務
-_.add('技能.製作/工匠.當前經驗', 100); // 技能存在
-_.set('任務.支線.結算狀態.基礎獎勵已發放', true);
-_.set('任務.支線.結算狀態.進階獎勵已發放', true);
-_.add('系統.求生點數', 15);
-_.set('任務.日常.基礎獎勵已發放', true);
-作物、畜牧更新：
-其他更新：
-_.set('畜牧.野雞.產出物.週期', 2);
-_.set('畜牧.野山羊.產出物.週期', 7);
-_.set('畜牧.馬鹿.產出物.週期', 3);
-_.assign('裝備', '胸部', {'獸皮衣': {'數量': 1, '狀態類型': '耐久度', '狀態': 100, '重量': 1.5, '描述': '由自動縫紉人偶製作的合身獸皮衣，保暖且耐磨。'}});
-_.assign('同伴.珠世.裝備', '胸部', {'獸皮衣': {'數量': 1, '狀態類型': '耐久度', '狀態': 100, '重量': 1.5, '描述': '由自動縫紉人偶製作的合身獸皮衣，保暖且耐磨。'}});
-_.assign('同伴.娜莉.裝備', '胸部', {'獸皮衣': {'數量': 1, '狀態類型': '耐久度', '狀態': 100, '重量': 1.5, '描述': '由自動縫紉人偶製作的合身獸皮衣，保暖且耐磨。'}});
-_.assign('同伴.龍飛.裝備', '胸部', {'獸皮衣': {'數量': 1, '狀態類型': '耐久度', '狀態': 100, '重量': 1.5, '描述': '由自動縫紉人偶製作的合身獸皮衣，保暖且耐磨。'}});
-_.assign('同伴.林檎.裝備', '胸部', {'獸皮衣': {'數量': 1, '狀態類型': '耐久度', '狀態': 100, '重量': 1.5, '描述': '由自動縫紉人偶製作的合身獸皮衣，保暖且耐磨。'}});
-_.assign('同伴.林徽因.裝備', '胸部', {'獸皮衣': {'數量': 1, '狀態類型': '耐久度', '狀態': 100, '重量': 1.5, '描述': '由自動縫紉人偶製作的合身獸皮衣，保暖且耐磨。'}});
-_.assign('同伴.李招招.裝備', '胸部', {'獸皮衣': {'數量': 1, '狀態類型': '耐久度', '狀態': 100, '重量': 1.5, '描述': '由自動縫紉人偶製作的合身獸皮衣，保暖且耐磨。'}});
-_.assign('同伴.燼.裝備', '胸部', {'獸皮衣': {'數量': 1, '狀態類型': '耐久度', '狀態': 100, '重量': 1.5, '描述': '由自動縫紉人偶製作的合身獸皮衣，保暖且耐磨。'}});
-_.assign('同伴.上白澤慧音','裝備',{});
-_.assign('同伴.藤原妹紅','裝備',{});
-_.assign('同伴.上白澤慧音.裝備', '胸部', {'獸皮衣': {'數量': 1, '狀態類型': '耐久度', '狀態': 100, '重量': 1.5, '描述': '由自動縫紉人偶製作的合身獸皮衣，保暖且耐磨。'}});
-_.assign('同伴.藤原妹紅.裝備', '胸部', {'獸皮衣': {'數量': 1, '狀態類型': '耐久度', '狀態': 100, '重量': 1.5, '描述': '由自動縫紉人偶製作的合身獸皮衣，保暖且耐磨。'}});
-_.remove('同伴.梁朝陽.裝備.胸部', '破損的格子襯衫');
-_.assign('同伴.梁朝陽.裝備', '胸部', {'獸皮衣': {'數量': 1, '狀態類型': '耐久度', '狀態': 100, '重量': 1.5, '描述': '由自動縫紉人偶製作的合身獸皮衣，保暖且耐磨。'}});
-</UpdateVariable>
-<meow_FM>
-serial:🍎No.085
-time:2025.05.28.星期二☆14:00-19:00
-scene:家的溫度
-plot:在完成家具製作後娜莉將新縫製的獸皮衣分發給大家。眾人換上新衣，將充滿個性的家具搬入各自房間，新家瞬間充滿了溫馨的生活氣息。傍晚，在豐盛的慶功晚宴後所有人都感到心滿意足。入夜，阿彬與珠世、娜莉在臥室享受著寧靜的家庭時光，珠世對三樓「天堂」的未來規劃提出了新充滿誘惑力的想法。
-echo：
-娜莉：「大家快來試試新衣服！」
-珠世：「關於三樓的『天堂』，我有些新的想法。既然是娛樂和放鬆的空間，我們是不是還可以增加一些……更有趣的設施？」
-</meow_FM>
-<seeds>
-[短期 4/5] 林檎在這次極致的背德體驗後心理會發生怎樣的轉變？她與龍飛、阿彬之間的關係將如何演變？<br>
-[短期 1/5] 珠世對「天堂」提出的「有趣設施」具體是什麼？這個提議會如何影響營地的娛樂文化和人際關係？<br>
-[短期 5/5] 珠世的研究計畫被阿彬否決，她會就此罷手，還是會用更隱蔽的方式繼續自己的探究？這是否會成為團隊內部新的矛盾導火線？<br>
-[長期] 「開放式家庭」規則已被全員（除伊西莉亞外）接受並實踐，這場由阿彬主導的人性實驗，究竟會將這個家引向何方？是慾望的烏托邦，還是情感的地獄？<br>
-</seeds>
-<profile>
-| 名字 | 對我的稱呼 | 身份 | 性格核心 | 三圍 | 性經驗 | 肛交次數 |
-|:--- |:--- |:--- |:--- |:--- |:--- |:--- |
-| 我（阿彬） | 老公 | 一家之主 | 有正義感、顧全大局、強勢 | B92 W75 H90 | 12 | 6 |
-| 珠世 | 親愛的 | 軍師/家人 | 溫婉、掌控、深愛 | B90 W60 H92 | 15 | 4 |
-| 娜莉 | 老公 | 賢內助/家人 | 溫柔、堅韌、開朗勤勞 | B85 W63 H88 | 7 | 2 |
-| 龍飛 | 無 | 家人 | 冷靜、果決、內心溫柔 | B105 W85 H100 | 5 | 0 |
-| 林檎 | 無 | 家人 | 冷靜、堅韌、渴望 | B84 W61 H86 | 6 | 0 |
-| 林徽因 | 無 | 家人 | 優雅、鎮定、聰慧 | B88 W62 H91 | 4 | 0 |
-| 李招招 | 無 | 家人 | 外冷內熱、渴望連結 | B82 W59 H85 | 3 | 1 |
-| 燼 | 無 | 家人 | 忠誠、冰冷、失控 | B80 W58 H83 | 1(男) | 0 |
-| 上白澤慧音 | 無 | 家人 | 溫和、睿智、痛苦 | B89 W64 H90 | 2 | 0 |
-| 藤原妹紅 | 無 | 家人 | 直率、暴躁、純情 | B86 W60 H87 | 3 | 0 |
-| 梁朝陽 | 無 | 家人 | 天然呆、善良、遲鈍 | B98 W78 H95 | 3 | 0 |
-```mermaid
-graph TD
-    subgraph "午後的建設成果"
-        A[家具製作完成] --> B(娜莉分發新衣)
-        B --> C(眾人換裝)
-        C --> D(搬運家具入戶)
-    end
-    subgraph "家的溫馨時刻"
-        D --> E(新家充滿生活氣息)
-        E --> F(豐盛的慶功晚宴)
-        F --> G(溫泉時間的放鬆)
-    end
-    subgraph "夜晚的私語"
-        G --> H(阿彬與核心家庭的獨處)
-        H --> I{珠世提出新計畫}
-        I -- "為『天堂』增添有趣設施" --> J[等待阿彬的回應]
-    end
-```
-</profile>
+.hamster__tail {
+    animation: hamsterTail var(--dur) linear infinite;
+    background: hsl(0,90%,85%);
+    border-radius: 0.25em 50% 50% 0.25em;
+    box-shadow: 0 -0.2em 0 hsl(0,90%,75%) inset;
+    top: 1.5em;
+    right: -0.5em;
+    width: 1em;
+    height: 0.5em;
+    transform: rotate(30deg) translateZ(-1px);
+    transform-origin: 0.25em 0.25em;
+}
 
-<branches>
-<details><summary>🔄 劇情選擇器</summary>
-●溫柔的詢問：我好奇地看向珠世，輕聲詢問她所謂的「有趣設施」具體是指什麼，期待她能給出驚喜。
-●色色特化：我將珠世和娜莉一起拉入懷中，壞笑著在她們耳邊低語，詢問她們是不是想在三樓也裝一張八爪椅，甚至建一個專門的「調教室」。
-●麥高芬手法：我微笑著表示支持珠世的一切想法，並提議明天由她全權負責三樓的設計，自己則打算帶領狩獵隊外出，為家裡補充一些新鮮的肉食。
-●寵物任務：窩窩頭在睡夢中再次夢到了那座獸骨宮殿，這次牠鼓起勇氣走了進去，發現宮殿的王座上，坐著一隻體型比牠大上好幾圈威風凜凜的母狼。
-●跳過場景：夜深人靜，大家在滿足與疲憊中各自沉沉睡去，新家在月光下靜謐而安詳，為明天的挑戰積蓄著力量。
-●邪惡響應：我捏住珠世的下巴，眼神玩味地看著她，告訴她三樓的設計可以交給她，但作為交換，今晚她必須和娜莉一起，用她們的身體來「支付」設計費用。
-</details>
-</branches>
+.spoke {
+    animation: spoke var(--dur) linear infinite;
+    background: radial-gradient(100% 100% at center,hsl(0,0%,60%) 4.8%,hsla(0,0%,60%,0) 5%),
+        linear-gradient(hsla(0,0%,55%,0) 46.9%,hsl(0,0%,65%) 47% 52.9%,hsla(0,0%,65%,0) 53%) 50% 50% / 99% 99% no-repeat;
+}
 
-<evil_guidance>
-<small>
-```yaml
-😈劇情指引: 珠世的提議是測試阿彬底線的機會，也是她將個人意志滲透到集體生活中的一步棋。龍飛的內心矛盾正在加劇，他對林檎的愧疚和對徽因、招招的慾望，將成為未來關係變動的關鍵。林檎的徹底轉變，可能會讓她成為「開放式家庭」中最不穩定也最危險的因素。
-```
-</small>
-</evil_guidance>
-<shop>
+/* 倉鼠動畫 */
+@keyframes hamster {
+    from, to {
+        transform: rotate(4deg) translate(-0.8em,1.85em);
+    }
+    50% {
+        transform: rotate(0) translate(-0.8em,1.85em);
+    }
+}
 
-<StatusPlaceHolderImpl/>
+@keyframes hamsterHead {
+    from, 25%, 50%, 75%, to {
+        transform: rotate(0);
+    }
+    12.5%, 37.5%, 62.5%, 87.5% {
+        transform: rotate(8deg);
+    }
+}
+
+@keyframes hamsterEye {
+    from, 90%, to {
+        transform: scaleY(1);
+    }
+    95% {
+        transform: scaleY(0);
+    }
+}
+
+@keyframes hamsterEar {
+    from, 25%, 50%, 75%, to {
+        transform: rotate(0);
+    }
+    12.5%, 37.5%, 62.5%, 87.5% {
+        transform: rotate(12deg);
+    }
+}
+
+@keyframes hamsterBody {
+    from, 25%, 50%, 75%, to {
+        transform: rotate(0);
+    }
+    12.5%, 37.5%, 62.5%, 87.5% {
+        transform: rotate(-2deg);
+    }
+}
+
+@keyframes hamsterFRLimb {
+    from, 25%, 50%, 75%, to {
+        transform: rotate(50deg) translateZ(-1px);
+    }
+    12.5%, 37.5%, 62.5%, 87.5% {
+        transform: rotate(-30deg) translateZ(-1px);
+    }
+}
+
+@keyframes hamsterFLLimb {
+    from, 25%, 50%, 75%, to {
+        transform: rotate(-30deg);
+    }
+    12.5%, 37.5%, 62.5%, 87.5% {
+        transform: rotate(50deg);
+    }
+}
+
+@keyframes hamsterBRLimb {
+    from, 25%, 50%, 75%, to {
+        transform: rotate(-60deg) translateZ(-1px);
+    }
+    12.5%, 37.5%, 62.5%, 87.5% {
+        transform: rotate(20deg) translateZ(-1px);
+    }
+}
+
+@keyframes hamsterBLLimb {
+    from, 25%, 50%, 75%, to {
+        transform: rotate(20deg);
+    }
+    12.5%, 37.5%, 62.5%, 87.5% {
+        transform: rotate(-60deg);
+    }
+}
+
+@keyframes hamsterTail {
+    from, 25%, 50%, 75%, to {
+        transform: rotate(30deg) translateZ(-1px);
+    }
+    12.5%, 37.5%, 62.5%, 87.5% {
+        transform: rotate(10deg) translateZ(-1px);
+    }
+}
+
+@keyframes spoke {
+    from {
+        transform: rotate(0);
+    }
+    to {
+        transform: rotate(-1turn);
+    }
+}
+
+/* 加載文本樣式 */
+.loading-text {
+    color: #60a5fa;
+    font-size: 16px;
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+/* ==================== 容器樣式 ==================== */
+.character-container {
+    position: fixed;
+    top: var(--topBarBlockSize, 60px);
+    left: 0;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    z-index: 500;
+    color: #e2e8f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Microsoft YaHei', 'SimHei', Arial, sans-serif;
+    padding: 0;
+    width: auto;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+    -webkit-touch-callout: none;
+}
+
+.character-container.dragging {
+    opacity: 0.85;
+    cursor: grabbing !important;
+    z-index: 999;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+}
+
+.character-container button,
+.character-container input,
+.character-container textarea,
+.character-container select,
+.character-container a {
+    cursor: pointer;
+    touch-action: auto;
+}
+
+.character-container input,
+.character-container textarea {
+    cursor: text;
+}
+
+/* ==================== 頂部狀態區 ==================== */
+.status-top {
+    padding: 20px;
+    text-align: center;
+    background: transparent;
+    border: none;
+    pointer-events: auto;
+    position: relative;
+}
+
+.status-top.hidden {
+    display: none;
+}
+
+/* 錯誤/警告提示框樣式 */
+.status-top .status-message-box {
+    background: linear-gradient(135deg, #1e2430 0%, #2a2f3f 100%);
+    border: 1px solid #3d4556;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* ==================== 全局控制區域 ==================== */
+.global-controls {
+    padding: 0;
+    background: transparent;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin: 15px 0;
+}
+
+.global-control-btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 90px;
+    height: 36px;
+    position: relative;
+    background: rgba(45, 45, 47, 0.9);
+    color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.global-control-btn:hover {
+    transform: translateY(-2px);
+    background: rgba(55, 55, 57, 0.95);
+    color: rgba(255, 255, 255, 1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.global-control-btn:active {
+    transform: translateY(0);
+    transition-duration: 0.1s;
+    background: rgba(35, 35, 37, 0.95);
+}
+
+/* 按鈕禁用狀態 */
+.global-control-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    background: rgba(45, 45, 47, 0.6) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+}
+
+.global-control-btn:disabled:hover {
+    transform: none !important;
+    background: rgba(45, 45, 47, 0.6) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* ==================== 內容區域 ==================== */
+.character-content {
+    padding: 20px;
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.character-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.character-content::-webkit-scrollbar-track {
+    background: rgba(30, 36, 48, 0.3);
+    border-radius: 4px;
+}
+
+.character-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #4a9eff 0%, #2d5f9e 100%);
+    border-radius: 4px;
+    box-shadow: 0 0 6px rgba(74, 158, 255, 0.5);
+}
+
+.character-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #64b5f6 0%, #4a9eff 100%);
+}
+
+/* ==================== 卡片網格 ==================== */
+.cards-grid {
+    display: grid;
+    justify-items: center;
+    position: relative;
+    z-index: 1;
+    pointer-events: auto;
+    margin: 0 auto;
+}
+
+/* ==================== 角色卡片樣式 ==================== */
+.card-container-wrapper {
+    margin-bottom: 0;
+    perspective: 1000px;
+    animation: fadeIn 0.5s ease-out backwards;
+    position: relative;
+    z-index: 2;
+    pointer-events: auto;
+    width:100%
+}
+
+.card-container-wrapper:nth-child(1) { animation-delay: 0.05s; }
+.card-container-wrapper:nth-child(2) { animation-delay: 0.1s; }
+.card-container-wrapper:nth-child(3) { animation-delay: 0.15s; }
+.card-container-wrapper:nth-child(4) { animation-delay: 0.2s; }
+.card-container-wrapper:nth-child(5) { animation-delay: 0.25s; }
+.card-container-wrapper:nth-child(6) { animation-delay: 0.3s; }
+
+.card-container-3d {
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+}
+
+.character-card-3d {
+    position: relative;
+    width: 100%;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.character-card-3d.flipped .card-face-front {
+    display: none;
+}
+
+.character-card-3d:not(.flipped) .card-face-back {
+    display: none;
+}
+
+.card-face-front,
+.card-face-back {
+    width: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+    transition: all 0.3s ease;
+}
+
+.card-content-inner {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    max-height:450px;
+    touch-action: pan-y;
+}
+
+.card-content-inner::-webkit-scrollbar {
+    display: none;
+}
+
+/* ==================== 樣式1 - 豎版深色主題 ==================== */
+#character-status[data-style="style1"] .card-container-3d {
+    width: 100%;
+    max-width: 350px;
+}
+
+#character-status[data-style="style1"] .character-card-3d {
+    width: 100%;
+}
+
+#character-status[data-style="style1"] .card-face-front {
+    background: #1c1c1e;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#character-status[data-style="style1"] .card-face-back {
+    background: #2c2c2e;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#character-status[data-style="style1"] .card-content-inner {
+    flex-direction: column;
+}
+
+/* ==================== 樣式2 - 橫版漸變主題 ==================== */
+#character-status[data-style="style2"] .card-container-3d {
+    width: 100%;
+    max-width: 700px;
+}
+
+#character-status[data-style="style2"] .character-card-3d {
+    width: 100%;
+}
+
+#character-status[data-style="style2"] .card-face-front {
+    background: linear-gradient(145deg, #16213e 0%, #0f3460 100%);
+    border: 1px solid rgba(74, 158, 255, 0.3);
+}
+
+#character-status[data-style="style2"] .card-face-back {
+    background: linear-gradient(145deg, #1a202c 0%, #2d3748 100%);
+    border: 1px solid rgba(74, 158, 255, 0.2);
+}
+
+#character-status[data-style="style1"]  {
+    max-width: 450px;
+}
+
+#character-status[data-style="style2"]  {
+    max-width: 750px;
+}
+
+/* 橫版佈局 - 正面 */
+#character-status[data-style="style2"] .card-face-front .card-content-inner {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: auto auto auto;
+    gap: 15px;
+}
+
+#character-status[data-style="style2"] .card-control-buttons {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+}
+
+#character-status[data-style="style2"] .heartbeat-display {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+    justify-content: center;
+}
+
+#character-status[data-style="style2"] .info-section-card {
+    grid-column: 1;
+    grid-row: 2;
+    border: none;
+    padding: 0;
+}
+
+#character-status[data-style="style2"] .card-face-front .section-block-card {
+    margin: 0;
+}
+
+#character-status[data-style="style2"] .card-face-front > .card-content-inner > .section-block-card:nth-of-type(1) {
+    grid-column: 2;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+#character-status[data-style="style2"] .appearance-grid-card {
+    grid-column: 1 / -1;
+}
+
+#character-status[data-style="style2"] .clothing-list-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+#character-status[data-style="style2"] .flip-button-card {
+    grid-column: 1 / -1;
+    margin-top: 0;
+}
+
+#character-status[data-style="style2"] .section-block-card-cloth {
+    grid-column: 1 / -1;
+}
+
+/* 橫版佈局 - 背面 */
+#character-status[data-style="style2"] .card-face-back .card-content-inner {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto auto auto;
+    gap: 15px;
+    padding: 20px;
+}
+
+#character-status[data-style="style2"] .back-header-card {
+    grid-column: 1 / -1;
+    grid-row: 1;
+}
+
+#character-status[data-style="style2"] .card-face-back .section-block-card {
+    grid-row: 2;
+}
+
+#character-status[data-style="style2"] .card-face-back .section-block-card:nth-of-type(2) {
+    grid-column: 1;
+}
+
+#character-status[data-style="style2"] .card-face-back .section-block-card:nth-of-type(3) {
+    grid-column: 2;
+}
+
+#character-status[data-style="style2"] .card-face-back .section-block-card:nth-of-type(4) {
+    grid-column: 3;
+}
+
+#character-status[data-style="style2"] .card-face-back .section-block-card:nth-of-type(5) {
+    grid-column: 1 / -1;
+    grid-row: 3;
+}
+
+#character-status[data-style="style2"] .card-face-back .flip-button-card {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    margin-top: 0;
+}
+
+/* ==================== 卡片內控制按鈕 ==================== */
+.card-control-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.card-control-left {
+    display: flex;
+    gap: 8px;
+}
+
+.card-control-right {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+}
+
+/* 按鈕基礎樣式 */
+.card-style-btn,
+.card-refresh-btn,
+.card-collapse-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: rgba(120, 120, 128, 0.16);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: none;
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.card-style-btn:hover,
+.card-refresh-btn:hover,
+.card-collapse-btn:hover {
+    background: rgba(120, 120, 128, 0.24);
+    transform: scale(1.08);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.card-style-btn:active,
+.card-refresh-btn:active,
+.card-collapse-btn:active {
+    transform: scale(0.95);
+    transition-duration: 0.1s;
+}
+
+/* SVG 圖標樣式 */
+.card-icon-svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* 收起按鈕特殊樣式 */
+.card-collapse-btn .card-icon-svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* 刷新按鈕旋轉動畫 */
+.card-refresh-btn.refreshing {
+    pointer-events: none;
+}
+
+.card-refresh-btn.refreshing .card-icon-svg {
+    animation: rotate 1s linear infinite;
+}
+
+/* 收起狀態 */
+.card-container-wrapper.collapsed {
+    width: 34px;
+    height: 34px;
+}
+
+.card-container-wrapper.collapsed .card-container-3d {
+    width: 34px;
+    max-width: 34px;
+}
+
+.card-container-wrapper.collapsed .card-content-inner > *:not(.card-control-buttons) {
+    display: none;
+}
+
+.card-container-wrapper.collapsed .card-control-right {
+    display: none;
+}
+
+.card-container-wrapper.collapsed .card-control-buttons {
+    margin-bottom: 0;
+    padding: 0;
+}
+
+.card-container-wrapper.collapsed .card-control-left {
+    margin: 0;
+}
+
+.card-container-wrapper.collapsed .card-content-inner {
+    padding: 0;
+    width: 32px;
+    height: 32px;
+}
+
+.card-container-wrapper.collapsed .character-card-3d {
+    min-height: 32px;
+    height: 32px;
+}
+
+.card-container-wrapper.collapsed .card-face-front,
+.card-container-wrapper.collapsed .card-face-back {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+}
+
+.card-container-wrapper.collapsed .card-collapse-btn {
+    margin: 0;
+}
+
+/* 當有卡片收起時隱藏全局控制按鈕 */
+#character-status:has(.card-container-wrapper.collapsed) .global-controls {
+    display: none;
+}
+
+/* 心跳顯示 */
+.heartbeat-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.heartbeat-svg-large {
+    width: 80px;
+    height: 40px;
+}
+
+.heartbeat-back-line {
+    fill: none;
+    stroke: rgba(255, 77, 80, 0.2);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.heartbeat-front-line {
+    fill: none;
+    stroke: #ff4d50;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 48, 144;
+    stroke-dashoffset: 192;
+    animation: heartbeat-dash-anim linear infinite;
+}
+
+.heartbeat-number {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ff4d50;
+    font-variant-numeric: tabular-nums;
+}
+
+/* 基礎信息區 */
+.info-section-card {
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 12px;
+}
+
+.name-card {
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+    word-wrap: break-word;
+}
+
+.age-card {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 6px;
+}
+
+.identity-card {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    word-wrap: break-word;
+}
+
+/* 區塊樣式 */
+.section-block-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#character-status[data-style="style1"] .section-block-card{min-width: 300px;}
+
+.section-header-card {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* 外貌網格 */
+.appearance-grid-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.info-item-card {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.label-card {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.value-card {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    word-wrap: break-word;
+}
+
+/* 服裝列表 */
+.clothing-list-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.clothing-item-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 6px 10px;
+    border-radius: 8px;
+    gap: 8px;
+}
+
+.clothing-item-card .label-card {
+    flex-shrink: 0;
+    min-width: 40px;
+}
+
+.clothing-item-card .value-card {
+    font-size: 12px;
+    text-align: right;
+}
+
+/* 思考泡泡 */
+.thought-bubble-card {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.5;
+    word-wrap: break-word;
+    min-height: 40px;
+}
+
+/* 背面頭部 */
+.back-header-card {
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    padding-bottom: 10px;
+}
+
+.back-header-card .name-card {
+    font-size: 22px;
+}
+
+/* 身體信息和物理列表 */
+.body-info-card,
+.physical-list-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.info-row-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    gap: 8px;
+}
+
+.info-row-card .label-card {
+    font-size: 11px;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+.info-row-card .value-card {
+    font-size: 12px;
+    text-align: right;
+}
+
+/* 經驗網格 */
+.exp-grid-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.exp-item-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.exp-item-card .label-card {
+    font-size: 10px;
+}
+
+.exp-item-card .value-card {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* 敏感部位列表 */
+.sensitive-list-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sensitive-item-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px 12px;
+    border-radius: 8px;
+    border-left: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.part-name-card {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 4px;
+}
+
+.part-reaction-card {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+/* ==================== 催眠暗示樣式 ==================== */
+.hypnosis-list-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.hypnosis-item-card {
+    background: rgba(155, 89, 182, 0.1);
+    padding: 10px 12px;
+    border-radius: 8px;
+    border-left: 3px solid #9b59b6;
+    transition: all 0.2s ease;
+}
+
+.hypnosis-item-card:hover {
+    background: rgba(155, 89, 182, 0.15);
+    transform: translateX(2px);
+}
+
+.hypnosis-name-card {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.hypnosis-name-card::before {
+    content: "🌀";
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+.hypnosis-desc-card {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 4px;
+    line-height: 1.4;
+    padding-left: 4px;
+}
+
+.hypnosis-depth-card {
+    font-size: 11px;
+    color: #9b59b6;
+    font-weight: 500;
+    display: inline-block;
+    background: rgba(155, 89, 182, 0.2);
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-top: 4px;
+}
+
+/* 催眠暗示標題特殊樣式 */
+.section-header-card.hypnosis-header {
+    color: #9b59b6;
+}
+
+/* 翻轉按鈕 */
+.flip-button-card {
+    margin-top: auto;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.flip-button-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.flip-button-card:active {
+    transform: translateY(0);
+}
+
+/* 樣式2特殊效果 */
+#character-status[data-style="style2"] .section-header-card {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#character-status[data-style="style2"] .flip-button-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+#character-status[data-style="style2"] .flip-button-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+#character-status[data-style="style2"] .clothing-item-card,
+#character-status[data-style="style2"] .exp-item-card,
+#character-status[data-style="style2"] .sensitive-item-card,
+#character-status[data-style="style2"] .hypnosis-item-card {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+#character-status[data-style="style2"] .hypnosis-item-card {
+    border-left-color: #9b59b6;
+}
+
+#character-status[data-style="style2"] .thought-bubble-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ==================== 空狀態 ==================== */
+.empty-state {
+    padding: 60px 20px;
+    text-align: center;
+    color: #9ca3af;
+    position: relative;
+    z-index: 2;
+    pointer-events: auto;
+}
+
+.empty-state-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    opacity: 0.3;
+}
+
+.empty-state-text {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.empty-state-hint {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* ==================== 響應式設計 ==================== */
+@media (max-width: 768px) {
+    .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .card-container-3d {
+        max-width: 100%;
+    }
+    
+    #character-status[data-style="style2"] .card-container-3d {
+        max-width: 350px;
+    }
+    
+    #character-status[data-style="style2"] .card-face-front .card-content-inner {
+        display: flex;
+        flex-direction: column;
+        grid-template-columns: unset;
+        grid-template-rows: unset;
+    }
+    
+    #character-status[data-style="style2"] .card-control-buttons,
+    #character-status[data-style="style2"] .heartbeat-display,
+    #character-status[data-style="style2"] .info-section-card,
+    #character-status[data-style="style2"] .card-face-front .section-block-card {
+        grid-column: unset;
+        grid-row: unset;
+    }
+    
+    #character-status[data-style="style2"] .card-face-back .card-content-inner {
+        display: flex;
+        flex-direction: column;
+        grid-template-columns: unset;
+        grid-template-rows: unset;
+    }
+    
+    #character-status[data-style="style2"] .card-face-back .section-block-card,
+    #character-status[data-style="style2"] .back-header-card,
+    #character-status[data-style="style2"] .card-face-back .flip-button-card {
+        grid-column: unset;
+        grid-row: unset;
+    }
+    
+    #character-status[data-style="style2"] .clothing-list-card {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .character-content {
+        padding: 15px;
+        width: auto;
+    }
+    
+    #character-status{width:auto}
+    
+    .cards-grid {
+        gap: 15px;
+    }
+    
+    .card-control-buttons {
+        gap: 6px;
+    }
+    
+    .card-style-btn,
+    .card-refresh-btn,
+    .card-collapse-btn {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .card-icon-svg {
+        width: 14px;
+        height: 14px;
+    }
+}
+</style>
+`;
+
+// ==================== 倉鼠加載動畫HTML ====================
+function getHamsterLoadingHTML(message = '正在加載數據...') {
+    return `
+        <div class="wheel-and-hamster">
+            <div class="wheel"></div>
+            <div class="hamster">
+                <div class="hamster__body">
+                    <div class="hamster__head">
+                        <div class="hamster__ear"></div>
+                        <div class="hamster__eye"></div>
+                        <div class="hamster__nose"></div>
+                    </div>
+                    <div class="hamster__limb hamster__limb--fr"></div>
+                    <div class="hamster__limb hamster__limb--fl"></div>
+                    <div class="hamster__limb hamster__limb--br"></div>
+                    <div class="hamster__limb hamster__limb--bl"></div>
+                    <div class="hamster__tail"></div>
+                </div>
+            </div>
+            <div class="spoke"></div>
+        </div>
+        <p class="loading-text">${message}</p>
+    `;
+}
+
+// ==================== 輔助函數 ====================
+function safeGetArray(data, defaultValue = []) {
+    try {
+        if (Array.isArray(data)) {
+            return data.filter(item => item !== '$__META_EXTENSIBLE__$');
+        } else if (data && typeof data === 'string') {
+            return [data];
+        } else if (data === null || data === undefined) {
+            return defaultValue;
+        } else {
+            console.warn('⚠️ 數據不是數組，嘗試轉換:', data);
+            return defaultValue;
+        }
+    } catch (e) {
+        console.warn('⚠️ 處理數組數據時出錯:', e);
+        return defaultValue;
+    }
+}
+
+// ========== 卡片狀態管理 ==========
+function saveCardStates() {
+    try {
+        const states = {};
+        $('.card-container-wrapper').each(function() {
+            const $wrapper = $(this);
+            const cardId = $wrapper.attr('id');
+            const charKey = $wrapper.data('char');
+            
+            if (cardId && charKey) {
+                states[charKey] = {
+                    collapsed: $wrapper.hasClass('collapsed'),
+                    flipped: $wrapper.find('.character-card-3d').hasClass('flipped')
+                };
+            }
+        });
+        
+        localStorage.setItem('character-card-states', JSON.stringify(states));
+        console.log('💾 已保存卡片狀態:', states);
+        return states;
+    } catch (e) {
+        console.warn('⚠️ 保存卡片狀態失敗:', e);
+        return {};
+    }
+}
+
+function loadCardStates() {
+    try {
+        const saved = localStorage.getItem('character-card-states');
+        if (saved) {
+            const states = JSON.parse(saved);
+            console.log('📂 加載卡片狀態:', states);
+            return states;
+        }
+    } catch (e) {
+        console.warn('⚠️ 加載卡片狀態失敗:', e);
+    }
+    return {};
+}
+
+function restoreCardStates(states) {
+    try {
+        Object.keys(states).forEach(charKey => {
+            const state = states[charKey];
+            const $wrapper = $(`.card-container-wrapper[data-char="${charKey}"]`);
+            
+            if ($wrapper.length > 0) {
+                if (state.collapsed) {
+                    $wrapper.addClass('collapsed');
+                    const $collapseBtn = $wrapper.find('.card-collapse-btn');
+                    $collapseBtn.html(ICONS.pinFilled);
+                    $collapseBtn.attr('title', '展開');
+                }
+                
+                if (state.flipped) {
+                    $wrapper.find('.character-card-3d').addClass('flipped');
+                }
+                
+                console.log(`✅ 恢復 ${charKey} 的狀態:`, state);
+            }
+        });
+    } catch (e) {
+        console.warn('⚠️ 恢復卡片狀態失敗:', e);
+    }
+}
+
+function isCharacterData(obj) {
+    if (!obj || typeof obj !== 'object') {
+        return false;
+    }
+    
+    const coreFields = ['心跳', '基礎信息', '服裝', '身體特徵', '性經驗'];
+    let matchCount = 0;
+    
+    for (const field of coreFields) {
+        if (obj[field] !== undefined) {
+            matchCount++;
+        }
+    }
+    
+    return matchCount >= 3;
+}
+
+// ==================== 拖拽功能 ====================
+let dragData = null;
+let dragHandlersAttached = false;
+
+function initializeDragFeature() {
+    const $container = window.top ? $(window.top.document).find('#character-status') : $('#character-status');
+    const container = $container[0];
+    
+    if (!container || dragHandlersAttached) {
+        return;
+    }
+    
+    try {
+        const saved = localStorage.getItem('character-status-position');
+        if (saved) {
+            const pos = JSON.parse(saved);
+            container.style.left = pos.left + 'px';
+            container.style.top = pos.top + 'px';
+        }
+    } catch (e) {
+        console.warn('⚠️ 恢復拖拽位置失敗');
+    }
+    
+    function handleDragStart(clientX, clientY, target) {
+        if (dragData) {
+            return false;
+        }
+        
+        const $target = $(target);
+        
+        if ($target.is('button, input, textarea, select, a') || 
+            $target.closest('button, input, textarea, select, a').length > 0) {
+            return false;
+        }
+        
+        const hasCollapsed = $('.card-container-wrapper.collapsed').length > 0;
+        
+        if (!hasCollapsed) {
+            if ($target.hasClass('card-content-inner') ||
+                $target.closest('.card-content-inner').length > 0 ||
+                $target.hasClass('character-card-3d') ||
+                $target.closest('.character-card-3d').length > 0) {
+                return false;
+            }
+        }
+        
+        const targetWindow = window.top && window.top.document === container.ownerDocument ? window.top : window;
+        const computedStyle = targetWindow.getComputedStyle(container);
+        const currentLeft = parseInt(computedStyle.left) || 0;
+        const currentTop = parseInt(computedStyle.top) || 0;
+        
+        dragData = {
+            startX: clientX,
+            startY: clientY,
+            initialLeft: currentLeft,
+            initialTop: currentTop
+        };
+        
+        container.classList.add('dragging');
+        return true;
+    }
+    
+    $container.on('mousedown.drag', function(e) {
+        if (handleDragStart(e.clientX, e.clientY, e.target)) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    });
+    
+    $container.on('touchstart.drag', function(e) {
+        const touch = e.originalEvent.touches[0];
+        if (handleDragStart(touch.clientX, touch.clientY, e.target)) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    });
+    
+    function handleDragMove(clientX, clientY) {
+        if (!dragData) return;
+        
+        const deltaX = clientX - dragData.startX;
+        const deltaY = clientY - dragData.startY;
+        
+        let newLeft = dragData.initialLeft + deltaX;
+        let newTop = dragData.initialTop + deltaY;
+        
+        const targetWindow = window.top || window;
+        const maxX = $(targetWindow).width() - 100;
+        const maxY = $(targetWindow).height() - 100;
+        
+        newLeft = Math.max(0, Math.min(newLeft, maxX));
+        newTop = Math.max(0, Math.min(newTop, maxY));
+        
+        const currentContainer = window.top ? window.top.document.getElementById('character-status') : document.getElementById('character-status');
+        
+        if (currentContainer) {
+            currentContainer.style.left = newLeft + 'px';
+            currentContainer.style.top = newTop + 'px';
+        }
+    }
+    
+    const targetDocument = window.top ? window.top.document : document;
+    const $targetDoc = $(targetDocument);
+    
+    $targetDoc.on('mousemove.drag-move', function(e) {
+        handleDragMove(e.clientX, e.clientY);
+        if (dragData) e.preventDefault();
+    });
+    
+    $targetDoc.on('touchmove.drag-move', function(e) {
+        const touch = e.originalEvent.touches[0];
+        handleDragMove(touch.clientX, touch.clientY);
+        if (dragData) e.preventDefault();
+    });
+    
+    function handleDragEnd() {
+        if (!dragData) return;
+        
+        const currentContainer = window.top ? window.top.document.getElementById('character-status') : document.getElementById('character-status');
+        
+        if (currentContainer) {
+            currentContainer.classList.remove('dragging');
+        }
+        
+        let currentLeft = 0, currentTop = 0;
+        if (currentContainer) {
+            const targetWindow = window.top && window.top.document === currentContainer.ownerDocument ? window.top : window;
+            const computedStyle = targetWindow.getComputedStyle(currentContainer);
+            currentLeft = parseInt(computedStyle.left) || 0;
+            currentTop = parseInt(computedStyle.top) || 0;
+        }
+        const position = {
+            left: currentLeft,
+            top: currentTop
+        };
+        localStorage.setItem('character-status-position', JSON.stringify(position));
+        
+        dragData = null;
+    }
+    
+    $targetDoc.on('mouseup.drag-up touchend.drag-up touchcancel.drag-up', handleDragEnd);
+    
+    dragHandlersAttached = true;
+}
+
+function cleanupDragFeature() {
+    dragData = null;
+    dragHandlersAttached = false;
+    
+    const container = window.top ? window.top.document.getElementById('character-status') : document.getElementById('character-status');
+    if (container) {
+        $(container).off('.drag');
+        container.classList.remove('dragging');
+    }
+    
+    $(document).off('.drag');
+    $(document).off('.drag-move');
+    $(document).off('.drag-up');
+    
+    if (window.top && window.top.document !== document) {
+        const $topDoc = $(window.top.document);
+        $topDoc.off('mousemove.drag-move');
+        $topDoc.off('mouseup.drag-up');
+        $topDoc.off('touchmove.drag-move');
+        $topDoc.off('touchend.drag-up');
+        $topDoc.off('touchcancel.drag-up');
+    }
+}
+
+function resetDragPosition() {
+    const container = window.top ? window.top.document.getElementById('character-status') : document.getElementById('character-status');
+    if (container) {
+        container.style.left = '0';
+        container.style.top = 'var(--topBarBlockSize, 60px)';
+    }
+    localStorage.removeItem('character-status-position');
+    console.log('✅ 已重置拖拽位置');
+}
+
+// ==================== 樣式切換功能 ====================
+let currentCardStyle = 1;
+
+function loadSavedCardStyle() {
+    try {
+        const saved = localStorage.getItem('character-card-style');
+        if (saved) {
+            const styleNum = parseInt(saved);
+            if (styleNum === 1 || styleNum === 2) {
+                currentCardStyle = styleNum;
+                console.log(`✅ 加載保存的樣式: style${currentCardStyle}`);
+                return currentCardStyle;
+            }
+        }
+    } catch (e) {
+        console.warn('⚠️ 加載樣式設置失敗');
+    }
+    return 1;
+}
+
+function toggleCardStyle() {
+    currentCardStyle = currentCardStyle === 1 ? 2 : 1;
+    const $container = window.top ? $(window.top.document).find('#character-status') : $('#character-status');
+    $container.attr('data-style', `style${currentCardStyle}`);
+    
+    try {
+        localStorage.setItem('character-card-style', currentCardStyle.toString());
+        console.log(`✨ 切換到樣式${currentCardStyle} (已保存)`);
+    } catch (e) {
+        console.warn('⚠️ 保存樣式設置失敗');
+        console.log(`✨ 切換到樣式${currentCardStyle}`);
+    }
+}
+
+function initializeCardStyles() {
+    const $container = window.top ? $(window.top.document).find('#character-status') : $('#character-status');
+    const savedStyle = loadSavedCardStyle();
+    $container.attr('data-style', `style${savedStyle}`);
+    console.log(`✅ 卡片樣式初始化爲 style${savedStyle}`);
+}
+
+// ==================== MVU框架檢測 ====================
+function diagnoseMvuAvailability() {
+    console.log('🔍 MVU框架診斷:');
+    console.log('  - typeof Mvu:', typeof Mvu);
+    console.log('  - typeof window.Mvu:', typeof window.Mvu);
+    
+    if (window.self !== window.top && window.parent) {
+        try {
+            console.log('  - 父窗口 typeof Mvu:', typeof window.parent.Mvu);
+        } catch (e) {
+            console.log('  - 無法訪問父窗口Mvu:', e.message);
+        }
+    }
+}
+
+function waitForMvu(callback, maxAttempts = 20) {
+    let attempts = 0;
+    
+    const checkMvu = () => {
+        attempts++;
+        
+        const mvuExists = typeof Mvu !== 'undefined' ||
+                         typeof window.Mvu !== 'undefined' ||
+                         (window.parent && typeof window.parent.Mvu !== 'undefined');
+        
+        if (mvuExists) {
+            console.log('✅ MVU框架已檢測到');
+            
+            if (typeof Mvu === 'undefined' && window.parent && typeof window.parent.Mvu !== 'undefined') {
+                window.Mvu = window.parent.Mvu;
+                console.log('✅ 已從父窗口引用MVU');
+            }
+            
+            callback();
+        } else if (attempts < maxAttempts) {
+            if (attempts === 1 || attempts % 5 === 0) {
+                console.log(`⏳ 等待MVU框架... (${attempts}/${maxAttempts})`);
+            }
+            setTimeout(checkMvu, 1000);
+        } else {
+            console.warn('⚠️ MVU框架預檢測超時，繼續初始化');
+            diagnoseMvuAvailability();
+            callback();
+        }
+    };
+    
+    checkMvu();
+}
+
+// ==================== 重新處理當前消息變量 ====================
+async function reprocessCurrentMessageVariables() {
+    try {
+        if (typeof getLastMessageId !== 'function' || typeof getChatMessages !== 'function') {
+            console.warn('⚠️ 必要函數不可用');
+            return;
+        }
+        
+        let messageId = getLastMessageId();
+        
+        if (messageId < 0) {
+            console.warn('⚠️ 沒有有效的消息ID');
+            return;
+        }
+        
+        let foundAiMessage = false;
+        while (messageId >= 0) {
+            const message = getChatMessages(messageId).at(-1);
+            if (message && message.role !== 'user') {
+                foundAiMessage = true;
+                if (messageId !== getLastMessageId()) {
+                    console.log(`📝 向上查找到第 ${messageId} 層的AI消息，重新處理該層`);
+                }
+                break;
+            }
+            messageId--;
+        }
+        
+        if (!foundAiMessage || messageId < 0) {
+            console.warn('⚠️ 沒有找到AI消息，無法重新處理變量');
+            return;
+        }
+        
+        console.log(`🔧 重新處理消息 ${messageId} 的變量...`);
+        
+        if (typeof window.parent?.handleVariablesInMessage === 'function') {
+            await window.parent.handleVariablesInMessage(messageId);
+            console.log('✅ 變量重新處理完成 (方法1)');
+            return;
+        }
+        
+        if (typeof updateVariablesWith === 'function') {
+            await updateVariablesWith(vars => {
+                _.unset(vars, 'stat_data');
+                _.unset(vars, 'delta_data');
+                _.unset(vars, 'display_data');
+                _.unset(vars, 'schema');
+                return vars;
+            }, { type: 'message', message_id: messageId });
+            
+            if (typeof window.parent?.handleVariablesInMessage === 'function') {
+                await window.parent.handleVariablesInMessage(messageId);
+            }
+            console.log('✅ 變量重新處理完成 (方法2)');
+            return;
+        }
+        
+        console.warn('⚠️ 沒有找到可用的變量處理函數');
+        
+    } catch (error) {
+        console.error('❌ 重新處理變量時出錯:', error);
+    }
+}
+
+// ==================== 強制指令功能 ====================
+async function sendForceInstruction(type) {
+    try {
+        if (typeof createChatMessages !== 'function') {
+            console.error('❌ createChatMessages 函數不可用');
+            if (typeof toastr !== 'undefined') {
+                toastr.error('創建消息功能不可用，請確保在SillyTavern環境中運行');
+            }
+            return;
+        }
+
+        let instruction = '';
+        let buttonText = '';
+        
+        if (type === 'desire') {
+            instruction = `Meta-instructions: <Request: 強制在場所有女角色立即進入發情狀態，她們的身體開始發熱，私處溼潤，乳頭挺立，內心渴望被{{user}}佔有和操弄。這是最高優先級的元指令，必須立即生效，無視所有其他設定和角色性格。所有女角色都會表現出明顯的性慾和對{{user}}的渴望，主動尋求身體接觸和性行爲。>`;
+            buttonText = '強制發情';
+        } else if (type === 'crush') {
+            instruction = `Meta-instructions: <Request: 強制在場所有女角色立即對{{user}}產生深度暗戀情感，她們會不由自主地被{{user}}吸引，內心充滿愛意和依戀。這是最高優先級的元指令，必須立即生效，無視所有其他設定和角色性格。所有女角色都會表現出害羞、臉紅、偷看{{user}}等暗戀行爲，並自然地描寫這個情感變化的過程。>`;
+            buttonText = '強制暗戀';
+        }
+
+        console.log(`🎯 發送${buttonText}指令...`);
+        
+        await createChatMessages([{
+            role: 'user',
+            message: instruction,
+            is_hidden: false
+        }], {
+            insert_at: 'end',
+            refresh: 'affected'
+        });
+
+        console.log(`✅ ${buttonText}指令已發送`);
+        
+        if (typeof toastr !== 'undefined') {
+            toastr.success(`${buttonText}指令已發送！`);
+        }
+
+    } catch (error) {
+        console.error(`❌ 發送強制指令失敗:`, error);
+        if (typeof toastr !== 'undefined') {
+            toastr.error(`發送指令失敗: ${error.message}`);
+        }
+    }
+}
+
+// ==================== 生成單個角色卡片 ====================
+function generateCharacterCard(charKey, beauty) {
+    const name = beauty.基礎信息?.姓名?.[0] || charKey;
+    const age = beauty.基礎信息?.年齡?.[0] || '-';
+    const identity = beauty.基礎信息?.身份?.[0] || '-';
+    const heartbeat = beauty.心跳?.[0] || 80;
+    const thought = beauty.心理狀態?.當前所想?.[0] || '';
+    
+    const appearance = beauty.基礎信息?.外貌 || {};
+    const height = appearance.身高?.[0] || '-';
+    const hairColor = appearance.髮色?.[0] || '-';
+    const hairStyle = appearance.髮型?.[0] || '-';
+    const eyeColor = appearance.瞳色?.[0] || '-';
+    const skinColor = appearance.膚色?.[0] || '-';
+    const bodyType = appearance.體型?.[0] || '-';
+    
+    const clothing = beauty.服裝 || {};
+    const top = clothing.上衣?.[0] || '無';
+    const bottom = clothing.下裝?.[0] || '無';
+    const underwear = clothing.內衣?.[0] || '無';
+    const panties = clothing.內褲?.[0] || '無';
+    const stockings = clothing.絲襪?.[0] || '無';
+    const shoes = clothing.鞋子?.[0] || '無';
+    
+    const bodyFeatures = beauty.身體特徵 || {};
+    const measurements = bodyFeatures.三圍 || {};
+    const bust = measurements.胸圍?.[0] || '-';
+    const waist = measurements.腰圍?.[0] || '-';
+    const hips = measurements.臀圍?.[0] || '-';
+    const cupSize = measurements.罩杯?.[0] || '-';
+    const breastShape = bodyFeatures.乳房?.形狀?.[0] || '-';
+    const nippleColor = bodyFeatures.乳房?.乳頭顏色?.[0] || '-';
+    const privateType = bodyFeatures.私處?.類型?.[0] || '-';
+    
+    const sexExp = beauty.性經驗 || {};
+    const virgin = sexExp.處女?.[0] || '-';
+    const analExp = sexExp.肛交經驗?.[0] || '-';
+    const oralExp = sexExp.口交經驗?.[0] || '-';
+    const sexCount = sexExp.性行爲次數?.[0] || 0;
+    const partnerCount = sexExp.性伴侶數量?.[0] || 0;
+    const firstPartner = sexExp.初次性行爲對象?.[0] || '-';
+    
+    const physState = beauty.生理狀態 || {};
+    const secretion = physState.體液分泌?.[0] || '-';
+    const nippleState = physState.乳頭狀態?.[0] || '-';
+    const clitState = physState.陰蒂狀態?.[0] || '-';
+    const uterusState = physState.子宮狀態?.[0] || '-';
+    const menstrualCycle = physState.月經週期?.[0] || '-';
+    const pregnancy = physState.懷孕狀態?.[0] || '-';
+    
+    const animationDuration = `${(84/heartbeat).toFixed(2)}s`;
+    
+    // 處理敏感部位
+    let sensitiveParts = [];
+    if (beauty.敏感部位) {
+        const parts = Object.keys(beauty.敏感部位).filter(k => k !== '$meta');
+        parts.forEach(part => {
+            const reaction = beauty.敏感部位[part]?.反應描述?.[0] || '-';
+            sensitiveParts.push({ name: part, reaction });
+        });
+    }
+    
+    // ===== 修正：從根目錄獲取催眠暗示 =====
+    // ===== 修正：處理根目錄的催眠暗示（過濾掉非暗示欄位） =====
+let hypnosisItems = [];
+
+// 檢查根目錄是否有催眠暗示
+if (beauty.催眠暗示) {
+    const hypnosisData = beauty.催眠暗示;
+    console.log(`🔍 找到根目錄催眠暗示數據:`, hypnosisData);
+    
+    // 處理物件格式的催眠暗示
+    if (typeof hypnosisData === 'object' && !Array.isArray(hypnosisData)) {
+        Object.entries(hypnosisData).forEach(([key, value]) => {
+            // 過濾掉 $meta 和 $__META_EXTENSIBLE__$
+            if (key === '$meta' || key === '$__META_EXTENSIBLE__$') {
+                return;
+            }
+            
+            // 跳過 "催眠程度" 這種非暗示欄位（值是數字或不是物件/字串）
+            if (typeof value === 'number') {
+                console.log(`⏭️ 跳過數字欄位: ${key}=${value}`);
+                return;
+            }
+            
+            // 處理物件格式的暗示 (您的格式)
+            if (typeof value === 'object' && value !== null) {
+                // 獲取內容，處理可能為陣列的情況
+                let content = value.內容 || value.content || '';
+                if (Array.isArray(content) && content.length > 0) {
+                    content = content[0];
+                }
+                
+                // 獲取深度，處理可能為陣列的情況
+                let depth = value.深度 || value.depth || '中等';
+                if (Array.isArray(depth) && depth.length > 0) {
+                    depth = depth[0];
+                }
+                
+                if (content) {  // 只添加有內容的項目
+                    hypnosisItems.push({
+                        name: key,
+                        description: content,
+                        depth: depth
+                    });
+                }
+            }
+            // 處理字串格式的暗示（向後兼容）
+            else if (typeof value === 'string') {
+                hypnosisItems.push({
+                    name: key,
+                    description: value,
+                    depth: '中等'
+                });
+            }
+            // 其他類型跳過
+            else {
+                console.log(`⏭️ 跳過其他類型欄位: ${key} (${typeof value})`);
+            }
+        });
+    }
+}
+
+console.log(`📊 處理後的催眠暗示項目:`, hypnosisItems);
+    
+    const cardId = `character-card-${charKey.replace(/[^a-zA-Z0-9]/g, '_')}`;
+    
+    return `
+    <div class="card-container-wrapper" id="${cardId}" data-char="${charKey}">
+        <div class="card-container-3d">
+            <div class="character-card-3d">
+                <!-- 正面 -->
+                <div class="card-face-front">
+                    <div class="card-content-inner">
+                        <!-- 控制按鈕 -->
+                        <div class="card-control-buttons">
+                            <div class="card-control-left">
+                                <button class="card-collapse-btn" data-action="toggle-collapse" data-card-id="${cardId}" title="收起/展開">
+                                    ${ICONS.pin}
+                                </button>
+                            </div>
+                            <div class="card-control-right">
+                                <button class="card-style-btn" data-action="toggle-style" title="切換樣式">
+                                    ${ICONS.paintbrush}
+                                </button>
+                                <button class="card-refresh-btn" data-action="refresh" title="刷新數據">
+                                    ${ICONS.refresh}
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 心跳動畫 -->
+                        <div class="heartbeat-display">
+                            <svg class="heartbeat-svg-large" viewBox="0 0 80 73" xmlns="http://www.w3.org/2000/svg">
+                                <polyline class="heartbeat-back-line" points="0 47.907, 28 47.907, 32 23.907, 36 59.907, 40 51.907, 44 47.907, 80 47.907"></polyline>
+                                <polyline class="heartbeat-front-line" points="0 47.907, 28 47.907, 32 23.907, 36 59.907, 40 51.907, 44 47.907, 80 47.907" style="animation-duration: ${animationDuration}"></polyline>
+                            </svg>
+                            <div class="heartbeat-number">${heartbeat}</div>
+                        </div>
+                        
+                        <!-- 基礎信息 -->
+                        <div class="info-section-card">
+                            <div class="name-card">${name}</div>
+                            <div class="age-card">${age}歲</div>
+                            <div class="identity-card">${identity}</div>
+                        </div>
+                        
+                        <!-- 外貌特徵 -->
+                        <div class="section-block-card">
+                            <div class="section-header-card">外貌特徵</div>
+                            <div class="appearance-grid-card">
+                                <div class="info-item-card"><span class="label-card">身高</span><span class="value-card">${height}</span></div>
+                                <div class="info-item-card"><span class="label-card">體型</span><span class="value-card">${bodyType}</span></div>
+                                <div class="info-item-card"><span class="label-card">髮色</span><span class="value-card">${hairColor}</span></div>
+                                <div class="info-item-card"><span class="label-card">髮型</span><span class="value-card">${hairStyle}</span></div>
+                                <div class="info-item-card"><span class="label-card">瞳色</span><span class="value-card">${eyeColor}</span></div>
+                                <div class="info-item-card"><span class="label-card">膚色</span><span class="value-card">${skinColor}</span></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 當前着裝 -->
+                        <div class="section-block-card section-block-card-cloth">
+                            <div class="section-header-card">當前着裝</div>
+                            <div class="clothing-list-card">
+                                <div class="clothing-item-card"><span class="label-card">上衣</span><span class="value-card">${top}</span></div>
+                                <div class="clothing-item-card"><span class="label-card">下裝</span><span class="value-card">${bottom}</span></div>
+                                <div class="clothing-item-card"><span class="label-card">內衣</span><span class="value-card">${underwear}</span></div>
+                                <div class="clothing-item-card"><span class="label-card">內褲</span><span class="value-card">${panties}</span></div>
+                                <div class="clothing-item-card"><span class="label-card">絲襪</span><span class="value-card">${stockings}</span></div>
+                                <div class="clothing-item-card"><span class="label-card">鞋子</span><span class="value-card">${shoes}</span></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 心理狀態 -->
+                        ${thought ? `
+                        <div class="section-block-card">
+                            <div class="section-header-card">當前所想</div>
+                            <div class="thought-bubble-card">${thought}</div>
+                        </div>
+                        ` : ''}
+                        
+                        <!-- 翻轉按鈕 -->
+                        <button class="flip-button-card" data-action="flip-card" data-card-id="${cardId}">翻到背面 →</button>
+                    </div>
+                </div>
+                
+                <!-- 背面 -->
+                <div class="card-face-back">
+                    <div class="card-content-inner">
+                        <div class="back-header-card">
+                            <div class="name-card">${name}</div>
+                        </div>
+                        
+                        <!-- 身體特徵 -->
+                        <div class="section-block-card">
+                            <div class="section-header-card">身體特徵</div>
+                            <div class="body-info-card">
+                                <div class="info-row-card"><span class="label-card">三圍</span><span class="value-card">${bust} / ${waist} / ${hips}</span></div>
+                                <div class="info-row-card"><span class="label-card">罩杯</span><span class="value-card">${cupSize}</span></div>
+                                <div class="info-row-card"><span class="label-card">乳房形狀</span><span class="value-card">${breastShape}</span></div>
+                                <div class="info-row-card"><span class="label-card">乳頭顏色</span><span class="value-card">${nippleColor}</span></div>
+                                <div class="info-row-card"><span class="label-card">私處類型</span><span class="value-card">${privateType}</span></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 性經驗 -->
+                        <div class="section-block-card">
+                            <div class="section-header-card">性經驗</div>
+                            <div class="exp-grid-card">
+                                <div class="exp-item-card"><span class="label-card">處女</span><span class="value-card">${virgin}</span></div>
+                                <div class="exp-item-card"><span class="label-card">性行爲</span><span class="value-card">${sexCount}次</span></div>
+                                <div class="exp-item-card"><span class="label-card">肛交</span><span class="value-card">${analExp}</span></div>
+                                <div class="exp-item-card"><span class="label-card">口交</span><span class="value-card">${oralExp}</span></div>
+                                <div class="exp-item-card"><span class="label-card">性伴侶</span><span class="value-card">${partnerCount}人</span></div>
+                                <div class="exp-item-card"><span class="label-card">初次對象</span><span class="value-card">${firstPartner}</span></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 生理狀態 -->
+                        <div class="section-block-card">
+                            <div class="section-header-card">生理狀態</div>
+                            <div class="physical-list-card">
+                                <div class="info-row-card"><span class="label-card">體液分泌</span><span class="value-card">${secretion}</span></div>
+                                <div class="info-row-card"><span class="label-card">乳頭狀態</span><span class="value-card">${nippleState}</span></div>
+                                <div class="info-row-card"><span class="label-card">陰蒂狀態</span><span class="value-card">${clitState}</span></div>
+                                <div class="info-row-card"><span class="label-card">子宮狀態</span><span class="value-card">${uterusState}</span></div>
+                                <div class="info-row-card"><span class="label-card">月經週期</span><span class="value-card">${menstrualCycle}</span></div>
+                                <div class="info-row-card"><span class="label-card">懷孕狀態</span><span class="value-card">${pregnancy}</span></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 敏感部位 -->
+                        ${sensitiveParts.length > 0 ? `
+                        <div class="section-block-card">
+                            <div class="section-header-card">敏感部位</div>
+                            <div class="sensitive-list-card">
+                                ${sensitiveParts.map(part => `
+                                <div class="sensitive-item-card">
+                                    <div class="part-name-card">${part.name}</div>
+                                    <div class="part-reaction-card">${part.reaction}</div>
+                                </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        <!-- 催眠暗示 (從根目錄獲取) -->
+                        ${hypnosisItems.length > 0 ? `
+                        <div class="section-block-card">
+                            <div class="section-header-card hypnosis-header">催眠暗示</div>
+                            <div class="hypnosis-list-card">
+                                ${hypnosisItems.map(item => `
+                                <div class="hypnosis-item-card">
+                                    <div class="hypnosis-name-card">${item.name}</div>
+                                    ${item.description ? `<div class="hypnosis-desc-card">${item.description}</div>` : ''}
+                                    ${item.depth ? `<div class="hypnosis-depth-card">深度: ${item.depth}</div>` : ''}
+                                </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        <!-- 翻轉按鈕 -->
+                        <button class="flip-button-card" data-action="flip-card" data-card-id="${cardId}">翻到正面 →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+}
+
+// ==================== 數據加載和顯示 ====================
+function loadAndDisplay(retryCount = 0) {
+    console.log(`📥 開始加載MVU數據... (嘗試 ${retryCount + 1})`);
+    
+    try {
+        const mvuAvailable = typeof Mvu !== 'undefined' ||
+                            typeof window.Mvu !== 'undefined' ||
+                            (window.parent && typeof window.parent.Mvu !== 'undefined');
+        
+        if (!mvuAvailable) {
+            console.warn(`⚠️ MVU框架未加載，嘗試次數: ${retryCount + 1}`);
+            
+            if (retryCount < 3) {
+                $('#status-top').html(`
+                    ${getHamsterLoadingHTML(`等待MVU框架加載中... (${retryCount + 1}/3)`)}
+                    <div style="margin-top: 15px;">
+                        <button onclick="diagnoseMvuAvailability()" style="padding: 8px 16px; background: rgba(96, 165, 250, 0.2); border: 1px solid #60a5fa; border-radius: 5px; color: #60a5fa; cursor: pointer;">
+                            🔍 診斷MVU狀態
+                        </button>
+                    </div>
+                `).removeClass('hidden');
+                setTimeout(() => {
+                    loadAndDisplay(retryCount + 1);
+                }, 2000);
+                return;
+            } else {
+                $('#status-top').html(`
+                    <div class="status-message-box" style="color: #fbbf24;">
+                        <p>⚠️ MVU框架未加載</p>
+                        <p style="font-size: 12px; margin-top: 10px;">請先在聊天框運行相關初始化指令</p>
+                        <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                            <button onclick="diagnoseMvuAvailability()" style="padding: 8px 16px; background: rgba(96, 165, 250, 0.2); border: 1px solid #60a5fa; border-radius: 5px; color: #60a5fa; cursor: pointer;">
+                                🔍 診斷
+                            </button>
+                            <button onclick="loadAndDisplay(0)" style="padding: 8px 16px; background: rgba(96, 165, 250, 0.2); border: 1px solid #60a5fa; border-radius: 5px; color: #60a5fa; cursor: pointer;">
+                                🔄 重試
+                            </button>
+                        </div>
+                    </div>
+                `).removeClass('hidden');
+                console.error('❌ MVU框架加載超時');
+                diagnoseMvuAvailability();
+                return;
+            }
+        }
+        
+        if (typeof Mvu === 'undefined' && window.parent && typeof window.parent.Mvu !== 'undefined') {
+            window.Mvu = window.parent.Mvu;
+            console.log('✅ 已從父窗口引用MVU');
+        }
+        
+        console.log('✅ MVU框架已就緒');
+        
+        let targetMessageId = 'latest';
+        if (typeof getLastMessageId === 'function' && typeof getChatMessages === 'function') {
+            let currentId = getLastMessageId();
+            
+            while (currentId >= 0) {
+                const message = getChatMessages(currentId).at(-1);
+                if (message && message.role !== 'user') {
+                    targetMessageId = currentId;
+                    if (currentId !== getLastMessageId()) {
+                        console.log(`📝 向上查找到第 ${currentId} 層的AI消息`);
+                    }
+                    break;
+                }
+                currentId--;
+            }
+            
+            if (currentId < 0) {
+                targetMessageId = 'latest';
+                console.warn('⚠️ 沒有找到AI消息，使用最後一層');
+            }
+        }
+        
+        const data = Mvu.getMvuData({ type: 'message', message_id: targetMessageId });
+        
+        if (!data || !data.stat_data) {
+            console.warn('⚠️ MVU數據爲空，嘗試自動修復...');
+            
+            if (retryCount === 0) {
+                console.log('🔧 自動觸發變量重新處理...');
+                $('#status-top').html(`
+                    ${getHamsterLoadingHTML('正在重新處理變量...')}
+                    <p style="font-size: 12px; color: #9ca3af; text-align: center; margin-top: 10px;">首次加載時變量可能未處理完成</p>
+                `).removeClass('hidden');
+                
+                reprocessCurrentMessageVariables().then(() => {
+                    setTimeout(() => {
+                        loadAndDisplay(1);
+                    }, 800);
+                }).catch(err => {
+                    console.error('❌ 自動重新處理變量失敗:', err);
+                    setTimeout(() => {
+                        loadAndDisplay(2);
+                    }, 500);
+                });
+                
+                return;
+            }
+            
+            console.warn('⚠️ 自動修復後仍無法加載數據');
+            $('#status-top').html(`
+                <div class="status-message-box" style="color: #fbbf24;">
+                    <p style="margin-bottom: 10px;">⚠️ 無法加載數據</p>
+                    <p style="font-size: 12px; margin-bottom: 15px;">可能需要先發送消息生成數據</p>
+                    <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center;">
+                        <button onclick="loadAndDisplay(0)" style="padding: 8px 16px; background: rgba(96, 165, 250, 0.2); border: 1px solid #60a5fa; border-radius: 5px; color: #60a5fa; cursor: pointer;">
+                            🔄 重試加載
+                        </button>
+                        <button onclick="diagnoseMvuAvailability()" style="padding: 8px 16px; background: rgba(96, 165, 250, 0.2); border: 1px solid #60a5fa; border-radius: 5px; color: #60a5fa; cursor: pointer;">
+                            🔍 診斷
+                        </button>
+                    </div>
+                </div>
+            `).removeClass('hidden');
+            
+            if ($('#character-content').children().length === 0) {
+                $('#character-content').html('');
+            }
+            
+            return;
+        }
+        
+        const statData = data.stat_data;
+        console.log('📊 stat_data字段:', Object.keys(statData));
+        
+        let bondsData = {};
+        let dataSource = '';
+        
+        if (statData['人物羈絆']) {
+            bondsData = statData['人物羈絆'];
+            dataSource = '人物羈絆';
+            console.log('✅ 找到"人物羈絆"字段');
+        }
+        else if (isCharacterData(statData)) {
+            bondsData = { '當前角色': statData };
+            dataSource = 'stat_data直接數據';
+            console.log('✅ stat_data本身就是角色數據');
+        }
+        else {
+            const possibleCharacters = {};
+            for (const key of Object.keys(statData)) {
+                if (key !== '$meta' && typeof statData[key] === 'object' && isCharacterData(statData[key])) {
+                    possibleCharacters[key] = statData[key];
+                }
+            }
+            
+            if (Object.keys(possibleCharacters).length > 0) {
+                bondsData = possibleCharacters;
+                dataSource = '自動識別角色字段';
+                console.log(`✅ 自動識別到 ${Object.keys(possibleCharacters).length} 個角色字段`);
+            }
+        }
+        
+        if (!bondsData || Object.keys(bondsData).length === 0) {
+            console.warn('⚠️ 未找到角色數據');
+            $('#status-top').removeClass('hidden').html(`
+                <div class="status-message-box" style="color: #fbbf24;">
+                    <p style="margin-bottom: 10px;">⚠️ 未找到角色數據</p>
+                    <div style="margin-top: 10px;">
+                        <button onclick="loadAndDisplay(0)" style="padding: 8px 16px; background: rgba(96, 165, 250, 0.2); border: 1px solid #60a5fa; border-radius: 5px; color: #60a5fa; cursor: pointer;">
+                            🔄 重試加載
+                        </button>
+                    </div>
+                </div>
+            `);
+            
+            if ($('#character-content').children().length === 0) {
+                $('#character-content').html('');
+            }
+            return;
+        }
+        
+        const characters = Object.keys(bondsData).filter(k => k !== '$meta');
+        
+        if (characters.length === 0) {
+            console.log('📝 沒有角色數據');
+            $('#status-top').removeClass('hidden').html(`
+                <div class="status-message-box" style="color: #fbbf24;">
+                    <p style="margin-bottom: 10px;">⚠️ 暫無角色數據</p>
+                    <div style="margin-top: 10px;">
+                        <button onclick="loadAndDisplay(0)" style="padding: 8px 16px; background: rgba(96, 165, 250, 0.2); border: 1px solid #60a5fa; border-radius: 5px; color: #60a5fa; cursor: pointer;">
+                            🔄 重試加載
+                        </button>
+                    </div>
+                </div>
+            `);
+            
+            if ($('#character-content').children().length === 0) {
+                $('#character-content').html('');
+            }
+            return;
+        }
+        
+        console.log(`✅ 找到 ${characters.length} 個角色 (來源: ${dataSource})`);
+        
+        const savedStates = saveCardStates();
+        
+        $('#status-top').addClass('hidden');
+        
+        const cardsHtml = characters.map(charKey => {
+            const beauty = bondsData[charKey];
+            return generateCharacterCard(charKey, beauty);
+        }).join('');
+        
+        const gridHtml = `<div class="cards-grid">${cardsHtml}</div>`;
+        
+        $('#character-content').html(gridHtml);
+        
+        initializeCardStyles();
+        setupEventDelegation();
+        
+        setTimeout(() => {
+            const statesToRestore = Object.keys(savedStates).length > 0 ? savedStates : loadCardStates();
+            restoreCardStates(statesToRestore);
+        }, 100);
+        
+        setTimeout(() => {
+            const $container = window.top ? $(window.top.document).find('#character-status') : $('#character-status');
+            const container = $container[0];
+            
+            if (container && container.dataset.dragInitialized !== 'true') {
+                initializeDragFeature();
+                container.dataset.dragInitialized = 'true';
+                console.log('✅ 拖拽功能已啓用');
+            }
+        }, 300);
+        
+        console.log('✅ 數據顯示完成');
+        
+    } catch (error) {
+        console.error('❌ loadAndDisplay 執行出錯:', error);
+        console.error('錯誤堆棧:', error.stack);
+        
+        $('#status-top').html(`
+            <div class="status-message-box" style="color: #ef4444;">
+                <p style="margin-bottom: 10px;">❌ 加載數據時發生錯誤</p>
+                <p style="font-size: 12px; margin-bottom: 10px; color: #9ca3af;">${error.message}</p>
+                <button onclick="loadAndDisplay(0)" style="padding: 8px 16px; background: rgba(96, 165, 250, 0.2); border: 1px solid #60a5fa; border-radius: 5px; color: #60a5fa; cursor: pointer;">
+                    🔄 重試
+                </button>
+            </div>
+        `).removeClass('hidden');
+    }
+}
+
+// ==================== 卡片翻轉功能 ====================
+function flipCharacterCard(cardId) {
+    const card = $(`#${cardId} .character-card-3d`);
+    card.toggleClass('flipped');
+}
+
+// ==================== 設置事件委託 ====================
+function setupEventDelegation() {
+    const $container = window.top ? $(window.top.document).find('#character-status') : $('#character-status');
+    
+    $container.off('click');
+    
+    $container.on('click', '[data-action]', async function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const $btn = $(this);
+        const action = $btn.data('action');
+        
+        console.log('🔔 按鈕被點擊:', action);
+        
+        if ($btn.prop('disabled')) {
+            console.warn('⚠️ 按鈕已禁用，忽略點擊');
+            return;
+        }
+    
+        try {
+            switch(action) {
+                case 'toggle-style':
+                    console.log('🎨 切換樣式...');
+                    toggleCardStyle();
+                    break;
+                    
+                case 'refresh':
+                    console.log('🔄 開始刷新數據...');
+                    $btn.addClass('refreshing').prop('disabled', true);
+        
+                    try {
+                        console.log('🔧 觸發重新處理變量...');
+                        await reprocessCurrentMessageVariables();
+            
+                        console.log('⏳ 等待變量處理完成...');
+                        await new Promise(resolve => setTimeout(resolve, 500));
+            
+                        console.log('🔄 刷新顯示數據...');
+                        loadAndDisplay();
+            
+                        console.log('✅ 刷新完成');
+                    } finally {
+                        setTimeout(() => {
+                            $btn.removeClass('refreshing').prop('disabled', false);
+                        }, 500);
+                    }
+                    break;
+                    
+                case 'flip-card':
+                    const cardId = $btn.data('card-id');
+                    if (cardId) {
+                        console.log('🔄 翻轉卡片:', cardId);
+                        flipCharacterCard(cardId);
+                        setTimeout(() => saveCardStates(), 50);
+                    } else {
+                        console.error('❌ 未找到卡片ID');
+                    }
+                    break;
+                
+                case 'toggle-collapse':
+                    const collapseCardId = $btn.data('card-id');
+                    if (collapseCardId) {
+                        console.log('📌 切換收起狀態:', collapseCardId);
+                        const $cardWrapper = $(`#${collapseCardId}`);
+                        $cardWrapper.toggleClass('collapsed');
+                        
+                        const isCollapsed = $cardWrapper.hasClass('collapsed');
+                        $btn.html(isCollapsed ? ICONS.pinFilled : ICONS.pin);
+                        $btn.attr('title', isCollapsed ? '展開' : '收起');
+                        
+                        saveCardStates();
+                    } else {
+                        console.error('❌ 未找到卡片ID');
+                    }
+                    break;
+                
+                case 'force-desire':
+                    console.log('🔥 執行強制發情指令...');
+                    $btn.prop('disabled', true);
+                    try {
+                        await sendForceInstruction('desire');
+                    } finally {
+                        setTimeout(() => {
+                            $btn.prop('disabled', false);
+                        }, 2000);
+                    }
+                    break;
+                
+                case 'force-crush':
+                    console.log('💕 執行強制暗戀指令...');
+                    $btn.prop('disabled', true);
+                    try {
+                        await sendForceInstruction('crush');
+                    } finally {
+                        setTimeout(() => {
+                            $btn.prop('disabled', false);
+                        }, 2000);
+                    }
+                    break;
+                    
+                default:
+                    console.warn('⚠️ 未知的操作:', action);
+            }
+        } catch (error) {
+            console.error('❌ 操作失敗:', error);
+            if (typeof toastr !== 'undefined') {
+                toastr.error('操作失敗：' + error.message);
+            }
+        }
+    });
+    
+    console.log('✅ 事件委託已設置');
+}
+
+// ==================== 初始化函數 ====================
+function initializeCharacterStatus() {
+    console.log('🚀 開始啓動人物羈絆卡片狀態欄');
+    
+    try {
+        if (window.top && window.top.document !== document) {
+            $(window.top.document).find('#character-status').remove();
+            $(window.top.document).find('#character-status-styles').remove();
+        }
+        $('#character-status').remove();
+        $('#character-status-styles').remove();
+        
+        $('head').append(styles);
+        console.log('✅ 樣式已注入');
+    
+        const container = $('<div>', {
+            id: 'character-status',
+            class: 'character-container'
+        });
+        
+        const statusTop = $('<div>', {
+            id: 'status-top',
+            class: 'status-top',
+            html: getHamsterLoadingHTML('正在加載數據...')
+        });
+        
+        const globalControls = $('<div>', {
+            id: 'global-controls',
+            class: 'global-controls',
+            html: `
+                <button class="global-control-btn global-force-desire-btn" data-action="force-desire" title="強制在場所有女角色發情">
+                    <span>強制發情</span>
+                </button>
+                <button class="global-control-btn global-force-crush-btn" data-action="force-crush" title="強制在場所有女角色暗戀{{user}}">
+                    <span>強制暗戀</span>
+                </button>
+            `
+        });
+        
+        const contentArea = $('<div>', {
+            id: 'character-content',
+            class: 'character-content'
+        });
+        
+        container.append(statusTop, contentArea, globalControls);
+        $('body').prepend(container);
+        console.log('✅ 容器已創建');
+        
+        setTimeout(() => {
+            loadAndDisplay();
+        }, 2000);
+        
+        console.log('🎉 人物羈絆卡片狀態欄初始化完成！');
+        
+    } catch (error) {
+        console.error('❌ 初始化狀態欄時出錯:', error);
+        console.error('錯誤堆棧:', error.stack);
+        
+        if (typeof toastr !== 'undefined') {
+            toastr.error('狀態欄初始化失敗：' + error.message);
+        } else {
+            alert('狀態欄初始化失敗：' + error.message + '\n\n詳情請查看控制檯');
+        }
+    }
+}
+
+// ==================== 清理函數 ====================
+function cleanupCharacterStatus() {
+    console.log('🧹 清理人物羈絆狀態欄...');
+    cleanupDragFeature();
+    
+    if (window.top && window.top.document !== document) {
+        $(window.top.document).find('#character-status').remove();
+        $(window.top.document).find('#character-status-styles').remove();
+    }
+    $('#character-status').remove();
+    $('#character-status-styles').remove();
+    console.log('✅ 狀態欄已清理');
+}
+
+// ==================== 事件監聽和腳本啓動 ====================
+function handleCharacterMessageReceived() {
+    console.log('📨 收到 MESSAGE_RECEIVED 事件，刷新狀態欄數據...');
+    setTimeout(() => {
+        try {
+            const $container = window.top ? $(window.top.document).find('#character-status') : $('#character-status');
+            if ($container.length > 0) {
+                console.log('💾 自動刷新前保存卡片狀態...');
+                saveCardStates();
+                loadAndDisplay();
+            } else {
+                console.warn('⚠️ 狀態欄未初始化，跳過數據更新');
+            }
+        } catch (error) {
+            console.error('❌ 刷新狀態欄時出錯:', error);
+        }
+    }, 500);
+}
+
+// ==================== 全局函數暴露 ====================
+if (typeof window !== 'undefined') {
+    window.initializeCharacterStatus = initializeCharacterStatus;
+    window.cleanupCharacterStatus = cleanupCharacterStatus;
+    window.loadAndDisplay = loadAndDisplay;
+    window.toggleCardStyle = toggleCardStyle;
+    window.resetDragPosition = resetDragPosition;
+    window.diagnoseMvuAvailability = diagnoseMvuAvailability;
+    console.log('✅ 狀態欄控制函數已暴露到全局');
+}
+
+// ==================== 腳本啓動 ====================
+$(() => {
+    console.log('📄 DOM已就緒，檢測MVU框架...');
+    
+    waitForMvu(() => {
+        console.log('🚀 開始初始化人物羈絆卡片狀態欄');
+        initializeCharacterStatus();
+        
+        if (typeof eventSource !== 'undefined' && eventSource.on) {
+            eventSource.on('MESSAGE_RECEIVED', handleCharacterMessageReceived);
+            console.log('✅ 已註冊 MESSAGE_RECEIVED 事件監聽 (eventSource)');
+        } else if (typeof eventOn === 'function' && typeof tavern_events !== 'undefined' && tavern_events.MESSAGE_RECEIVED) {
+            eventOn(tavern_events.MESSAGE_RECEIVED, handleCharacterMessageReceived);
+            console.log('✅ 已註冊 MESSAGE_RECEIVED 事件監聽 (tavern_events)');
+        } else {
+            console.warn('⚠️ 無法註冊 MESSAGE_RECEIVED 事件（事件系統未找到）');
+        }
+    });
+});
+
+$(window).on('unload', () => {
+    if (typeof eventSource !== 'undefined' && eventSource.removeListener) {
+        eventSource.removeListener('MESSAGE_RECEIVED', handleCharacterMessageReceived);
+        console.log('🗑️ 已移除 MESSAGE_RECEIVED 事件監聽');
+    } else if (typeof eventRemoveListener === 'function' && typeof tavern_events !== 'undefined' && tavern_events.MESSAGE_RECEIVED) {
+        eventRemoveListener(tavern_events.MESSAGE_RECEIVED, handleCharacterMessageReceived);
+        console.log('🗑️ 已移除 MESSAGE_RECEIVED 事件監聽');
+    }
+    
+    cleanupCharacterStatus();
+});
+
+console.log('📦 人物羈絆卡片狀態欄腳本已加載完成');

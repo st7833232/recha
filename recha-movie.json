@@ -214,6 +214,17 @@
       "ext": "./json/獨播庫.json"
     },
     {
+      "key": "🍿哔嘀",
+      "name": "🏆｜嗶滴",
+      "type": 3,
+      "api": "csp_BidysAmns",
+      "jar": "./jar/aowu.jar;md5;29ee0730017660db62f57a585cd1aeb6",
+      "searchable": 1,
+      "filterable": 1,
+      "quickSearch": 1,
+      "changeable": 1
+    },    
+    {
       "key": "📹YOU视",
       "name": "🏆｜優視｜藍光◎秒播",
       "type": 3,
@@ -594,17 +605,6 @@
       "name": "🏆｜高端",
       "type": 3,
       "api": "csp_DdysAmns",
-      "jar": "./jar/aowu.jar;md5;29ee0730017660db62f57a585cd1aeb6",
-      "searchable": 1,
-      "filterable": 1,
-      "quickSearch": 1,
-      "changeable": 1
-    },
-    {
-      "key": "🍿哔嘀",
-      "name": "🏆｜嗶滴",
-      "type": 3,
-      "api": "csp_BidysAmns",
       "jar": "./jar/aowu.jar;md5;29ee0730017660db62f57a585cd1aeb6",
       "searchable": 1,
       "filterable": 1,

@@ -5,7 +5,15 @@
   "notice": "115.03.08_Ver.8\n 狂賀！獨播庫畫質又回到高清！！！",
   "sites": [
 
-
+    {
+    "key": "py_mv4r4",
+    "name": "有兮｜測試",
+    "type": 3,
+    "api": "./py/1.py",
+    "searchable": 1,
+    "quickSearch": 1,
+    "filterable": 0
+    },
  
  
         {

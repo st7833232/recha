@@ -1,4 +1,4 @@
-/* 欢迎各位来宾来到图书馆 (v0.45) */
+/* 欢迎各位来宾来到图书馆 (v0.6) */
 @import url('https://fonts.font.im/css2?family=Inter:wght@400;500;700&display=swap');
 @import url('https://fonts.font.im/css2?family=Noto+Sans+SC:wght@400;500&display=swap');
 @import url('https://fonts.loli.net/css2?family=Inter:wght@400;500;700&display=swap');
@@ -64,17 +64,68 @@ body {
     background-image: url('https://files.catbox.moe/geqc9d.png');
     background-size: cover;
     background-position: center center;
-    background-attachment: fixed;
+    background-attachment: scroll; /* Modified: fixed 导致滚动卡顿，改为 scroll */
 }
 
 /* --- 主要布局元素 --- */
 #chat {
+    flex-grow: 1;
     background-color: var(--panel-bg-color); /* 应用带透明度的背景 */
     border-radius: 0 0 var(--generic-radius) var(--generic-radius); /* MODIFIED: 移除顶部圆角，实现无缝连接 */
     padding: 10px;
     box-shadow: var(--box-shadow-subtle);
     border: var(--noble-border);
     margin-top: 0; /* MODIFIED: 移除顶部外边距，去掉空隙 */
+    margin-bottom: 0 !important; /* ADDED: 移除底部外边距，防止PC端底部留白 */
+}
+
+/* 修复PC端页面底部出现大片空白的问题 (Override default SillyTavern padding) */
+#sheld {
+    display: flex !important;
+    flex-direction: column;
+    flex: 1;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    min-height: 0;
+}
+
+/* 隐藏可能存在的各种占位符 div */
+.chat-scroll-spacer, #chat-scroll-spacer, .spacer, .silly-card-placeholder {
+    display: none !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+#qr--bar {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+body {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 确保 #bg_menu_content 不会意外撑开 */
+#bg_menu_content {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+/* 针对 PC 端的额外约束 */
+@media screen and (min-width: 768px) {
+    #sheld {
+        width: var(--sheldWidth);
+        margin-left: auto;
+        margin-right: auto;
+        /* 确保输入框紧贴底部内容，无额外间隙 */
+        padding-bottom: 0 !important; 
+    }
 }
 
 #top-bar {
@@ -98,7 +149,7 @@ body {
 }
 
 #send_form {
-    background-color: rgb(65, 45, 30) !important; /* 使用更精致的“胡桃木”色，与消息卡片区分 */
+    background-color: #000000 !important; /* Modified: 纯黑背景 */
     border-radius: var(--generic-radius);
     border-style: solid;
     border-width: 2px;
@@ -154,16 +205,36 @@ body {
 /* --- 聊天气泡 --- */
 .mes {
     background-color: transparent;
-    border: 1px solid transparent; /* MODIFIED: 为悬停效果预留边框空间 */
+    border: 1px solid transparent; /* 为悬停效果预留边框空间 */
     margin-bottom: 15px;
     padding: 0;
-    transition: border-color 0.2s ease-in-out, box-shadow 0.3s ease; /* MODIFIED: 添加边框和阴影过渡 */
+    /* 轻微的浮动与阴影过渡，让消息出现更柔和 */
+    transition: border-color 0.2s ease-in-out,
+                box-shadow 0.3s ease,
+                background-color 0.25s ease,
+                transform 0.25s ease;
+    animation: mes-fade-in 0.35s ease-out both;
 }
 
-/* MODIFIED: 新增消息悬停效果 */
+/* 消息悬停时，略微抬起并提亮边框 */
 .mes:hover {
-    border-color: var(--text-accent-color); /* MODIFIED: 悬停时使用更亮的强调色边框 */
-    box-shadow: 0 0 12px hsla(45, 95%, 55%, 0.4); /* ADDED: 添加金色光晕效果 */
+    border-color: var(--text-accent-color);
+    box-shadow: 0 0 12px hsla(45, 95%, 55%, 0.35);
+    background-color: rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+}
+
+/* 消息淡入动画 */
+@keyframes mes-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
     /* AI 消息卡片化布局 */
@@ -301,7 +372,8 @@ body {
         height: 16px;
         color: var(--accent-color-gold);
         z-index: 3;
-        filter: drop-shadow(0.5px 0.5px 0.5px rgba(255, 255, 255, 0.3)) drop-shadow(-0.5px -0.5px 0.5px rgba(0, 0, 0, 0.2));
+        /* filter: drop-shadow(...) REMOVED: 性能开销大 */
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* 使用 text-shadow 代替 */
     }
 
     .mes .ch_name {
@@ -338,13 +410,13 @@ body {
 
 /* 三反引号代码块 */
 .mes_text pre {
-    background-color: rgba(0,0,0,0.3); /* 比面板稍暗一点, 增加对比度 */
+    background-color: rgba(0, 0, 0, 0.3); /* 还原为半透明 */
     padding: 0.8em 1em;
     border-radius: var(--generic-radius);
     font-family: inherit;
     font-size: 0.95em;
     letter-spacing: 0.3px;
-    overflow-x: auto;
+    overflow: auto;
     white-space: pre-wrap;
     word-break: break-word;
     border-left: 3px solid var(--text-accent-color); /* 边框改为强调色 */
@@ -421,8 +493,25 @@ body {
 /* --- 新增：斜体 (em, i) 文本样式 --- */
 .mes_text em,
 .mes_text i {
-    color: var(--text-secondary-color); /* MODIFIED: 使用次要文本颜色，使其不那么显眼 */
+    color: var(--text-secondary-color); /* 使用次要文本颜色，使其不那么显眼 */
     font-style: italic; /* 确保它们确实是斜体 */
+}
+
+/* --- 高亮与选中效果 --- */
+.mes_text mark {
+    background-color: rgba(214, 154, 4, 0.45);
+    color: var(--text-color);
+    padding: 0 0.15em;
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+}
+
+.mes_text ::selection,
+.mes_text *::selection,
+body ::selection,
+body *::selection {
+    background-color: rgba(214, 154, 4, 0.55);
+    color: #1b130a;
 }
 
 /* --- 新增：Details/Summary 标签样式 --- */
@@ -430,9 +519,10 @@ body {
     margin: 10px 0;
     border: 1px solid var(--border-color);
     border-radius: var(--generic-radius);
-    background-color: rgba(0,0,0,0.1);
+    background-color: rgba(20, 14, 9, 0.96); /* 更深的背景，和普通消息明显区分 */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.45);
     overflow: hidden; /* 确保圆角效果 */
-    transition: all 0.25s ease-in-out; /* ADDED: Smooth open/close */
+    transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease; /* Smooth open/close */
 }
 
 .mes_text summary {
@@ -459,102 +549,128 @@ body {
 .mes_text details > div,
 .mes_text details > p {
     padding: 10px 15px;
-    background-color: rgba(0,0,0,0.05); /* 内容区域的细微背景 */
+    background: radial-gradient(
+        circle at top left,
+        rgba(214, 154, 4, 0.14),
+        rgba(0, 0, 0, 0.35)
+    ); /* 展开内容带轻微金色晕染，和普通消息区别更明显 */
 }
 
 /* --- 推理链 --- */
 .mes_reasoning_header {
     background-color: var(--reasoning-bg-color) !important; /* Fallback */
-    background-image: linear-gradient(to bottom, rgba(100, 80, 65, 0.95), rgba(80, 60, 45, 0.95)); /* ADDED: Gradient background */
+    background-image: linear-gradient(to bottom, rgba(100, 80, 65, 0.95), rgba(80, 60, 45, 0.95)); /* 渐变背景 */
     border: 1px solid var(--accent-color-gold) !important;
     border-radius: var(--generic-radius);
     padding: 0.6em 1em 0.6em 2.5em; /* 调整内边距，为图标留空间 */
     margin-bottom: 8px;
-    color: transparent; /* HIDE original text */
+    color: transparent; /* 隐藏原始文字，由 ::after 接管 */
     font-family: "LXGW Neo XiHei Plus", sans-serif;
     font-size: calc(var(--main-font-size, 1em) * 0.85);
     letter-spacing: 0.5px;
     position: relative;
     transition: border-color 0.3s ease, background-color 0.3s ease;
     cursor: pointer;
-    min-width: 13em; /* ADDED: Ensure container is wide enough for custom text */
+    min-width: 13em; /* 保证自定义文案不会被挤压 */
 }
 
-    .mes_reasoning_header::before { /* 更新为书本图标 📔 */
-        content: "📔"; /* 直接使用 emoji */
+    .mes_reasoning_header::before { /* 设定用的书本图标 📔 */
+        content: "📔";
         position: absolute;
         left: 0.7em;
         top: 50%;
         transform: translateY(-50%);
-        font-size: 1.3em; /* 调整 emoji 大小 */
-        color: var(--text-accent-color); /* 使用强调色 */
+        font-size: 1.3em;
+        color: var(--text-accent-color);
     }
 
-    .mes_reasoning_header::after { /* ADDED: Replace text with custom content */
+    .mes_reasoning_header::after { /* 设定用固定文案 */
         content: "至理之书正在推演";
         position: absolute;
         left: 2.5em;
         top: 50%;
         transform: translateY(-50%);
-        color: var(--text-color); /* RESTORE text color */
+        color: var(--text-color);
         font-size: inherit;
         letter-spacing: inherit;
-        white-space: nowrap; /* ADDED: Prevent text wrapping */
+        white-space: nowrap;
     }
-
 
     .mes_reasoning_header:hover {
         border-color: var(--text-accent-color) !important;
-        background-color: rgba(90, 70, 60, 0.95) !important; /* 悬停时更深一点 */
+        background-color: rgba(90, 70, 60, 0.95) !important;
     }
+
 
 .mes_reasoning_details,
 .mes_reasoning {
-    background-color: rgba(0,0,0,0.05);
-    padding: 8px;
-    border-left: 2px solid var(--border-color);
-    margin-left: 0px; /* 调整对齐 */
+    background-color: rgba(0, 0, 0, 0.16);
+    padding: 10px 12px;
+    border-left: 2px dashed var(--border-color);
+    margin-left: 8px;
     border-radius: 0 0 var(--generic-radius) var(--generic-radius);
+    color: var(--text-secondary-color);
+    font-size: 0.95em;
+    font-style: italic;
 }
 
 /* --- 按钮 --- */
 .menu_button,
 input[type='button'],
 button {
-    background-image: var(--shared-bg-image); /* 应用共享背景 */
+    background-image: linear-gradient(145deg, rgba(150, 110, 75, 0.95), rgba(105, 75, 50, 0.98)), var(--shared-bg-image, none);
     background-color: var(--button-bg-color) !important; /* 底色，纹理可能半透明 */
     background-repeat: repeat;
-    background-blend-mode: multiply; /* 尝试混合模式 */
+    background-blend-mode: multiply;
     border: 1px solid var(--border-color) !important;
     color: var(--button-icon-color) !important;
     border-radius: var(--generic-radius);
-    padding: 5px 10px;
-    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
-    box-shadow: inset 0 1px 1px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.3);
+    padding: 6px 12px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.2s ease,
+                border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                transform 0.12s ease;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.35);
     filter: none !important;
     min-width: var(--button-size);
     min-height: var(--button-size);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.25);
 }
 
-    .menu_button:hover,
-    input[type='button']:hover,
-    button:hover {
-        background-color: var(--button-hover-bg-color) !important;
-        border-color: var(--text-accent-color) !important;
-        transform: translateY(-1px);
-        box-shadow: inset 0 1px 1px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.3), 0 0 8px hsla(45, 95%, 55%, 0.4); /* ADDED: 添加悬停光晕效果 */
-    }
+.menu_button:hover,
+input[type='button']:hover,
+button:hover {
+    background-color: var(--button-hover-bg-color) !important;
+    border-color: var(--text-accent-color) !important;
+    transform: translateY(-1px);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.2),
+                0 2px 5px rgba(0,0,0,0.4),
+                0 0 10px hsla(45, 95%, 55%, 0.5);
+}
 
-    .menu_button:active,
-    input[type='button']:active,
-    button:active {
-        transform: translateY(0px);
-        box-shadow: inset 0 2px 3px rgba(0,0,0,0.3);
-    }
+.menu_button:active,
+input[type='button']:active,
+button:active {
+    transform: translateY(0);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.45);
+}
+
+/* 禁用态按钮 */
+.menu_button[disabled],
+input[type='button'][disabled],
+button[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+    filter: grayscale(0.2);
+}
 
 /* --- 特定按钮图标 --- */
 #extensionsMenuButton,
@@ -678,8 +794,8 @@ textarea {
 
 /* --- 复选框样式 (Checkbox) --- */
 input[type='checkbox'] {
-    appearance: none;
     -webkit-appearance: none;
+    appearance: none;
     background-color: var(--input-bg-color);
     border: 2px solid var(--border-color);
     border-radius: var(--generic-radius);
@@ -893,18 +1009,37 @@ input[type='checkbox']:hover {
         height: 16px;
         color: var(--accent-color-gold);
         z-index: 3;
-        filter: drop-shadow(0.5px 0.5px 0.5px rgba(255, 255, 255, 0.3)) drop-shadow(-0.5px -0.5px 0.5px rgba(0, 0, 0, 0.2));
+        /* filter: drop-shadow(...) REMOVED: 性能开销大 */
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     }
 
 /* --- 自动隐藏快速回复 --- */
-/* [FIX] 修复QR栏显示不全的问题 */
+/* [FIX] 修复QR栏显示不全及推挤输入框导致滚动条的问题 */
 #qr--bar {
+    position: absolute !important;
+    bottom: 100% !important; /* 悬浮在输入框上方 */
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 100;
+    
+    background-color: rgba(0, 0, 0, 0.95); /* Modified: 半透明纯黑背景 - 移除 blur 以提升性能 */
+    /* backdrop-filter: blur(5px); REMOVED: 导致页面卡顿 */
+    border: 2px solid var(--accent-color-gold); /* Modified: 匹配输入框的金色边框 */
+    border-bottom: none; /* 与输入框连接处无边框 */
+    border-radius: var(--generic-radius) var(--generic-radius) 0 0;
+    /* Modified: 添加与输入框一致的金色光晕，但主要是向上 */
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.2), 0 -2px 7px var(--accent-color-gold), 0 -4px 12px rgba(214, 154, 4, 0.5);
+    
     opacity: 0;
     visibility: hidden;
-    transform: translateY(15px);
+    transform: translateY(10px); /* 初始位置略微下沉，制造升起效果 */
     max-height: 0;
     overflow: hidden;
-    transition: opacity 0.15s ease-out, transform 0.15s ease-out, max-height 0.2s ease-out, visibility 0s linear 0.15s;
+    /* Updated transition to include border and box-shadow */
+    transition: opacity 0.15s ease-out, transform 0.15s ease-out, max-height 0.2s ease-out, visibility 0s linear 0.15s, border-color 0.3s ease, box-shadow 0.3s ease;
+    
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
     #send_form:has(#send_textarea:focus) #qr--bar,
@@ -913,8 +1048,8 @@ input[type='checkbox']:hover {
         opacity: 1;
         visibility: visible;
         transform: translateY(0);
-        max-height: 400px; /* 增大了最大高度，以容纳更多QR项目 */
-        overflow-y: auto; /* 当内容超出最大高度时，显示滚动条 */
+        max-height: 400px; /* 最大高度 */
+        overflow-y: auto;
         transition: opacity 0.2s ease-in, transform 0.2s ease-in, max-height 0.2s ease-in, visibility 0s linear 0s;
     }
 
@@ -978,8 +1113,9 @@ body.is-loading {
         padding: 5px;
     }
 
+    /* 修复移动端聊天气泡过窄的问题 */
     .mes .mes_block {
-        padding: 75px 1px 8px 5px;
+        padding: 75px 8px 8px 8px; /* 增加左右内边距 */
     }
 
     .mes:not([is_user="true"]) .ch_name, .mes[is_user="true"] .ch_name {
@@ -1004,7 +1140,7 @@ body.is-loading {
     }
 
     #rm_extensions_block {
-        padding-right: 24px;
+        padding-right: 4px;
     }
 
     #bg_menu_content {
@@ -1014,8 +1150,13 @@ body.is-loading {
     #top-settings-holder {
         display: flex;
         justify-content: flex-start;
-        overflow: hidden;
+        overflow-x: auto; /* Allow horizontal scroll for token counter visibility */
         align-items: center;
+        scrollbar-width: none;
+    }
+
+    #top-settings-holder::-webkit-scrollbar {
+        display: none;
     }
 
         #top-settings-holder .drawer-icon {
@@ -1038,15 +1179,16 @@ body.is-loading {
         left: calc(10px + var(--selection-indent));
     }
 
+    /* 为移动端右侧留出专门的空白滑动带 */
+    .regex_script_item, 
+    .regex_script_label,
     .regex-script-label {
-        display: inline-flex;
-        width: auto;
-        max-width: 80%;
-        box-sizing: border-box;
-        margin-bottom: 4px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        max-width: 50% !important; 
+    }
+
+    .regex_script_buttons {
+        flex-shrink: 0;
+        margin-left: auto;
     }
 
     .font-name-clickable {
@@ -1089,31 +1231,17 @@ body.is-loading {
 }
 
 /* --- 滚动条 --- */
-* {
-    scrollbar-width: thin;
-    scrollbar-color: var(--border-color) rgba(30, 30, 36);
-}
-
+/* 保留浏览器默认滚动条，只在悬停时叠加主题金色高光，并统一细滚动条宽度 */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
 }
 
-::-webkit-scrollbar-track {
-    background: rgba(30, 30, 36);
-    border-radius: 6px;
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-accent-color) !important;
+    box-shadow: 0 0 6px var(--text-accent-color);
 }
 
-::-webkit-scrollbar-thumb {
-    background-color: var(--border-color);
-    border-radius: 6px;
-    border: 2px solid transparent;
-    background-clip: content-box;
-}
-
-    ::-webkit-scrollbar-thumb:hover {
-        background-color: var(--text-accent-color);
-    }
 
 /* --- 消息操作按钮和编辑按钮 --- */
 /* [MODIFICATION] 根据用户要求，按钮始终可见，以彻底解决点击问题。*/
@@ -1138,38 +1266,50 @@ body.is-loading {
 
 /* --- Markdown 表格样式 --- */
 .mes_text table {
-    width: 98%;
+    width: 100%;
     border-collapse: collapse;
-    margin: 15px auto;
-    background-color: var(--panel-bg-color);
-    border: 1px solid var(--border-color);
-    box-shadow: var(--box-shadow-subtle);
+    margin: 16px 0;
+    background-color: #2a0e12;
+    border: 1px solid #a86827;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.35);
     border-radius: var(--generic-radius);
     overflow: hidden;
 }
 
-.mes_text th, .mes_text td {
-    border: 1px solid var(--border-color);
-    padding: 10px 14px;
+.mes_text th,
+.mes_text td {
+    padding: 9px 12px;
     text-align: left;
     color: var(--text-color);
     vertical-align: top;
+    border-bottom: 1px solid #6e3c1f;
 }
 
 .mes_text th {
-    background-color: var(--base-dark-brown);
-    color: var(--text-accent-color);
-    font-weight: bold;
-    font-size: 1.05em;
+    background: linear-gradient(120deg, #412511, #7e5725);
+    color: var(--title-accent-bright);
+    font-weight: 600;
+    font-size: 1.03em;
+    white-space: nowrap;
 }
 
-.mes_text tr:nth-child(even) td {
-    background-color: rgba(0,0,0,0.15);
+.mes_text tbody tr:nth-child(odd) td {
+    background-color: #412511;
 }
 
-.mes_text tr:hover td {
-    background-color: rgba(255,255,255,0.08);
-    transition: background-color 0.2s; /* ADDED */
+.mes_text tbody tr:nth-child(even) td {
+    background-color: #7e5725;
+}
+
+
+.mes_text tbody tr:hover td {
+    background-color: #6e3c1f;
+    transition: background-color 0.16s ease-out;
+}
+
+.mes_text tbody td:first-child {
+    color: #e9d888;
+    font-weight: 500;
 }
 
 .mes_text h1 {
@@ -1254,7 +1394,7 @@ body.is-loading {
     padding: 0;
     margin-bottom: 3px;
     margin-right: 3px;
-    transition: all 0.2s ease; /* ADDED */
+    transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease; /* ADDED */
 }
 
 .select2-container--default .select2-selection--multiple {
@@ -1442,105 +1582,231 @@ body.is-loading {
     filter: brightness(1.2);
 }
 
-/* ============================================
-   QR插件火箭按鈕圖示修復 (覆蓋插件樣式)
-   ============================================ */
+/* --- 扩展图标兼容层（整理版） ---
+   目标：
+   1. 修复 QR 助手图标受 #send_but 的 transparent / font-size:0 影响而消失。
+   2. 修复 CFM 把主题渐变误识别为自定义图标后只剩背景块的问题。
+   3. 保留当前已调好的视觉尺寸与配色，移除前面多轮排障留下的重复规则。 */
 
-/* 確保選擇器特異性高於插件樣式 */
-#top-bar #quick-reply-rocket-button,
-#send_form #quick-reply-rocket-button,
-#top-settings-holder #quick-reply-rocket-button {
-    /* 1. 使用您的圖示庫中的圖示 */
-    background-image: url('https://s21.ax1x.com/2025/07/01/pVudn6f.png') !important;
+/* 通用：避免顶栏/QR 区域中的图片与 SVG 图标被透明或尺寸规则误伤 */
+#top-settings-holder .drawer-icon img,
+#top-settings-holder .drawer-icon svg,
+#top-settings-holder .drawer-toggle img,
+#top-settings-holder .drawer-toggle svg,
+#quick-reply-rocket-button img,
+#quick-reply-rocket-button svg,
+#qr--bar button img,
+#qr--bar button svg {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    opacity: 1 !important;
+    visibility: visible !important;
+    object-fit: contain;
+}
 
-    /* 2. 調整圖示大小 - 使用您現有的變數系統 */
-    background-size: calc(var(--icon-actual-size) * 0.85) calc(var(--icon-actual-size) * 0.85) !important;
-    
-    /* 3. 重置其他背景相關屬性 */
-    background-position: center center !important;
-    background-repeat: no-repeat !important;
-    background-color: transparent !important;
-    
-    /* 4. 隱藏任何可能存在的文字內容 */
-    color: transparent !important;
-    font-size: 0 !important;
-    
-    /* 5. 保持原有尺寸但使用您的設計系統 */
-    width: var(--button-size) !important;
-    height: var(--button-size) !important;
-    min-width: var(--button-size) !important;
-    min-height: var(--button-size) !important;
-    
-    /* 6. 重置邊框和陰影 */
-    border: none !important;
-    border-radius: var(--generic-radius) !important;
-    box-shadow: none !important;
-    
-    /* 7. 重置間距 */
-    padding: 0 !important;
-    margin: 0 5px !important;
-    
-    /* 8. 確保顯示 */
-    display: flex !important;
+#top-settings-holder .drawer-icon svg,
+#top-settings-holder .drawer-toggle svg,
+#quick-reply-rocket-button svg,
+#qr--bar button svg {
+    fill: currentColor;
+}
+
+/* QR 助手：显式恢复可见字号与颜色，绕开 #send_but 的 0 字号同步 */
+#quick-reply-rocket-button {
+    font-size: 18px !important;
+    line-height: 1 !important;
+    color: var(--text-accent-color) !important;
+}
+
+#quick-reply-rocket-button i,
+#quick-reply-rocket-button i::before,
+#quick-reply-rocket-button svg,
+#quick-reply-rocket-button img {
+    font-size: 18px !important;
+    line-height: 1 !important;
+    color: var(--text-accent-color) !important;
+    -webkit-text-fill-color: currentColor !important;
+    opacity: 1 !important;
+}
+
+/* CFM：强制回退为稳定的 folder 字体图标，并去掉误识别得到的背景块 */
+#cfm-topbar-button .drawer-icon,
+#cfm-topbar-button,
+#cfm-topbar-button .drawer-toggle,
+#cfm-topbar-button .drawer-icon {
+    display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    
-    /* 9. 交互效果 */
-    cursor: pointer !important;
-    transition: transform 0.2s ease, filter 0.2s ease !important;
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+/* --- 新增：为脚本管理器项目添加悬停效果 --- */
+.regex-script-label, .regex_script_item {
+    border: 1px solid transparent; /* 为悬停效果预留边框空间 */
+    border-radius: var(--generic-radius);
+    padding: 4px 8px;
+    margin-bottom: 4px;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.regex-script-label:hover,
+.regex_script_item:hover {
+    background-color: rgba(0,0,0,0.2);
+    border-color: var(--text-accent-color);
+    box-shadow: 0 0 10px hsla(45, 95%, 55%, 0.4);
+    cursor: pointer;
+}
+
+/* --- 正则脚本管理器适配 --- */
+#cfm-topbar-button .drawer-icon.cfm-custom-icon[style],
+#cfm-topbar-button .drawer-icon.cfm-custom-icon.closedIcon[style],
+#cfm-topbar-button .drawer-icon.cfm-custom-icon,
+#top-settings-holder #cfm-topbar-button .drawer-icon.cfm-custom-icon[style] {
+    background: none !important;
+    background-image: none !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    width: auto !important;
+    height: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    font-size: 38px !important;
+    line-height: 1 !important;
+    text-shadow: none !important;
     filter: none !important;
-    
-    /* 10. 確保沒有文本內容 */
-    text-indent: -9999px !important;
-    overflow: hidden !important;
+    background-image: linear-gradient(to bottom, hsl(50, 100%, 75%), var(--text-accent-color)) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
 }
 
-/* 懸停效果 - 與您的美化UI保持一致 */
-#quick-reply-rocket-button:hover {
-    transform: scale(1.1) !important;
+#cfm-topbar-button .drawer-icon.cfm-custom-icon[style]::before,
+#cfm-topbar-button .drawer-icon.cfm-custom-icon.closedIcon[style]::before,
+#cfm-topbar-button .drawer-icon.cfm-custom-icon::before,
+#top-settings-holder #cfm-topbar-button .drawer-icon.cfm-custom-icon[style]::before {
+    display: inline-block !important;
+    content: "\f07b" !important;
+    font-family: "Font Awesome 6 Free" !important;
+    font-style: normal !important;
+    font-variant: normal !important;
+    font-weight: 900 !important;
+    text-rendering: auto !important;
+    font-size: inherit !important;
+    line-height: 1 !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    background: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+#cfm-topbar-button .drawer-toggle {
+    width: auto !important;
+    height: auto !important;
+    min-width: auto !important;
+    min-height: auto !important;
+    padding: 0 3px !important;
+    margin: 0 !important;
+}
+
+#cfm-topbar-button .drawer-icon.cfm-custom-icon[style].fa-folder::before,
+#cfm-topbar-button .drawer-icon.cfm-custom-icon.fa-folder::before,
+#cfm-topbar-button .drawer-icon.cfm-custom-icon[style].fa-solid.fa-folder::before,
+#cfm-topbar-button .drawer-icon.cfm-custom-icon.fa-solid.fa-folder::before,
+#top-settings-holder #cfm-topbar-button .drawer-icon.cfm-custom-icon[style].fa-folder::before {
+    content: "\f07b" !important;
+}
+
+#cfm-topbar-button .drawer-icon:hover,
+#cfm-topbar-button .drawer-icon.cfm-custom-icon:hover {
     filter: brightness(1.2) !important;
-    box-shadow: 0 0 8px hsla(45, 95%, 55%, 0.5) !important;
 }
 
-/* 強制隱藏按鈕內部的所有內容（文字、圖標等） */
-#quick-reply-rocket-button > *,
-#quick-reply-rocket-button::before,
-#quick-reply-rocket-button::after,
-#quick-reply-rocket-button i,
-#quick-reply-rocket-button span,
-#quick-reply-rocket-button svg {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    width: 0 !important;
-    height: 0 !important;
-    font-size: 0 !important;
+.regex_script_name {
+    white-space: normal !important;
+    word-break: break-all;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    height: auto !important;
+    line-height: 1.3;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
 }
 
-/* 調試模式：如果圖示還是不顯示，取消註釋以下代碼查看問題 */
-/*
-#quick-reply-rocket-button {
-    border: 3px solid gold !important;
-    background-color: rgba(255, 215, 0, 0.2) !important;
-    position: relative !important;
+/* 容器适配：移除固定高度，允许内容撑开 */
+.regex_script_item, 
+.regex_script_label,
+.regex-script-label {
+    background-color: var(--card-base-bg);
+    border: 1px solid var(--border-color);
+    height: auto !important;
+    min-height: 42px;
+    display: flex;
+    flex-wrap: wrap; 
+    align-items: center;
+    padding: 6px 8px;
+    gap: 4px;
+    margin-bottom: 6px;
 }
 
-#quick-reply-rocket-button::after {
-    content: "🚀" !important;
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    font-size: 20px !important;
-    z-index: 9999 !important;
+:root {
+    color-scheme: dark;
+    accent-color: var(--text-accent-color);
 }
-*/
+html {
+    scrollbar-gutter: stable both-edges;
+}
+/* Provide clear keyboard focus rings */
+:where(button, [role="button"], a, input, select, textarea, .select2-container--default .select2-selection--multiple .select2-selection__choice__remove, .select2-container--default .select2-selection--multiple .select2-selection__clear):focus-visible {
+    outline: 2px dashed var(--text-accent-color);
+    outline-offset: 2px;
+}
+/* Disable costly fixed background on touch devices */
+@media (pointer: coarse) {
+    body { background-attachment: scroll !important; }
+}
+/* Respect reduced motion user preference */
+@media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+}
 
-/* 確保在移動端也有正確大小 */
-@media (max-width: 600px) {
-    #quick-reply-rocket-button {
-        width: calc(var(--button-size) * 0.9) !important;
-        height: calc(var(--button-size) * 0.9) !important;
-        background-size: calc(var(--icon-actual-size) * 0.75) calc(var(--icon-actual-size) * 0.75) !important;
-    }
+/* --- Position 下拉框：仅控制左右长度 --- */
+select[name="position"] {
+    width: 110px !important; /* 目标宽度 */
+    max-width: 110px !important;
+    min-width: 0 !important; /* 允许缩小 */
+    display: inline-block !important; /* 仍是 flex item，此设置仅影响内部格式化 */
+}
+
+/* 防止选项换行，进一步压缩选中态文本占位 */
+select[name="position"] option {
+    white-space: nowrap;
+}
+
+/* --- Flex 容器通用收缩修正 [REMOVED due to hiding token counters] --- */
+/* #send_form > * { min-width: 0 !important; } */
+/* #send_form > :not(select):not(input):not(button) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+} */
+
+
+
+/* --- 代码块/思维链折叠优化 --- */
+.mes_text pre.collapsed,
+.mes_text pre.folded,
+.mes_text pre.code-collapse {
+    max-height: 35px !important;
+    overflow: hidden !important;
+    /* 核心修复：折叠时禁用阴影，防止“鬼影”溢出 */
+    text-shadow: none !important;
+    box-shadow: none !important;
 }

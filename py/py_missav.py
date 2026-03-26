@@ -253,7 +253,9 @@ class Spider(Spider):
 
     def playerContent(self, flag, pid, vipFlags):
         h2 = {
-            "User-Agent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36',
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+            "Origin": "https://missav.ai",
+            "Referer": "https://missav.ai",
         }
 
         return {"url": pid, "header": h2, "parse": 0, "jx": 0}

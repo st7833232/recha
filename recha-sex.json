@@ -475,17 +475,6 @@
       "style": {"type": "rect", "ratio": 1.5}
     },
     {
-      "key": "php_madou2",
-      "name": "🔞麻豆(沐辰)",
-      "type": 4,
-      "api": "https://json.doube.eu.org/app/index.php?site=dbmadou",
-      "jar": "./jar/xyqxbpq.jar",
-      "spider": "./jar/xyqxbpq.jar",
-      "filterable": 0,
-      "changeable": 0,
-      "style": {"type": "rect", "ratio": 1.5}
-    },
-    {
       "key": "csp_XYQHiker_麻豆社",
       "name": "🔞麻豆社",
       "type": 3,
@@ -595,67 +584,6 @@
       "style": {"type": "rect", "ratio": 1.75}
     },
     {
-      "key": "*91麻豆x",
-      "name": "🔞91麻豆┃備1",
-      "type": 1,
-      "api": "https://91md.me/api.php/provide/vod/",
-      "jar": "./jar/pg.jar",
-      "searchable": 1,
-      "quickSearch": 1
-    },
-    {
-      "key": "*91麻豆2🔞",
-      "name": "🔞91麻豆┃備2",
-      "type": 1,
-      "api": "http://www.9191md.me/api.php/provide/vod/",
-      "jar": "./jar/pg.jar",
-      "searchable": 1,
-      "quickSearch": 1
-    },
-    {
-      "key": "*91麻豆3x",
-      "name": "🔞91麻豆┃備3",
-      "type": 1,
-      "api": "http://www.md91.cc/api.php/provide/vod/",
-      "jar": "./jar/pg.jar",
-      "searchable": 1,
-      "quickSearch": 1
-    },
-    {
-      "key": "*91麻豆4x",
-      "name": "🔞91麻豆┃備4",
-      "type": 1,
-      "api": "http://www.36717.pw/api.php/provide/vod/",
-      "jar": "./jar/pg.jar",
-      "searchable": 1,
-      "quickSearch": 1
-    },
-    {
-      "key": "*91麻豆5🔞",
-      "name": "🔞91麻豆┃備5",
-      "type": 1,
-      "api": "http://www.bt4.cc/api.php/provide/vod/",
-      "jar": "./jar/pg.jar",
-      "searchable": 1,
-      "quickSearch": 1
-    },
-    {
-      "key": "麻豆",
-      "name": "🔞91麻豆┃備6",
-      "type": 1,
-      "api": "https://md91.cc/api.php/provide/vod/",
-      "jar": "./jar/xc0126.jar",
-      "filterable": 1
-    },
-    {
-      "key": "J91",
-      "name": "🔞91珍惜",
-      "type": 3,
-      "api": "csp_J91",
-      "filterable": 1,
-      "jar": "./jar/182.jar"
-    },
-    {
       "key": "91速播",
       "name": "🔞91速播",
       "type": 3,
@@ -706,32 +634,6 @@
         "播放链接": "href=\"&&\"",
         "分类url": "https://dpmnmv.xvideos4.hair/vodtype/{cateId}-{catePg}.html",
         "分类": "女神$21#美女直播$22#人妻$23#动漫$35#无码$30#有码$31#中文字幕$32#三级伦理$36"
-      }
-    },
-    {
-      "key": "小黄书",
-      "name": "🔞小黄书",
-      "type": 3,
-      "jar": "./jar/xyqxbpq.jar",
-      "api": "csp_XBPQ",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "请求头"  : "User-Agent$MOBILE_UA",
-        "过滤词"  : "https://upload.xchina.io",
-        "主页url": "https://xchina.fit/categories.html",
-        "数组"   : "item video\">&&</a",
-        "图片"   : "background-image:url('&&')",
-        "标题"   : "title=\"&&\"",
-        "简介"   : "twitter:title\" content=\"&&\"",
-        "链接"   : "href=\"&&\"",
-        "搜索模式" : "1",
-        "搜索url": "https://xchina.fit/videos/series-id/{pg}.html?wd={wd}",
-        "分类数组" : "<a&&</a",
-        "分类标题" : "title\">&&<",
-        "分类ID" : "/videos/series-&&.html",
-        "分类url": "https://xchina.fit/videos/series-{cateId}/{catePg}.html;;z"
       }
     },
         {
@@ -1390,7 +1292,7 @@
       "key": "18+採集",
       "name": "🔞送AV采集",
       "type": 1,
-      "api": "https://api.souavzy.vip/api.php/provide/vod/?ac=list",
+      "api": "https://api.souavzy.net/api.php/provide/vod/?ac=list",
       "jar": "./jar/pg.jar",
       "searchable": 1,
       "quickSearch": 1,

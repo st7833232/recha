@@ -441,12 +441,11 @@
       "key": "php_madou",
       "name": "🔞麻豆(沐辰)",
       "type": 4,
-      "api": "https://doubebly.doube.eu.org/madou.php",
+      "api": "https://php.doube.eu.org/spider/php/麻豆.php",
       "searchable": 1,
       "quickSearch": 0,
-      "filterable": 0,
       "changeable": 0,
-      "style": {"type": "rect", "ratio": 1.5}
+      "style": {"type": "rect", "ratio": 1.78}
     },
     {
       "key": "csp_XYQHiker_麻豆社",
@@ -612,7 +611,7 @@
     },
         {
             "key": "性细胞|AV",
-            "name": "性细胞｜🔞",
+            "name": "🔞｜性细胞",
             "type": 1,
             "api": "https://www.xxibaozyw.com/api.php/provide/vod/",
             "quickSearch": 1,

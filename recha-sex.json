@@ -10,7 +10,7 @@
   ],
   "logo": ".美.gif",
   "wallpaper": "https://picsum.photos/1080/",
-  "notice": "版本：115.03.26.Ver.3",
+  "notice": "版本：115.03.26.Ver.4",
   "sites": [
     {
       "key": "麻豆",
@@ -614,10 +614,11 @@
             "name": "🔞｜性细胞",
             "type": 1,
             "api": "https://www.xxibaozyw.com/api.php/provide/vod/?ac=list",
+            "header": { "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" },
             "quickSearch": 1,
             "searchable": 1,
             "filterable": 0
-        },       
+        },           
     {
       "key": "hipy_js_avtoday[密]",
       "name": "🔞AVtoday",

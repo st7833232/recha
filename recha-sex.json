@@ -608,17 +608,7 @@
         "分类url": "https://dpmnmv.xvideos4.hair/vodtype/{cateId}-{catePg}.html",
         "分类": "女神$21#美女直播$22#人妻$23#动漫$35#无码$30#有码$31#中文字幕$32#三级伦理$36"
       }
-    },
-        {
-            "key": "性细胞|AV",
-            "name": "🔞｜性细胞",
-            "type": 1,
-            "api": "https://www.xxibaozyw.com/api.php/provide/vod/?ac=list",
-            "header": { "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" },
-            "quickSearch": 1,
-            "searchable": 1,
-            "filterable": 0
-        },           
+    },         
     {
       "key": "hipy_js_avtoday[密]",
       "name": "🔞AVtoday",

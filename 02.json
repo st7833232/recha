@@ -28,7 +28,7 @@
       "ext": [ {"name": "60", "url": "http://220.134.196.147:1888"} ]
     },
     {
-      "name": "港奥台国际",
+      "name": "tv123",
       "type": 0,
       "ua": "okhttp",
       "url": "http://tv123.vvvv.ee/tv.m3u"
@@ -39,19 +39,8 @@
       "ua": "okhttp",
       "url": "http://iptv.4666888.xyz/FYTV.txt"
     },
-
     {
-      "name": "中港台頻道",
-      "type": 0,
-      "ua": "okhttp",
-      "url": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/港台大陆"
-    },
-    {
-      "name": "中港台頻道2",
-      "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E6%B8%AF%E5%8F%B0%E5%A4%A7%E9%99%86"
-    },
-    {
-      "name": "中港台頻道3",
+      "name": "鋒哥直播",
       "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E6%B8%AF%E5%8F%B0%E5%A4%A7%E9%99%86%E6%97%A018%E5%86%85%E5%AE%B9"
     },    
     {
@@ -67,7 +56,7 @@
       "url": "https://epg.pw/test_channels_taiwan.m3u"
     },
     {
-      "name": "安博🔞",
+      "name": "安博",
       "type": 0,
       "ua": "okhttp",
       "url": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/安博"
@@ -107,6 +96,12 @@
       "logo": "https://epg.112114.xyz/logo/{name}.png",
       "pass": true
     },
+    {
+      "name": "🔞老王專用直播",
+      "type": 0,
+      "ua": "okhttp",
+      "url": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/港台大陆"
+    },    
     {
       "name": "🔞祕密花園",
       "url": "./live/福利.txt",

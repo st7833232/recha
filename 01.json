@@ -679,7 +679,7 @@ function waitForMvu(callback, maxAttempts = 20) {
     checkMvu();
 }
 
-// ========== 判斷是否爲角色數據 ==========
+// ========== 判斷是否為角色數據 ==========
 function isCharacterData(obj) {
     if (!obj || typeof obj !== 'object') return false;
     const coreFields = ['基礎信息', '性經驗', '心理狀態'];
@@ -936,7 +936,7 @@ function generateCharacterCard(charKey, beauty) {
     const identity = safeGet(beauty?.基礎信息?.身份, '?');
     const thought = safeGet(beauty?.心理狀態?.當前所想, '');
     const virgin = safeGet(beauty?.性經驗?.處女, '-');
-    const sexCount = safeGet(beauty?.性經驗?.性行爲次數, 0);
+    const sexCount = safeGet(beauty?.性經驗?.性行為次數, 0);
     const sexPartners = safeGet(beauty?.性經驗?.性伴侶數量, 0);
     const heartRate = safeGet(beauty?.心跳, '?');
     
@@ -968,17 +968,41 @@ function generateCharacterCard(charKey, beauty) {
     // 背面數據 - 性經驗（擴充）
     const oralExp = safeGet(beauty?.性經驗?.口交經驗, '無');
     const analExp = safeGet(beauty?.性經驗?.肛交經驗, '無');
-    const firstTimePartner = safeGet(beauty?.性經驗?.初次性行爲對象, '無');
+    const firstTimePartner = safeGet(beauty?.性經驗?.初次性行為對象, '無');
     const sexExpLevel = safeGet(beauty?.性經驗?.性交經驗, '無');
     
-    // 背面數據 - 性癖好
-    let fetishes = beauty?.性癖好;
-    if (!Array.isArray(fetishes) && typeof fetishes === 'object') {
-        fetishes = Object.values(fetishes);
+// 背面數據 - 性癖好（支持數組和對象兩種格式）
+let fetishes = beauty?.性癖好;
+let fetishesArray = [];
+
+if (Array.isArray(fetishes)) {
+    // 如果是數組，直接使用
+    fetishesArray = fetishes;
+} else if (fetishes && typeof fetishes === 'object') {
+    // 如果是對象，遍歷提取
+    for (const [fetishName, fetishData] of Object.entries(fetishes)) {
+        if (fetishName === '$meta') continue;
+        
+        let description = '';
+        if (fetishData && typeof fetishData === 'object') {
+            if (fetishData.描述 && Array.isArray(fetishData.描述)) {
+                description = fetishData.描述[0] || '';
+            } else if (fetishData.description && Array.isArray(fetishData.description)) {
+                description = fetishData.description[0] || '';
+            }
+        }
+        
+        fetishesArray.push({
+            name: fetishName,
+            description: description
+        });
     }
-    if (!fetishes || fetishes.length === 0) fetishes = ['無'];
+}
+
+if (fetishesArray.length === 0) fetishesArray = ['無'];
+fetishes = fetishesArray;
     
-let importantEvents = beauty?.重要性經歷;
+let importantEvents = beauty?.重要經歷;
 let eventsArray = [];
 
 if (importantEvents && typeof importantEvents === 'object') {
@@ -986,15 +1010,18 @@ if (importantEvents && typeof importantEvents === 'object') {
         if (eventName === '$meta') continue;
         
         let description = '';
-        if (eventData && typeof eventData === 'object') {
-            // 嘗試獲取描述
+        if (Array.isArray(eventData)) {
+            // 數組格式：["描述", "類型"]
+            description = eventData[0] || '';
+        } else if (eventData && typeof eventData === 'object') {
+            // 對象格式：{ "描述": [...] }
             if (eventData.描述 && Array.isArray(eventData.描述)) {
                 description = eventData.描述[0] || '';
             } else if (eventData.description && Array.isArray(eventData.description)) {
                 description = eventData.description[0] || '';
-            } else if (typeof eventData === 'string') {
-                description = eventData;
             }
+        } else if (typeof eventData === 'string') {
+            description = eventData;
         }
         
         eventsArray.push({
@@ -1016,12 +1043,18 @@ if (sensitiveSpots && typeof sensitiveSpots === 'object') {
         if (spotName === '$meta') continue;
         
         let reaction = '';
-        if (spotData && typeof spotData === 'object') {
+        if (Array.isArray(spotData)) {
+            // 數組格式：["反應描述", "類型"]
+            reaction = spotData[0] || '';
+        } else if (spotData && typeof spotData === 'object') {
+            // 對象格式：{ "反應描述": [...] }
             if (spotData.反應描述 && Array.isArray(spotData.反應描述)) {
                 reaction = spotData.反應描述[0] || '';
             } else if (spotData.reaction && Array.isArray(spotData.reaction)) {
                 reaction = spotData.reaction[0] || '';
             }
+        } else if (typeof spotData === 'string') {
+            reaction = spotData;
         }
         
         spotsArray.push({ name: spotName, reaction: reaction });
@@ -1041,14 +1074,18 @@ if (guilt && typeof guilt === 'object') {
         if (eventName === '$meta') continue;
         
         let feeling = '';
-        if (eventData && typeof eventData === 'object') {
+        if (Array.isArray(eventData)) {
+            // 數組格式：["感受", "類型"]
+            feeling = eventData[0] || '';
+        } else if (eventData && typeof eventData === 'object') {
+            // 對象格式：{ "當下感受": [...] }
             if (eventData.當下感受 && Array.isArray(eventData.當下感受)) {
                 feeling = eventData.當下感受[0] || '';
             } else if (eventData.feeling && Array.isArray(eventData.feeling)) {
                 feeling = eventData.feeling[0] || '';
-            } else if (typeof eventData === 'string') {
-                feeling = eventData;
             }
+        } else if (typeof eventData === 'string') {
+            feeling = eventData;
         }
         
         if (feeling) {
@@ -1068,19 +1105,19 @@ if (guilt && typeof guilt === 'object') {
     const collapsedClass = shouldCollapse ? 'collapsed' : '';
     const btnIcon = shouldCollapse ? ICONS.pinFilled : ICONS.pin;
     
-    // 生成性癖好HTML
-    const fetishesHtml = fetishes.map(f => {
-        if (typeof f === 'object') {
-            return `<div class="fetish-item">
-                        <span class="fetish-name">${escapeHtml(f.name || '未知')}</span>
-                        <span class="fetish-desc">${escapeHtml(f.description || '')}</span>
-                        ${f.time ? `<span class="fetish-time">${escapeHtml(f.time)}</span>` : ''}
-                    </div>`;
-        }
-        return `<div class="fetish-item"><span class="fetish-name">${escapeHtml(f)}</span></div>`;
-    }).join('');
+// 生成性癖好HTML
+const fetishesHtml = fetishes.map(f => {
+    if (typeof f === 'object' && f !== null) {
+        return `<div class="fetish-item">
+                    <span class="fetish-name">${escapeHtml(f.name || '未知')}</span>
+                    <span class="fetish-desc">${escapeHtml(f.description || '')}</span>
+                </div>`;
+    }
+    // 如果是字符串
+    return `<div class="fetish-item"><span class="fetish-name">${escapeHtml(f)}</span></div>`;
+}).join('');
     
-    // 生成重要性經歷HTML
+    // 生成重要經歷HTML
     const eventsHtml = importantEvents.map(e => {
         if (typeof e === 'object') {
             return `<div class="event-item">
@@ -1130,7 +1167,7 @@ if (guilt && typeof guilt === 'object') {
                         <div class="section-block-card">
                             <div class="section-header-card">❤️ 親密關係</div>
                             <div class="info-row-card"><span class="label-card">處女</span><span class="value-card">${escapeHtml(virgin)}</span></div>
-                            <div class="info-row-card"><span class="label-card">性行爲次數</span><span class="value-card">${sexCount === 0 ? '0次' : sexCount + '次'}</span></div>
+                            <div class="info-row-card"><span class="label-card">性行為次數</span><span class="value-card">${sexCount === 0 ? '0次' : sexCount + '次'}</span></div>
                             <div class="info-row-card"><span class="label-card">性伴侶數量</span><span class="value-card">${sexPartners === 0 ? '0人' : sexPartners + '人'}</span></div>
                             <div class="info-row-card"><span class="label-card">心跳</span><span class="value-card">${escapeHtml(heartRate)}次/分</span></div>
                         </div>
@@ -1192,7 +1229,7 @@ if (guilt && typeof guilt === 'object') {
                         <div class="physiology-grid">
                             <div class="physiology-item"><span class="physiology-label">處女</span><span class="physiology-value">${escapeHtml(virgin)}</span></div>
                             <div class="physiology-item"><span class="physiology-label">性經驗等級</span><span class="physiology-value">${escapeHtml(sexExpLevel)}</span></div>
-                            <div class="physiology-item"><span class="physiology-label">性行爲次數</span><span class="physiology-value">${sexCount === 0 ? '0次' : sexCount + '次'}</span></div>
+                            <div class="physiology-item"><span class="physiology-label">性行為次數</span><span class="physiology-value">${sexCount === 0 ? '0次' : sexCount + '次'}</span></div>
                             <div class="physiology-item"><span class="physiology-label">性伴侶數量</span><span class="physiology-value">${sexPartners === 0 ? '0人' : sexPartners + '人'}</span></div>
                             <div class="physiology-item"><span class="physiology-label">口交經驗</span><span class="physiology-value">${escapeHtml(oralExp)}</span></div>
                             <div class="physiology-item"><span class="physiology-label">肛交經驗</span><span class="physiology-value">${escapeHtml(analExp)}</span></div>
@@ -1211,8 +1248,8 @@ if (guilt && typeof guilt === 'object') {
                             ${spotsHtml}
                         </div>
                                                
-                        <!-- 重要性經歷 -->
-                        <div class="back-section-title">📖 重要性經歷</div>
+                        <!-- 重要經歷 -->
+                        <div class="back-section-title">📖 重要經歷</div>
                         <div class="events-grid">
                             ${eventsHtml}
                         </div>
@@ -1492,11 +1529,11 @@ async function syncAllCharactersEntry(worldbooks, charKey, beauty) {
         
         // 添加性經驗
         const virgin = safeGet(beauty?.性經驗?.處女, '-');
-        const sexCount = safeGet(beauty?.性經驗?.性行爲次數, 0);
+        const sexCount = safeGet(beauty?.性經驗?.性行為次數, 0);
         const sexPartners = safeGet(beauty?.性經驗?.性伴侶數量, 0);
         
         characterEntry += `處女: ${virgin}\n`;
-        characterEntry += `性行爲次數: ${sexCount}次\n`;
+        characterEntry += `性行為次數: ${sexCount}次\n`;
         characterEntry += `性伴侶數量: ${sexPartners}人\n`;
         
         // 添加當前所想
@@ -1580,11 +1617,11 @@ function buildSimpleCharacterYAML(charKey, beauty) {
     
     // 性經驗
     const virgin = safeGet(beauty?.性經驗?.處女, '-');
-    const sexCount = safeGet(beauty?.性經驗?.性行爲次數, 0);
+    const sexCount = safeGet(beauty?.性經驗?.性行為次數, 0);
     const sexPartners = safeGet(beauty?.性經驗?.性伴侶數量, 0);
     const oralExp = safeGet(beauty?.性經驗?.口交經驗, '無');
     const analExp = safeGet(beauty?.性經驗?.肛交經驗, '無');
-    const firstTimePartner = safeGet(beauty?.性經驗?.初次性行爲對象, '無');
+    const firstTimePartner = safeGet(beauty?.性經驗?.初次性行為對象, '無');
     
     // 生理狀態
     const secretion = safeGet(beauty?.生理狀態?.體液分泌, '正常');
@@ -1636,11 +1673,11 @@ function buildSimpleCharacterYAML(charKey, beauty) {
     
     yaml += `\n  # ========== 性經驗 ==========\n`;
     yaml += `  處女: ${virgin}\n`;
-    yaml += `  性行爲次數: ${sexCount}次\n`;
+    yaml += `  性行為次數: ${sexCount}次\n`;
     yaml += `  性伴侶數量: ${sexPartners}人\n`;
     yaml += `  口交經驗: ${oralExp}\n`;
     yaml += `  肛交經驗: ${analExp}\n`;
-    yaml += `  初次性行爲對象: ${firstTimePartner}\n`;
+    yaml += `  初次性行為對象: ${firstTimePartner}\n`;
     
     yaml += `\n  # ========== 生理狀態 ==========\n`;
     yaml += `  體液分泌: ${secretion}\n`;

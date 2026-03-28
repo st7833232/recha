@@ -2,11 +2,11 @@
   "spider": "./jar/xiaosa-0306.jar;md5;f027984f04ff6dfec61d21f3db26389f",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.03.19_Ver.1",
+  "notice": "115.03.28_Ver.1",
   "sites": [
     {
       "key": "py_mv4r4",
-      "name": "有兮｜測試",
+      "name": "有兮｜4K",
       "type": 3,
       "api": "./py/1.py",
       "searchable": 1,
@@ -22,6 +22,20 @@
       "quickSearch": 0,
       "changeable": 0
     },
+    {
+      "key": "喜马拉雅",
+      "name": "🎖︎｜喜馬拉雅｜有聲書",
+      "type": 3,
+      "api": "./py/喜马拉雅.py",
+      "style": {"type": "rect", "ratio": 1.333},
+      "ext": ""
+    },
+    {
+      "key": "喜马拉雅2",
+      "name": "🎖︎｜喜馬拉雅2｜有聲書",
+      "type": 3,
+      "api": "./py/ximalaya.py"
+    },    
     {
       "key": "GoConfig",
       "name": "🇹🇼｜熱播排行榜｜自動切換1",
@@ -1511,14 +1525,7 @@
       "type": 4,
       "api": "https://catbox.n13.club/t9/xingzhige.php"
     },
-    {
-      "key": "喜马拉雅",
-      "name": "🎖︎｜喜馬拉雅｜有聲書",
-      "type": 3,
-      "api": "./py/喜马拉雅.py",
-      "style": {"type": "rect", "ratio": 1.333},
-      "ext": ""
-    },
+
     {
       "key": "六月听书",
       "name": "🎖︎｜六月｜有聲書",

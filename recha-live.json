@@ -3,144 +3,8 @@
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://tv.nxog.top/m/t/",
   "lives": [
-
-    
     {
-      "name": "60酒店源",
-      "type": 3,
-      "jar": "https://5413.kstore.space/DM/jar/fm.jar",
-      "api": "csp_MQiTV",
-      "epg": "https://gitee.com/taksssss/tv/raw/main/epg/epgpw_tw.xml.gz",
-      "ext": [
-        {
-          "name": "60",
-          "url": "http://220.134.196.147:1888"
-        }
-      ]
-    },
-       {
-            "name": "港奥台国际",
-            "type": 0,
-            "ua": "okhttp",
-            "url": "http://tv123.vvvv.ee/tv.m3u"
-        },
-        {
-            "name": "風雲源",
-            "type": 0,
-            "ua": "okhttp",
-            "url": "http://iptv.4666888.xyz/FYTV.txt"
-        },
-        {
-            "name": "中港台直播源",
-            "type": 0,
-            "ua": "okhttp",
-            "url": "https://t.freetv.fun/m3u/playlist.txt"
-        },
-
-        {
-            "name": "小螞蟻直播",
-            "type": 0,
-            "ua": "okhttp",
-            "url": "http://ge.html-5.me//ii/%E5%B0%8F%F0%9F%90%9C%E8%9A%82%E8%9A%81%E7%9B%B4%E6%92%AD%EF%BC%88%E5%BF%85%E9%A1%BB%E7%94%A8%E7%A7%91%E5%AD%A6%E5%B7%A5%E5%85%B7%E5%8F%B0%E6%B9%BE%E8%8A%82%E7%82%B9%E7%BE%8E%E5%9B%BD%E8%8A%82%E7%82%B9%EF%BC%89.txt"
-        },
-        {
-            "name": "台湾频道",
-            "type": 0,
-            "ua": "okhttp",
-            "url": "https://epg.pw/test_channels_taiwan.m3u"
-        },
-        {
-            "name": "安博🔞",
-            "type": 0,
-            "ua": "okhttp",
-            "url": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/安博"
-        },
-        {
-            "name": "港台大陆频道🔞",
-            "type": 0,
-            "ua": "okhttp",
-            "url": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/港台大陆"
-        },
-    {
-      "name": "Dream",
-      "url": "http://hufa.zabc.net:8080/dream.txt",
-      "ua":"okhttp/5.1.0"
-    },    
-    {
-      "name": "斯馬特",
-      "url": "http://52xinghe.top/smmmt.php"
-    },        
-    {
-      "name": "港台大陆频道",
-      "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E6%B8%AF%E5%8F%B0%E5%A4%A7%E9%99%86"
-    },         
-    {
-      "name": "海豚直播",
-      "url": "http://hufa.zabc.net:8080/iptvpro.txt",
-      "ua":"okhttp/5.1.0"
-    },    
-    {"name": "大街直播", "url": "./live/綜合大街.txt"},
-        {
-            "name": "4GTV",
-            "type": 0,
-            "ua": "okhttp",
-            "url": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/4gtv"
-        },
-    {
-      "name": "纯血4g",
-      "url": "http://dreamtv.sylu.net:2082/m3u8view?token=lxbjj8O2w50t7jTlHHZVNvjQR_SxVy86CKier7PVtDGLWgE1ojaO69xOwH_FyNfw",
-      "playerType": 2,
-      "epg": "https://gitee.com/taksssss/tv/raw/main/epg/112114.xml.gz,https://gitee.com/taksssss/tv/raw/main/epg/epgpw_tw.xml.gz，http://epg.52sw.top:668/?ch={name}&date={date}",
-      "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
-    },
-    {
-      "name": "93酒店源",
-      "type": 0,
-      "url": "./live/93.txt",
-      "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
-      "logo": "https://epg.112114.eu.org/logo/{name}.png",
-      "pass": true
-    },
-    {
-      "name": "147酒店源",
-      "type": 0,
-      "url": "./live/147.txt",
-      "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
-      "logo": "https://epg.112114.eu.org/logo/{name}.png",
-      "pass": true
-    },
-    {
-      "name": "211酒店源",
-      "type": 0,
-      "url": "./live/211.txt",
-      "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
-      "logo": "https://epg.112114.eu.org/logo/{name}.png",
-      "pass": true
-    },
-    {
-      "name": "沐辰直播(Litv)",
-      "type": 3,
-      "api": "./py/live_litv.py",
-      "ext": {},
-      "pass": true
-    },
-    {
-      "name": "貓抓",
-      "url" : "https://live.catvod.com/tv.m3u",
-      "ua"  : "catvod.com"
-    },
-    {
-      "name": "港台頻道",
-      "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E6%B8%AF%E5%8F%B0%E5%A4%A7%E9%99%86%E6%97%A018%E5%86%85%E5%AE%B9"
-    },    
-    {
-      "name": "立方直播",
-      "url": "http://breezy-audrie-zspace-7524863c.koyeb.app/sub?type=m3u&token=leifeng",
-      "timeout": 5,
-      "pass": true
-    },
-    {
-      "name": "Free TV",
+      "name": "Free Man TV",
       "url": "https://media0501.github.io/Freemedia/520freerecha@tv.txt",
       "type": 0,
       "timeout": 10,
@@ -149,6 +13,66 @@
       "logo": "https://epg.112114.xyz/logo/{name}.png",
       "epg": "http://epg.112114.xyz/?ch={name}&date={date}"
     },
+    {
+      "name": "FreeTV.fun",
+      "type": 0,
+      "ua": "okhttp",
+      "url": "https://t.freetv.fun/m3u/playlist.txt"
+    },    
+    {
+      "name": "60酒店源",
+      "type": 3,
+      "jar": "https://5413.kstore.space/DM/jar/fm.jar",
+      "api": "csp_MQiTV",
+      "epg": "https://gitee.com/taksssss/tv/raw/main/epg/epgpw_tw.xml.gz",
+      "ext": [ {"name": "60", "url": "http://220.134.196.147:1888"} ]
+    },
+    {
+      "name": "港奥台国际",
+      "type": 0,
+      "ua": "okhttp",
+      "url": "http://tv123.vvvv.ee/tv.m3u"
+    },
+    {
+      "name": "風雲源",
+      "type": 0,
+      "ua": "okhttp",
+      "url": "http://iptv.4666888.xyz/FYTV.txt"
+    },
+
+    {
+      "name": "中港台頻道",
+      "type": 0,
+      "ua": "okhttp",
+      "url": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/港台大陆"
+    },
+    {
+      "name": "中港台頻道2",
+      "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E6%B8%AF%E5%8F%B0%E5%A4%A7%E9%99%86"
+    },
+    {
+      "name": "中港台頻道3",
+      "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E6%B8%AF%E5%8F%B0%E5%A4%A7%E9%99%86%E6%97%A018%E5%86%85%E5%AE%B9"
+    },    
+    {
+      "name": "小螞蟻直播",
+      "type": 0,
+      "ua": "okhttp",
+      "url": "http://ge.html-5.me//ii/%E5%B0%8F%F0%9F%90%9C%E8%9A%82%E8%9A%81%E7%9B%B4%E6%92%AD%EF%BC%88%E5%BF%85%E9%A1%BB%E7%94%A8%E7%A7%91%E5%AD%A6%E5%B7%A5%E5%85%B7%E5%8F%B0%E6%B9%BE%E8%8A%82%E7%82%B9%E7%BE%8E%E5%9B%BD%E8%8A%82%E7%82%B9%EF%BC%89.txt"
+    },
+    {
+      "name": "台湾频道",
+      "type": 0,
+      "ua": "okhttp",
+      "url": "https://epg.pw/test_channels_taiwan.m3u"
+    },
+    {
+      "name": "安博🔞",
+      "type": 0,
+      "ua": "okhttp",
+      "url": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/安博"
+    },
+
     {
       "name": "香蕉-Gather",
       "url": "https://tv.iill.top/m3u/Gather",
@@ -164,32 +88,7 @@
       "pass": true
     },
     {
-      "name": "香蕉-LIVE",
-      "url": "https://tv.iill.top/m3u/Live",
-      "epg": "http://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Taipei",
-      "pass": true
-    },
-    {
-      "name": "ROB JTV",
-      "url": "./live/jtv.txt",
-      "ua": "okhttp/3.15",
-      "timeout": 5,
-      "epg": "https://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/taipei",
-      "logo": "https://epg.112114.xyz/logo/{name}.png",
-      "pass": true
-    },
-    {
-      "name": "RobYang| http://RobYang.ggff.net",
-      "type": 0,
-      "url": "http://www1.RobYang.ggff.net/VodLive/lb8ffa",
-      "ua": "okhttp/4.12.0",
-      "timeout": 5,
-      "epg": "https://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Hong_Kong",
-      "logo": "https://epg.112114.xyz/logo/{name}.png",
-      "pass": true
-    },
-    {
-      "name": "RobYang備1| http://RobYang.dpdns.org",
+      "name": "RobYang| http://RobYang.dpdns.org",
       "type": 0,
       "url": "http://www1.RobYang.dpdns.org/VodLive/lb8ffa",
       "ua": "okhttp/4.12.0",
@@ -199,7 +98,7 @@
       "pass": true
     },
     {
-      "name": "RobYang備2| http://RobYang.rr.nu",
+      "name": "RobYang備份| http://RobYang.rr.nu",
       "type": 0,
       "url": "http://RobYang.runasp.net/VodLive/lb8ffa",
       "ua": "okhttp/4.12.0",
@@ -207,77 +106,20 @@
       "epg": "https://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Hong_Kong",
       "logo": "https://epg.112114.xyz/logo/{name}.png",
       "pass": true
-    },  
-		{
-			"name": "🔞秘密花园",
-			"type": 0,
-			"url": "https://down.nigx.cn/mmhy.zzong6599.workers.dev",
-			"playerType": 1,
-			"epg": "http://diyp5.112114.xyz/?ch={name}&date={date}",
-			"logo": "http://diyp5.112114.xyz/{name}.png"
-		},    
+    },
     {
-      "name": "🔞福利",
+      "name": "🔞祕密花園",
       "url": "./live/福利.txt",
       "type": 0,
       "timeout": 10,
       "ua": "okhttp/3.8.1 okhttp/3.15 okhttp/4.12.0 Herissmon/2016 judy/5.2.1 RobYang/5.2.1 Lavf/58.12.100 catvod.com Goiptv/8.8.8 Goiptv/0.0.1 xieanqishiwoerzi/0.0.1 okHttp/Mod-1.0.0",
       "logo": "https://epg.112114.xyz/logo/{name}.png",
       "epg": "http://epg.112114.xyz/?ch={name}&date={date}"
-    },    
-    {
-      "name": "🔞海角色區",
-      "url": "https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/%E6%B5%B7%E8%A7%92%E7%A4%BE%E5%8C%BA%E5%8D%9A%E4%B8%BB(%E5%85%8D%E7%95%AA%E5%BC%BA)"
-    },
-    {
-      "name": "日本直播台",
-      "type": 0,
-      "ua": "AptvPlayer/1.3.3",
-      "url": "https://raw.githubusercontent.com/luongz/iptv-jp/refs/heads/main/jp.m3u",
-      "timeout": 5,
-      "epg": "https://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Hong_Kong",
-      "logo": "https://epg.112114.xyz/logo/{name}.png",
-      "jar": "https://fm.t4tv.hz.cz/jar/custom_spider.jar",
-      "pass": true
-    },
-    {
-      "name": "日本直播台2",
-      "type": 0,
-      "ua": "AptvPlayer/1.3.3",
-      "url": "https://raw.githubusercontent.com/luongz/iptv-jp/refs/heads/main/jp_clean.m3u",
-      "timeout": 5,
-      "epg": "https://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Hong_Kong",
-      "logo": "https://epg.112114.xyz/logo/{name}.png",
-      "jar": "https://fm.t4tv.hz.cz/jar/custom_spider.jar",
-      "pass": true
-    },
-    {
-      "name": "抖音、斗鱼、B站、YY、Afreeca、Youtube",
-      "type": 0,
-      "url": "https://tv.iill.top/m3u/Live",
-      "playerType": 2,
-      "ua": "okhttp/3",
-      "epg": "https://epg.112114.eu.org/?ch={name}&date={date}&serverTimeZone=Asia/Taipei",
-      "logo": "https://epg.112114.eu.org/logo/{name}.png"
-    },
-    {
-      "name": "台灣景點直播",
-      "playerType": 2,
-      "url": "https://freeman.neocities.org/520free@TW-LiveCAM.txt",
-      "ua": "okhttp/4.12",
-      "epg": "http://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Taipei"
     },
     {
       "name": "台灣景點直播(freeman)",
       "playerType": 2,
       "url": "https://freeman.neocities.org/520free@TW-LiveCAM.txt",
-      "ua": "okhttp/4.12",
-      "epg": "http://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Taipei"
-    },
-    {
-      "name": "大陸景點直播",
-      "playerType": 2,
-      "url": "./live/11.txt",
       "ua": "okhttp/4.12",
       "epg": "http://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Taipei"
     }

@@ -5,51 +5,7 @@
   "notice": "115.04.02_Ver.1",
   "sites": [
 
-{
-  "key": "模拟器",
-  "name": "羊佬壳游戏",
-  "type": 3,
-  "api": "./js/云游.js"
- },
-{
-      "key": "drpyS_听友[听]",
-      "name": "🎧听友",
-      "type": 4,
-      "api": "http://149.118.133.251:5757/api/听友[听]",
-      "searchable": 2,
-      "filterable": 1,
-      "quickSearch": 0,
-      "title": "听友[听]",
-      "类型": "听书",
-      "lang": "ds",
-      "ext": ""
-    },    
-    {
-      "key": "喜马拉雅",
-      "name": "🎖︎｜喜馬拉雅｜有聲書",
-      "type": 3,
-      "api": "./py/喜马拉雅.py",
-      "style": {"type": "rect", "ratio": 1.333},
-      "ext": ""
-    },
-    {
-      "key": "喜马拉雅2",
-      "name": "🎖︎｜喜馬拉雅2｜有聲書",
-      "type": 3,
-      "api": "./py/ximalaya.py"
-    },    
-    {
-      "key": "GoConfig",
-      "name": "🇹🇼｜熱播排行榜｜自動切換1",
-      "type": 3,
-      "api": "csp_GoConfigAmns",
-      "jar": "./jar/aowu.jar;md5;29ee0730017660db62f57a585cd1aeb6",
-      "indexs": 1,
-      "searchable": 0,
-      "filterable": 0,
-      "quickSearch": 0,
-      "changeable": 0
-    },
+
     {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換2",
@@ -562,6 +518,45 @@
       },
       "timeout": 20
     },
+{
+      "key": "drpyS_听友[听]",
+      "name": "🎧｜听友｜有聲書",
+      "type": 4,
+      "api": "http://149.118.133.251:5757/api/听友[听]",
+      "searchable": 2,
+      "filterable": 1,
+      "quickSearch": 0,
+      "title": "听友[听]",
+      "类型": "听书",
+      "lang": "ds",
+      "ext": ""
+    },    
+    {
+      "key": "喜马拉雅",
+      "name": "🎖︎｜喜馬拉雅｜有聲書",
+      "type": 3,
+      "api": "./py/喜马拉雅.py",
+      "style": {"type": "rect", "ratio": 1.333},
+      "ext": ""
+    },
+    {
+      "key": "喜马拉雅2",
+      "name": "🎖︎｜喜馬拉雅2｜有聲書",
+      "type": 3,
+      "api": "./py/ximalaya.py"
+    },    
+    {
+      "key": "GoConfig",
+      "name": "🇹🇼｜熱播排行榜｜自動切換1",
+      "type": 3,
+      "api": "csp_GoConfigAmns",
+      "jar": "./jar/aowu.jar;md5;29ee0730017660db62f57a585cd1aeb6",
+      "indexs": 1,
+      "searchable": 0,
+      "filterable": 0,
+      "quickSearch": 0,
+      "changeable": 0
+    },    
     {
       "key": "py_愛電影.py",
       "name": "🏆｜金牌系列-愛電影",

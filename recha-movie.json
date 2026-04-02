@@ -2,14 +2,14 @@
   "spider": "./jar/xiaosa-0306.jar;md5;f027984f04ff6dfec61d21f3db26389f",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.04.01_Ver.1",
+  "notice": "115.04.02_Ver.1",
   "sites": [
 
 {
   "key": "模拟器",
   "name": "羊佬壳游戏",
   "type": 3,
-  "api": "/js/云游.js"
+  "api": "./js/云游.js"
  },
 {
       "key": "drpyS_听友[听]",

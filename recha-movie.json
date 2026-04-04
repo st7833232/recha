@@ -8,7 +8,7 @@
 
     {
       "key": "豆瓣",
-      "name": "🇹🇼｜熱播排行榜｜自動切換2",
+      "name": "🇹🇼｜熱播排行榜｜自動切換",
       "type": 3,
       "api": "csp_Douban",
       "searchable": 0,
@@ -17,7 +17,7 @@
     },
     {
       "key": "豆瓣2",
-      "name": "🇹🇼｜點播搜索｜可選站2",
+      "name": "🇹🇼｜熱播排行榜｜可選站",
       "type": 3,
       "api": "csp_Douban",
       "spider": "./jar/pg.jar;md5;e56f6e07a8bd2bcfb1a14c6e3c99aa26",

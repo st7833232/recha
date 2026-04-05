@@ -10,7 +10,7 @@
   ],
   "logo": ".美.gif",
   "wallpaper": "https://picsum.photos/1080/",
-  "notice": "版本：115.03.26.Ver.4",
+  "notice": "版本：115.04.05.Ver.2",
 
   "sites": [
     {
@@ -231,7 +231,15 @@
         "分类ID": "/vodtype/&&/"
       }
     },
-{
+        {
+      "key": "极乐国产禁区",
+      "name": "极乐国产🔞",
+      "type": 3,
+      "api": "csp_XBPQ",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": {
   "作者": "暗黑乐哥",
   "请求头": "User-Agent$MOBILE_UA",
   "编码": "UTF-8",
@@ -259,6 +267,7 @@
   "简介": "【友情提醒：请不要相信视频中的广告，以免上当受骗！】",
   "搜索模式": "1",
   "搜索url": "http://1617ck.cc/vodsearch/{wd}----------{pg}---.html"
+}
 },    
     {
       "key": "麻豆",

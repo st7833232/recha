@@ -10,178 +10,8 @@
   ],
   "logo"     : ".美.gif",
   "wallpaper": "https://picsum.photos/1080/",
-  "notice"   : "版本：115.04.05.Ver.4",
+  "notice"   : "版本：115.04.06.Ver.2",
   "sites"    : [
-
-
-
-
-    {
-      "key"       : "XX-1",
-      "name"      : "XX-1",
-      "type"      : 3,
-      "changeable": 1,
-      "filterable": 1,
-      "api"       : "csp_XBPQ",
-      "jar"       : "./jar/xyqxbpq.jar",
-      "style"     : {"ratio": 1.7},
-      "ext"       : {
-  "作者": "暗黑乐哥",
-  "请求头": "User-Agent$MOBILE_UA",
-  "编码": "UTF-8",
-  "站名": "超AAAA精品",
-  "发布页": "",
-  "防丢url": "",
-  "主页url": "https://gxxxx13.xyz/123/",
-  "分类url": "https://gxxxx13.xyz/123/index.php/vod/type/id/{cateId}/page/{catePg}.html",
-  "分类二次截取": "class=\"txtguanggao2&&</ul>",
-  "分类数组": "<a&&/a>",
-  "分类标题": ">&&<",
-  "分类ID": "/123/index.php/vod/type/id/&&.html",
-  "二次截取": "",
-  "数组": "lazyload&&</li>",
-  "链接": "href=\"&&\"",
-  "标题": "title=\"&&\"",
-  "图片": "data-original=\"&&\"",
-  "副标题": "text-right\">&&</span>",
-  "线路数组": "<h1 class=\"title\">&&</h1>",
-  "线路标题": "✨精品专线",
-  "播放数组": "var player&&</script>",
-  "播放列表": "url\":&&,\"",
-  "播放标题": "✨正在播放",
-  "播放链接": "\"&&\"",
-  "简介": "【友情提醒：请不要相信视频中的广告，以免上当受骗！】",
-  "搜索模式": "1",
-  "搜索url": "https://gxxxx13.xyz/123/index.php/vod/search/page/{pg}/wd/{wd}.html"
-}
-    },
-{
-"key": "极乐国产禁区",
-"name": "极乐国产🔞",
-"type": 3,
-"api": "csp_XBPQ",
-      "jar"       : "./jar/xyqxbpq.jar",
-"searchable": 1,
-"quickSearch": 1,
-"filterable": 1,
-"ext": {
-"请求头": "User-Agent$MOBILE_UA",
-"编码": "UTF-8",
-"主页url": "https://iegeewiet-4mag.hscwang26y2m.xyz/jlhs",
-"二次截取": "thumbnail-group&&<script>",
-"数组": "<li&&</li>",
-"标题": ">&&</a></h5>",
-"副标题": "🔞少看少撸",
-"图片": "data-original=\"&&\"",
-"链接": "/vodplay/+/voddetail/&&/+-1-1/",
-"直接播放": "1",
-"分类url": "https://iegeewiet4mag.hscwang26y2m.xyz/vodtype/{cateId}-{catePg}/",
-"分类数组": "<dd&&/dd>",
-"分类标题": ">&&</a",
-"分类ID": "/vodtype/&&/"
-}
-},
-        {
-            "key": "臭泥影院",
-            "name": "臭泥影院",
-            "type": 3,
-            "api": "csp_XBPQ",
-            "jar": "./jar/xyqxbpq.jar",
-            "searchable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "ext": {
-                "请求头": "User-Agent$MOBILE_UA#Referer$https://www.csoni.cc/",
-                "编码": "UTF-8",
-                "主页url": "https://www.csoni.cc/",
-                "数组": "stui-vodlist__box\">&&</a>",
-                "标题": "title=\"&&\"",
-                "副标题": "text-right\">&&</span>",
-                "链接": "href=\"&&\"",
-                "图片": "data-original=\"&&\"",
-                "图片请求头": "User-Agent$MOBILE_UA",
-                "图片代理": "1",
-                "简介": "<p>简介：&&</p>",
-                "跳转播放链接": "var player_aaaa*\"url\":\"&&\"",
-                "播放数组": "stui-play__list clearfix\">&&</li>",
-                "播放列表": "<a&&/a>",
-                "播放标题": ">&&<",
-                "播放链接": "href=\"&&\"",
-                "分类url": "https://www.csoni.cc/csotype/{cateId}-{catePg}.html",
-                "分类": "新品日韩$20#中文字幕$21#短片本土$22#大胸美女$23#剧情暴力$24#制服扮演$25#人妻御姐$26#无马专区$27#动漫卡通$28#名人系列$29#欧美大片$30"
-            }
-        },
-    {
-      "key"        : "jp  spankbang2",
-      "name"       : "日本SB高质梯2",
-      "type"       : 3,
-      "jar"        : "./jar/xyqxbpq.jar",
-      "api"        : "csp_XBPQ",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "ext"        : {
-        "分类url": "https://jp.spankbang.com/{cateId}/{catePg}/;;z",
-        "分类": "Spankbang Gold$1gk/channel/spankbang+gold#CamSoda$19/channel/camsoda#FAMILYxxx$j2/channel/familyxxx#Cuck Hunter$1e2/channel/cuck+hunter#Spizoo$bz/channel/spizoo#MrLuckyLife$ut/channel/mrluckylife#XL Girls$15j/channel/xl+girls#Fantasy Massage$7h/channel/fantasy+massage#Blacked$2c/channel/blacked#NF Busty$ch/channel/nf+busty#BBCPIE$ns/channel/bbcpie#Adult Time$7r/channel/adult+time#Mommys Girl$7j/channel/mommys+girl#Daddy4K$1q/channel/daddy4k#FuckMyJeans$h2/channel/fuckmyjeans#Blacks on Blondes$ne/channel/blacks+on+blondes#Cuck4k$pb/channel/cuck4k#Taboo Heat$9s/channel/taboo+heat#Just Taboo$1cg/channel/just+taboo#MrLuckyRaw$uu/channel/mrluckyraw#HeyOutdoor$115/channel/heyoutdoor#Premium GFs$16a/channel/premium+gfs#MilfsDay.com$4y8/channel/milfsday+com#NakedSword$113/channel/nakedsword#Africa-XXX$121/channel/africa+xxx#African POV$4xu/channel/african+pov#Anal Licking GFs$178/channel/anal+licking+gfs#Grooby.Club$1eg/channel/grooby+club#Bobs Tgirls$13o/channel/bobs+tgirls#StepFamSex$1gn/channel/stepfamsex#LustForBoys$10v/channel/lustforboys#See Him Fuck BTS$1gp/channel/see+him+fuck+bts#GoonMuse$1gg/channel/goonmuse#LetsDoeIt Bonus$4y1/channel/letsdoeit+bonus#Sexmex$1ai/channel/sexmex#Squirting Fun$1a6/channel/squirting+fun#dhtestuserta3_channel$1dn/channel/dhtestuserta3+channel#All Pornsites Pass$12k/channel/all+pornsites+pass#Vixen Plus+$11d/channel/vixen+plus#Big Cocks Porn$130/channel/big+cocks+porn#Kams$4y5/channel/kams#Fuck A Fan$1aa/channel/fuck+a+fan#Immoral POV$1a9/channel/immoral+pov"
-      }
-    },
-    {
-      "key"        : "叔捅妓",
-      "name"       : "叔捅妓",
-      "type"       : 3,
-      "api"        : "csp_XBPQ",
-      "jar"        : "./jar/XBPQ.jar",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "ext"        : {
-        "请求头": "User-Agent@Mozilla/5.0",
-        "编码": "UTF-8",
-        "图片": "data-original=\"&&\"",
-        "标题": "write(Base64('&&')",
-        "副标题": "🔞少看少撸",
-        "分类url": "https://dlw45.llxzz01.top/list.php?id={cateId}&page={catePg};;z",
-        "分类": "主播直播$87619650#91探花$87859650#传媒出品$87979650#自拍偷拍$87729650#日本精品$87759650#欧美精品$87689650#精品推荐$87589650#国产色情$87609650#国产精品$87429580#中文字幕$87569580#动漫精品$87589580#日韩精品$87619580#自拍偷拍$87659580#大秀视频$87809580#日韩无码$87399580#欧美精品$87419580#中文字幕$87589600#网红主播$87599600#成人动漫$87609600#欧美情色$87619600#国模私拍$87629600#韩国伦理$87659600#国产情色$87399600#日本无码$87409600#无码专区$87429560#欧美性爱$87439560#熟女人妻$87449560#强奸乱伦$87459560#巨乳美乳$87469560#中文字幕$87479560#国产主播$87409560#国产自拍$87419560#"
-      }
-    },
-        {
-      "key"        : "射里面了",
-      "name"       : "射里面了",
-      "type"       : 3,
-      "api"        : "csp_XBPQ",
-      "jar"        : "./jar/xyqxbpq.jar",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "ext"        : {
-        "请求头": "User-Agent$MOBILE_UA",
-        "编码": "UTF-8",
-        "数组": "pornkvideos&&</div></a>",
-        "图片": "data-src=\"&&\"",
-        "标题": "<h2&&</h2>",
-        "链接": "href=\"&&\"[替换:voddetail>>vodplay#.html>>-1-1.html]",
-        "嗅探词": ".mp4#.m3u8",
-        "搜索模式": "1",
-        "搜索url": "https://yjewvzfn.shewo22.cc/vodsearch/{wd}----------{pg}---.html",
-        "分类url": "https://yjewvzfn.shewo22.cc/vodtype/{cateId}-{catePg}.html;;z",
-        "分类": "国产精品$55#华语精品$63#黑料吃瓜$58#欧美大屌$60#动漫禁漫$57#学生合集$65#乱伦精品$64#探花约炮$61#日本无码$86#日本有码$80#主播网红$81#国产色情$12#日本无码$20#自拍偷拍$21#人妻熟女$22#黑人洋屌$23#欧美精品$24#卡通动漫$69#乱伦中出$70#传媒原创$71#口爆颜射$72#岛国女优$25#萝莉少女$26#重口调教$88#国产直播$56#岛国群交$73#日本有码$74#中文字幕$75#吃瓜爆料$76#角色扮演$77#淫娃自慰$78#韩国直播$84#公开漏出$85#户外打野$89#"
-      }
-    },
-
-    
-{"key":"sese1","name":"sese1","type":4,"api":"http://ser995290833053.gptapp.ren/tvbox/php/sese1.php?token=yyds","playUrl":"","searchable":1,"quickSearch":1,"filterable":1},
-{"key":"sese2","name":"sese2","type":4,"api":"http://ser995290833053.gptapp.ren/tvbox/php/sese2.php?token=yyds","playUrl":"","searchable":1,"quickSearch":1,"filterable":1},
-{"key":"pptv","name":"pptv","type":4,"api":"http://ser995290833053.gptapp.ren/tvbox/php/pptv.php?token=yyds","playUrl":"","searchable":1,"quickSearch":1,"filterable":1},
-{"key":"sese","name":"sese","type":4,"api":"http://ser995290833053.gptapp.ren/tvbox/php/sese.php?token=yyds","playUrl":"","searchable":1,"quickSearch":1,"filterable":1},
-{"key":"yintao","name":"yintao","type":4,"api":"http://ser995290833053.gptapp.ren/tvbox/php/yintao.php?token=yyds","playUrl":"","searchable":1,"quickSearch":1,"filterable":1},
-{"key":"pingguo","name":"pingguo","type":4,"api":"http://ser995290833053.gptapp.ren/tvbox/php/pingguo.php?token=yyds","playUrl":"","searchable":1,"quickSearch":1,"filterable":1},
-{"key":"mianfei","name":"mianfei","type":4,"api":"http://ser995290833053.gptapp.ren/tvbox/php/mianfei.php?token=yyds","playUrl":"","searchable":1,"quickSearch":1,"filterable":1},
-{"key":"jiang","name":"jiang","type":4,"api":"http://ser995290833053.gptapp.ren/tvbox/php/jiang.php?token=yyds","playUrl":"","searchable":1,"quickSearch":1,"filterable":1},
-{"key":"bihe","name":"bihe","type":4,"api":"http://ser995290833053.gptapp.ren/tvbox/php/bihe.php?token=yyds","playUrl":"","searchable":1,"quickSearch":1,"filterable":1},
-{"key":"jxx","name":"jxx","type":4,"api":"http://ser995290833053.gptapp.ren/tvbox/php/jxx.php?token=yyds","playUrl":"","searchable":1,"quickSearch":1,"filterable":1},
-{"key":"av338","name":"av338","type":4,"api":"http://ser995290833053.gptapp.ren/tvbox/php/av338.php?token=yyds","playUrl":"","searchable":1,"quickSearch":1,"filterable":1},
-
-    
     {
       "key"       : "麻豆",
       "name"      : "🇹🇼【老王成人專區】🇹🇼",
@@ -1134,7 +964,7 @@
         "分类url": "https://yiren194.cc/index.php/vod/type/id/{cateId}/page/{catePg}.html",
         "分类": "中文字幕$11#国产视频$4#无码视频$8#日本有码$53#欧美视频$5#动漫视频$30#91精选$33#伦理视频$9#JAV字幕$29#JAV丝袜$28#素人搭讪$7#AV解说$26#国产色情$39#黑料吃瓜$35#国产福利$87#自拍偷拍$54#国产传媒$55#日韩视频$90#日本无码$89#日本字幕$34#福利姬$88#"
       }
-    },    
+    },
     {
       "key"        : "csp_XYQHiker_御姐诱惑",
       "name"       : "🔞御姐诱惑",
@@ -3528,6 +3358,75 @@
         "分类ID": "/vodtype/&&.html",
         "分类链接": "https://vip.woaav.online:13097/vodshow/{cateId}--------{catePg}---.html"
       }
+    },
+    {
+      "key"       : "今晚打手槍",
+      "name"      : "🔞今晚打手槍",
+      "type"      : 3,
+      "changeable": 1,
+      "filterable": 1,
+      "api"       : "csp_XBPQ",
+      "jar"       : "./jar/xyqxbpq.jar",
+      "style"     : {"ratio": 1.7},
+      "ext"       : {
+        "作者": "暗黑乐哥",
+        "请求头": "User-Agent$MOBILE_UA",
+        "编码": "UTF-8",
+        "站名": "超AAAA精品",
+        "发布页": "",
+        "防丢url": "",
+        "主页url": "https://gxxxx13.xyz/123/",
+        "分类url": "https://gxxxx13.xyz/123/index.php/vod/type/id/{cateId}/page/{catePg}.html",
+        "分类二次截取": "class=\"txtguanggao2&&</ul>",
+        "分类数组": "<a&&/a>",
+        "分类标题": ">&&<",
+        "分类ID": "/123/index.php/vod/type/id/&&.html",
+        "二次截取": "",
+        "数组": "lazyload&&</li>",
+        "链接": "href=\"&&\"",
+        "标题": "title=\"&&\"",
+        "图片": "data-original=\"&&\"",
+        "副标题": "text-right\">&&</span>",
+        "线路数组": "<h1 class=\"title\">&&</h1>",
+        "线路标题": "✨精品专线",
+        "播放数组": "var player&&</script>",
+        "播放列表": "url\":&&,\"",
+        "播放标题": "✨正在播放",
+        "播放链接": "\"&&\"",
+        "简介": "【友情提醒：请不要相信视频中的广告，以免上当受骗！】",
+        "搜索模式": "1",
+        "搜索url": "https://gxxxx13.xyz/123/index.php/vod/search/page/{pg}/wd/{wd}.html"
+      }
+    },
+    {
+      "key": "sese1",
+      "name": "🔞色哥哥",
+      "type": 4,
+      "api": "http://ser995290833053.gptapp.ren/tvbox/php/sese1.php?token=yyds",
+      "playUrl": "",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1
+    },
+    {
+      "key": "pptv",
+      "name": "🔞屁屁電視",
+      "type": 4,
+      "api": "http://ser995290833053.gptapp.ren/tvbox/php/pptv.php?token=yyds",
+      "playUrl": "",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1
+    },
+    {
+      "key": "av338",
+      "name": "🔞三八電台",
+      "type": 4,
+      "api": "http://ser995290833053.gptapp.ren/tvbox/php/av338.php?token=yyds",
+      "playUrl": "",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1
     },
     {
       "key"       : "沙咖影院",

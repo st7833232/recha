@@ -2,40 +2,31 @@
   "spider": "./jar/xiaosa-0415.jar;md5;2cea0bdebc24f11570af244edc0e105b",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.04.15_Ver.4",
+  "notice": "115.04.15_Ver.5",
   "sites": [
 
 
+
         {
-            "key": "三秋影视",
-            "name": "三秋｜APP",
+            "key": "Juzhi",
+            "name": "🏆｜橘汁｜待測試",
             "type": 3,
-            "api": "csp_App3Q"
-        },
-        {
-            "key": "韩圈",
-            "name": "韩圈｜APP",
-            "type": 3,
-            "api": "csp_Hxq",
-            "ext": "https://fishapi.wya6.com/fish/fishhxq.php"
-        },
-        {
-            "key": "橘汁",
-            "name": "橘汁｜APP",
-            "type": 3,
+            "jar": "./jar/Juzhi_spider.jar",
             "api": "csp_Juzhi",
+            "playerType": 2,
             "searchable": 1,
-            "quickSearch": 1,
             "filterable": 1,
+            "quickSearch": 1,
+            "changeable": 1,
             "ext": {
                 "host": "",
                 "site": "https://vip.123pan.cn/1848463092/cct/az5.txt",
                 "version": "3.0.1.9"
             }
-        },
+        }, 
         {
             "key": "久久",
-            "name": "久久｜APP",
+            "name": "🏆｜久久｜待測試",
             "type": 3,
             "api": "csp_AppYsV2",
             "searchable": 1,
@@ -44,28 +35,8 @@
             "ext": "http://99cms.jj99.icu:8199/api.php/app/"
         },
         {
-            "key": "闪影",
-            "name": "闪影｜APP",
-            "type": 3,
-            "api": "csp_AppYsV2",
-            "searchable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "ext": "http://38.47.213.61:41271/mogai_api.php/v1.vod"
-        },
-        {
-            "key": "超前",
-            "name": "超前丨APP",
-            "type": 3,
-            "api": "csp_AppYsV2",
-            "searchable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "ext": "http://chaoqianys.top:91/api.php/app/"
-        },
-        {
             "key": "飞飞",
-            "name": "飞飞丨APP",
+            "name": "🏆｜飛飛｜待測試",
             "type": 3,
             "api": "csp_AppYsV2",
             "searchable": 1,
@@ -75,7 +46,7 @@
         },
         {
             "key": "云播",
-            "name": "云播｜APP",
+            "name": "🏆｜雲播｜待測試",
             "type": 3,
             "api": "csp_AppFox",
             "searchable": 1,
@@ -86,7 +57,7 @@
         },
         {
             "key": "金牌",
-            "name": "金牌｜APP",
+            "name": "🏆｜金牌｜待測試",
             "type": 3,
             "api": "csp_AppQi",
             "searchable": 1,
@@ -102,7 +73,7 @@
         },
         {
             "key": "蓝鹰",
-            "name": "蓝鹰｜APP",
+            "name": "🏆｜藍鷹｜待測試",
             "type": 3,
             "api": "csp_AppQi",
             "searchable": 1,
@@ -117,7 +88,7 @@
         },
         {
             "key": "金都",
-            "name": "金都｜APP",
+            "name": "🏆｜金都｜待測試",
             "type": 3,
             "api": "csp_AppGet",
             "searchable": 1,
@@ -130,7 +101,7 @@
         },
         {
             "key": "猎豹",
-            "name": "猎豹｜APP",
+            "name": "🏆｜獵豹｜待測試",
             "type": 3,
             "api": "csp_AppGet",
             "searchable": 1,
@@ -142,21 +113,8 @@
             }
         },
         {
-            "key": "映画",
-            "name": "映画｜APP",
-            "type": 3,
-            "api": "csp_AppGet",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "url": "https://cms140.yhg.one/",
-                "dataKey": "bM7iC9eA3oZ1nB7z",
-                "dataIv": "bM7iC9eA3oZ1nB7z"
-            }
-        },
-        {
             "key": "王子",
-            "name": "王子｜APP",
+            "name": "🏆｜王子｜待測試",
             "type": 3,
             "api": "csp_AppGet",
             "searchable": 1,
@@ -168,21 +126,8 @@
             }
         },
         {
-            "key": "星空",
-            "name": "星空｜APP",
-            "type": 3,
-            "api": "csp_AppGet",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "url": "http://xk7.xkgzs.xyz",
-                "dataKey": "107jkcdncofcdkjk",
-                "dataIv": "107jkcdncofcdkjk"
-            }
-        },
-        {
             "key": "秒看",
-            "name": "秒看｜APP",
+            "name": "🏆｜秒看｜待測試",
             "type": 3,
             "api": "csp_AppGet",
             "searchable": 1,
@@ -196,7 +141,7 @@
         },
         {
             "key": "茉莉",
-            "name": "茉莉｜APP",
+            "name": "🏆｜茉莉｜待測試",
             "type": 3,
             "api": "csp_AppGet",
             "searchable": 1,
@@ -209,7 +154,7 @@
         },
         {
             "key": "灵虎",
-            "name": "灵虎｜APP",
+            "name": "🏆｜靈虎｜待測試",
             "type": 3,
             "api": "csp_AppGet",
             "searchable": 1,
@@ -236,23 +181,6 @@
             "quickSearch": 1,
             "changeable": 1,
             "ext": "2688288565eb2ea7fcb9caa81e70fad5b9a3d290f7e7066e286ddee6884c810ce5bbe0a9ee3dca2a86a21892c506a73db6e9eadf0f102f57a713650b09b20c7ed86ac6d8055809567dcdf7992631b05b07840f7a3aebd4f2f23986e8983432494554f3f700d81de8a2336c3b4a22c07c861a8be0506a3837e08b472a5ceaf61b474c9bc035718044f7e30aa408dab3050d66bc913d83556e06064dac4058a773f679bc3974f31e2e90ba12cb883ca23aa5f9396a4bcb0dcf04bc323b09911b57a011a4bee63e18cfccd39246c42e7a6098605d8dafecfcc331ff9a5e7931223f050cc329eacefe3468eddae1e00f4f214546db11da64b0fdead941acaebc34a71cae62cddff68662b0618e9e7d43a17340cc170cd1f6369fc9121bdbb72508a69c629476b4854ba1ca6a24c5e5b576593fcd718d35390fceeb0b7b839f2ef84597c2210369a354c8a1892fb356001920d62a242a922418be5aae588c6f7910f05a9c190a01d0052e76df67c31dda834c850a05aa"
-        },
-        {
-            "key": "Juzhi",
-            "name": "🏆｜橘汁｜待測試",
-            "type": 3,
-            "jar": "./jar/Juzhi_spider.jar",
-            "api": "csp_Juzhi",
-            "playerType": 2,
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "ext": {
-                "host": "",
-                "site": "https://vip.123pan.cn/1848463092/cct/az5.txt",
-                "version": "3.0.1.9"
-            }
         },
         {
             "key": "AppV6Dxs",

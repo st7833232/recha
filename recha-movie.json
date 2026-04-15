@@ -2,15 +2,15 @@
   "spider": "./jar/xiaosa-0306.jar;md5;f027984f04ff6dfec61d21f3db26389f",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.04.02_Ver.1",
+  "notice": "115.04.15_Ver.1",
   "sites": [
-{"key":"csp_xBPQ_搞aa","name":"🔞GAOAA(XBPQ)","type":3,"api":"csp_xBPQ","searchable":1,"quickSearch":1,"filterable":0,"playerType":2,"jar": "./jar/xyqxbpq.jar","ext": "./json/X(Twitter)黑料.json"},
+{"key":"csp_xBPQ_搞aa","name":"🔞GAOAA(XBPQ)","type":3,"api":"csp_xBPQ","searchable":1,"quickSearch":1,"filterable":0,"playerType":2,"jar": "./jar/xyq202503.jar","ext": "./json/X(Twitter)黑料.json"},
 {
             "key": "APP影院",
             "name": "✨APP影院✨",
             "type": 3,
             "api": "csp_XBPQ",
-            "jar": "./jar/xyqxbpq.jar",
+            "jar": "./jar/xyq202503.jar",
             "ext": {
                 "主页url": "https://www.appmovie.art",
                 "分类url": "https://www.appmovie.art/index.php/vod/type/id/{cateId}/page/{catePg}.html",

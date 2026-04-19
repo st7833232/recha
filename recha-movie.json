@@ -45,17 +45,6 @@
             "ext": "https://qpcj.69mini.com/api.php/app/"
         },
         {
-            "key": "云播",
-            "name": "🏆｜雲播｜待測試",
-            "type": 3,
-            "api": "csp_AppFox",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "host": "http://app.hktvyb.cc"
-            }
-        },
-        {
             "key": "蓝鹰",
             "name": "🏆｜藍鷹｜待測試",
             "type": 3,

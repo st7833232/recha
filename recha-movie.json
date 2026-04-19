@@ -84,19 +84,6 @@
             }
         },
         {
-            "key": "NewGr",
-            "name": "🏆｜春天｜待測試",
-            "type": 3,
-            "api": "csp_NewGrAmns",
-            "jar": "./jar/aowu-0415.jar;md5;89296a3aede64b4e27769bd3d1746bdf",
-            "playerType": 2,
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "ext": "2688288565eb2ea7fcb9caa81e70fad5b9a3d290f7e7066e286ddee6884c810ce5bbe0a9ee3dca2a86a21892c506a73db6e9eadf0f102f57a713650b09b20c7ed86ac6d8055809567dcdf7992631b05b07840f7a3aebd4f2f23986e8983432494554f3f700d81de8a2336c3b4a22c07c861a8be0506a3837e08b472a5ceaf61b474c9bc035718044f7e30aa408dab3050d66bc913d83556e06064dac4058a773f679bc3974f31e2e90ba12cb883ca23aa5f9396a4bcb0dcf04bc323b09911b57a011a4bee63e18cfccd39246c42e7a6098605d8dafecfcc331ff9a5e7931223f050cc329eacefe3468eddae1e00f4f214546db11da64b0fdead941acaebc34a71cae62cddff68662b0618e9e7d43a17340cc170cd1f6369fc9121bdbb72508a69c629476b4854ba1ca6a24c5e5b576593fcd718d35390fceeb0b7b839f2ef84597c2210369a354c8a1892fb356001920d62a242a922418be5aae588c6f7910f05a9c190a01d0052e76df67c31dda834c850a05aa"
-        },
-        {
             "key": "AppV6Dxs",
             "name": "🏆｜大师兄｜待測試",
             "type": 3,

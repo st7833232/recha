@@ -1,0 +1,310 @@
+```
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>荒野求生 · 開局購點</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg-0:#0e1015; --bg-1:#131722; --bg-2:#1b2030; --glass:rgba(255,255,255,0.04); --text-0:#e8ecf2; --text-1:#aab3c5; --muted:#7a8599; --brand:#7ee787; --brand-2:#6aa3ff; --warn:#ff7b7b; --chip:#2a3144; --border:#25304a; --glow:0 0 .5rem rgba(110,163,255,.25); --radius:14px; }
+    *{box-sizing:border-box} html,body{min-height:100%}
+    body{margin:0;overflow:auto;font-family:Inter,'Noto Sans SC',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Segoe UI Emoji','Noto Color Emoji';background:radial-gradient(1200px 800px at 10% -10%,#1a1f2d 0%,#10131b 40%,#0c0f15 80%),linear-gradient(180deg,#0e1015,#0b0d12);color:var(--text-0)}
+    .wrap{display:grid;grid-template-rows:auto 1fr auto;min-height:100%}
+    header{padding:22px 28px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(8px);background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0));border-bottom:1px solid var(--border)}
+    .title{display:flex;align-items:center;gap:14px;letter-spacing:.3px}
+    .badge{padding:4px 10px;border-radius:999px;background:linear-gradient(180deg,#162036,#111726);border:1px solid var(--border);font-size:12px;color:var(--text-1)} h1{font-size:20px;margin:0;font-weight:700}
+    .points{display:flex;align-items:center;gap:14px;padding:8px 12px;border-radius:12px;background:linear-gradient(180deg,rgba(126,231,135,.08),rgba(126,231,135,.02));border:1px solid #2a3b2f;box-shadow:var(--glow)} .points .remain{font-weight:700;color:var(--brand)} .points .spent{color:var(--text-1)}
+    main{padding:26px;display:grid;gap:24px;grid-template-columns:1.3fr 1fr;position:relative;overflow:auto;max-height:72vh;-webkit-overflow-scrolling:touch}
+    @media (max-width:1100px){main{grid-template-columns:1fr}}
+    .panel{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.04);position:relative;z-index:1}
+    .panel h2{margin:2px 0 14px;font-size:16px;font-weight:700;color:var(--text-0)} .hint{color:var(--muted);font-size:12px}
+    .grid{display:grid;gap:14px;grid-template-columns:repeat(2,minmax(0,1fr))} @media (max-width:640px){.grid{grid-template-columns:1fr}}
+    .item{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px}
+    .item .name{font-weight:600} .item .meta{color:var(--muted);font-size:12px} .item .desc{color:var(--text-1);font-size:12px;line-height:1.5;margin-top:4px} .ctrls{display:flex;align-items:center;gap:8px}
+    .btn{appearance:none;border:1px solid var(--border);color:var(--text-0);background:#171c2a;border-radius:8px;padding:6px 10px;cursor:pointer}
+    .btn:hover{background:#1a2132} .btn:disabled{opacity:.5;cursor:not-allowed} .chip{padding:4px 8px;border-radius:999px;background:var(--chip);color:var(--text-1);font-size:12px;border:1px solid var(--border)}
+    .seg-title{margin:18px 0 8px;font-weight:700;font-size:14px;color:var(--text-1)} .divider{height:1px;background:var(--border);margin:12px 0}
+    .attr-ctrl{display:flex;align-items:center;gap:8px} .attr-value{font-weight:700;min-width:40px;text-align:center;color:var(--brand-2)} .count{min-width:22px;text-align:center}
+    .toggle{display:flex;align-items:center;gap:10px} .toggle input{width:18px;height:18px}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px} @media (max-width:640px){.two-col{grid-template-columns:1fr}}
+    @media (max-width:480px){header{flex-direction:column;gap:12px;padding:16px;text-align:center}.difficulty{order:3;width:100%;justify-content:center}.points{order:2}main{grid-template-columns:1fr;padding:16px;gap:16px;max-height:none;overflow-y:auto}.panel{padding:14px}.item{grid-template-columns:1fr;gap:8px}.ctrls{justify-content:center;margin-top:8px}.attr-ctrl{justify-content:center}.two-col{grid-template-columns:1fr;gap:16px}.footer{flex-direction:column;gap:12px;padding:16px}.primary,.ghost{width:100%}}
+    @media (max-width:360px){header .difficulty{flex-wrap:wrap;justify-content:center}.difficulty .btn{padding:6px 8px;font-size:13px}h1{font-size:18px}.panel h2{font-size:15px}.seg-title{font-size:13px}}
+    /* 移除下方高光特效 */
+    .summary{display:grid;gap:10px;background:linear-gradient(180deg,rgba(110,163,255,.05),rgba(110,163,255,.02));border:1px solid #22314b;border-radius:12px;padding:12px}
+    .summary .line{display:flex;justify-content:space-between;color:var(--text-1)} .summary .line b{color:var(--text-0)}
+    textarea{width:100%;min-height:96px;resize:vertical;padding:10px;border-radius:10px;border:1px solid var(--border);background:#121724;color:var(--text-0)}
+    .footer{display:flex;justify-content:space-between;align-items:center;padding:16px 26px;border-top:1px solid var(--border);background:linear-gradient(0deg,rgba(255,255,255,.03),rgba(255,255,255,0))}
+    .primary{background:linear-gradient(180deg,#3a64ff,#2446c9);border:1px solid #2a3d98;color:#fff;padding:10px 16px;border-radius:10px;font-weight:700;cursor:pointer;box-shadow:0 10px 24px rgba(36,70,201,.35),inset 0 1px 0 rgba(255,255,255,.22)} .primary:disabled{opacity:.6;cursor:not-allowed}
+    .ghost{background:transparent;border:1px solid var(--border);color:var(--text-0);padding:10px 14px;border-radius:10px}
+    .error{color:var(--warn);font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <span class="badge" id="badgeDifficulty">標準 · 100 點</span>
+        <h1>荒野求生 · 開局購點</h1>
+      </div>
+      <div class="difficulty" style="display:flex;gap:8px;align-items:center;">
+        <span class="hint">難度</span>
+        <button class="btn" data-diff="hard">困難 50</button>
+        <button class="btn" data-diff="normal">標準 100</button>
+        <button class="btn" data-diff="easy">簡單 200</button>
+        <button class="btn" data-diff="superEasy">超級簡單 400</button>
+      </div>
+      <div class="points">
+        <span class="spent">已用 <b id="spent">0</b></span>
+        <span class="remain">剩餘 <b id="remain">100</b></span>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel" id="left">
+        <h2>分配與選擇</h2>
+        <div class="hint">點選 + / − 調整，所見即所得。所有資料可在指令碼頂部配置。</div>
+
+        <div class="seg-title">屬性（基礎 20，每 +1 花費 5）</div>
+        <div class="grid" id="attrGrid"></div>
+
+        <div class="divider"></div>
+
+        <div class="seg-title">技能</div>
+        <div class="grid" id="skillGrid"></div>
+
+        <div class="divider"></div>
+
+        <div class="seg-title">物品</div>
+        <div class="grid" id="itemGrid"></div>
+
+        <div class="divider"></div>
+
+        <div class="seg-title">天賦 或 狀態</div>
+        <div class="two-col">
+          <div>
+            <div class="hint">正面（消耗點數）</div>
+            <div class="grid" id="traitPosGrid"></div>
+          </div>
+          <div>
+            <div class="hint">負面（返還點數）</div>
+            <div class="grid" id="traitNegGrid"></div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="seg-title">職業</div>
+        <div class="grid" id="careerGrid"></div>
+
+        <div class="divider"></div>
+
+        <div class="seg-title">出生點</div>
+        <div class="grid" id="birthGrid"></div>
+
+        <div class="divider"></div>
+
+        <div class="seg-title">自定義設定</div>
+        <textarea id="custom" placeholder="在此填寫你希望在劇情/世界觀/規則上的自定義偏好或補充,比如身邊躺著個貓娘..."></textarea>
+      </section>
+
+      <aside class="panel" id="right">
+        <h2>總覽</h2>
+        <div class="summary" id="summary"></div>
+        <div class="divider"></div>
+        <div class="hint">提示：若點數超出預算，將無法確認。</div>
+        <div class="error" id="error" style="display:none;">點數不足或選擇不合法，請檢查。</div>
+      </aside>
+    </main>
+
+    <div class="footer">
+      <button class="ghost" id="resetBtn">重置選擇</button>
+      <button class="primary" id="confirmBtn">確認併傳送至 LLM</button>
+    </div>
+  </div>
+
+  <script>
+const CONFIG = {
+  difficulties: { hard: 50, normal: 100, easy: 200,superEasy: 400, simple: 400 },
+  attributes: { base: 20, min: 20, max: 40, costPerPoint: 5, list: ['力量','敏捷','耐力','智力','感知','意志'] },
+  skills: [
+    // 戰鬥類
+    { id:'melee_combat', name:'白刃戰', costPerRank:15, maxRank:5, desc:'允許你有效使用近戰武器。每級為你的近戰攻擊和招架檢定提供+5加值。' },
+    { id:'ranged_combat', name:'投擲及射擊', costPerRank:15, maxRank:5, desc:'允許你有效使用遠端武器。每級為你的遠端攻擊檢定提供+5加值，並增加10%的有效射程。' },
+    // 採集類
+    { id:'foraging', name:'採集辨識', costPerRank:15, maxRank:5, desc:'允許你進行採集檢定以尋找食物和草藥。每級為該檢定提供+5加值，並能辨識更多種類的植物。' },
+    { id:'tracking', name:'狩獵追蹤', costPerRank:12, maxRank:5, desc:'允許你進行追蹤檢定。每級為該檢定提供+5加值，並能從蹤跡中解讀出更精確的資訊（如數量、方向、時間）。' },
+    { id:'fishing', name:'漁獵', costPerRank:12, maxRank:5, desc:'允許你在有水源的地方進行漁獵檢定。每級為該檢定提供+5加值，並能判斷更佳的捕魚地點。' },
+    // 製作類
+    { id:'construction', name:'基礎建築', costPerRank:18, maxRank:5, desc:'允許你進行建築檢定。每級為該檢定提供+5加值，並解鎖更復雜、更堅固的建築藍圖。' },
+    { id:'crafting', name:'製作及工匠', costPerRank:18, maxRank:5, desc:'允許你進行製作檢定。每級為該檢定提供+5加值，並解鎖更高階的工具和物品製作配方。' },
+    { id:'cooking', name:'烹飪調理', costPerRank:11, maxRank:5, desc:'允許你進行烹飪檢定。每級為該檢定提供+5加值。成功的烹飪會使食物的營養價值提升20%。' },
+    // 知識/輔助類
+    { id:'stealth', name:'潛行與偽裝', costPerRank:10, maxRank:5, desc:'允許你進行潛行檢定以避免被發現。每級為該檢定提供+5加值。' },
+    { id:'survival', name:'野外生存',      costPerRank:20, maxRank:5, desc:'一項綜合技能，每級為導航、尋找水源、天氣預測等非特定的野外生存檢定提供+5加值。' },
+    { id:'med',      name:'醫療救護',      costPerRank:15, maxRank:5, desc:'允許你進行高階醫療檢定。每級為該檢定提供+5加值，可處理骨折、感染等複雜傷病。' },
+    { id:'climb',    name:'攀爬及繩索技巧', costPerRank:12, maxRank:5, desc:'允許你進行攀爬和使用繩索的檢定。每級為該檢定提供+5加值，並減少體力消耗。' },
+    { id:'trapping', name:'陷阱與捕獵',   costPerRank:12, maxRank:5, desc:'允許你進行陷阱佈置檢定。每級為該檢定提供+5加值，並解鎖更高效的陷阱知識。' },
+    { id:'water',    name:'涉水及水上技巧', costPerRank:10, maxRank:5, desc:'允許你進行遊泳、划船等水上活動檢定。每級為該檢定提供+5加值，並減少10%的水中體力消耗。' }
+  ],
+  items: [
+    // 核心工具
+    { id:'heavy_axe', name:'重型多功能斧', cost:35, maxQty:1, desc:'伐木、建造和防身的最佳伴侶，能極大提高木材採集效率。提供+15相關檢定加值。' },
+    { id:'knife',      name:'軍用匕首',         cost:20,  maxQty:1, desc:'輕便近戰與割切工具。使用時對近戰/製作類檢定 +5 判定點；耐用，廣泛工具型。' },
+    { id:'fishing_kit', name:'漁夫的工具包', cost:10, maxQty:1, desc:'包含了一卷堅韌的魚線、幾個骨制魚鉤和一些羽毛擬餌，極大提升釣魚成功率。' },
+    { id:'multitool',  name:'多功能工具',       cost:30,  maxQty:1, desc:'小型修理/裁切/開瓶/扳手集合體。對修理與製作檢定 +10 判定點；重複使用（耐用）。' },
+    // 生存輔助
+    { id:'tarp', name:'軍用防水油布', cost:15, maxQty:1, desc:'一塊輕便但堅韌的油布，可以快速搭建起一個有效的臨時避雨棚，防止失溫。' },
+    { id:'backpack', name:'大容量登山包', cost:18, maxQty:1, desc:'經過人體工程學設計的揹包，能讓你攜帶比平時更多的物資，且消耗更少的體力。' },
+    { id:'trap_kit', name:'簡易陷阱套組', cost:12, maxQty:1, desc:'包含幾個繩套、觸發器和一個金屬捕獸夾，讓你在開局就能穩定獲得小型獵物。' },
+    { id:'surgical_kit', name:'醫用手術包', cost:15, maxQty:1, desc:'包含縫合針、消毒酒精和抗生素，能處理非常嚴重的傷口，避免致命的感染。(可使用兩次)' },
+    // 消耗品
+    { id:'rations', name:'高熱量壓縮餅乾 (3日份)', cost:6, maxQty:3, desc:'提供緊急情況下的能量來源，讓你能專注於建立營地而不是尋找食物。' },
+    { id:'water_purification_tablets', name:'淨水藥片 (50片)', cost:12, maxQty:1, desc:'能快速淨化飲水，避免因飲用不潔水源而生病。' },
+    { id:'rope_20m', name:'一捆結實的繩索 (20米)', cost:12, maxQty:2, desc:'用途極其廣泛，可用於捆綁、攀爬、製作工具和陷阱。' },
+    { id:'tent',     name:'輕型帳篷',         cost:40,  maxQty:1, desc:'舒適度加成。提供庇護, 方便拆卸可移動（耐用，可重複使用）。' },
+    { id:'binoculars', name:'望遠鏡',   cost:15,  maxQty:1, desc:'遠距偵查時對感知/偵查檢定 +10 判定點（長期可重複使用）。' },
+    { id:'dogmeat', name:'狗肉',   cost:40,  maxQty:1, desc:'一隻德國黑背犬, 能給你陪伴, 或許也能幫助你打獵? 不過你也需要負責它的食物.' },
+    { id:'debt', name:'賭狗', cost:100, maxQty:1, desc:'獲得600點生存點數, 至於會抽到什麼就看命吧.' },
+
+  ],
+  traits: {
+    positive: [
+      { id:'survival_instinct', name:'生存本能', cost:40, desc:'你與荒野心意相通。所有“採集辨識”、“狩獵追蹤”和“漁獵”檢定自動獲得+15背景加值。' },
+      { id:'master_craftsman', name:'巧匠之心', cost:35, desc:'你天生擅長變廢為寶。所有“基礎建築”和“製作/工匠”檢定自動獲得+15背景加值。' },
+      { id:'thick_skin', name:'厚皮', cost:15, desc:'你的皮膚堅韌如革，更加難以受傷。' },
+      { id:'boundless_energy', name:'精力旺盛', cost:22, desc:'你的體力恢復速度驚人。每次透過休息恢復耐力時，額外恢復耐力值30%。' },
+      { id:'night_vision', name:'夜視能力', cost:12, desc:'你的眼睛能適應黑暗。在低光照環境下，因光線不足受到的感知檢定懲罰減半。' },
+      { id:'brave', name:'臨危不懼（勇敢）', cost:15, desc:'你的意志堅定。在進行所有對抗恐懼、恐慌或精神壓力的意志豁免時，獲得+10加值。' },
+      { id:'keen',  name:'敏銳直覺',   cost:35, desc:'你的感官異常敏銳。在進行有意識的偵查、搜尋檢定時獲得+10加值。' },
+      { id:'strong_immunity',  name:'強免疫力',   cost:25, desc:'你的免疫力比常人更加強大, 獲得免疫負荷時將減少50%.' },
+      { id:'fisher',  name:'釣魚佬',   cost:25, desc:'釣魚佬永不空軍!（希望）. 釣魚時獲得+20檢定' },
+
+    ],
+    negative: [
+      { id:'allergies', name:'過敏體質', cost:-12, desc:'你對特定物質（如花粉、昆蟲）過敏。暴露在這種環境中時，所有檢定受到-10的生理懲罰，直到脫離環境。' },
+      { id:'fastidious', name:'潔癖', cost:-10, desc:'你無法忍受骯髒。在不潔環境中休息，或情節程度低將會增加壓力值。食用生食或飲用不潔淨水對免疫負荷的影響更大' },
+      { id:'pessimistic', name:'悲觀主義者', cost:-10, desc:'你總是預想最壞的結果。當你的一次重要檢定失敗時，必須進行一次意志豁免，若失敗則陷入“士氣低落”狀態（所有檢定-10），持續1小時。' },
+      { id:'heavy_footed', name:'沉重腳步', cost:-10, desc:'你走路的聲音很大。所有“潛行與偽裝”檢定受到-10的固定懲罰。' },
+      { id:'chronic_pain', name:'慢性疼痛', cost:-15, desc:'你的舊傷時常復發。每天早上進行一次成功率50%的檢定，若失敗，當天所有基於力量和敏捷的檢定都將承受-5懲罰。' },
+      { id:'learning_disability', name:'學習障礙', cost:-30, desc:'你學習新事物的速度很慢。所有技能獲得的經驗值減半。' },
+      { id:'phobia', name:'恐高', cost:-15, desc:'你對高度有非理性的恐懼。在任何高處（如懸崖、高樹）進行檢定時，承受-15懲罰。若在此期間檢定失敗，必須進行一次意志豁免，否則會“恐慌”一輪。' },
+      { id:'insomnia', name:'失眠', cost:-15, desc:'你飽受失眠困擾。進行長時間休息時，睡眠恢復的睡眠值減少30%。' },
+      { id:'bleeding',  name:'大出血',   cost:-20, desc:'你醒來的時候發現自己身上有個巨大的傷口, 以一個正在快速流血的大傷口開局.' },
+      { id:'vegetarianism',  name:'素食主義者',   cost:-15, desc:'食用肉食會讓你噁心抑鬱。' },
+      { id:'weak_immunity',  name:'弱免疫力',   cost:-15, desc:'你的免疫力比常人更加脆弱, 獲得免疫負荷時將增加50%.' },
+      { id:'Shortsighted',  name:'近視',   cost:-15, desc:'降低發現好東西的機率, 增加精細活的難度. 進行搜尋和製作判定時難度+10' },
+
+    ]
+  },
+  careers: [
+    { id:'doctor', name:'醫生', cost:30, desc:'你的使命是拯救生命。你對處理外傷和疾病有著系統性的知識。初始配置: 醫療救護lv1, 急救處理lv1, 醫用手術包x1。' },
+    { id:'engineer', name:'工程師', cost:40, desc:'你相信任何問題都可以透過正確的工具和設計來解決。初始配置: 製作/工匠lv1, 基礎建築lv1, 多功能工具x1。' },
+    { id:'fitness_coach', name:'健身教練', cost:40, desc:'你將身體鍛鍊到了極限，懂得如何高效地利用和恢復體力。初始配置: 力量和耐力額外+3. 天賦“精力旺盛”, 攀爬/繩索技巧lv1。' },
+    { id:'chef', name:'廚師', cost:30, desc:'變廢為寶是你的專長，尤其是在吃的方面。你知道如何安全地處理並烹飪大部分食材。初始配置: 烹飪調理lv2, 廚刀x1。' },
+    { id:'outdoor_enthusiast', name:'戶外愛好者', cost:50, desc:'豐富的野外活動經驗讓你對真正的荒野生存有更深刻的理解。初始配置: 野外生存lv1, 大容量登山包x1, 軍用防水油布x1。' },
+    { id:'useless_college_student', name:'廢物大學生', cost:-20, desc:'通宵遊戲和考前突擊曾是你生活的全部。你沒有任何實用技能，但好在年輕，學什麼都快。初始配置: 無，所有點數自由分配。' }
+  ],
+  birthpoints: [
+    { id:'mountain', name:'長草之海', cost:0, desc:'普通難度' },
+    { id:'coast', name:'漿果園丘', cost:5, desc:'簡單難度' },
+    { id:'forest', name:'黃金沙海', cost:-10, desc:'困難難度' },
+    { id:'urban', name:'岩漿主脈', cost:-15, desc:'地獄難度' },
+  ]
+};
+    const state = { attrs:{}, skills:new Map(), items:new Map(), traitsPos:new Set(), traitsNeg:new Set(), career:null, birthpoint:null, difficulty:'normal', difficultyLabel:'標準', budget:100, custom:'' };
+    for(const n of CONFIG.attributes.list) state.attrs[n]=CONFIG.attributes.base;
+    for(const s of CONFIG.skills) state.skills.set(s.id,0);
+    for(const it of CONFIG.items) state.items.set(it.id,0);
+
+    function calcCosts(){ let spent=0; for(const n of CONFIG.attributes.list){ const d=Math.max(0,state.attrs[n]-CONFIG.attributes.base); spent+=d*CONFIG.attributes.costPerPoint; } for(const s of CONFIG.skills){ const r=state.skills.get(s.id)||0; spent+=r*s.costPerRank; } for(const it of CONFIG.items){ const q=state.items.get(it.id)||0; spent+=q*it.cost; } for(const t of CONFIG.traits.positive) if(state.traitsPos.has(t.id)) spent+=t.cost; for(const t of CONFIG.traits.negative) if(state.traitsNeg.has(t.id)) spent+=t.cost; if(state.career){ const c=CONFIG.careers.find(b=>b.id===state.career); if(c) spent+=c.cost; } if(state.birthpoint){ const o=CONFIG.birthpoints.find(b=>b.id===state.birthpoint); if(o) spent+=o.cost; } return {spent, remain:(state.budget - spent)}; }
+
+    const qs=s=>document.querySelector(s);
+    const el={ attrGrid:qs('#attrGrid'), skillGrid:qs('#skillGrid'), itemGrid:qs('#itemGrid'), traitPosGrid:qs('#traitPosGrid'), traitNegGrid:qs('#traitNegGrid'), careerGrid:qs('#careerGrid'), birthGrid:qs('#birthGrid'), summary:qs('#summary'), err:qs('#error'), spent:qs('#spent'), remain:qs('#remain'), badge:qs('#badgeDifficulty'), custom:qs('#custom'), confirm:qs('#confirmBtn'), reset:qs('#resetBtn') };
+
+    function renderAttrs(){ el.attrGrid.innerHTML=''; for(const n of CONFIG.attributes.list){ const v=state.attrs[n]; const wrap=document.createElement('div'); wrap.className='item'; wrap.innerHTML=`<div><div class="name">${n}</div><div class="meta">基礎 ${CONFIG.attributes.base} · 每 +1 花費 ${CONFIG.attributes.costPerPoint}</div></div><div class="ctrls attr-ctrl"><button class="btn" data-a="-">−</button><div class="attr-value">${v}</div><button class="btn" data-a="+">＋</button></div>`; const [bMinus, val, bPlus]=wrap.querySelectorAll('.btn, .attr-value'); bMinus.addEventListener('click',()=>{ state.attrs[n]=Math.max(CONFIG.attributes.min,state.attrs[n]-1); val.textContent=state.attrs[n]; updateAll(); }); bPlus.addEventListener('click',()=>{ state.attrs[n]=Math.min(CONFIG.attributes.max,state.attrs[n]+1); val.textContent=state.attrs[n]; updateAll(); }); el.attrGrid.appendChild(wrap);} }
+    function renderSkills(){ el.skillGrid.innerHTML=''; for(const s of CONFIG.skills){ const wrap=document.createElement('div'); wrap.className='item'; wrap.innerHTML=`<div><div class="name">${s.name}</div><div class="meta">每級 ${s.costPerRank} 點 · 上限 ${s.maxRank}</div><div class="desc">${s.desc}</div></div><div class="ctrls"><button class="btn" data-a="-">−</button><div class="count">${state.skills.get(s.id)}</div><button class="btn" data-a="+">＋</button></div>`; const [bMinus, val, bPlus]=wrap.querySelectorAll('.btn, .count, .btn'); bMinus.addEventListener('click',()=>{ const cur=state.skills.get(s.id)||0; const nx=Math.max(0,cur-1); state.skills.set(s.id,nx); val.textContent=nx; updateAll(); }); bPlus.addEventListener('click',()=>{ const cur=state.skills.get(s.id)||0; const nx=Math.min(s.maxRank,cur+1); state.skills.set(s.id,nx); val.textContent=nx; updateAll(); }); el.skillGrid.appendChild(wrap);} }
+    function renderItems(){ el.itemGrid.innerHTML=''; for(const it of CONFIG.items){ const wrap=document.createElement('div'); wrap.className='item'; wrap.innerHTML=`<div><div class="name">${it.name}</div><div class="meta">單價 ${it.cost} · 上限 ${it.maxQty}</div><div class="desc">${it.desc}</div></div><div class="ctrls"><button class="btn" data-a="-">−</button><div class="count">${state.items.get(it.id)}</div><button class="btn" data-a="+">＋</button></div>`; const [bMinus, val, bPlus]=wrap.querySelectorAll('.btn, .count, .btn'); bMinus.addEventListener('click',()=>{ const cur=state.items.get(it.id)||0; const nx=Math.max(0,cur-1); state.items.set(it.id,nx); val.textContent=nx; updateAll(); }); bPlus.addEventListener('click',()=>{ const cur=state.items.get(it.id)||0; const nx=Math.min(it.maxQty,cur+1); state.items.set(it.id,nx); val.textContent=nx; updateAll(); }); el.itemGrid.appendChild(wrap);} }
+    function renderTraits(){ el.traitPosGrid.innerHTML=''; for(const t of CONFIG.traits.positive){ const wrap=document.createElement('div'); wrap.className='item'; const checked=state.traitsPos.has(t.id)?'checked':''; wrap.innerHTML=`<div><div class="name">${t.name}</div><div class="meta">花費 ${t.cost} · ${t.desc||''}</div></div><label class="toggle"><input type="checkbox" ${checked}><span class="chip">選擇</span></label>`; const input=wrap.querySelector('input'); input.addEventListener('change',()=>{ if(input.checked) state.traitsPos.add(t.id); else state.traitsPos.delete(t.id); updateAll(); }); el.traitPosGrid.appendChild(wrap);} el.traitNegGrid.innerHTML=''; for(const t of CONFIG.traits.negative){ const wrap=document.createElement('div'); wrap.className='item'; const checked=state.traitsNeg.has(t.id)?'checked':''; wrap.innerHTML=`<div><div class="name">${t.name}</div><div class="meta">返還 ${Math.abs(t.cost)} · ${t.desc||''}</div></div><label class="toggle"><input type="checkbox" ${checked}><span class="chip">選擇</span></label>`; const input=wrap.querySelector('input'); input.addEventListener('change',()=>{ if(input.checked) state.traitsNeg.add(t.id); else state.traitsNeg.delete(t.id); updateAll(); }); el.traitNegGrid.appendChild(wrap);} }
+    function renderCareers(){ el.careerGrid.innerHTML=''; for(const b of CONFIG.careers){ const wrap=document.createElement('div'); wrap.className='item'; const chosen=state.career===b.id; wrap.innerHTML=`<div><div class="name">${b.name}</div><div class="meta">${b.desc||''} · 花費 ${b.cost}</div></div><div class="ctrls"><button class="btn" ${chosen?'disabled':''}>${chosen?'已選擇':'選擇'}</button></div>`; wrap.querySelector('.btn').addEventListener('click',()=>{ state.career=b.id; renderCareers(); updateAll(); }); el.careerGrid.appendChild(wrap);} }
+    function renderBirthpoints(){ el.birthGrid.innerHTML=''; for(const b of CONFIG.birthpoints){ const wrap=document.createElement('div'); wrap.className='item'; const chosen=state.birthpoint===b.id; wrap.innerHTML=`<div><div class="name">${b.name}</div><div class="meta">${b.desc||''} · 花費 ${b.cost}</div></div><div class="ctrls"><button class="btn" ${chosen?'disabled':''}>${chosen?'已選擇':'選擇'}</button></div>`; wrap.querySelector('.btn').addEventListener('click',()=>{ state.birthpoint=b.id; renderBirthpoints(); updateAll(); }); el.birthGrid.appendChild(wrap);} }
+    function renderSummary(){ const {spent,remain}=calcCosts(); el.spent.textContent=spent; el.remain.textContent=remain; el.err.style.display=remain<0?'block':'none'; el.confirm.disabled=remain<0; const parts=[]; const attrsLine=CONFIG.attributes.list.map(n=>`${n}: ${state.attrs[n]}`).join(' · '); parts.push(`<div class="line"><span>屬性</span><b>${attrsLine}</b></div>`); const skillPicks = CONFIG.skills.filter(s => (state.skills.get(s.id) || 0) > 0).map(s => `${s.name}×${state.skills.get(s.id)}`).join(`，`) || `無`; parts.push(`<div class="line"><span>技能</span><b>${skillPicks}</b></div>`); const itemPicks = CONFIG.items.filter(it => (state.items.get(it.id) || 0) > 0).map(it => `${it.name}×${state.items.get(it.id)}`).join(`，`) || `無`; parts.push(`<div class="line"><span>物品</span><b>${itemPicks}</b></div>`); const pos=CONFIG.traits.positive.filter(t=>state.traitsPos.has(t.id)).map(t=>t.name).join('，')||'無'; const neg=CONFIG.traits.negative.filter(t=>state.traitsNeg.has(t.id)).map(t=>t.name).join('，')||'無'; parts.push(`<div class="line"><span>天賦</span><b>正面：${pos} ｜ 負面：${neg}</b></div>`); const c=CONFIG.careers.find(x=>x.id===state.career); parts.push(`<div class="line"><span>職業</span><b>${c?c.name:'未選擇'}</b></div>`); const o=(CONFIG.birthpoints||[]).find(x=>x.id===state.birthpoint); parts.push(`<div class="line"><span>出生點</span><b>${o?o.name:'未選擇'}</b></div>`); parts.push(`<div class="line"><span>預算</span><b>已用 ${spent} ｜ 剩餘 ${remain} ｜ 難度 ${state.difficultyLabel}（${state.budget}）</b></div>`); parts.push(`<div class="line"><span>自定義</span><b>${state.custom?state.custom.replace(/</g,'&lt;').replace(/>/g,'&gt;'):'（空）'}</b></div>`); el.summary.innerHTML=parts.join(''); }
+    function updateAll(){ renderSummary(); }
+
+    el.custom.addEventListener('input',()=>{ state.custom=el.custom.value.trim(); updateAll(); });
+    el.reset.addEventListener('click',()=>{ for(const n of CONFIG.attributes.list) state.attrs[n]=CONFIG.attributes.base; for(const s of CONFIG.skills) state.skills.set(s.id,0); for(const it of CONFIG.items) state.items.set(it.id,0); state.traitsPos.clear(); state.traitsNeg.clear(); state.career=null; state.birthpoint=null; state.custom=''; el.custom.value=''; renderAttrs(); renderSkills(); renderItems(); renderTraits(); renderCareers(); renderBirthpoints(); updateAll(); });
+    (function setupDifficulty(){ const badge=el.badge; const map=CONFIG.difficulties; const label={hard:'困難',normal:'標準',easy:'簡單', superEasy: '超級簡單'}; document.querySelectorAll('[data-diff]').forEach(btn=>btn.addEventListener('click',()=>{ const key=btn.getAttribute('data-diff'); state.difficulty=key; state.difficultyLabel=label[key]||'標準'; state.budget=map[key]||100; if(badge) badge.textContent=`${state.difficultyLabel} · ${state.budget} 點`; updateAll(); })); if(badge) badge.textContent=`${state.difficultyLabel} · ${state.budget} 點`; })();
+
+    function buildTextForLLM(){
+  const { spent, remain } = calcCosts();
+  const q = (v) => JSON.stringify(String(v ?? ''));
+  const n = (v) => Number.isFinite(v) ? v : Number(v) || 0;
+
+  const attrsBlock = CONFIG.attributes.list
+    .map((name) => `  - name: ${q(name)}\n    value: ${n(state.attrs[name])}`)
+    .join('\n');
+
+  const skillsBlock = CONFIG.skills
+    .filter((s) => (state.skills.get(s.id) || 0) > 0)
+    .map((s) => `  - id: ${q(s.id)}\n    name: ${q(s.name)}\n    rank: ${n(state.skills.get(s.id) || 0)}\n    cost_per_rank: ${n(s.costPerRank)}\n    max_rank: ${n(s.maxRank)}\n    desc: ${q(s.desc)}`)
+    .join('\n');
+
+  const itemsBlock = CONFIG.items
+    .filter((it) => (state.items.get(it.id) || 0) > 0)
+    .map((it) => `  - id: ${q(it.id)}\n    name: ${q(it.name)}\n    qty: ${n(state.items.get(it.id) || 0)}\n    cost: ${n(it.cost)}\n    max_qty: ${n(it.maxQty)}\n    desc: ${q(it.desc)}`)
+    .join('\n');
+
+  const pickedPos = CONFIG.traits.positive.filter(t => state.traitsPos.has(t.id));
+  const pickedNeg = CONFIG.traits.negative.filter(t => state.traitsNeg.has(t.id));
+  const posBlock = pickedPos.length
+    ? pickedPos.map((t) => `    - id: ${q(t.id)}\n      name: ${q(t.name)}\n      cost: ${n(t.cost)}\n      desc: ${q(t.desc)}`).join('\n')
+    : '    []';
+  const negBlock = pickedNeg.length
+    ? pickedNeg.map((t) => `    - id: ${q(t.id)}\n      name: ${q(t.name)}\n      cost: ${n(t.cost)}\n      desc: ${q(t.desc)}`).join('\n')
+    : '    []';
+
+  const career = CONFIG.careers.find(x => x.id === state.career) || null;
+  const birth = (CONFIG.birthpoints || []).find(x => x.id === state.birthpoint) || null;
+
+  const careerBlock = career
+    ? `id: ${q(career.id)}\n  name: ${q(career.name)}\n  cost: ${n(career.cost)}\n  desc: ${q(career.desc)}`
+    : 'null';
+  const birthBlock = birth
+    ? `id: ${q(birth.id)}\n  name: ${q(birth.name)}\n  cost: ${n(birth.cost)}\n  desc: ${q(birth.desc)}`
+    : 'null';
+
+  const custom = (state.custom || '').trim();
+  const customLine = `custom: ${custom ? q(custom) : '""'}`;
+
+  const yaml = [
+    '---',
+    'attributes:',
+    attrsBlock || '  []',
+    'skills:',
+    skillsBlock || '  []',
+    'items:',
+    itemsBlock || '  []',
+    'traits:',
+    '  positive:',
+    posBlock,
+    '  negative:',
+    negBlock,
+    'career:',
+    career ? `  ${careerBlock.replace(/\n/g, '\n  ')}` : '  null',
+    'birthpoint:',
+    birth ? `  ${birthBlock.replace(/\n/g, '\n  ')}` : '  null',
+    customLine, 
+    '要求: 根據以上給出的資訊, 寫一段身臨其境帶點黑色幽默的穿越開場，最終生成一個簡單情境。並在最後根據給出的開局條件寫入變數。'
+  ].join('\n');
+
+  return yaml;
+}async function sendToSillyTavern(){ const {remain}=calcCosts(); if(remain<0) return; const text=buildTextForLLM(); const stVars={ DIFFICULTY: state.difficultyLabel, BUDGET: String(state.budget), SPENT: String(state.budget - remain), REMAIN: String(remain), SURVIVAL_POINTS: String(0)}; try{ if(typeof insertOrAssignVariables==='function'){ await insertOrAssignVariables(stVars);} if(typeof triggerSlash==='function'){ const slash=`/send <START>\n${text}\n|\n/trigger`; await triggerSlash(slash,'Send'); return; } }catch(e){ console.warn('SillyTavern 整合失敗，轉為剪貼簿複製。',e);} try{ await navigator.clipboard.writeText(text); alert('已複製到剪貼簿，請貼上到聊天。'); }catch(e){ alert('無法複製到剪貼簿，請手動複製總覽文字。'); console.log(text);} }
+    document.getElementById('confirmBtn').addEventListener('click', sendToSillyTavern);
+
+    (function boot(){ state.difficulty='normal'; state.difficultyLabel='標準'; state.budget=CONFIG.difficulties.normal; renderAttrs(); renderSkills(); renderItems(); renderTraits(); renderCareers(); renderBirthpoints(); updateAll(); })();
+  </script>
+</body>
+</html>
+```

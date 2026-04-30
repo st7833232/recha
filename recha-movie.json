@@ -2,12 +2,12 @@
   "spider": "./jar/xiaosa-0415.jar;md5;2cea0bdebc24f11570af244edc0e105b",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.04.30_Ver.5\n 大陸那邊最近有大動作啊！",
+  "notice": "115.04.30_Ver.6\n 大陸那邊最近有大動作啊！",
   "sites": [
 
         {
             "key": "AppV7Fz",
-            "name": "🐷粉猪|秒播",
+            "name": "🐷粉猪｜嗷嗚",
             "type": 3,
             "api": "csp_AppV7Amns",
             "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
@@ -19,7 +19,7 @@
         },
         {
             "key": "AppV7Xy",
-            "name": "🐟咸鱼|秒播",
+            "name": "🐟咸鱼｜嗷嗚",
             "type": 3,
             "api": "csp_AppV7Amns",
             "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
@@ -31,7 +31,7 @@
         },
         {
             "key": "AppV7Xnm",
-            "name": "🟡小柠檬|秒播",
+            "name": "🟡小柠檬｜嗷嗚",
             "type": 3,
             "api": "csp_AppV7Amns",
             "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
@@ -43,7 +43,7 @@
         },
         {
             "key": "AppV7Mtq",
-            "name": "💎蒙太奇|秒播",
+            "name": "💎蒙太奇｜嗷嗚",
             "type": 3,
             "api": "csp_AppV7Amns",
             "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
@@ -55,7 +55,7 @@
         },
         {
             "key": "AppV7Llq",
-            "name": "🕵️零零七|秒播",
+            "name": "🕵️零零七｜嗷嗚",
             "type": 3,
             "api": "csp_AppV7Amns",
             "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
@@ -67,7 +67,7 @@
         },
         {
             "key": "AppV7Xsz",
-            "name": "🍅小柿子|秒播",
+            "name": "🍅小柿子｜嗷嗚",
             "type": 3,
             "api": "csp_AppV7Amns",
             "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
@@ -79,7 +79,7 @@
         },
         {
             "key": "AppV6Dr",
-            "name": "🥋达人|秒播",
+            "name": "🥋达人｜嗷嗚",
             "type": 3,
             "api": "csp_AppV6Amns",
             "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
@@ -91,7 +91,7 @@
         },
         {
             "key": "AppV6Yz",
-            "name": "🍋柚子|秒播",
+            "name": "🍋柚子｜嗷嗚",
             "type": 3,
             "api": "csp_AppV6Amns",
             "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
@@ -103,7 +103,7 @@
         },
         {
             "key": "AppV6Tg",
-            "name": "🐶特狗|秒播",
+            "name": "🐶特狗｜嗷嗚",
             "type": 3,
             "api": "csp_AppV6Amns",
             "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
@@ -114,10 +114,21 @@
             "ext": "291f288565eb2ea7fcb9caa81e70fa9b13ee50aa4880a55d5da44a22bc07d90a87c2078c271197d29b708c0e51da4326089ccfa0765319fe6aa5788b0e8073f192d9a15ffb277a378829dc70346b083810b66a73e4176fe1ba51cde68ee64c68c04a8d1ed92e586688e09ade2701dfba3ccf720c024287dc3187c946399bdd4ad5785674bcad46f894c081f80e3ac064289ddf0889b44c566d6d0d8b9e4ee774160d3cd5859e6448e5ea2012623a0fa0f97104f39e462f89d3d03f6a6ab9ab4afd799c08cb4621ef0cfca86fb4fda635a0137523cc5c8fe4c2f820857f6168879b8a0f2a92949b3ade404d5c2b5951b09caa7a1b23c373ef5a548de6704b799989da3fed86a6562e0806b571f4e7fe85b1310caa105a87b222bda8c72759b75d4d1e230b51c235015d961f1a8bf67cbfccfaa8b970e3fdac81f13155239b9dbae209dd9e96559a3a25640c2b7932b0c2ecfa327dab44fa646fd6a23ef1fd0df73b645d8dddbf5bc9c39318330189e5fc2335be5e897c3a27d09ad9be406bba1b0f84280d1219b843b87896ae6642fa3be042b62ee11d7fffdc220ce2c0cf83721836a38685353afff339e4b7dd5621f6acc8899fedc64351b518fde91661a9a5b948ee57e4de5d018d21bc2f045ac225ee031b843618002025559e9e66093706adcbd16902307fe1ac031c7293fc5ea0fafb6af4ef975421cd50eea958fac6cc83d2819666fa9cdc1b0d23b256034949e75276e51010f8743f9440edb6bf568819364eba2d68b9aa720fcc91f6465ae92375c6f06043e95c4566acd6483b175f90e9d189b6cde6ad7a7f9d66c386e49c0264cda18df57c073d74154cfc8e24aefab25f323cc84e196daf501cfabeb643a0c9cab0e0c7550875adb0870789b3edc49a9f8f772960bfe9fbc15943a31c3096baf8b1e62f5f01e6bb7f45dc56f24d5d3c7e1dd33c9a7aa0f18ade601a4780121e758db79c03e75436d38e96c463713e37e477bc6770d7b131f440d9a4fe1ba7295c2a211387aa319587c8f5be8cfab47bddd1ef1dffbbca22b3069205674f90a80223d91f005fbda1cf09124152b119bc3fc260725931c6b3e7608c8463e84c46ddd1ff16f78da180b7efb7ddbddaf4e209d3753a07f70b85393bc11eb73ab878cd5e59b846c839bcea083220a08bcb7815e4908cbdfb53d6a7aead5c9a4380c14f8c5e4319fed342d5985d1b907a576756dc28512a16c74bc57e4c6b415070fd1a1a59aa3619de7bc5989e440a5ff8512dd260fb4e0926f479b46d9a232755567b3b52e0765718acbf491c894519ddaa3fa22dc07d40afd142445473592ef60bf398652ad7edd36b05ac951d08f8a3305cfceffe4d104f3f4ebd10f17607575e967e0af17d594f7fb57e43a22b26cd72a667cc8753584897ffe060636ad0c378450dab2c6ad9239d58949d75399e9a212b7d5c13472e0df6425ce49dfce3fb3be3b8bead3329260d63b45eeb4481594fed19da2c72b1017644046b8aab0a1f8dc01ecbbce3fc4ac4cf71c37f6918c69a40ba2ee04661872a06ab8855e29dd2c25a2502406fef84e96164cb3e202ec89b07233931cf444f66ad16fa5fefe53b7d6605d2b7bb3a95b9b71eb9bc56e10b049b96cde60646e78190978d5409475dfcf909599b059f939040ca3888d37cbea9c7814d93ac428f91e8b08044d99cfad3772522f9cefc1c34a33fe2ff464817ed69d4f8bd2417ade9507a033147d121b5483dba44e28b3a150cfc57f856eea30b85e80e28aa1da7f0aa491410885317dc31535b7baaeaa4b06025022088bc6aced130a13d82444de650ca173902aff94aee29a2276ff924ecc9a99de41476d8324362443ab2125574455da3145041d790a7962548f93d56be50a5d696fc3b3db75f74934c727ff813c5c8e75f89e2f4014d22710bcfedcb02ab4f59b25c01def2c9d8476b59310d9dff88473b5fc054076513e3255280594ee6076b89dd42a53b667312c2d34c95f08a80ef474f6eb6a3b2c1a707cf3c8032de400162e08b131edbe0f8be74097daf48c29d7e88a4948271633a6398a42c8567f54840a7ad9a388c9895fc2effa499b74fb9856321e62104"
         },
 
-
+    {
+      "key": "GoConfig",
+      "name": "🇹🇼｜熱播排行榜｜自動切換1",
+      "type": 3,
+      "api": "csp_GoConfigAmns",
+      "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
+      "indexs": 1,
+      "searchable": 0,
+      "filterable": 0,
+      "quickSearch": 0,
+      "changeable": 0
+    },  
     {
       "key": "豆瓣",
-      "name": "🇹🇼｜熱播排行榜｜自動切換",
+      "name": "🇹🇼｜熱播排行榜｜自動切換2",
       "type": 3,
       "api": "csp_Douban",
       "searchable": 0,
@@ -288,17 +299,6 @@
       "changeable": 0
     },
     {
-      "key": "麻雀",
-      "name": "🏆｜麻雀｜藍光◎秒播",
-      "type": 4,
-      "api": "http://115.191.55.109:8080/video/qqqys?token=47f318660fa5ca46",
-      "jar": "./jar/mi-0213.jar;md5;c4def4496c2e1a0959c8fedfaff41488",
-      "searchable": 1,
-      "quickSearch": 1,
-      "changeable": 1,
-      "filterable": 1
-    },
-    {
       "key": "独播",
       "name": "🏆｜獨播｜藍光◎秒播(無廣告)",
       "type": 3,
@@ -377,12 +377,6 @@
       "filterable": 1
     },
     {
-      "key": "月佬瓜子影视",
-      "name": "🏆｜瓜子｜特清◎秒播(月佬版)",
-      "type": 4,
-      "api": "https://newtv.ggff.net/guazi?token=fhJadO1R"
-    },
-    {
       "key": "py_非凡资源无广",
       "name": "🏆｜非凡｜高清◎秒播(無廣告)",
       "type": 3,
@@ -411,31 +405,12 @@
       }
     },
     {
-      "key": "小紅",
-      "name": "🏆｜小紅｜高清◎秒播(無廣告)",
-      "type": 3,
-      "api": "./py/小红影视.py",
-      "searchable": 1,
-      "filterable": 0,
-      "changeable": 1
-    },
-    {
       "key": "py_愛瓜app.py",
       "name": "🏆｜愛瓜｜高清◎秒播(無廣告+嗷嗚版)",
       "type": 3,
       "api": "./py/爱瓜TVAPP.py",
       "searchable": 1,
       "quickSearch": 1,
-      "filterable": 0,
-      "changeable": 1
-    },
-    {
-      "key": "py_aiguatv",
-      "name": "🏆｜愛瓜｜高清◎秒播(無廣告+沐辰版)",
-      "type": 3,
-      "api": "./py/py_aigua.py",
-      "searchable": 1,
-      "quickSearch": 0,
       "filterable": 0,
       "changeable": 1
     },
@@ -447,21 +422,6 @@
       "searchable": 1,
       "filterable": 0,
       "changeable": 0
-    },
-    {
-      "key": "爱盈",
-      "name": "🏆｜愛盈｜高清◎秒播(無廣告)",
-      "type": 3,
-      "api": "csp_AppQi",
-      "searchable": 1,
-      "changeable": 1,
-      "ext": {
-        "site"   : "https://rxysyyds.oss-cn-chengdu.aliyuncs.com/qiji.txt",
-        "dataKey": "sjvlwnhk6h9znl61",
-        "dataIv" : "sjvlwnhk6h9znl61",
-        "version": "305",
-        "ua"     : "okhttp/3.10.0"
-      }
     },
     {
       "key": "爱影",
@@ -478,34 +438,6 @@
       }
     },
     {"key": "三秋影视", "name": "🏆｜三秋｜高清◎秒播", "type": 3, "api": "csp_App3Q"},
-    {
-      "key": "小羊",
-      "name": "🏆｜小羊｜高清◎秒播",
-      "type": 3,
-      "api": "csp_AppGet",
-      "ext": {
-        "site"   : "https://xy4k.com/url.txt",
-        "dataKey": "7SDWjknU34zqFbVr",
-        "dataIv" : "7SDWjknU34zqFbVr"
-      }
-    },
-        {
-            "key": "Juzhi",
-            "name": "🏆｜橘汁｜待測試",
-            "type": 3,
-            "jar": "./jar/Juzhi_spider.jar",
-            "api": "csp_Juzhi",
-            "playerType": 2,
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "ext": {
-                "host": "",
-                "site": "https://vip.123pan.cn/1848463092/cct/az5.txt",
-                "version": "3.0.1.9"
-            }
-        }, 
         {
             "key": "AppV6Dxs",
             "name": "🏆｜大师兄｜待測試",
@@ -545,23 +477,7 @@
             "changeable": 1,
             "ext": "c45e288565eb2ea7fcb9caa81e70fa9b13ee58fa569055a61c9e79bba88fe5c391421b3ca47d9afa5cbef8294a3ac0dc5b4465957d31fa7370cff9791cf886dce11385fee05779d793e80a1a61a9de0a16bc28239c46d742ede10a9aed1f5188a943d37e32e1867200bc9046a9df535eb593a1e9967e08a61234744d4b103fcf0bbcea5f694979b0f9b180666369a1abbc63449a0558117608acc086c566cadcc3220654195aff732ec7a7216a1b37af22fd52248a76f0b3b90b05c3d8d7cb4dcd8bc199df0c69f00a469b00b2272af9b20b353561c1ebd309c5872fe905a8e5434c9e977eda2b2920c4770c13222a31a533666b2bc3c6025facb2a79eec8e7a8610f3e9181201589d0a257d22436747fdb16233ac7f504e0fd4f91999f4e6dd5104855ea3853b9fa9215eda8d1497dab399efb9a6972bb79aa078358a8685c4ccc82fd5b06c4868f8ebe2714c2ad214e5b370f338f37c59272f0e4464bae30dc62bfea0e5eea60a36a49018c20f7040b0686d4c7c399febbbc0921f896d195f6fee018a2d3b70c9f35a4ead6ea24ce90abe020a72c92b6fa861c5113a79207770dfd9ee4f1a5089d2b3caf1d00457fe44df8ab6a6bc9453d880590cb28f0cdfbb50fe47dba63ba964afd8102a7b090f9731eb01f24fa1cdfb512d320230b7f3d342468d75b34e70e71a439c8e36e8531fd5f1a91859d9b5915805e2c01781ecfbf2b026cace4598c2b380fec8ee5c38461fcc0663a24c96f352667382e496f2cafa1a03ca5ea1e58be26a6d7c0b806b176515ebd6bc4e78982abe49ac1cf07480f879bc5ddb36ee4bf6e25173a31cc709ecb8465413f834a59008e3c7563a6738658dc6e04752895a1ecc418c25276e00cd52e53011912b4d0fc4f66863089741f40032bcace3e55b0f4d741382f41ca6630e1a7223e8153e05c5c9c78625bee232d4386a2b40a0dc9b97f6874da7f25a1e633dfa5771dfcb5bce58fbb6abab44ae787c14aad60507e5592d34b80c1e96f2196b0c1aa7d3841903fcc02f9f6a08257b05a954096f40e6ba4ed16e31e96bdee9e910c14dce140413a24e9315ae8abad82659f3ee0d7e2fcc36991d4188a240362b2aa0330ffe439e8f16f9a5eae4c2a21e538b1b10c620634583ccceb4d9536b8456a00c7888105db41d79c92dfd325b524b4ad2e56b3fde09daac332ff5ea919e9ffcc6a4123ebc7eb3c5c64aa878553ad97fa29bd103044404988cacf1aa7235641a872a584ef6d8dd7fa2e5ec62451d9a35df247007d499fee6d65c8d90303b92752276d62bc32eb15db7fb4ce419abc66471a021b45f1a9184cd94716dbeced0af83f2abf18977638aedadea6bbdfede36af93c10a03c28d15b8a2598f384d041877785816e33739a0ec85c1f2e020da369f3bf633060a812c5ab8312484cf08e1c542789e1f6a631b7039bd19c428caccdda4099c59a5be25c065373c74ac96acac5220fd412d0a098094320deb1069eabe7de71bf440719a6b89b2e072d468e37ee0e339be0ef98e332e2d7faedee0e58d4268470ee448d81d0ec74a0dcb706bb0739860d4b145ba7be16c1e0c4361f2b52a5e1f84dfdfae64a0014efdb84613c1fa2cbdd2686bda5639bda15f5d7caac362f0a957bcb594dcc214ac67c3bdefddf552ff013a51d21e2f25a7efc89f84b383c9f36aedd7c6d62d50a6ffb89e1cd0ec336c0db2f5a6ac3dd5d04702826ca2fbc3c3c1295af8bdba6297f8f86082245fd8c2d9f13718681846dc2a12a19d550076d6aa1982369f0b8ef2c9ee0f105f4840c7711d7922efeb53d7ffc167abd6ecb40314ca4f02a7fb2cec1222d4f725678790803001e11440f0339eee3790a38a2a1df4f8a83c3f2946b6b0460c8903ff7cc7c9717aa20456f54255142b883d7ec08228632333404927dfc178aa6cc1d223449e7f0b197f472827333aa997847a20cff178e427976aef1b3cca978405c68b4a9d16c21f4809266d6d7deb55aa72c862c4c68d16194eb7215bda65d15b36400c75ed2ebbce3296aabaf1e6c5432808cc1f2c0282edab9cda4f54992ec872e6c9990ee15eb1fb0ccc09cced55979c5ba4023cdc7430f1c2922f3baadf9bcc3365667b1c60d2541d84474cfb3770078d1843aca8959b022785"
         },
-        {
-            "key": "NewNoxZy",
-            "name": "🏆｜追憶｜待測試",
-            "type": 3,
-            "api": "csp_NewNoxAmns",
-            "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
-            "playerType": 2,
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "ext": {
-                "name": "",
-                "password": "",
-                "data": "4122288565eb2ea7fcb9caa81e70fa9b13ee58fa569055a61c8e99e0e685e59b23bfd2fede0c6909ed737ef5f8bf1ed059ee1222b4ed5608fdb3706b6c8b03f092e28a96fdc785c29b10433294465a2940ec80382950c7fd32775455e18dddb20ce680df1032820b7f3e36b58835e26cf64143caed9d3491f302adae503007d049243be56681fd3328c76f44393b3f01872abe86be7f6190a3b012ac28cbfb5ca81b45b5d85cf76347547bd3edfde4eb54261cda45b8469e2bef40d2dfc63d6f5846256de2fdc4e2c2e0a0c1dd0cd784a121243dec0d514eb59bdf76924637518d723c1561b3f6bb423494885708df5c753f9e7ec256bfc5d9d8c748e1bdced241b6c0a6b6c5cdfa7a8fafa9b0d743d8f1d95724a29fed43edb14aaa905eb92300d687b010d8f3adfc11e3616243777f6675840e93e68c442d9de777aa7d18f0fce1627b329b1d6e66675c32aab7de7a96504b8c25e3f6a30ca60a6ae20f7fd7c1706c1db935f2e37497f727943c1ac049464be2c61c21f99ab000e4086a62a114ac6af3d09e4500ed799cce1f20a223aeeb4864b24ddf1a9d3aeee7ded6f38b33a52a55a3c51df894c04f0a996c20270e86e9319a7e586ee0991902db1491e4e4f948dad5b46e6fd058cbe020c913c049fc20530bb2f4e5a28b09d4b7c7bb4d6d8f2f2dccbc6ec7ebe952eaf8cd5528888039e5e655af8d1924e4816df3ec2dd010ed71bc955d46e711fdafbeadc49a3bcf4932b4ff843c18866973cc3e48be3caf6033bc8d65ef12043d7d92ee9ea4ea411dbcb8d5dbe4c212ab4999d673697e6d1e1c41222ac199d2a961c4e43481eb4bbbc9154ac19499f238cd759bbd65c61a2b3d9a064f38587486b0d09ed5b4c240b3d9f565ead37985d17e2ceb2c71b0395e7cf2b7ce0245bc40ba9efe3e3176ddf9772c59dfa2d4d0e1d105b05cf06aa7dac6a72de85bdf20c646cba604f8a27374ad46d8dbec7c0d830801da0bae9a326673e2df4bb0ec9b0764d49c0dee8c2836d5ed2d206f5664a6e95002af8359763c03d9acae3580008bf0880ee173ce5023d3671939975b3c2c75f2277a69f8b3cac63fa37e476fb5d8a6c8c68b3c46dcd7c0476052981bc649ba18ca931c4d4eb5195388ed05cd2a8ec88f64704fdd409db0a647872448e4da8e172a0a9891127d33e48f8dbc7a55152ce45d976a8ef2f09f9fd69ddc6bd57ffbf005c14245bca8875d30823ab6c18190fffdd61adf98e9df0faa167e36150dfcd6dc73870bfe0884b7559f046fa752828d14890a353f7c73bcdf932c903ac6602ab38ebc54c4a7311a08a185c1c8290b23d17b17ef41d30023cb4bd6318f71b558080918a5d371052bdbcbd249149ba8407028f7ba31ce96058ae5837bdde1a1108a9574b0f98a10d1dc2bdf"
-            }
-        },    
+ 
     {
       "key": "py_mv4r4",
       "name": "🏆｜有兮｜高清◎秒播",
@@ -571,32 +487,6 @@
       "quickSearch": 1,
       "filterable": 0
     },    
-    {
-      "key": "椰子",
-      "name": "🏆｜椰子｜高清◎秒播",
-      "type": 3,
-      "searchable": 1,
-      "changeable": 1,
-      "api": "csp_AppGet",
-      "ext": {
-        "url"    : "http://103.109.20.117:6699",
-        "dataKey": "xxm9N4P9rS2zjdyz",
-        "dataIv" : "xxm9N4P9rS2zjdyz"
-      }
-    },
-    {
-      "key": "劇猫",
-      "name": "🏆｜劇貓｜高清◎秒播",
-      "type": 3,
-      "searchable": 1,
-      "changeable": 1,
-      "api": "csp_AppGet",
-      "ext": {
-        "site": "https://zjm-1302383509.cos.ap-guangzhou.myqcloud.com/zjm.txt",
-        "dataKey": "zjmznbl2026zcxgb",
-        "dataIv": "zjmznbl2026zcxgb"
-      }
-    },
     {
       "key": "Aiyf",
       "name": "🎖︎｜愛壹帆｜官源",
@@ -742,19 +632,7 @@
       "name": "🎖︎｜喜馬拉雅2｜有聲書",
       "type": 3,
       "api": "./py/ximalaya.py"
-    },    
-    {
-      "key": "GoConfig",
-      "name": "🇹🇼｜熱播排行榜｜自動切換1",
-      "type": 3,
-      "api": "csp_GoConfigAmns",
-      "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
-      "indexs": 1,
-      "searchable": 0,
-      "filterable": 0,
-      "quickSearch": 0,
-      "changeable": 0
-    },    
+    },      
     {
       "key": "py_愛電影.py",
       "name": "🏆｜金牌系列-愛電影",
@@ -840,17 +718,6 @@
       "changeable": 1
     },
     {
-      "key": "📀TWOBT",
-      "name": "🏆｜TWOBT",
-      "type": 3,
-      "api": "csp_BttwoAmns",
-      "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
-      "searchable": 1,
-      "filterable": 1,
-      "quickSearch": 1,
-      "changeable": 1
-    },
-    {
       "key": "php_官方资源",
       "name": "🏆｜官方资源｜(PHP)",
       "type": 4,
@@ -866,28 +733,6 @@
       "api": "http://zhangqun1818.serv00.net/py.php"
     },
     {
-      "key": "TnewGr",
-      "name": "🥇｜糖心｜高清◎瞬播",
-      "type": 3,
-      "api": "csp_TnewGrAmns",
-      "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
-      "searchable": 1,
-      "filterable": 1,
-      "quickSearch": 1,
-      "changeable": 1
-    },
-    {
-      "key": "Hxq",
-      "name": "🥇｜韓劇｜高清◎瞬播",
-      "type": 3,
-      "api": "csp_HxqAmns",
-      "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
-      "searchable": 1,
-      "filterable": 1,
-      "quickSearch": 1,
-      "changeable": 1
-    },
-    {
       "key": "🥇伊外",
       "name": "🥇｜伊外｜高清◎秒播",
       "type": 3,
@@ -897,16 +742,6 @@
       "filterable": 1,
       "quickSearch": 1,
       "changeable": 1
-    },
-    {
-      "key": "csp_Jiaozi",
-      "name": "🥇｜餃子｜高清◎秒播(無廣告)",
-      "type": 3,
-      "api": "csp_Jiaozi",
-      "jar": "https://jihulab.com/yoursmile66/TVBox/-/raw/main/Yoursmile.jar",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1
     },
     {
       "key": "csp_看片狂人",
@@ -924,7 +759,7 @@
         "搜索url": "https://www.kpkuang.fun/vodsearch/-------------.html?wd={wd}",
         "分类url": "https://www.kpkuang.fun/vodshow/{cateId}-{area}-time------{catePg}---{year}--.html",
         "分类": "电影$1#连续劇$2#综艺$3#动漫$4",
-        "地区": "中国大陆&香港&台湾&日本&韩国&泰国&美国&英国&德国&法国||中国大陆&韩国&香港&台湾&日本&美国&泰国&英国&新加坡&其他||香港&台湾&韩国&中国大陆&英国&美国&日本&加拿大&泰国&其它||日本&大陆&中国大陆&中国&美国&台湾&韩国&法国&英国&加拿大"
+        "地区": "中国大陆&香港&台湾&日本&韩国&泰国&美国&英国&德国&法国｜｜中国大陆&韩国&香港&台湾&日本&美国&泰国&英国&新加坡&其他｜｜香港&台湾&韩国&中国大陆&英国&美国&日本&加拿大&泰国&其它｜｜日本&大陆&中国大陆&中国&美国&台湾&韩国&法国&英国&加拿大"
       }
     },
     {
@@ -943,16 +778,6 @@
       "quickSearch": 1,
       "api": "csp_XYQHiker",
       "ext": "./json/农民影视.json"
-    },
-    {
-      "key": "py_OleVod",
-      "name": "🥇｜歐沐｜高清◎秒播(無廣告)",
-      "type": 4,
-      "api": "https://py.doube.eu.org/spider?site=OleVod",
-      "searchable": 1,
-      "quickSearch": 0,
-      "filterable": 0,
-      "changeable": 1
     },
     {
       "key": "csp_If101",
@@ -1012,7 +837,7 @@
         "简介": "video-info-item video-info-content vod_content\">&&</span>",
         "分类url": "https://ylsp.tv/vodshow/{cateId}-{area}-{by}------{cateIPg}---{year}/",
         "分类": "電影$1#電視劇$2#綜藝$3#動漫$4",
-        "地区": "大陆&香港&台湾&美国&法国&英国&日本&韩国&德国&泰国&印度&意大利&西班牙&加拿大&其他||大陆&香港&台湾&美国&法国&英国&日本&韩国&德国&泰国&印度&意大利&西班牙&加拿大&其他||内地&港台&日韩&欧美||国产&日本&欧美&其他"
+        "地区": "大陆&香港&台湾&美国&法国&英国&日本&韩国&德国&泰国&印度&意大利&西班牙&加拿大&其他｜｜大陆&香港&台湾&美国&法国&英国&日本&韩国&德国&泰国&印度&意大利&西班牙&加拿大&其他｜｜内地&港台&日韩&欧美｜｜国产&日本&欧美&其他"
       }
     },
     {
@@ -1026,7 +851,7 @@
         "编码": "UTF-8",
         "分类url": "https://www.ylys.tv/vodshow/{cateId}-{area}-{by}-{class}-{lang}-{letter}---{catePg}---{year}.html",
         "分类": "电影$1#电视劇$2#综艺$3#动漫$4",
-        "类型": "动作片$6#喜劇片$7#爱情片$8#科幻片$9#奇幻片$10#恐怖片$11#劇情片$12#战争片$20#动画片$26#悬疑片$22#冒险片$23#犯罪片$24#惊悚片$45#歌舞片$46#灾难片$47#网络片$48||国产劇$13#港台劇$14#日劇$15#韩劇$33#欧美劇$16#泰劇$34#新马劇$35#其他劇$25||内地综艺$27#港台综艺$28#日本综艺$29#韩国综艺$36#欧美综艺$30#新马泰综艺$37#其他综艺$38||国产动漫$31#日本动漫$32#韩国动漫$39#港台动漫$40#新马泰动漫$41#欧美动漫$42#其他动漫$43"
+        "类型": "动作片$6#喜劇片$7#爱情片$8#科幻片$9#奇幻片$10#恐怖片$11#劇情片$12#战争片$20#动画片$26#悬疑片$22#冒险片$23#犯罪片$24#惊悚片$45#歌舞片$46#灾难片$47#网络片$48｜｜国产劇$13#港台劇$14#日劇$15#韩劇$33#欧美劇$16#泰劇$34#新马劇$35#其他劇$25｜｜内地综艺$27#港台综艺$28#日本综艺$29#韩国综艺$36#欧美综艺$30#新马泰综艺$37#其他综艺$38｜｜国产动漫$31#日本动漫$32#韩国动漫$39#港台动漫$40#新马泰动漫$41#欧美动漫$42#其他动漫$43"
       }
     },
     {
@@ -1095,96 +920,6 @@
       }
     },
     {
-      "key": "顾我1",
-      "name": "📱｜故我｜高清◎秒播",
-      "type": 3,
-      "api": "csp_AppQi",
-      "searchable": 1,
-      "changeable": 1,
-      "ext": {
-        "url"    : "http://117.50.204.35:520",
-        "dataKey": "ca94b06ca3c7d80e",
-        "dataIv" : "ca94b06ca3c7d80e",
-        "search" : "gftvvvvklod",
-        "init"   : "initV122",
-        "ua"     : "okhttp/3.10.0"
-      }
-    },
-    {
-      "key": "小猪",
-      "name": "📱｜小豬｜高清◎秒播",
-      "type": 3,
-      "api": "csp_AppQi",
-      "searchable": 1,
-      "changeable": 1,
-      "ext": {
-        "site": "https://tiantangyoulu.oss-cn-beijing.aliyuncs.com/aoteman.txt",
-        "dataKey": "lp3d4t53y9t5db8y",
-        "dataIv": "lp3d4t53y9t5db8y",
-        "search": "searchList9",
-        "init": "initV122",
-        "ua": "okhttp/3.10.0"
-      }
-    },
-    {
-      "key": "白鸽",
-      "name": "📱｜白鴿｜高清◎秒播",
-      "type": 3,
-      "api": "csp_AppGet",
-      "searchable": 1,
-      "changeable": 1,
-      "ext": {
-        "url"    : "https://cy.baige.asia",
-        "dataKey": "599D0FE5178642FD",
-        "dataIv" : "599D0FE5178642FD"
-      }
-    },
-    {
-      "key": "魔方",
-      "name": "📱｜魔方｜高清◎秒播(浮水印廣告)",
-      "type": 3,
-      "api": "csp_AppGet",
-      "searchable": 1,
-      "changeable": 1,
-      "ext": {
-        "url"    : "http://www.613mf4k12.top",
-        "dataKey": "1234567887654321",
-        "dataIv" : "1234567887654321"
-      }
-    },
-    {
-      "key": "零度",
-      "name": "📱｜零度｜待測試",
-      "type": 3,
-      "api": "csp_AppNox",
-      "ext": {
-        "url": "http://ld.ldysapp.cn",
-        "header": {
-          "content-type": "application/json",
-          "x-app-signature": "70:DF:B1:2A:AE:C3:E3:73:6E:23:0F:67:B9:3B:C5:63:2D:EA:2A:2C:9E:9D:52:82:1D:3F:3C:3C:B9:10:9E:EE",
-          "x-app-package": "com.mjyx.jhxq",
-          "x-app-version-code": "36",
-          "x-app-version-name": "2.2.6"
-        }
-      }
-    },
-    {
-      "key": "回响",
-      "name": "📱｜回響｜待測試",
-      "type": 3,
-      "api": "csp_AppNox",
-      "ext": {
-        "url": "http://110.42.37.69:8080",
-        "header": {
-          "content-type": "application/json",
-          "x-app-signature": "EB:19:FD:A7:8F:67:99:CD:6C:F0:6F:A4:72:3F:7A:C7:E9:2E:95:79:6F:5B:60:EA:CD:D8:05:CF:3E:06:D9:71",
-          "x-app-package": "com.recall.app",
-          "x-app-version-code": "22",
-          "x-app-version-name": "2.2.0"
-        }
-      }
-    },
-    {
       "key": "火狐",
       "name": "📱｜火狐｜高清◎順播(無廣告+APP)",
       "type": 3,
@@ -1198,66 +933,6 @@
         "deviceId": "",
         "version" : "140",
         "ua"      : ""
-      }
-    },
-    {
-      "key": "麒麟",
-      "name": "📱｜麒麟｜高清◎秒播(無廣告)",
-      "type": 3,
-      "api": "csp_AppFox",
-      "searchable": 1,
-      "changeable": 1,
-      "ext": {"host": "https://qh.70qh.top", "ver": 2}
-    },
-    {
-      "key": "搜搜",
-      "name": "📱｜搜搜｜高清◎秒播(無廣告)",
-      "type": 3,
-      "api": "csp_AppFox",
-      "searchable": 1,
-      "changeable": 1,
-      "ext": "https://www.zjcvod.com"
-    },
-    {
-      "key": "奇奇",
-      "name": "📱｜奇奇｜高清◎秒播(無廣告)",
-      "type": 3,
-      "api": "csp_AppQi",
-      "searchable": 1,
-      "changeable": 1,
-      "ext": {
-        "url"    : "http://110.42.67.221:8007",
-        "dataKey": "123456789abcdefg",
-        "dataIv" : "123456789abcdefg",
-        "search" : "searchList7",
-        "init"   : "initV122",
-        "ua"     : "okhttp/3.10.0"
-      }
-    },
-    {
-      "key": "芬奇",
-      "name": "📱｜芬奇｜高清◎秒播(浮水印廣告)",
-      "type": 3,
-      "searchable": 1,
-      "changeable": 1,
-      "api": "csp_AppGet",
-      "ext": {
-        "site"   : "https://wsapi.dafenqi.mom/yuming.txt",
-        "dataKey": "bH5mI8iK0tK7aQ5x",
-        "dataIv" : "bH5mI8iK0tK7aQ5x"
-      }
-    },
-    {
-      "key": "优兔",
-      "name": "📱｜優兔｜高清◎秒播(無廣告)",
-      "type": 3,
-      "api": "csp_AppQi",
-      "searchable": 1,
-      "changeable": 1,
-      "ext": {
-        "site": "https://uututv-1319209748.cos.ap-shanghai.myqcloud.com/uutuv4.txt",
-        "dataKey": "UrWKPnmQWJA8AQzd",
-        "dataIv": "UrWKPnmQWJA8AQzd"
       }
     },
     {
@@ -1302,19 +977,7 @@
         "dataiv" : "1234567890987654"
       }
     },
-    {
-      "key": "小白",
-      "name": "📱｜小白｜高清◎秒播(無廣告)",
-      "type": 3,
-      "searchable": 1,
-      "changeable": 1,
-      "api": "csp_AppGet",
-      "ext": {
-        "url"    : "https://uutu.efjhl.cn",
-        "dataKey": "uXVVRRuaPnjEfsX5",
-        "dataIv" : "uXVVRRuaPnjEfsX5"
-      }
-    },
+
     {
       "key": "火锅",
       "name": "📱｜火鍋｜高清◎秒播(無廣告)",
@@ -1327,40 +990,6 @@
         "dataKey": "062dec75d039980e",
         "dataIv" : "062dec75d039980e",
         "ua"     : "Dart/3.5(dart:io)"
-      }
-    },
-    {
-      "key": "星空",
-      "name": "📱｜星空｜高清◎秒播(無廣告+APP)",
-      "type": 3,
-      "api": "csp_AppFox",
-      "ext": {"host": "http://fox.qwqfun.com"}
-    },
-    {
-      "key": "云速",
-      "name": "📱｜云速｜高清◎秒播(無廣告+APP)",
-      "type": 3,
-      "quickSearch": 1,
-      "api": "csp_AppGet",
-      "ext": {
-        "site"    : "http://59.153.167.137:7788/1.json",
-        "url"     : "http://59.153.167.137:7788",
-        "dataKey" : "4d83b87c4c5ea111",
-        "dataIv"  : "4d83b87c4c5ea111",
-        "deviceId": "",
-        "version" : "105"
-      }
-    },
-    {
-      "key": "优势",
-      "name": "📱｜優視丨高清◎秒播(浮水印廣告+app)",
-      "type": 3,
-      "quickSearch": 1,
-      "api": "csp_AppGet",
-      "ext": {
-        "url"    : "http://zxy-ys.810211.dpdns.org",
-        "dataKey": "1234567890123456",
-        "dataIv" : "1234567890123456"
       }
     },
     {
@@ -1385,47 +1014,6 @@
       "changeable": 1
     },
     {
-      "key": "洽洽影视",
-      "name": "📱｜洽洽｜高清◎秒播(無廣告+無首頁+APP)",
-      "jar": "./jar/pizza.jar;md5;6bcb3de5f0d7c9b3d4f19cfe9a314ab2",
-      "type": 3,
-      "api": "csp_AppGZ",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": "KhY021WelCEl+6MsvwnzaPussky6FQJcpCjT9V7/D61ft9vQAhNEPOYSMZVJSODd/JOOSOwUzim+9qfvgpNz7SvUPpAkXAweyrp76WY8s5EBwW7DBMY="
-    },
-    {
-      "key": "客星",
-      "name": "📱｜客星｜高清◎秒播(無廣告+APP)",
-      "type": 3,
-      "quickSearch": 1,
-      "api": "csp_AppGet",
-      "ext": {
-        "url"     : "https://api.hiapp.com.cn",
-        "dataKey" : "2268331221bobobo",
-        "dataIv"  : "2268331221bobobo",
-        "deviceId": "",
-        "version" : "105"
-      }
-    },
-    {
-      "key": "像素",
-      "name": "📱｜像素｜高清◎順播(無廣告+APP)",
-      "type": 3,
-      "quickSearch": 1,
-      "api": "csp_AppGet",
-      "ext": {
-        "url"     : "https://mcvod.top",
-        "site"    : "",
-        "dataKey" : "cnmbknmbtounimab",
-        "dataIv"  : "cnmbknmbtounimab",
-        "deviceId": "",
-        "version" : "",
-        "ua"      : ""
-      }
-    },
-    {
       "key": "py_爱影_APP",
       "name": "📱｜爱影",
       "type": 3,
@@ -1438,36 +1026,6 @@
         "api"    : "/api.php/qijiappapi",
         "datakey": "sada21321sdq231d",
         "dataiv" : "sada21321sdq231d"
-      }
-    },
-    {
-      "key": "py_云云_APP",
-      "name": "📱｜云云",
-      "type": 3,
-      "api": "./py/app/qijiapp.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "host": "https://staraugust123456.oss-cn-hangzhou.aliyuncs.com/2.txt",
-        "api": "/api.php/qijiappapi",
-        "datakey": "staraugust123456",
-        "dataiv": "staraugust123456"
-      }
-    },
-    {
-      "key": "py_优势_APP",
-      "name": "📱｜优势",
-      "type": 3,
-      "api": "./py/app/getapp.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "host"   : "http://zxy-ys.810211.dpdns.org",
-        "api"    : "/api.php/getappapi",
-        "datakey": "1234567890123456",
-        "dataiv" : "1234567890123456"
       }
     },
     {
@@ -1498,21 +1056,6 @@
         "api"    : "/api.php/getappapi",
         "datakey": "1111111111111111",
         "dataiv" : "1111111111111111"
-      }
-    },
-    {
-      "key": "py_紫金_APP",
-      "name": "📱｜紫金",
-      "type": 3,
-      "api": "./py/app/getapp.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "host"   : "http://www.zjcvod.com",
-        "api"    : "/api.php/getappapi",
-        "datakey": "ab4e9a421675f14b",
-        "dataiv" : "ab4e9a421675f14b"
       }
     },
             {
@@ -1563,37 +1106,8 @@
                 "dataIv": "#getapp@TMD@2025"
             }
         },    
-    {
-      "key": "py_旗星_APP",
-      "name": "📱｜旗星",
-      "type": 3,
-      "api": "./py/app/getapp.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "host"   : "http://ys.qist.top",
-        "api"    : "/api.php/getappapi",
-        "datakey": "2SWSPFxugBLPPOKo",
-        "dataiv" : "2SWSPFxugBLPPOKo"
-      }
-    },
-    {
-      "key": "py_卡卡_APP",
-      "name": "📱｜卡卡",
-      "type": 3,
-      "api": "./py/app/getapp.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "host"   : "http://154.201.90.53:8002",
-        "api"    : "/api.php/getappapi",
-        "datakey": "123456789abcdefg",
-        "dataiv" : "123456789abcdefg"
-      }
-    },
-    {
+
+     {
       "key": "甜圈短剧",
       "name": "📺｜甜圈短劇",
       "type": 3,

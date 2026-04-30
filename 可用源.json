@@ -5,6 +5,19 @@
   "sites": [
 {"key":"🌱春天","name":"🥈｜春天｜特清◎秒播(全屏賭場廣告)","type":3,"api":"csp_NewGrAmns","jar": "./jar/aowu.jar;md5;8845da8529a9d2073931d429fcf80b2d","searchable":1,"filterable":1,"quickSearch":1,"changeable":1,"ext":"fcsH1ANGAUTUF9HVgAAHARACF0cRFwdCx0TGwlcBggZSlhIVlFtBFZDAQ0dC1VMR1BUV1ZEVEofVktQCRFQPSQKQjwgBjMpJz4MOyBQCxdmfAs0KhU+Ow48CzMgKjULMlQBKl1VNSlAIEpUS1JHDgJKTkhWUnQZSnscNj0oRkcVIA8EBzIxH0djY08OE15EUAgTQxQGF0VOSFYJEgFGBwJQMQsqEjM/MgIkITYeQwFMQHYaQ1hBByEXBVRLUkcGBBgrARARCFIRVRMMEwwZExBQSUdWCxwJGl1XHmxSHQAXR01WRRYNFAQ3BxhEAhBeExMCBREOFhECLQsGGQ1WUlQRUR1eHxcIEwsSWBYbBAkXDRoPAFIcHltSF0ZeRVUFHgE6FxgJAA4bQV9QCRFQVlBJV1QUCxYVEQQRCQdWEEgTE0NVUElXVBEXFxQdBxpKThMQRgMBQlRQGA=="},    
     {
+      "key": "魔方",
+      "name": "📱｜魔方｜高清◎秒播(浮水印廣告)",
+      "type": 3,
+      "api": "csp_AppGet",
+      "searchable": 1,
+      "changeable": 1,
+      "ext": {
+        "url"    : "http://www.613mf4k12.top",
+        "dataKey": "1234567887654321",
+        "dataIv" : "1234567887654321"
+      }
+    },
+    {
       "key": "csp_T4Guard",
       "name": "🏆｜奶酪｜高清◎秒播(賭場全屏廣告)",
       "type": 3,

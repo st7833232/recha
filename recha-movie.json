@@ -1,8 +1,9 @@
 {
-  "spider": "./jar/xiaosa-0415.jar;md5;2cea0bdebc24f11570af244edc0e105b",
+  //"spider": "./jar/xiaosa-0415.jar;md5;2cea0bdebc24f11570af244edc0e105b",
+  "spider": "./jar/xiaosa-0430.jar",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.04.30_Ver.2\n 大陸那邊最近有大動作啊！",
+  "notice": "115.04.30_Ver.3\n 大陸那邊最近有大動作啊！",
   "sites": [
 
         {

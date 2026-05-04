@@ -1143,17 +1143,6 @@
       "changeable": 0
     },
     {
-      "key"        : "🎯薦片",
-      "name"       : "🧲｜薦片｜高清◎秒播(全屏廣告)",
-      "type"       : 3,
-      "api"        : "csp_JPianAmns",
-      "searchable" : 1,
-      "filterable" : 1,
-      "quickSearch": 1,
-      "changeable" : 1,
-      "ext"        : "./json/jianpian.json"
-    },
-    {
       "key"       : "tufun采集",
       "name"      : "🧲｜菠菜｜高清◎秒播(無廣告)",
       "type"      : 1,
@@ -1161,15 +1150,6 @@
       "playerType": 2,
       "searchable": 1,
       "changeable": 1
-    },
-    {
-      "key"       : "csp_123TV",
-      "name"      : "🧲｜123TV｜好多線路",
-      "type"      : 3,
-      "api"       : "./py/123TV.py",
-      "searchable": 1,
-      "filterable": 0,
-      "changeable": 0
     },
     {
       "key"        : "csp_PTT",

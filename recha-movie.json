@@ -10,7 +10,7 @@
 
         {
             "key": "师兄",
-            "name": "師兄｜星河",
+            "name": "🏆｜師兄｜無廣",
             "type": 3,
             "jar": "https://s3plus.meituan.net/opapisdk/op_ticket_1_5677168484_1774853250308_PA5tmo8g_vip.jar;md5;a4f403a000bc5e4ebdd9da27fcb05852",
             "api": "csp_AppV6",
@@ -19,14 +19,14 @@
         },
         {
             "key": "农民影视",
-            "name": "農民｜星河",
+            "name": "🏆｜農民｜無廣",
             "type": 3,
             "api": "csp_Wwys",
             "ext": "https://vip.wwgz.cn:5200"
         },
         {
             "key": "星空2",
-            "name": "櫻花｜4k｜星河",
+            "name": "🏆｜櫻花｜藍光◎無廣",
             "type": 3,
             "searchable": 1,
             "changeable": 1,
@@ -39,7 +39,7 @@
         },
         {
             "key": "吉米",
-            "name": "星河｜秒播｜星河",
+            "name": "🏆｜星河｜秒播◎無廣",
             "type": 3,
             "api": "csp_AppDrama",
             "searchable": 1,
@@ -59,14 +59,14 @@
         },
         {
             "key": "金牌影视",
-            "name": "金牌｜秒播｜星河",
+            "name": "🏆｜金牌｜秒播◎無廣",
             "type": 3,
             "api": "csp_Jpys",
             "ext": "https://y2s52n7.com,https://m.hkybqufgh.com,https://m.sizhengxt.com,https://m.9zhoukj.com,https://m.sizhengxt.com,https://m.jiabaide.cn"
         },
         {
             "key": "4kmx",
-            "name": "木兮｜秒播｜星河",
+            "name": "🏆｜木兮｜藍光◎無廣",
             "type": 3,
             "api": "http://mytv6688.xyz/pyplugin/木兮.py",
             "searchable": 1,
@@ -546,78 +546,6 @@
             "genre": "shortdrama"
         },
         {
-            "key": "Bddj",
-            "name": "📺｜拜拜｜短劇",
-            "type": 3,
-            "api": "csp_BddjAmns",
-            "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "genre": "shortdrama"
-        },
-        {
-            "key": "Wgdj",
-            "name": "📺｜圍觀｜短劇",
-            "type": 3,
-            "api": "csp_WgdjAmns",
-            "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "genre": "shortdrama"
-        },
-        {
-            "key": "JLdj",
-            "name": "📺｜锦鲤｜短劇",
-            "type": 3,
-            "api": "csp_JLdjAmns",
-            "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "genre": "shortdrama"
-        },
-        {
-            "key": "TQdj",
-            "name": "📺｜甜圈｜短劇",
-            "type": 3,
-            "api": "csp_TQdjAmns",
-            "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "genre": "shortdrama"
-        },
-        {
-            "key": "Qmdj",
-            "name": "📺｜喵喵｜短劇",
-            "type": 3,
-            "api": "csp_QmdjAmns",
-            "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "genre": "shortdrama"
-        },
-        {
-            "key": "Xydj",
-            "name": "📺｜星星｜短劇",
-            "type": 3,
-            "api": "csp_XydjAmns",
-            "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
-            "searchable": 1,
-            "filterable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "genre": "shortdrama"
-        },
-        {
             "key": "AiGua",
             "name": "🏆｜愛瓜｜無廣告",
             "type": 3,
@@ -985,17 +913,6 @@
         "分类": "電視劇$2#電影$1#動漫$4#綜藝$3#短劇$53",
         "地区": "大陆&香港&台湾&美国&法国&英国&日本&韩国&德国&泰国&印度&意大利&西班牙&加拿大&其他"
       }
-    },
-    {
-      "key"        : "csp_XBPQ_微云",
-      "name"       : "🥇｜微云｜高清◎秒播(無廣告)",
-      "type"       : 3,
-      "api"        : "csp_XBPQ",
-      "jar"        : "./jar/xyqxbpq.jar;md5;fd3cefc7302f3a39a442682f802b11e5",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "ext"        : "./json/微雲.json"
     },
     {
       "key"        : "csp_YLSP",

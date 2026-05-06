@@ -2,7 +2,7 @@
   "spider": "./jar/river-0506.jar;md5;49bf68569c72be249d87ebc287e690d3",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.05.06_Ver.1\n 嘗試修復閃退問題",
+  "notice": "115.05.06_Ver.2\n 嘗試修復閃退問題",
   "sites": [
 
 
@@ -22,7 +22,7 @@
         },
         {
             "key": "师兄",
-            "name": "师兄秒播｜星河",
+            "name": "師兄｜星河",
             "type": 3,
             "jar": "https://s3plus.meituan.net/opapisdk/op_ticket_1_5677168484_1774853250308_PA5tmo8g_vip.jar;md5;a4f403a000bc5e4ebdd9da27fcb05852",
             "api": "csp_AppV6",
@@ -31,7 +31,7 @@
         },
         {
             "key": "瓜子影视",
-            "name": "瓜子影视｜星河",
+            "name": "瓜子｜星河",
             "type": 3,
             "api": "csp_Gz360",
             "searchable": 1,
@@ -40,14 +40,14 @@
         },
         {
             "key": "农民影视",
-            "name": "农民影视｜星河",
+            "name": "農民｜星河",
             "type": 3,
             "api": "csp_Wwys",
             "ext": "https://vip.wwgz.cn:5200"
         },
         {
             "key": "橘汁",
-            "name": "橘子4k｜星河",
+            "name": "橘子｜4k｜星河",
             "type": 3,
             "api": "csp_AppDrama",
             "searchable": 1,
@@ -67,7 +67,7 @@
         },
         {
             "key": "星夜",
-            "name": "星夜4K｜星河",
+            "name": "星夜｜4k｜星河",
             "type": 3,
             "api": "csp_AppQi",
             "changeable": "1",
@@ -86,7 +86,7 @@
         },
         {
             "key": "爱影",
-            "name": "爱盈4K｜星河",
+            "name": "愛盈｜4k｜星河",
             "type": 3,
             "api": "csp_AppQi",
             "changeable": "1",
@@ -105,7 +105,7 @@
         },
         {
             "key": "星空2",
-            "name": "樱花4K｜星河",
+            "name": "櫻花｜4k｜星河",
             "type": 3,
             "searchable": 1,
             "changeable": 1,
@@ -118,7 +118,7 @@
         },
         {
             "key": "吉米",
-            "name": "星河秒播｜星河",
+            "name": "星河｜秒播｜星河",
             "type": 3,
             "api": "csp_AppDrama",
             "searchable": 1,
@@ -138,21 +138,21 @@
         },
         {
             "key": "金牌影视",
-            "name": "金牌影视｜星河",
+            "name": "金牌｜秒播｜星河",
             "type": 3,
             "api": "csp_Jpys",
             "ext": "https://y2s52n7.com,https://m.hkybqufgh.com,https://m.sizhengxt.com,https://m.9zhoukj.com,https://m.sizhengxt.com,https://m.jiabaide.cn"
         },
         {
             "key": "韩圈",
-            "name": "韩圈影视｜星河",
+            "name": "韓圈｜秒播｜星河",
             "type": 3,
             "api": "csp_Hxq",
             "ext": "https://fishapi.wya6.com/fish/fishhxq.php"
         },
         {
             "key": "4kmx",
-            "name": "木兮影视｜星河",
+            "name": "木兮｜秒播｜星河",
             "type": 3,
             "api": "http://mytv6688.xyz/pyplugin/木兮.py",
             "searchable": 1,
@@ -162,7 +162,7 @@
         },
         {
             "key": "4kvm",
-            "name": "花花影视｜星河",
+            "name": "花花｜秒播｜星河",
             "type": 3,
             "api": "./py/4KVM.py",
             "searchable": 1,
@@ -172,7 +172,7 @@
         },
         {
             "key": "py_jieyingshi",
-            "name": "界界影视｜星河️",
+            "name": "界界｜秒播｜星河",
             "type": 3,
             "api": "http://mytv6688.xyz/星河影视/界.py",
             "searchable": 1,
@@ -181,7 +181,7 @@
         },
         {
             "key": "py_bi星河影视ili",
-            "name": "哔哩影视｜星河",
+            "name": "嗶哩｜秒播｜星河",
             "type": 3,
             "api": "http://mytv6688.xyz/星河影视/哔哩.py",
             "filterable": 0,
@@ -189,13 +189,13 @@
         },
         {
             "key": "奇优影视",
-            "name": "奇优影视｜⭐️星河⭐️",
+            "name": "奇優影视｜星河",
             "type": 3,
             "api": "csp_Qiyou"
         },
         {
             "key": "honggui",
-            "name": "围观短剧｜星河",
+            "name": "圍觀短劇｜星河",
             "type": 3,
             "api": "csp_WeiguanDJ",
             "searchable": 1,
@@ -206,7 +206,7 @@
         },
         {
             "key": "星阁短剧",
-            "name": "星阁短剧｜星河",
+            "name": "星閣短劇｜星河",
             "type": 3,
             "api": "csp_XinggeDJ",
             "searchable": 1,
@@ -217,7 +217,7 @@
         },
         {
             "key": "星芽短剧",
-            "name": "星芽短剧｜星河",
+            "name": "星芽短劇｜星河",
             "type": 3,
             "api": "./py/星芽短剧.py",
             "searchable": 1,
@@ -227,7 +227,7 @@
         },
         {
             "key": "甜圈短剧",
-            "name": "甜圈短剧｜星河",
+            "name": "甜圈短劇｜星河",
             "type": 3,
             "api": "csp_TianquanDJ",
             "searchable": 1,
@@ -238,7 +238,7 @@
         },
         {
             "key": "卡卡",
-            "name": "卡卡动漫｜星河",
+            "name": "卡卡動漫｜星河",
             "type": 3,
             "searchable": 1,
             "changeable": 1,
@@ -251,7 +251,7 @@
         },
         {
             "key": "丫丫动漫",
-            "name": "丫丫动漫｜星河",
+            "name": "丫丫動漫｜星河",
             "type": 3,
             "quickSearch": 1,
             "api": "csp_AppGet",
@@ -263,7 +263,7 @@
         },
         {
             "key": "元咲动漫",
-            "name": "元咲动漫｜星河",
+            "name": "元咲動漫｜星河",
             "type": 3,
             "quickSearch": 1,
             "api": "csp_AppGet",
@@ -275,7 +275,7 @@
         },
         {
             "key": "番薯动漫",
-            "name": "番薯动漫｜星河",
+            "name": "番薯動漫｜星河",
             "type": 3,
             "quickSearch": 1,
             "api": "csp_AppGet",
@@ -287,7 +287,7 @@
         },
         {
             "key": "曼波动漫",
-            "name": "曼波动漫｜星河",
+            "name": "曼波動漫｜星河",
             "type": 3,
             "quickSearch": 1,
             "api": "csp_AppGet",
@@ -299,7 +299,7 @@
         },
         {
             "key": "米饭动漫",
-            "name": "米饭动漫｜星河",
+            "name": "米飯動漫｜星河",
             "type": 3,
             "quickSearch": 1,
             "api": "csp_AppGet",

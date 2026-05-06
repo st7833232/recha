@@ -1,7 +1,7 @@
 (async function() {
-    if (window._mvuFinalStableV98) return;
+    if (window._mvuFinalStableV100) return;
     await waitGlobalInitialized('Mvu');
-    console.log('✅ MVU ZOD 最終穩定後處理 v9.8 (路徑更新版) 已啓用');
+    console.log('✅ MVU ZOD 最終穩定後處理 v10.0 已啓用');
 
     var _ = window._;
     var get = function(o, p) { return _.get(o, p); };
@@ -14,7 +14,7 @@
     var lastLogHash = '';
 
     // ==================== Debug 模式開關 ====================
-    var DEBUG_MODE = true;  // ← 設為 true 開啟詳細 Log
+    var DEBUG_MODE = false;  // ← 設為 true 開啟詳細 Log
 
     function debugLog() {
         if (DEBUG_MODE) {
@@ -2448,6 +2448,75 @@ debugLog('屬性加值更新 - 力量:' + strBonus + ', 耐力:' + endBonus + ',
         statusCache = { time: cur, statuses: statuses };
     }
 
+        // ======================== 清理已完結的劇情演出 ========================
+function cleanupCompletedPerformances(vars) {
+    var comps = get(vars, '同伴');
+    if (!_.isPlainObject(comps)) return;
+    
+    for (var name in comps) {
+        if (name.startsWith('$')) continue;
+        
+        var performances = get(vars, '同伴.' + name + '.劇情演出');
+        if (!Array.isArray(performances) || performances.length === 0) continue;
+        
+        // 收集需要刪除的主題
+        var themesToDelete = {};
+        
+        // 第一遍：分析每個主題的狀態
+        for (var i = 0; i < performances.length; i++) {
+            var perf = performances[i];
+            if (typeof perf !== 'string') continue;
+            
+            // 解析格式：事件-主題-序號-狀態:描述
+            var match = perf.match(/^事件-([^-]+)-(\d+)-(.+?):(.+)$/);
+            if (!match) continue;
+            
+            var theme = match[1];
+            var seq = parseInt(match[2]);
+            var status = match[3];
+            var desc = match[4];
+            
+            if (!themesToDelete[theme]) {
+                themesToDelete[theme] = {
+                    maxSeq: 0,
+                    hasCompleted: false,
+                    indices: []
+                };
+            }
+            
+            themesToDelete[theme].indices.push(i);
+            if (seq > themesToDelete[theme].maxSeq) {
+                themesToDelete[theme].maxSeq = seq;
+            }
+            if (status === '已完成') {
+                themesToDelete[theme].hasCompleted = true;
+            }
+        }
+        
+        // 第二遍：從後往前刪除（避免索引錯亂）
+        var indicesToRemove = [];
+        for (var theme in themesToDelete) {
+            var info = themesToDelete[theme];
+            
+            // 規則：當序號達到 5 且最後一個事件已完成時，刪除整個主題
+            if (info.maxSeq >= 5 && info.hasCompleted) {
+                indicesToRemove.push(...info.indices);
+                logChange('劇情演出清理', name + ' 主題「' + theme + '」序號已達 ' + info.maxSeq + '，已完結，刪除 ' + info.indices.length + ' 條');
+                fixCount++;
+            }
+        }
+        
+        // 從後往前刪除（保持索引有效）
+        if (indicesToRemove.length > 0) {
+            indicesToRemove.sort((a, b) => b - a);
+            for (var i = 0; i < indicesToRemove.length; i++) {
+                performances.splice(indicesToRemove[i], 1);
+            }
+            set(vars, '同伴.' + name + '.劇情演出', performances);
+        }
+    }
+}
+
     // ======================== 任務和商店處理 ========================
     function processTasksAndShop(vars) {
         function updateTaskCompletion(tp) {
@@ -2495,7 +2564,8 @@ debugLog('屬性加值更新 - 力量:' + strBonus + ', 耐力:' + endBonus + ',
                 }
             }
         }
-        
+
+
         function updateTaskStatus(tp, type) {
             var task = get(vars, tp);
             if (!_.isPlainObject(task) || !task.狀態) return;
@@ -2930,7 +3000,25 @@ if (lastSnapshot) {
         var hoursDiff = calculateTimeDifference(prevTime, curTime);
         if (hoursDiff > 0 && hoursDiff < 24) {
             debugLog('時間差計算: ' + hoursDiff + ' 小時');
-            
+
+// ========== 自動入睡/喚醒規則（22:00-07:00）==========
+var currentTime = get(vars, '系統.當前時間');
+if (currentTime && typeof currentTime === 'string') {
+    var hour = parseInt(currentTime.split(':')[0]);
+    if (!isNaN(hour)) {
+        var shouldBeSleeping = (hour >= 22 || hour < 7);
+        var isCurrentlySleeping = get(vars, '狀態.入睡') === true;
+        
+        if (shouldBeSleeping && !isCurrentlySleeping) {
+            set(vars, '狀態.入睡', true);
+            keyLog('😴 自動入睡：時間 ' + currentTime + ' 進入睡眠狀態');
+        } else if (!shouldBeSleeping && isCurrentlySleeping) {
+            set(vars, '狀態.入睡', false);
+            keyLog('⏰ 自動喚醒：時間 ' + currentTime + ' 結束睡眠狀態');
+        }
+    }
+}
+
 // ========== 獲取入睡狀態（由AI根據劇情設置）==========
 var isSleeping = get(vars, '狀態.入睡') === true;
 var sleepMultiplier = isSleeping ? 0.5 : 1.0;
@@ -3092,14 +3180,44 @@ if (companionCount > 0) {
             processCompanionStatusEffects(vars); 
             processTasksAndShop(vars);
 
-            integerPaths.forEach(function(p) {
-                var val = get(vars, p);
-                if (typeof val == 'number' && !Number.isInteger(val)) {
-                    set(vars, p, Math.round(val));
-                    logChange('整數化', p + ' ' + val + ' → ' + Math.round(val));
-                    fixCount++;
-                }
-            });
+// 同伴變量整數化
+var companions = get(vars, '同伴');
+if (_.isPlainObject(companions)) {
+    for (var name in companions) {
+        if (name.startsWith('$')) continue;
+        var base = '同伴.' + name;
+        
+        var compPaths = [
+            base + '.生理.水分',
+            base + '.生理.飽腹感',
+            base + '.生理.排泄欲',
+            base + '.精神.壓力',
+            base + '.精神.睡眠',
+            base + '.次生屬性.疲勞',
+            base + '.次生屬性.清潔'
+        ];
+        
+        compPaths.forEach(function(p) {
+            var val = get(vars, p);
+            if (typeof val == 'number' && !Number.isInteger(val)) {
+                var rounded = Math.round(val);
+                set(vars, p, rounded);
+                logChange('整數化', p + ' ' + val + ' → ' + rounded);
+                fixCount++;
+            }
+        });
+    }
+}
+
+// 原有玩家整數化
+integerPaths.forEach(function(p) {
+    var val = get(vars, p);
+    if (typeof val == 'number' && !Number.isInteger(val)) {
+        set(vars, p, Math.round(val));
+        logChange('整數化', p + ' ' + val + ' → ' + Math.round(val));
+        fixCount++;
+    }
+});
             
             processCompanionLimits(vars);
             
@@ -3117,6 +3235,9 @@ if (companionCount > 0) {
             checkAndRestoreSustainableCrops(vars, oldVars);
             verifyAndFixAllCrops(vars);
             verifyAndFixAllLivestock(vars);
+
+            cleanupCompletedPerformances(vars);
+
             updateStatus(vars, status, msg);
             
         } catch(e) {
@@ -3173,8 +3294,8 @@ if (companionCount > 0) {
     window.calculateMoonPhase = calculateMoonPhase;
     window.calculateSeason = calculateSeason;
     
-    window._mvuFinalStableV98 = true;
+    window._mvuFinalStableV100 = true;
     
-    console.log('✅ 所有擴充功能已載入 (v9.8 路徑更新): 月相 | 季節 | 作物 | 畜牧 | 懷孕 | 性愛 | 排泄欲 | 新生兒');
+    console.log('✅ 所有擴充功能已載入 (v10.0 路徑更新)');
     console.log('📊 功能模塊: 好感系統 | 性愛系統 | 月相系統 | 季節系統 | 作物系統 | 畜牧系統 | 懷孕系統 | 幼兒系統 | 排泄系統 | 任務系統 | 入眠系統 | 狀態效果');
 })();

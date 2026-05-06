@@ -2,7 +2,7 @@
   "spider": "./jar/river-0506.jar;md5;49bf68569c72be249d87ebc287e690d3",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.05.06_Ver.5\n 嘗試修復閃退問題",
+  "notice": "115.05.06_Ver.7\n 嘗試修復站源",
   "sites": [
 
 
@@ -405,6 +405,7 @@
       "name": "🏆｜小檸檬｜嗷嗚",
       "type": 3,
       "api": "csp_AppV7Amns",
+      "spider": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
       "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
       "searchable": 1,
       "filterable": 1,

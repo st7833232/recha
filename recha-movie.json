@@ -2,7 +2,7 @@
   "spider": "./jar/river-0506.jar;md5;49bf68569c72be249d87ebc287e690d3",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.05.06_Ver.4\n 嘗試修復閃退問題",
+  "notice": "115.05.06_Ver.5\n 嘗試修復閃退問題",
   "sites": [
 
 
@@ -105,22 +105,9 @@
 
 
 
-
-    {
-      "key"        : "GoConfig",
-      "name"       : "🇹🇼｜熱播排行榜｜自動切換1",
-      "type"       : 3,
-      "api"        : "csp_GoConfigAmns",
-      "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
-      "indexs"     : 1,
-      "searchable" : 0,
-      "filterable" : 0,
-      "quickSearch": 0,
-      "changeable" : 0
-    },
     {
       "key"        : "豆瓣",
-      "name"       : "🇹🇼｜熱播排行榜｜自動切換2",
+      "name"       : "🇹🇼｜熱播排行榜｜自動切換",
       "type"       : 3,
       "api"        : "csp_Douban",
       "searchable" : 0,
@@ -250,15 +237,13 @@
       }
     },
     {
-      "key"        : "🥇金牌",
-      "name"       : "🏆｜銀牌｜藍光◎秒播(無廣告)",
-      "type"       : 3,
-      "api"        : "csp_JinPaiAmns",
-      "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
-      "searchable" : 1,
-      "filterable" : 1,
-      "quickSearch": 1,
-      "changeable" : 1
+      "key"       : "異界",
+      "name"      : "🏆｜銀牌｜高清◎秒播(無廣告)",
+      "type"      : 3,
+      "api"       : "./py/界.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 0
     },
     {
       "key"        : "🍈爱瓜",
@@ -283,32 +268,11 @@
       "changeable" : 1
     },
     {
-      "key"       : "異界",
-      "name"      : "🏆｜異界｜高清◎秒播(無廣告)",
-      "type"      : 3,
-      "api"       : "./py/界.py",
-      "searchable": 1,
-      "filterable": 0,
-      "changeable": 0
-    },
-    {
       "key"        : "独播",
       "name"       : "🏆｜獨播｜藍光◎秒播(無廣告)",
       "type"       : 3,
       "jar"        : "./jar/7哥.jar",
       "api"        : "csp_DubkAmns",
-      "searchable" : 1,
-      "filterable" : 1,
-      "quickSearch": 1,
-      "changeable" : 1,
-      "ext"        : "./json/獨播庫.json"
-    },
-    {
-      "key"        : "🎭杜北",
-      "name"       : "🏆｜獨播｜藍光◎秒播(備用)",
-      "type"       : 3,
-      "api"        : "csp_DubkAmns",
-      "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
       "searchable" : 1,
       "filterable" : 1,
       "quickSearch": 1,
@@ -1985,154 +1949,69 @@
   ],
     "parses": [
         {
-            "name": "聚合",
+            "name": "聚合1",
+            "type": 3,
+            "url": "Demo"
+        },
+        {
+            "name": "聚合0",
             "type": 3,
             "url": "Web"
         },
         {
-            "name": "虾米",
+            "name": "ikun",
             "type": 0,
-            "url": "https://jx.xmflv.com/?url=",
-            "ext": {
-                "header": {
-                    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.57"
-                }
-            }
+            "url": "https://jx.hls.one/?url="
         },
         {
-            "name": "星河",
-            "url": "https://183933.xyz/xiaye.php?url=",
-            "type": 1
-        },
-        {
-            "name": "星河2",
-            "url": "https://fzl4k.xyz/jx.php?url=",
-            "type": 1
-        },
-        {
-            "name": "淘片",
+            "name": "77",
             "type": 0,
-            "url": "https://jx.yparse.com/index.php?url=",
-            "ext": {
-                "header": {
-                    "user-agent": "Mozilla/5.0 (Linux; Android 13; V2049A Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/116.0.0.0 Mobile Safari/537.36"
-                }
-            }
+            "url": "https://jx.77flv.cc/?url="
+        },
+        {
+            "name": "A6",
+            "type": 0,
+            "url": "https://pl.a6club.com/player/analysis.php?v="
+        },
+        {
+            "name": "8090",
+            "type": 0,
+            "url": "https://www.8090g.cn/?url="
+        },
+        {
+            "name": "M3u8TV",
+            "type": 0,
+            "url": "https://jx.m3u8.tv/jiexi/?url="
+        },
+        {
+            "name": "CK",
+            "type": 0,
+            "url": "https://www.ckplayer.vip/jiexi/?url="
         },
         {
             "name": "冰豆",
             "type": 0,
-            "url": "https://bd.jx.cn/?url=",
-            "ext": {
-                "header": {
-                    "user-agent": "Mozilla/5.0 (Linux; Android 13; V2049A Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/116.0.0.0 Mobile Safari/537.36"
-                }
-            }
+            "url": "https://bd.jx.cn/?url="
         },
         {
-            "name": "七七",
+            "name": "XY",
             "type": 0,
-            "url": "https://jx.77flv.cc/?url=",
-            "ext": {
-                "header": {
-                    "user-agent": "Mozilla/5.0 (Linux; Android 13; V2049A Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/116.0.0.0 Mobile Safari/537.36"
-                }
-            }
+            "url": "https://jx.xymp4.cc/?url="
         },
         {
-            "name": "盘古",
-            "type": 0,
-            "url": "https://www.playm3u8.cn/jiexi.php?url=",
-            "ext": {
-                "header": {
-                    "user-agent": "Mozilla/5.0 (Linux; Android 13; V2049A Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/116.0.0.0 Mobile Safari/537.36"
-                }
-            }
+            "name": "推荐",
+            "type": 1,
+            "url": "https://zy.qiaoji8.com/gouzi.php?url=94b07e0b2c0e8244&url="
         },
         {
-            "name": "夜幕",
-            "type": 0,
-            "url": "https://yemu.xyz/?url=",
-            "ext": {
-                "header": {
-                    "user-agent": "Mozilla/5.0 (Linux; Android 13; V2049A Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/116.0.0.0 Mobile Safari/537.36"
-                }
-            }
-        }
-    ],
-    "rules": [
-        {
-            "name": "农民",
-            "hosts": [
-                "toutiaovod.com"
-            ],
-            "regex": [
-                "video/tos/cn"
-            ]
+            "name": "臻享",
+            "type": 1,
+            "url": "https://150.138.78.37:4399/api?key=94b07e0b2c0e8244&url="
         },
         {
-            "name": "火山",
-            "hosts": [
-                "huoshan.com"
-            ],
-            "regex": [
-                "item_id="
-            ]
-        },
-        {
-            "name": "抖音",
-            "hosts": [
-                "douyin.com"
-            ],
-            "regex": [
-                "is_play_url="
-            ]
-        },
-        {
-            "name": "磁力广告",
-            "hosts": [
-                "magnet"
-            ],
-            "regex": [
-                "更多",
-                "请访问",
-                "example",
-                "社 區",
-                "x u u",
-                "直 播",
-                "更 新",
-                "社 区",
-                "有趣",
-                "有 趣",
-                "英皇体育",
-                "全中文AV在线",
-                "澳门皇冠赌场",
-                "哥哥快来",
-                "美女荷官",
-                "裸聊",
-                "新片首发",
-                "UUE29"
-            ]
-        },
-        {
-            "name": "饭团点击",
-            "hosts": [
-                "dadagui",
-                "freeok",
-                "dadagui"
-            ],
-            "script": [
-                "document.querySelector(\"#playleftiframe\").contentWindow.document.querySelector(\"#start\").click();"
-            ]
-        },
-        {
-            "name": "毛驴点击",
-            "hosts": [
-                "www.maolvys.com"
-            ],
-            "script": [
-                "document.getElementsByClassName('swal-buttonswal-button--confirm')[0].click()"
-            ]
+            "name": "优选",
+            "type": 1,
+            "url": "http://1.94.221.189:88/algorithm.php?url="
         }
     ],
     "doh": [
@@ -2179,41 +2058,10 @@
             ]
         }
     ],
-    "flags": [
-        "youku",
-        "优酷",
-        "优 酷",
-        "优酷视频",
-        "qq",
-        "腾讯",
-        "腾 讯",
-        "腾讯视频",
-        "iqiyi",
-        "qiyi",
-        "奇艺",
-        "爱奇艺",
-        "爱 奇 艺",
-        "m1905",
-        "xigua",
-        "letv",
-        "leshi",
-        "乐视",
-        "乐 视",
-        "sohu",
-        "搜狐",
-        "搜 狐",
-        "搜狐视频",
-        "tudou",
-        "pptv",
-        "mgtv",
-        "芒果",
-        "imgo",
-        "芒果TV",
-        "芒 果 T V",
-        "bilibili",
-        "哔 哩",
-        "哔 哩 哔 哩"
+    "ads": [
+        "mozai.4gtv.tv"
     ],
+    "lives": [],
     "ijk": [
         {
             "group": "软解码",
@@ -2376,13 +2224,124 @@
             ]
         }
     ],
-  "hosts": [
-        "cache.ott.*.itv.cmvideo.cn=base-v4-free-mghy.e.cdn.chinamobile.com",
-        "cache.ott.ystenlive.itv.cmvideo.cn=base-v4-free-mghy.e.cdn.chinamobile.com",
-        "cache.ott.bestlive.itv.cmvideo.cn=base-v4-free-mghy.e.cdn.chinamobile.com",
-        "cache.ott.wasulive.itv.cmvideo.cn=base-v4-free-mghy.e.cdn.chinamobile.com",
-        "cache.ott.fifalive.itv.cmvideo.cn=base-v4-free-mghy.e.cdn.chinamobile.com",
-        "cache.ott.hnbblive.itv.cmvideo.cn=base-v4-free-mghy.e.cdn.chinamobile.com"
-    ],  
-  "ads": ["static-mozai.4gtv.tv"]
+    "proxy": [
+        "raw.githubusercontent.com",
+        "googlevideo.com",
+        "cdn.v82u1l.com",
+        "cdn.iz8qkg.com",
+        "cdn.kin6c1.com",
+        "c.biggggg.com",
+        "c.olddddd.com",
+        "haiwaikan.com",
+        "www.histar.tv",
+        "youtube.com",
+        "uhibo.com",
+        ".*boku.*",
+        ".*nivod.*",
+        ".*ulivetv.*",
+        "iill.top"
+    ],
+    "rules": [
+        {
+            "name": "cl",
+            "hosts": [
+                "magnet"
+            ],
+            "regex": [
+                "最 新",
+                "直 播",
+                "更 新"
+            ]
+        },
+        {
+            "name": "火山嗅探",
+            "hosts": [
+                "huoshan.com"
+            ],
+            "regex": [
+                "item_id="
+            ]
+        },
+        {
+            "name": "抖音嗅探",
+            "hosts": [
+                "douyin.com"
+            ],
+            "regex": [
+                "is_play_url="
+            ]
+        },
+        {
+            "name": "农民嗅探",
+            "hosts": [
+                "toutiaovod.com"
+            ],
+            "regex": [
+                "video/tos/cn"
+            ]
+        },
+        {
+            "name": "七新嗅探",
+            "hosts": [
+                "api.52wyb.com"
+            ],
+            "regex": [
+                "m3u8?pt=m3u8"
+            ]
+        },
+        {
+            "name": "夜市",
+            "hosts": [
+                "yeslivetv.com"
+            ],
+            "script": [
+                "document.getElementsByClassName('vjs-big-play-button')[0].click()"
+            ]
+        },
+        {
+            "name": "毛驴",
+            "hosts": [
+                "www.maolvys.com"
+            ],
+            "script": [
+                "document.getElementsByClassName('swal-button swal-button--confirm')[0].click()"
+            ]
+        },
+        {
+            "name": "czzy",
+            "hosts": [
+                "10086.cn"
+            ],
+            "regex": [
+                "/storageWeb/servlet/downloadServlet"
+            ]
+        },
+        {
+            "name": "bdys",
+            "hosts": [
+                "bytetos.com",
+                "byteimg.com",
+                "bytednsdoc.com",
+                "pstatp.com"
+            ],
+            "regex": [
+                "/tos-cn"
+            ],
+            "exclude": [
+                ".m3u8"
+            ]
+        },
+        {
+            "name": "bdys10",
+            "hosts": [
+                "bdys10.com"
+            ],
+            "regex": [
+                "/obj/"
+            ],
+            "exclude": [
+                ".m3u8"
+            ]
+        }
+    ]
 }

@@ -36,20 +36,8 @@
       "searchable": 0
     },
     {
-      "key"        : "🍉找短劇",
-      "name"       : "📺｜短片搜索1｜點進去才有東西",
-      "type"       : 3,
-      "api"        : "csp_HgggAmns",
-      "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",
-      "indexs"     : 1,
-      "searchable" : 0,
-      "filterable" : 0,
-      "quickSearch": 0,
-      "changeable" : 0
-    },
-    {
       "key"        : "DjHggg",
-      "name"       : "📺｜短片搜索2｜點進去才有東西",
+      "name"       : "📺｜短片搜索｜",
       "type"       : 3,
       "api"        : "csp_HgggAmns",
       "jar": "./jar/aowu-0430.jar;md5;815a4bf8cbd9e0816d208bb1f115dfe2",

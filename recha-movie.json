@@ -2,7 +2,7 @@
   "spider": "./jar/river-0506.jar;md5;49bf68569c72be249d87ebc287e690d3",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.05.06_Ver.3\n 嘗試修復閃退問題",
+  "notice": "115.05.06_Ver.4\n 嘗試修復閃退問題",
   "sites": [
 
 
@@ -75,119 +75,6 @@
             "filterable": 1
         },
         {
-            "key": "4kvm",
-            "name": "花花｜秒播｜星河",
-            "type": 3,
-            "api": "./py/4KVM.py",
-            "searchable": 1,
-            "changeable": 1,
-            "quickSearch": 1,
-            "filterable": 1
-        },
-        {
-            "key": "py_jieyingshi",
-            "name": "界界｜秒播｜星河",
-            "type": 3,
-            "api": "http://mytv6688.xyz/星河影视/界.py",
-            "searchable": 1,
-            "filterable": 0,
-            "changeable": 0
-        },
-        {
-            "key": "py_bi星河影视ili",
-            "name": "嗶哩｜秒播｜星河",
-            "type": 3,
-            "api": "http://mytv6688.xyz/星河影视/哔哩.py",
-            "filterable": 0,
-            "changeable": 0
-        },
-        {
-            "key": "奇优影视",
-            "name": "奇優影视｜星河",
-            "type": 3,
-            "api": "csp_Qiyou"
-        },
-        {
-            "key": "honggui",
-            "name": "圍觀短劇｜星河",
-            "type": 3,
-            "api": "csp_WeiguanDJ",
-            "searchable": 1,
-            "changeable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "genre": "shortdrama"
-        },
-        {
-            "key": "星阁短剧",
-            "name": "星閣短劇｜星河",
-            "type": 3,
-            "api": "csp_XinggeDJ",
-            "searchable": 1,
-            "changeable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "genre": "shortdrama"
-        },
-        {
-            "key": "星芽短剧",
-            "name": "星芽短劇｜星河",
-            "type": 3,
-            "api": "./py/星芽短剧.py",
-            "searchable": 1,
-            "changeable": 1,
-            "quickSearch": 1,
-            "filterable": 1
-        },
-        {
-            "key": "甜圈短剧",
-            "name": "甜圈短劇｜星河",
-            "type": 3,
-            "api": "csp_TianquanDJ",
-            "searchable": 1,
-            "changeable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "genre": "shortdrama"
-        },
-        {
-            "key": "卡卡",
-            "name": "卡卡動漫｜星河",
-            "type": 3,
-            "searchable": 1,
-            "changeable": 1,
-            "api": "csp_AppGet",
-            "ext": {
-                "url": "http://154.201.90.53:8002",
-                "dataKey": "123456789abcdefg",
-                "dataIv": "123456789abcdefg"
-            }
-        },
-        {
-            "key": "丫丫动漫",
-            "name": "丫丫動漫｜星河",
-            "type": 3,
-            "quickSearch": 1,
-            "api": "csp_AppGet",
-            "ext": {
-                "url": "http://tv.yy-fun.cc",
-                "dataKey": "qkxnwkfjwpcnwycl",
-                "dataIv": "qkxnwkfjwpcnwycl"
-            }
-        },
-        {
-            "key": "元咲动漫",
-            "name": "元咲動漫｜星河",
-            "type": 3,
-            "quickSearch": 1,
-            "api": "csp_AppGet",
-            "ext": {
-                "url": "http://cic.aicg.fun",
-                "dataKey": "2c4h36abd96se10u",
-                "dataIv": "2c4h36abd96se10u"
-            }
-        },
-        {
             "key": "番薯动漫",
             "name": "番薯動漫｜星河",
             "type": 3,
@@ -211,26 +98,6 @@
                 "dataIv": "66dc309cbeeca454"
             }
         },
-        {
-            "key": "米饭动漫",
-            "name": "米飯動漫｜星河",
-            "type": 3,
-            "quickSearch": 1,
-            "api": "csp_AppGet",
-            "ext": {
-                "url": "https://get.mymifun.com",
-                "dataKey": "GETMIFUNGEIMIFUN",
-                "dataIv": "GETMIFUNGEIMIFUN"
-            }
-        },
-
-
-
-
-
-
-
-
 
 
 

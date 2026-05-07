@@ -88,9 +88,19 @@
       "api"        : "csp_FreeOk",
       "jar"        : "./jar/mi-0815.png;md5;66623623fe5ae34dad253ae2e0802416"
     },
+        {
+            "key": "py_jieyingshi",
+            "name": "🏆｜金牌｜無廣",
+            "type": 3,
+            "api": "./lib/jys.py",
+            "searchable": 1,
+            "quickSearch": 0,
+            "filterable": 0,
+            "changeable": 0
+        },
     {
       "key"       : "金牌",
-      "name"      : "🏆｜金牌｜藍光(無廣告)",
+      "name"      : "🏆｜銀牌｜高清(無廣告)",
       "type"      : 3,
       "api"       : "csp_AppQi",
       "searchable": 1,
@@ -103,15 +113,6 @@
         "init"   : "initV122",
         "ua"     : "okhttp/3.10.0"
       }
-    },
-    {
-      "key"       : "異界",
-      "name"      : "🏆｜銀牌｜高清(無廣告)",
-      "type"      : 3,
-      "api"       : "./py/界.py",
-      "searchable": 1,
-      "filterable": 0,
-      "changeable": 0
     },
     {
       "key"        : "py_愛瓜app.py",
@@ -132,7 +133,16 @@
       "filterable": 0,
       "changeable": 0
     },
-        {
+    {
+      "key"       : "異界",
+      "name"      : "🏆｜異界｜高清(無廣告)",
+      "type"      : 3,
+      "api"       : "./py/界.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 0
+    },
+    {
             "key": "师兄",
             "name": "🏆｜師兄｜無廣",
             "type": 3,

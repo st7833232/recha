@@ -19,6 +19,14 @@
       "ua": "okhttp",
       "url": "https://t.freetv.fun/m3u/playlist.txt"
     },    
+        {
+            "name": "欧华(需32位影视)",
+            "url": "http://dbmlosa.sylu.net:8080/ouhua.txt",
+            "playerType": 2,
+            "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
+            "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
+        },
+
     {
       "name": "60酒店源",
       "type": 3,

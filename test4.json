@@ -6,18 +6,8 @@
   "sites": [
 
         {
-            "key": "点我切源",
-            "name": "豆瓣",
-            "type": 3,
-            "api": "csp_DouDouGuard",
-            "indexs": 1,
-            "searchable": 0,
-            "quickSearch": 0,
-            "changeable": 0
-        },
-        {
             "key": "YGP",
-            "name": "🚀叨观荐影｜预告片",
+            "name": "❌｜預告片",
             "type": 3,
             "api": "csp_YGPGuard",
             "searchable": 0,
@@ -26,7 +16,7 @@
         },
         {
             "key": "云播",
-            "name": "⛅️云播｜无搜索",
+            "name": "❌｜雲播｜无搜索",
             "type": 3,
             "api": "csp_T4Guard",
             "searchable": 1,
@@ -36,7 +26,7 @@
         },
         {
             "key": "奶酪",
-            "name": "🧀奶酪",
+            "name": "❌｜奶酪",
             "type": 3,
             "api": "csp_T4Guard",
             "searchable": 1,
@@ -46,7 +36,7 @@
         },
         {
             "key": "厂长",
-            "name": "📔厂长",
+            "name": "❌｜廠長",
             "type": 3,
             "api": "csp_NewCzGuard",
             "timeout": 10,
@@ -57,7 +47,7 @@
         },
         {
             "key": "文采",
-            "name": "💮文采",
+            "name": "❌｜文采",
             "type": 3,
             "api": "csp_JpysGuard",
             "timeout": 10,
@@ -68,7 +58,7 @@
         },
         {
             "key": "原创",
-            "name": "☀原创",
+            "name": "❌｜原創",
             "type": 3,
             "api": "csp_YCyzGuard",
             "timeout": 15,
@@ -79,7 +69,7 @@
         },
         {
             "key": "糯米",
-            "name": "🍓糯米",
+            "name": "❌｜糯米",
             "type": 3,
             "api": "csp_NmyswvGuard",
             "timeout": 15,
@@ -89,7 +79,7 @@
         },
         {
             "key": "热播",
-            "name": "📺热播",
+            "name": "❌｜熱播",
             "type": 3,
             "api": "csp_AppTTGuard",
             "timeout": 10,
@@ -101,7 +91,7 @@
         },
         {
             "key": "剧圈",
-            "name": "🐻剧圈",
+            "name": "❌｜劇圈",
             "type": 3,
             "api": "csp_AppSxGuard",
             "timeout": 10,
@@ -112,7 +102,7 @@
         },
         {
             "key": "视界",
-            "name": "🍙视界",
+            "name": "❌｜視界",
             "type": 3,
             "api": "csp_AppSxGuard",
             "timeout": 10,
@@ -123,7 +113,7 @@
         },
         {
             "key": "花花",
-            "name": "🥝花花",
+            "name": "❌｜花花",
             "type": 3,
             "api": "csp_AppSxGuard",
             "timeout": 10,
@@ -134,7 +124,7 @@
         },
         {
             "key": "播客",
-            "name": "🦊播客",
+            "name": "❌｜播客",
             "type": 3,
             "api": "csp_AppSxGuard",
             "timeout": 10,
@@ -145,7 +135,7 @@
         },
         {
             "key": "爱影",
-            "name": "👀爱影",
+            "name": "❌｜愛影",
             "type": 3,
             "api": "csp_AppSxGuard",
             "timeout": 10,
@@ -156,7 +146,7 @@
         },
         {
             "key": "猫猫",
-            "name": "🐟猫猫",
+            "name": "❌｜猫猫",
             "type": 3,
             "api": "csp_AppSxGuard",
             "timeout": 10,
@@ -167,7 +157,7 @@
         },
         {
             "key": "奥特",
-            "name": "🏝奥特",
+            "name": "❌｜奥特",
             "type": 3,
             "api": "csp_AueteGuard",
             "timeout": 10,
@@ -177,7 +167,7 @@
         },
         {
             "key": "荐片",
-            "name": "🐭荐片",
+            "name": "❌｜荐片",
             "type": 3,
             "api": "csp_JPJGuard",
             "timeout": 10,
@@ -188,7 +178,7 @@
         },
         {
             "key": "咕咕",
-            "name": "🦉咕咕动漫",
+            "name": "❌｜咕咕动漫",
             "type": 3,
             "api": "csp_AppSxGuard",
             "timeout": 10,
@@ -199,7 +189,7 @@
         },
         {
             "key": "Dm84",
-            "name": "🚌巴士动漫",
+            "name": "❌｜巴士动漫",
             "type": 3,
             "api": "csp_Dm84Guard",
             "timeout": 10,

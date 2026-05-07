@@ -113,7 +113,25 @@
       "filterable": 0,
       "changeable": 0
     },
-
+    {
+      "key"        : "py_愛瓜app.py",
+      "name"       : "🏆｜銅牌｜高清◎秒播(無廣告)",
+      "type"       : 3,
+      "api"        : "./py/爱瓜TVAPP.py",
+      "searchable" : 1,
+      "quickSearch": 1,
+      "filterable" : 0,
+      "changeable" : 1
+    },    
+    {
+      "key"       : "py_aidianying",
+      "name"      : "🏆｜鐵牌｜藍光◎秒播(無廣告)",
+      "type"      : 3,
+      "api"       : "./py/aidianying.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 0
+    },
         {
             "key": "师兄",
             "name": "🏆｜師兄｜無廣",
@@ -241,25 +259,6 @@
         "url": "http://caiji.dyttzyapi.com/api.php/provide/vod/from/dyttm3u8/at/json/",
         "a": [1, 2, 3, 4, 5, 33]
       }
-    },
-    {
-      "key"        : "py_愛瓜app.py",
-      "name"       : "🏆｜愛瓜｜高清◎秒播(無廣告+嗷嗚版)",
-      "type"       : 3,
-      "api"        : "./py/爱瓜TVAPP.py",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 0,
-      "changeable" : 1
-    },
-    {
-      "key"       : "py_aidianying",
-      "name"      : "🏆｜愛影｜藍光◎秒播(無廣告)",
-      "type"      : 3,
-      "api"       : "./py/aidianying.py",
-      "searchable": 1,
-      "filterable": 0,
-      "changeable": 0
     },
     {
       "key"        : "py_mv4r4",

@@ -583,18 +583,6 @@
       }
     },
     {
-      "key"        : "WYtv",
-      "name"       : "🥇｜微雲｜高清◎秒播(跑馬燈廣告)",
-      "type"       : 3,
-      "api"        : "csp_XBPQ",
-      "jar"        : "./jar/xyqxbpq.jar;md5;fd3cefc7302f3a39a442682f802b11e5",
-      "playerType" : 2,
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "ext"        : "./json/微雲TV.json"
-    },
-    {
       "key" : "影视天堂",
       "name": "🥇｜影天｜高清◎秒播(無廣告)",
       "type": 3,

@@ -6,54 +6,50 @@
   "sites": [
 
 
-
-        {
-            "key": "天天",
-            "name": "🚀秒播┃1080P",
-            "type": 3,
-            "quickSearch": 1,
-            "searchable": 1,
-            "api": "csp_AppRJ",
-            "jar": "./jar/mi-0508.jar",
-            "timeout": 12,
-            "ext": "vxw35/hHSj07Q+maxQzOVMq1rjRCOTXpUCx8iKu5jIg="
-        },
-        {
-            "key": "csp_Wwys",
-            "name": "🌾农民┃1080P",
-            "type": 3,
-            "api": "csp_Wwys",
-            "jar": "./jar/mi-0508.jar",
-            "timeout": 12,
-            "ext": "https://vip.wwgz.cn:5200"
-        },
-        {
-            "key": "花猪",
-            "name": "🐷花猪┃1080P",
-            "type": 3,
-            "api": "csp_AppGet",
-            "jar": "./jar/mi-0508.jar",
-            "ext": "https://c0nfb829mg2ds3z6x28fb1hjs7euh9vd.68.gy:7865|g68kj3fdh3c23t98"
-        },
-        {
-            "key": "新首发",
-            "name": "👻新首发┃1080P",
-            "type": 3,
-            "api": "csp_AppGet",
-            "jar": "./jar/mi-0508.jar",
-            "ext": "https://yun-1316442804.cos.ap-guangzhou.myqcloud.com/600.txt|FTgP4Gq8zPiqbt7M|V122|okhttp/3.10.0"
-        },
-        {
-            "key": "四叶草",
-            "name": "🍀 四叶草┃1080P",
-            "type": 3,
-            "api": "csp_AppGet",
-            "jar": "./jar/mi-0508.jar",
-            "ext": "https://qj4.catbb.xyz|eecbio48dsq13kkk|V122|okhttp/3.10.0"
-        },
+    {
+      "key"        : "豆瓣",
+      "name"       : "🇹🇼｜熱播排行榜｜自動切換",
+      "type"       : 3,
+      "api"        : "csp_Douban",
+      "jar": "./jar/river-0506.jar;md5;49bf68569c72be249d87ebc287e690d3",
+      "searchable" : 0,
+      "quickSearch": 0,
+      "changeable" : 1
+    },
+    {
+      "key"       : "豆瓣2",
+      "name"      : "🇹🇼｜熱播排行榜｜可選站",
+      "type"      : 3,
+      "api"       : "csp_Douban",
+      "spider"    : "./jar/pg.jar;md5;e56f6e07a8bd2bcfb1a14c6e3c99aa26",
+      "jar"       : "./jar/pg.jar;md5;e56f6e07a8bd2bcfb1a14c6e3c99aa26",
+      "searchable": 0,
+      "changeable": 0,
+      "indexs"    : 1,
+      "ext"       : "./lib/tokenm.json$$$./lib/douban.json"
+    },
+    {
+      "key"       : "聚合短剧",
+      "name"      : "📺｜聚合短劇",
+      "type"      : 3,
+      "api"       : "./drpy_js/聚合短剧.js",
+      "jar": "./jar/river-0506.jar;md5;49bf68569c72be249d87ebc287e690d3",
+      "changeable": 1
+    },
+    {
+      "key"       : "网盘配置",
+      "name"      : "🇹🇼｜Youtube、网盘、弹幕配置",
+      "type"      : 3,
+      "jar"       : "./jar/pg.jar;md5;e56f6e07a8bd2bcfb1a14c6e3c99aa26",
+      "api"       : "csp_Config",
+      "searchable": 1,
+      "changeable": 0,
+      "ext"       : "./json/tokenm.json",
+      "style"     : {"type": "rect", "ratio": 1.5}
+    },
         {
             "key": "爱营",
-            "name": "💥爱影┃1080P",
+            "name": "❌｜爱影｜1080P",
             "type": 3,
             "searchable": 1,
             "changeable": 1,
@@ -63,7 +59,7 @@
         },
         {
             "key": "3QQQ",
-            "name": "🍅大鹅┃1080P",
+            "name": "❌｜大鹅｜1080P",
             "type": 3,
             "timeout": 15,
             "api": "csp_App3Q",
@@ -71,14 +67,14 @@
         },
         {
             "key": "csp_SaoHuo",
-            "name": "🔥火火┃1080P",
+            "name": "❌｜火火｜1080P",
             "type": 3,
             "api": "csp_SaoHuo",
             "jar": "./jar/mi-0508.jar"
         },
         {
             "key": "麦田",
-            "name": "🌾麦田┃1080P",
+            "name": "❌｜麦田｜1080P",
             "type": 3,
             "api": "csp_AppV6",
             "jar": "./jar/mi-0508.jar",
@@ -86,7 +82,7 @@
         },
         {
             "key": "听心99",
-            "name": "🦉欣欣┃1080P",
+            "name": "❌｜欣欣｜1080P",
             "type": 3,
             "api": "csp_App99",
             "jar": "./jar/mi-0508.jar",
@@ -104,7 +100,7 @@
         },
         {
             "key": "追番达人99",
-            "name": "🐎追番┃1080P",
+            "name": "❌｜追番｜1080P",
             "type": 3,
             "api": "csp_App99",
             "jar": "./jar/mi-0508.jar",
@@ -122,7 +118,7 @@
         },
         {
             "key": "大师兄",
-            "name": "💨大师兄┃1080P",
+            "name": "❌｜大师兄｜1080P",
             "type": 3,
             "jar": "https://s3plus.meituan.net/opapisdk/op_ticket_1_5677168484_1774853250308_PA5tmo8g_vip.jar;md5;a4f403a000bc5e4ebdd9da27fcb05852",
             "api": "csp_AppV6",
@@ -131,7 +127,7 @@
         },
         {
             "key": "荐片",
-            "name": "🧲荐片┃1080P",
+            "name": "❌｜荐片｜1080P",
             "quickSearch": 0,
             "changeable": "0",
             "searchable": 1,
@@ -146,26 +142,8 @@
             "ext": "https://api.ztcgi.com"
         },
         {
-            "key": "csp_duanju",
-            "name": "🔥短剧┃1080P",
-            "type": 3,
-            "timeout": 12,
-            "api": "csp_DuanJu",
-            "jar": "./jar/mi-0508.jar"
-        },
-        {
-            "key": "csp_Gz360",
-            "name": "🍉瓜子┃1080P",
-            "type": 3,
-            "timeout": 12,
-            "searchable": 1,
-            "quickSearch": 0,
-            "api": "csp_Gz360",
-            "jar": "./jar/mi-0508.jar"
-        },
-        {
             "key": "csp_Jpys",
-            "name": "🥇金牌┃1080P",
+            "name": "❌｜金牌｜1080P",
             "type": 3,
             "timeout": 12,
             "searchable": 1,
@@ -174,13 +152,6 @@
             "jar": "./jar/mi-0508.jar",
             "ext": "https://ghw9zwp5.com/"
         },
-
-
-
-
-
-
-
         {
             "key": "YGP",
             "name": "❌｜預告片",
@@ -350,47 +321,6 @@
             "quickSearch": 1,
             "changeable": 1
         },        
-    {
-      "key"        : "豆瓣",
-      "name"       : "🇹🇼｜熱播排行榜｜自動切換",
-      "type"       : 3,
-      "api"        : "csp_Douban",
-      "jar": "./jar/river-0506.jar;md5;49bf68569c72be249d87ebc287e690d3",
-      "searchable" : 0,
-      "quickSearch": 0,
-      "changeable" : 1
-    },
-    {
-      "key"       : "豆瓣2",
-      "name"      : "🇹🇼｜熱播排行榜｜可選站",
-      "type"      : 3,
-      "api"       : "csp_Douban",
-      "spider"    : "./jar/pg.jar;md5;e56f6e07a8bd2bcfb1a14c6e3c99aa26",
-      "jar"       : "./jar/pg.jar;md5;e56f6e07a8bd2bcfb1a14c6e3c99aa26",
-      "searchable": 0,
-      "changeable": 0,
-      "indexs"    : 1,
-      "ext"       : "./lib/tokenm.json$$$./lib/douban.json"
-    },
-    {
-      "key"       : "聚合短剧",
-      "name"      : "📺｜聚合短劇",
-      "type"      : 3,
-      "api"       : "./drpy_js/聚合短剧.js",
-      "jar": "./jar/river-0506.jar;md5;49bf68569c72be249d87ebc287e690d3",
-      "changeable": 1
-    },
-    {
-      "key"       : "网盘配置",
-      "name"      : "🇹🇼｜Youtube、网盘、弹幕配置",
-      "type"      : 3,
-      "jar"       : "./jar/pg.jar;md5;e56f6e07a8bd2bcfb1a14c6e3c99aa26",
-      "api"       : "csp_Config",
-      "searchable": 1,
-      "changeable": 0,
-      "ext"       : "./json/tokenm.json",
-      "style"     : {"type": "rect", "ratio": 1.5}
-    },
     {
       "key": "csp_瓜皮",
       "name": "🐙｜瓜皮｜只能搜索用",

@@ -7,6 +7,17 @@
 
 
     {
+      "key"        : "vod_豆瓣",
+      "name"       : "🧲｜豆瓣｜高清◎順播(浮水印廣告)",
+      "type"       : 1,
+      "api"        : "https://caiji.dbzy5.com/api.php/provide/vod/at/josn/",
+      "searchable" : 1,
+      "quickSearch": 0,
+      "changeable" : 1
+    },
+
+
+    {
       "key"        : "豆瓣",
       "name"       : "🇹🇼｜熱播排行榜｜自動切換",
       "type"       : 3,

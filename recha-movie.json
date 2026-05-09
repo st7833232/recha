@@ -6,16 +6,6 @@
   "sites": [
 
 
-    {
-      "key"        : "vod_豆瓣",
-      "name"       : "🧲｜豆瓣｜高清◎順播(浮水印廣告)",
-      "type"       : 1,
-      "api"        : "https://caiji.dbzy5.com/api.php/provide/vod/at/josn/",
-      "searchable" : 1,
-      "quickSearch": 0,
-      "changeable" : 1
-    },
-
 
     {
       "key"        : "豆瓣",
@@ -39,6 +29,15 @@
       "indexs"    : 1,
       "ext"       : "./lib/tokenm.json$$$./lib/douban.json"
     },
+        {
+            "key": "YGP",
+            "name": "🇹🇼｜預告片",
+            "type": 3,
+            "api": "csp_YGPGuard",
+            "searchable": 0,
+            "quickSearch": 0,
+            "changeable": 0
+        },    
     {
       "key"       : "聚合短剧",
       "name"      : "📺｜聚合短劇",
@@ -60,7 +59,7 @@
     },
         {
             "key": "爱营",
-            "name": "❌｜爱影｜1080P",
+            "name": "🏆｜愛影｜1080P",
             "type": 3,
             "searchable": 1,
             "changeable": 1,
@@ -70,7 +69,7 @@
         },
         {
             "key": "3QQQ",
-            "name": "❌｜大鹅｜1080P",
+            "name": "❌｜大鵝｜1080P",
             "type": 3,
             "timeout": 15,
             "api": "csp_App3Q",
@@ -154,7 +153,7 @@
         },
         {
             "key": "csp_Jpys",
-            "name": "❌｜金牌｜1080P",
+            "name": "🏆｜金牌｜1080P",
             "type": 3,
             "timeout": 12,
             "searchable": 1,
@@ -163,18 +162,10 @@
             "jar": "./jar/mi-0508.jar",
             "ext": "https://ghw9zwp5.com/"
         },
-        {
-            "key": "YGP",
-            "name": "❌｜預告片",
-            "type": 3,
-            "api": "csp_YGPGuard",
-            "searchable": 0,
-            "quickSearch": 0,
-            "changeable": 0
-        },
+
         {
             "key": "云播",
-            "name": "❌｜雲播｜无搜索",
+            "name": "🏆｜雲播｜高清◎無搜索(無廣告)",
             "type": 3,
             "api": "csp_T4Guard",
             "searchable": 1,
@@ -184,7 +175,7 @@
         },
         {
             "key": "奶酪",
-            "name": "❌｜奶酪",
+            "name": "🏆｜奶酪｜高清◎無廣",
             "type": 3,
             "api": "csp_T4Guard",
             "searchable": 1,
@@ -194,7 +185,7 @@
         },
         {
             "key": "厂长",
-            "name": "❌｜廠長",
+            "name": "🏆｜廠長｜高清◎無廣",
             "type": 3,
             "api": "csp_NewCzGuard",
             "timeout": 10,
@@ -205,7 +196,7 @@
         },
         {
             "key": "文采",
-            "name": "❌｜文采",
+            "name": "🏆｜文采｜高清◎無廣",
             "type": 3,
             "api": "csp_JpysGuard",
             "timeout": 10,
@@ -215,19 +206,8 @@
             "changeable": 1
         },
         {
-            "key": "原创",
-            "name": "❌｜原創",
-            "type": 3,
-            "api": "csp_YCyzGuard",
-            "timeout": 15,
-            "playerType": 1,
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },
-        {
             "key": "糯米",
-            "name": "❌｜糯米",
+            "name": "🏆｜糯米｜普清◎無廣",
             "type": 3,
             "api": "csp_NmyswvGuard",
             "timeout": 15,
@@ -237,7 +217,7 @@
         },
         {
             "key": "视界",
-            "name": "❌｜視界",
+            "name": "🏆｜視界｜高清◎無廣",
             "type": 3,
             "api": "csp_AppSxGuard",
             "timeout": 10,
@@ -248,7 +228,7 @@
         },
         {
             "key": "花花",
-            "name": "❌｜花花",
+            "name": "🏆｜花花｜高清◎無廣",
             "type": 3,
             "api": "csp_AppSxGuard",
             "timeout": 10,
@@ -259,7 +239,7 @@
         },
         {
             "key": "播客",
-            "name": "❌｜播客",
+            "name": "🏆｜播客｜高清◎無廣",
             "type": 3,
             "api": "csp_AppSxGuard",
             "timeout": 10,
@@ -270,7 +250,7 @@
         },
         {
             "key": "爱影",
-            "name": "❌｜愛影",
+            "name": "🏆｜愛影｜4K◎無廣",
             "type": 3,
             "api": "csp_AppSxGuard",
             "timeout": 10,
@@ -281,7 +261,7 @@
         },
         {
             "key": "猫猫",
-            "name": "❌｜猫猫",
+            "name": "🏆｜猫猫｜高清◎無廣",
             "type": 3,
             "api": "csp_AppSxGuard",
             "timeout": 10,
@@ -292,7 +272,7 @@
         },
         {
             "key": "奥特",
-            "name": "❌｜奥特",
+            "name": "🏆｜奥特｜高清◎無廣",
             "type": 3,
             "api": "csp_AueteGuard",
             "timeout": 10,
@@ -300,27 +280,7 @@
             "quickSearch": 1,
             "changeable": 1
         },
-        {
-            "key": "咕咕",
-            "name": "❌｜咕咕动漫",
-            "type": 3,
-            "api": "csp_AppSxGuard",
-            "timeout": 10,
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "ext": "rfOX1voDIQhH8epBwpmIsuS/sSCZxc/l0mxkeoroQVYOelMAvX1kuYptSLB36YxEjVawS9p37Cgo"
-        },
-        {
-            "key": "Dm84",
-            "name": "❌｜巴士动漫",
-            "type": 3,
-            "api": "csp_Dm84Guard",
-            "timeout": 10,
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 1
-        },        
+
     {
       "key": "csp_瓜皮",
       "name": "🐙｜瓜皮｜只能搜索用",
@@ -1461,6 +1421,16 @@
       "changeable" : 1,
       "filterable" : 0
     },
+        {
+            "key": "Dm84",
+            "name": "🎡｜巴士",
+            "type": 3,
+            "api": "csp_Dm84Guard",
+            "timeout": 10,
+            "searchable": 1,
+            "quickSearch": 1,
+            "changeable": 1
+        },            
     {
       "key"        : "csp_Dm84Guard",
       "name"       : "🎡｜巴士",

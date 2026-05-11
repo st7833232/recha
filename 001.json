@@ -7,7 +7,7 @@
 
         {
             "key": "爱影",
-            "name": "爱盈4K┃⭐星河⭐",
+            "name": "爱盈｜4K測試",
             "type": 3,
             "api": "csp_AppQi",
             "jar": "./jar/river-0506.jar;md5;49bf68569c72be249d87ebc287e690d3",
@@ -25,7 +25,7 @@
         },
         {
             "key": "爱影1",
-            "name": "鬼鬼4K┃⭐星河⭐",
+            "name": "鬼鬼｜4K測試",
             "type": 3,
             "api": "csp_AppQi",
             "jar": "./jar/river-0506.jar;md5;49bf68569c72be249d87ebc287e690d3",

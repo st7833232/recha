@@ -7,7 +7,7 @@
 
         {
             "key": "爱影",
-            "name": "爱盈｜4K測試",
+            "name": "爱盈｜4K◎測試",
             "type": 3,
             "api": "csp_AppQi",
             "jar": "./jar/river-0506.jar;md5;49bf68569c72be249d87ebc287e690d3",
@@ -23,24 +23,6 @@
                 "ua": "Lavf/58.12.10"
             }
         },
-        {
-            "key": "爱影1",
-            "name": "鬼鬼｜4K測試",
-            "type": 3,
-            "api": "csp_AppQi",
-            "jar": "./jar/river-0506.jar;md5;49bf68569c72be249d87ebc287e690d3",
-            "changeable": 1,
-            "searchable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "ext": {
-                "site": "https://yun-1316442804.cos.ap-guangzhou.myqcloud.com/600.txt",
-                "dataKey": "FTgP4Gq8zPiqbt7M",
-                "dataIv": "FTgP4Gq8zPiqbt7M",
-                "init": "initV122",
-                "ua": "okhttp/3.10.0"
-            }
-        },        
 
     {
       "key"        : "豆瓣",
@@ -198,6 +180,24 @@
             "api": "csp_App3Q",
             "jar": "./jar/mi-0508.jar"
         },
+        {
+            "key": "爱影1",
+            "name": "🏆｜鬼鬼｜4K◎隱藏",
+            "type": 3,
+            "api": "csp_AppQi",
+            "jar": "./jar/river-0506.jar;md5;49bf68569c72be249d87ebc287e690d3",
+            "changeable": 1,
+            "searchable": 1,
+            "quickSearch": 1,
+            "filterable": 1,
+            "ext": {
+                "site": "https://yun-1316442804.cos.ap-guangzhou.myqcloud.com/600.txt",
+                "dataKey": "FTgP4Gq8zPiqbt7M",
+                "dataIv": "FTgP4Gq8zPiqbt7M",
+                "init": "initV122",
+                "ua": "okhttp/3.10.0"
+            }
+        },               
         {
             "key": "听心99",
             "name": "🏆｜欣欣｜2K◎秒播",

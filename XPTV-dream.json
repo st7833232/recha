@@ -12,7 +12,7 @@
       "key"        : "vod_蜜雪",
       "name"       : "🧲｜夢想網頁版｜VOD",
       "type"       : 1,
-      "api"        : "http://www.mixuetv.top/api.php/provide/vod/?ac=list",
+      "api"        : "http://www.mixuetv.top/api.php/provide/vod/",
       "searchable" : 1,
       "quickSearch": 0,
       "changeable" : 1

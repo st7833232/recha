@@ -2,7 +2,7 @@
   "spider": "./jar/fan-0507.jar",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.05.11_Ver.2\n 更新完畢",
+  "notice": "115.05.18_Ver.2\n 新玩具，夢想網頁版",
   "sites": [
 
 
@@ -10,31 +10,14 @@
 
         {
       "key"        : "vod_蜜雪",
-      "name"       : "🧲｜蜜雪｜高清(??)",
+      "name"       : "🧲｜夢想網頁版｜？",
       "type"       : 0,
       "api"        : "http://www.mixuetv.top/api.php/provide/vod/at/xml",
-      "categories": ["电影","电视剧","综艺","动漫","国产剧","台灣剧","日本剧","美国剧","短剧","大陆综艺","日韩综艺","港台综艺","欧美综艺","国产动漫","港台动漫","日韓动漫","欧美动漫","奈飞","奈飞电视剧","奈飞电影","動作片","韓國劇","海外劇","港劇","恐怖片","喜劇片","科幻片","劇情片","戰爭片","愛情片"],
+      //"categories": ["电影","电视剧","综艺","动漫","国产剧","台灣剧","日本剧","美国剧","短剧","大陆综艺","日韩综艺","港台综艺","欧美综艺","国产动漫","港台动漫","日韓动漫","欧美动漫","奈飞","奈飞电视剧","奈飞电影","動作片","韓國劇","海外劇","港劇","恐怖片","喜劇片","科幻片","劇情片","戰爭片","愛情片"],
       "searchable" : 1,
       "quickSearch": 1
-    },
-        {
-            "key": "爱影",
-            "name": "爱盈｜4K◎測試",
-            "type": 3,
-            "api": "csp_AppQi",
-            "jar": "./jar/river-0506.jar;md5;49bf68569c72be249d87ebc287e690d3",
-            "changeable": 1,
-            "searchable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "ext": {
-                "site": "https://aysappto.oss-cn-chengdu.aliyuncs.com/q23.txt",
-                "dataKey": "nzEqOgYk3QzHuEP8",
-                "dataIv": "nzEqOgYk3QzHuEP8",
-                "init": "initV122",
-                "ua": "Lavf/58.12.10"
-            }
         },
+
 
     {
       "key"        : "豆瓣",
@@ -319,7 +302,24 @@
             "jar": "./jar/mi-0508.jar",
             "ext": "https://aysappto.oss-cn-chengdu.aliyuncs.com/q23.txt|nzEqOgYk3QzHuEP8|V122|okhttp/3.10.0"
         },
-
+        {
+            "key": "爱影",
+            "name": "爱盈｜4K◎測試",
+            "type": 3,
+            "api": "csp_AppQi",
+            "jar": "./jar/river-0506.jar;md5;49bf68569c72be249d87ebc287e690d3",
+            "changeable": 1,
+            "searchable": 1,
+            "quickSearch": 1,
+            "filterable": 1,
+            "ext": {
+                "site": "https://aysappto.oss-cn-chengdu.aliyuncs.com/q23.txt",
+                "dataKey": "nzEqOgYk3QzHuEP8",
+                "dataIv": "nzEqOgYk3QzHuEP8",
+                "init": "initV122",
+                "ua": "Lavf/58.12.10"
+            }
+        },
         {
             "key": "csp_SaoHuo",
             "name": "🏆｜火火｜高清◎普通",

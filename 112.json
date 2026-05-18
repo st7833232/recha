@@ -12,7 +12,7 @@
       "key"        : "vod_蜜雪",
       "name"       : "🧲｜蜜雪｜高清(??)",
       "type"       : 1,
-      "api"        : "http://www.mixuetv.top/index.php/provide/vod/",
+      "api"        : "http://www.mixuetv.top/api.php/provide/vod/at/xml",
       "searchable" : 1,
       "quickSearch": 1
     },

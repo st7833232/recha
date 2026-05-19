@@ -1,3 +1,1 @@
-{"sites":[
-        { "key": "XML_蜜雪", "name": "🧲｜夢想網頁版｜XML", "type" : 0, "api" : "http://www.mixuetv.top/api.php/provide/vod/at/xml" },
-        { "key": "vod_蜜雪", "name": "🧲｜夢想網頁版｜VOD", "type" : 1, "api" : "http://www.mixuetv.top/api.php/provide/vod/"}]}
+{"sites":[{ "key": "vod_蜜雪", "name": "🧲｜夢想網頁版｜VOD", "type" : 1, "api" : "http://www.mixuetv.top/api.php/provide/vod/"}]}

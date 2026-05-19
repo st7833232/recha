@@ -2,7 +2,7 @@
   "spider": "./jar/fan-0507.jar",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.05.18_Ver.3\n 新玩具，夢想網頁版",
+  "notice": "115.05.20_Ver.2\n 悲哀，群裡有內奸",
   "sites": [
 
 
@@ -10,7 +10,7 @@
 
         {
       "key"        : "vod_蜜雪",
-      "name"       : "🧲｜夢想網頁版｜嚴禁外流，leeeo給的",
+      "name"       : "🧲｜夢想網頁版｜嚴禁外流",
       "type"       : 0,
       "api"        : "http://www.mixuetv.top/api.php/provide/vod/at/xml",
       "categories": ["国产剧","台灣剧","日本剧","美国剧","短剧","大陆综艺","日韩综艺","港台综艺","欧美综艺","国产动漫","日韓动漫","欧美动漫","奈飞电视剧","奈飞电影","動作片","韓國劇","海外劇","港劇","恐怖片","科幻片","劇情片","戰爭片","愛情片"],

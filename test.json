@@ -2,7 +2,7 @@
   "spider": "./jar/fan-0523.jar;md5;e25131330e48e729864434147c857f41",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.05.24_Ver.1 等待排序建議調整",
+  "notice": "115.05.24_Ver.4 🏆藍光特選\n🥇高清無廣\n🥈普清尚可\n🥉僅無廣告",
   "sites": [
     {
       "key": "豆瓣",
@@ -144,6 +144,27 @@
       "changeable": 0
     },
     {
+      "key"        : "csp_Uvod",
+      "name"       : "🏆｜優視｜藍光◎秒播",
+      "type"       : 3,
+      "api"        : "csp_Uvod",
+      "jar"        : "./jar/lem0106.jar;md5;8A3F412E42E8B36750E238B066AC4D7A",
+      "searchable" : 1,
+      "quickSearch": 1,
+      "changeable" : 1
+    },
+    {
+      "key": "Qile优视频2",
+      "name": "🏆｜Uvod｜藍光◎秒播",
+      "type": 3,
+      "searchable": 1,
+      "changeable": 1,
+      "api": "csp_Uvod",
+      "jar": "./jar/custom_spider.jar;md5;5e53c8f9ddd4ede5359c16bee091db93",
+      "playerType": 2,
+      "filterable": 1
+    },    
+    {
       "key"       : "異界",
       "name"      : "🏆｜異界｜高清(無廣告)",
       "type"      : 3,
@@ -154,7 +175,7 @@
     },
     {
       "key"    : "3QQQ",
-      "name"   : "🏆｜大鵝｜4K◎秒播",
+      "name"   : "🥇｜大鵝｜4K◎秒播",
       "type"   : 3,
       "timeout": 15,
       "api"    : "csp_App3Q",
@@ -162,7 +183,7 @@
     },
     {
       "key": "爱影1",
-      "name": "🏆｜鬼鬼｜4K◎隱藏",
+      "name": "🥇｜鬼鬼｜4K◎隱藏",
       "type": 3,
       "api": "csp_AppQi",
       "jar": "./jar/river-0523.jar;md5;73333d98966e06771984235c416d92dc",
@@ -180,7 +201,7 @@
     },
     {
       "key" : "听心99",
-      "name": "🏆｜欣欣｜2K◎秒播",
+      "name": "🥇｜欣欣｜2K◎秒播",
       "type": 3,
       "api" : "csp_App99",
       "jar" : "./jar/mi-0508.jar",
@@ -198,7 +219,7 @@
     },
     {
       "key" : "追番达人99",
-      "name": "🏆｜追番｜高清◎秒播",
+      "name": "🥇｜追番｜高清◎秒播",
       "type": 3,
       "api" : "csp_App99",
       "jar" : "./jar/mi-0508.jar",
@@ -233,7 +254,7 @@
     },
     {
       "key": "AppV7Xyz",
-      "name": "🏆｜小柚子｜高清◎秒播",
+      "name": "🥇｜小柚子｜高清◎秒播",
       "type": 3,
       "api": "csp_AppV7Amns",
       "jar": "./jar/aowu-0523.jar;md5;f3717b413a5ea5fd1fae64a6146d0a6d",
@@ -244,7 +265,7 @@
     },
     {
       "key": "AppV7Mtq",
-      "name": "🏆｜蒙太奇｜高清◎秒播",
+      "name": "🥇｜蒙太奇｜高清◎秒播",
       "type": 3,
       "api": "csp_AppV7Amns",
       "jar": "./jar/aowu-0523.jar;md5;f3717b413a5ea5fd1fae64a6146d0a6d",
@@ -255,7 +276,7 @@
     },
     {
       "key": "AppV7Xhr",
-      "name": "🏆｜小黄人｜高清◎秒播",
+      "name": "🥇｜小黄人｜高清◎秒播",
       "type": 3,
       "api": "csp_AppV7Amns",
       "jar": "./jar/aowu-0523.jar;md5;f3717b413a5ea5fd1fae64a6146d0a6d",
@@ -266,7 +287,7 @@
     },
     {
       "key": "AppV6Tg",
-      "name": "🏆｜特狗｜高清◎秒播",
+      "name": "🥇｜特狗｜高清◎秒播",
       "type": 3,
       "api": "csp_AppV6Amns",
       "jar": "./jar/aowu-0523.jar;md5;f3717b413a5ea5fd1fae64a6146d0a6d",
@@ -277,7 +298,7 @@
     },
     {
       "key": "NewGrV2",
-      "name": "🏆｜夏天｜高清◎秒播",
+      "name": "🥇｜夏天｜高清◎秒播",
       "type": 3,
       "api": "csp_NewGrV2Amns",
       "jar": "./jar/aowu-0523.jar;md5;f3717b413a5ea5fd1fae64a6146d0a6d",
@@ -288,7 +309,7 @@
     },
     {
       "key": "AppV7Xy",
-      "name": "🏆｜鹹鱼｜高清◎秒播",
+      "name": "🥇｜鹹鱼｜高清◎秒播",
       "type": 3,
       "api": "csp_AppV7Amns",
       "jar": "./jar/aowu-0523.jar;md5;f3717b413a5ea5fd1fae64a6146d0a6d",
@@ -299,7 +320,7 @@
     },
     {
       "key": "AppV7Zjdr",
-      "name": "🏆｜達人｜高清◎秒播(跑馬燈廣告)",
+      "name": "🥇｜達人｜高清◎秒播(跑馬燈廣告)",
       "type": 3,
       "api": "csp_AppV7Amns",
       "jar": "./jar/aowu-0523.jar;md5;f3717b413a5ea5fd1fae64a6146d0a6d",
@@ -310,7 +331,7 @@
     },
     {
       "key": "Gaze",
-      "name": "🏆｜Gaze｜高清◎秒播",
+      "name": "🥇｜Gaze｜高清◎秒播",
       "type": 3,
       "api": "csp_GazeAmns",
       "jar": "./jar/aowu-0523.jar;md5;f3717b413a5ea5fd1fae64a6146d0a6d",
@@ -320,14 +341,14 @@
     },
     {
       "key" : "三秋影视",
-      "name": "🏆｜三秋｜普畫◎秒播",
+      "name": "🥇｜三秋｜普畫◎秒播",
       "type": 3,
       "api" : "csp_App3Q",
       "jar" : "./jar/xiaosa-0523.jar;md5;70367634355a94198b939b18f2be3d52"
     },
     {
       "key" : "听心99",
-      "name": "🏆｜聽心｜高清◎秒播",
+      "name": "🥇｜聽心｜高清◎秒播",
       "type": 3,
       "api" : "csp_App99",
       "jar" : "./jar/xiaosa-0523.jar;md5;70367634355a94198b939b18f2be3d52",
@@ -344,7 +365,7 @@
     },
     {
       "key" : "橙子99",
-      "name": "🏆｜橙子丨高清◎秒播",
+      "name": "🥇｜橙子丨高清◎秒播",
       "type": 3,
       "api" : "csp_App99",
       "jar" : "./jar/xiaosa-0523.jar;md5;70367634355a94198b939b18f2be3d52",
@@ -361,7 +382,7 @@
     },
     {
       "key" : "追番99",
-      "name": "🏆｜追番｜高清◎秒播",
+      "name": "🥇｜追番｜高清◎秒播",
       "type": 3,
       "api" : "csp_App99",
       "jar" : "./jar/xiaosa-0523.jar;md5;70367634355a94198b939b18f2be3d52",
@@ -378,7 +399,7 @@
     },
     {
       "key" : "咕噜99",
-      "name": "🏆｜咕噜丨普畫◎秒播",
+      "name": "🥇｜咕噜丨普畫◎秒播",
       "type": 3,
       "api" : "csp_App99",
       "jar" : "./jar/xiaosa-0523.jar;md5;70367634355a94198b939b18f2be3d52",
@@ -395,7 +416,7 @@
     },
     {
       "key": "天堂",
-      "name": "🏆｜天堂｜高清◎秒播",
+      "name": "🥇｜天堂｜高清◎秒播",
       "type": 3,
       "api": "csp_AppDrama",
       "jar": "./jar/xiaosa-0523.jar;md5;70367634355a94198b939b18f2be3d52",
@@ -416,7 +437,7 @@
     },
     {
       "key": "橘汁",
-      "name": "🏆｜橘汁｜高清◎秒播",
+      "name": "🥇｜橘汁｜高清◎秒播",
       "type": 3,
       "api": "csp_AppDrama",
       "jar": "./jar/xiaosa-0523.jar;md5;70367634355a94198b939b18f2be3d52",
@@ -437,7 +458,7 @@
     },
     {
       "key": "苹果",
-      "name": "🏆｜蘋果｜高清◎秒播",
+      "name": "🥇｜蘋果｜高清◎秒播",
       "type": 3,
       "api": "csp_AppDrama",
       "jar": "./jar/xiaosa-0523.jar;md5;70367634355a94198b939b18f2be3d52",
@@ -458,7 +479,7 @@
     },
     {
       "key": "薯条",
-      "name": "🏆｜薯條｜高清◎秒播",
+      "name": "🥇｜薯條｜高清◎秒播",
       "type": 3,
       "api": "csp_AppDrama",
       "jar": "./jar/xiaosa-0523.jar;md5;70367634355a94198b939b18f2be3d52",
@@ -479,7 +500,7 @@
     },
     {
       "key": "奴娜",
-      "name": "🏆｜奴娜丨高清◎秒播",
+      "name": "🥇｜奴娜丨高清◎秒播",
       "type": 3,
       "api": "csp_AppYsV2",
       "jar": "./jar/xiaosa-0523.jar;md5;70367634355a94198b939b18f2be3d52",
@@ -490,7 +511,7 @@
     },
     {
       "key": "闪影",
-      "name": "🏆｜閃影｜高清◎秒播",
+      "name": "🥇｜閃影｜高清◎秒播",
       "type": 3,
       "api": "csp_AppYsV2",
       "jar": "./jar/xiaosa-0523.jar;md5;70367634355a94198b939b18f2be3d52",
@@ -501,7 +522,7 @@
     },
     {
       "key": "飞飞",
-      "name": "🏆｜飛飛丨高清◎秒播",
+      "name": "🥇｜飛飛丨高清◎秒播",
       "type": 3,
       "api": "csp_AppYsV2",
       "jar": "./jar/xiaosa-0523.jar;md5;70367634355a94198b939b18f2be3d52",
@@ -512,7 +533,7 @@
     },
     {
       "key": "云播",
-      "name": "🏆｜云播｜高清◎秒播",
+      "name": "🥇｜云播｜高清◎秒播",
       "type": 3,
       "api": "csp_AppFox",
       "jar": "./jar/xiaosa-0523.jar;md5;70367634355a94198b939b18f2be3d52",
@@ -522,7 +543,7 @@
     },
     {
       "key": "蓝鹰",
-      "name": "🏆｜藍鷹｜高清◎秒播",
+      "name": "🥇｜藍鷹｜高清◎秒播",
       "type": 3,
       "api": "csp_AppQi",
       "jar": "./jar/xiaosa-0523.jar;md5;70367634355a94198b939b18f2be3d52",
@@ -538,7 +559,7 @@
     },
     {
       "key": "猎豹",
-      "name": "🏆｜獵豹｜高清◎秒播",
+      "name": "🥇｜獵豹｜高清◎秒播",
       "type": 3,
       "api": "csp_AppGet",
       "jar": "./jar/xiaosa-0523.jar;md5;70367634355a94198b939b18f2be3d52",
@@ -552,7 +573,7 @@
     },
     {
       "key": "秒看",
-      "name": "🏆｜秒看｜高清◎秒播",
+      "name": "🥇｜秒看｜高清◎秒播",
       "type": 3,
       "api": "csp_AppGet",
       "jar": "./jar/xiaosa-0523.jar;md5;70367634355a94198b939b18f2be3d52",
@@ -567,7 +588,7 @@
     },
     {
       "key": "茉莉",
-      "name": "🏆｜茉莉｜高清◎秒播",
+      "name": "🥇｜茉莉｜高清◎秒播",
       "type": 3,
       "api": "csp_AppGet",
       "jar": "./jar/xiaosa-0523.jar;md5;70367634355a94198b939b18f2be3d52",
@@ -581,7 +602,7 @@
     },
     {
       "key": "灵虎",
-      "name": "🏆｜灵虎｜高清◎秒播",
+      "name": "🥇｜灵虎｜高清◎秒播",
       "type": 3,
       "api": "csp_AppGet",
       "jar": "./jar/xiaosa-0523.jar;md5;70367634355a94198b939b18f2be3d52",
@@ -595,7 +616,7 @@
     },
     {
       "key": "光影",
-      "name": "🏆｜光影｜高清◎秒播",
+      "name": "🥇｜光影｜高清◎秒播",
       "type": 3,
       "api": "csp_T4Guard",
       "searchable": 1,
@@ -605,7 +626,7 @@
     },
     {
       "key": "gulu",
-      "name": "🏆｜咕噜｜高清◎秒播",
+      "name": "🥇｜咕噜｜高清◎秒播",
       "type": 3,
       "api": "csp_AppQi",
       "jar": "./jar/river-0523.jar;md5;73333d98966e06771984235c416d92dc",
@@ -623,7 +644,7 @@
     },
     {
       "key": "爱影",
-      "name": "🏆｜愛盈｜高清◎秒播",
+      "name": "🥇｜愛盈｜高清◎秒播",
       "type": 3,
       "api": "csp_AppQi",
       "jar": "./jar/river-0523.jar;md5;73333d98966e06771984235c416d92dc",
@@ -641,7 +662,7 @@
     },
     {
       "key": "大师兄",
-      "name": "🏆｜大師兄｜高清◎秒播",
+      "name": "🥇｜大師兄｜高清◎秒播",
       "type": 3,
       "jar": "https://s3plus.meituan.net/opapisdk/op_ticket_1_5677168484_1774853250308_PA5tmo8g_vip.jar;md5;a4f403a000bc5e4ebdd9da27fcb05852",
       "api": "csp_AppV6",
@@ -650,7 +671,7 @@
     },
     {
       "key"        : "csp_Jpys",
-      "name"       : "🏆｜真金｜高清◎秒播",
+      "name"       : "🥇｜真金｜高清◎秒播",
       "type"       : 3,
       "timeout"    : 12,
       "searchable" : 1,
@@ -661,7 +682,7 @@
     },
     {
       "key": "奶酪",
-      "name": "🏆｜奶酪｜高清◎秒播(無廣告)",
+      "name": "🥇｜奶酪｜高清◎秒播(無廣告)",
       "type": 3,
       "api": "csp_T4Guard",
       "searchable": 1,
@@ -671,7 +692,7 @@
     },
     {
       "key": "花花",
-      "name": "🏆｜花花｜高清◎秒播(無廣告)",
+      "name": "🥇｜花花｜高清◎秒播(無廣告)",
       "type": 3,
       "api": "csp_AppSxGuard",
       "timeout": 10,
@@ -682,7 +703,7 @@
     },
     {
       "key": "猫猫",
-      "name": "🏆｜猫猫｜高清◎秒播(無廣告)",
+      "name": "🥇｜猫猫｜高清◎秒播(無廣告)",
       "type": 3,
       "api": "csp_AppSxGuard",
       "timeout": 10,
@@ -693,7 +714,7 @@
     },
     {
       "key"        : "文采",
-      "name"       : "🏆｜文采｜高清◎秒播(無廣告)",
+      "name"       : "🥇｜文采｜高清◎秒播(無廣告)",
       "type"       : 3,
       "api"        : "csp_JpysGuard",
       "timeout"    : 10,
@@ -704,14 +725,14 @@
     },
     {
       "key" : "csp_SaoHuo",
-      "name": "🏆｜火火｜高清◎普速",
+      "name": "🥇｜火火｜高清◎普速",
       "type": 3,
       "api" : "csp_SaoHuo",
       "jar" : "./jar/mi-0508.jar"
     },
     {
       "key" : "顾我99",
-      "name": "🏆｜故我丨普畫◎普速",
+      "name": "🥇｜故我丨普畫◎普速",
       "type": 3,
       "api" : "csp_App99",
       "jar" : "./jar/xiaosa-0523.jar;md5;70367634355a94198b939b18f2be3d52",
@@ -728,7 +749,7 @@
     },
     {
       "key": "AppV7Xnm",
-      "name": "🏆｜小柠檬｜高清◎普速",
+      "name": "🥇｜小柠檬｜高清◎普速",
       "type": 3,
       "api": "csp_AppV7Amns",
       "jar": "./jar/aowu-0523.jar;md5;f3717b413a5ea5fd1fae64a6146d0a6d",
@@ -739,7 +760,7 @@
     },
     {
       "key": "AppV7Llq",
-      "name": "🏆｜零零七｜高清◎普速",
+      "name": "🥇｜零零七｜高清◎普速",
       "type": 3,
       "api": "csp_AppV7Amns",
       "jar": "./jar/aowu-0523.jar;md5;f3717b413a5ea5fd1fae64a6146d0a6d",
@@ -750,7 +771,7 @@
     },
     {
       "key": "AppV7Xsz",
-      "name": "🏆｜小柿子｜高清◎很慢",
+      "name": "🥇｜小柿子｜高清◎很慢",
       "type": 3,
       "api": "csp_AppV7Amns",
       "jar": "./jar/aowu-0523.jar;md5;f3717b413a5ea5fd1fae64a6146d0a6d",
@@ -761,7 +782,7 @@
     },
     {
       "key": "云播",
-      "name": "🏆｜雲播｜高清◎無搜(無廣告)",
+      "name": "🥇｜雲播｜高清◎無搜(無廣告)",
       "type": 3,
       "api": "csp_T4Guard",
       "searchable": 1,
@@ -771,7 +792,7 @@
     },
     {
       "key"        : "糯米",
-      "name"       : "🏆｜糯米｜普清◎很慢(無廣告)",
+      "name"       : "🥇｜糯米｜普清◎很慢(無廣告)",
       "type"       : 3,
       "api"        : "csp_NmyswvGuard",
       "timeout"    : 15,
@@ -781,7 +802,7 @@
     },
     {
       "key": "视界",
-      "name": "🏆｜視界｜高清◎很慢(無廣告)",
+      "name": "🥇｜視界｜高清◎很慢(無廣告)",
       "type": 3,
       "api": "csp_AppSxGuard",
       "timeout": 10,
@@ -792,7 +813,7 @@
     },
     {
       "key": "播客",
-      "name": "🏆｜播客｜高清◎普通(無廣告)",
+      "name": "🥇｜播客｜高清◎普通(無廣告)",
       "type": 3,
       "api": "csp_AppSxGuard",
       "timeout": 10,
@@ -803,7 +824,7 @@
     },
     {
       "key": "爱影",
-      "name": "🏆｜愛影｜4K◎很慢(無廣告)",
+      "name": "🥇｜愛影｜4K◎很慢(無廣告)",
       "type": 3,
       "api": "csp_AppSxGuard",
       "timeout": 10,
@@ -814,7 +835,7 @@
     },
     {
       "key"        : "奥特",
-      "name"       : "🏆｜奥特｜高清◎普通(無廣告)",
+      "name"       : "🥇｜奥特｜高清◎普通(無廣告)",
       "type"       : 3,
       "api"        : "csp_AueteGuard",
       "timeout"    : 10,
@@ -824,7 +845,7 @@
     },
     {
       "key" : "农民影视",
-      "name": "🏆｜農民｜無廣",
+      "name": "🥇｜農民｜無廣",
       "type": 3,
       "api" : "csp_Wwys",
       "jar" : "./jar/river-0523.jar;md5;73333d98966e06771984235c416d92dc",
@@ -832,7 +853,7 @@
     },
     {
       "key": "星空2",
-      "name": "🏆｜櫻花｜藍光◎無廣",
+      "name": "🥇｜櫻花｜藍光◎無廣",
       "type": 3,
       "searchable": 1,
       "changeable": 1,
@@ -846,7 +867,7 @@
     },
     {
       "key": "吉米",
-      "name": "🏆｜星河｜無廣",
+      "name": "🥇｜星河｜無廣",
       "type": 3,
       "api": "csp_AppDrama",
       "jar": "./jar/river-0523.jar;md5;73333d98966e06771984235c416d92dc",
@@ -867,7 +888,7 @@
     },
     {
       "key": "金牌影视",
-      "name": "🏆｜金牌｜無廣",
+      "name": "🥇｜金牌｜無廣",
       "type": 3,
       "api": "csp_Jpys",
       "jar": "./jar/river-0523.jar;md5;73333d98966e06771984235c416d92dc",
@@ -875,7 +896,7 @@
     },
     {
       "key"        : "4kmx",
-      "name"       : "🏆｜木兮｜藍光◎無廣",
+      "name"       : "🥇｜木兮｜藍光◎無廣",
       "type"       : 3,
       "api"        : "http://mytv6688.xyz/pyplugin/木兮.py",
       "searchable" : 1,
@@ -885,7 +906,7 @@
     },
     {
       "key"        : "独播",
-      "name"       : "🏆｜獨播｜普通◎無廣",
+      "name"       : "🥇｜獨播｜普通◎無廣",
       "type"       : 3,
       "jar"        : "./jar/7哥.jar",
       "api"        : "csp_DubkAmns",
@@ -896,29 +917,8 @@
       "ext"        : "./json/獨播庫.json"
     },
     {
-      "key"        : "csp_Uvod",
-      "name"       : "🏆｜優視｜高清◎無廣",
-      "type"       : 3,
-      "api"        : "csp_Uvod",
-      "jar"        : "./jar/lem0106.jar;md5;8A3F412E42E8B36750E238B066AC4D7A",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "changeable" : 1
-    },
-    {
-      "key": "Qile优视频2",
-      "name": "🏆｜Uvod｜高清◎無廣",
-      "type": 3,
-      "searchable": 1,
-      "changeable": 1,
-      "api": "csp_Uvod",
-      "jar": "./jar/custom_spider.jar;md5;5e53c8f9ddd4ede5359c16bee091db93",
-      "playerType": 2,
-      "filterable": 1
-    },
-    {
       "key": "py_非凡资源无广",
-      "name": "🏆｜非凡｜高清(無廣告)",
+      "name": "🥇｜非凡｜高清(無廣告)",
       "type": 3,
       "api": "https://gcore.jsdelivr.net/gh/doube-ba/TVlogo/py/采集去广模板.py",
       "searchable": 1,
@@ -932,7 +932,7 @@
     },
     {
       "key": "py_电影天堂无广",
-      "name": "🏆｜天堂｜高清(無廣告)",
+      "name": "🥇｜天堂｜高清(無廣告)",
       "type": 3,
       "api": "https://gcore.jsdelivr.net/gh/doube-ba/TVlogo/py/采集去广模板.py",
       "searchable": 1,
@@ -946,7 +946,7 @@
     },
     {
       "key"        : "py_mv4r4",
-      "name"       : "🏆｜有兮｜高清",
+      "name"       : "🥇｜有兮｜高清",
       "type"       : 3,
       "api"        : "./py/1.py",
       "searchable" : 1,
@@ -955,7 +955,7 @@
     },
     {
       "key"        : "厂长",
-      "name"       : "🏆｜廠長｜高清◎普通(無廣告)",
+      "name"       : "🥇｜廠長｜高清◎普通(無廣告)",
       "type"       : 3,
       "api"        : "csp_NewCzGuard",
       "timeout"    : 10,
@@ -1103,7 +1103,7 @@
     },
     {
       "key"        : "py_愛電影.py",
-      "name"       : "🏆｜金牌系列-愛電影",
+      "name"       : "🥇｜金牌系列-愛電影",
       "type"       : 3,
       "api"        : "./py/又是一個金牌.py",
       "searchable" : 1,
@@ -1113,14 +1113,14 @@
     },
     {
       "key": "新金牌影视",
-      "name": "🏆｜金牌系列-全家餐",
+      "name": "🥇｜金牌系列-全家餐",
       "type": 3,
       "api": "csp_Jpys",
       "ext": "https://y2s52n7.com,https://m.hkybqufgh.com,https://m.sizhengxt.com,https://m.9zhoukj.com,https://m.sizhengxt.com,https://m.jiabaide.cn"
     },
     {
       "key"        : "py_文才",
-      "name"       : "🏆｜金牌系列-文才",
+      "name"       : "🥇｜金牌系列-文才",
       "type"       : 3,
       "api"        : "./py/又是一個金牌.py",
       "searchable" : 1,
@@ -1132,7 +1132,7 @@
     },
     {
       "key"        : "py_zjuys.py",
-      "name"       : "🏆｜金牌系列-zjuys",
+      "name"       : "🥇｜金牌系列-zjuys",
       "type"       : 3,
       "api"        : "./py/又是一個金牌.py",
       "searchable" : 1,
@@ -1142,7 +1142,7 @@
     },
     {
       "key"        : "py_又是一個金牌",
-      "name"       : "🏆｜金牌系列-jpyy",
+      "name"       : "🥇｜金牌系列-jpyy",
       "type"       : 3,
       "api"        : "./py/又是一個金牌.py",
       "searchable" : 1,
@@ -1154,7 +1154,7 @@
     },
     {
       "key"        : "py_xiong_di_ying_shi",
-      "name"       : "🏆｜兄弟",
+      "name"       : "🥇｜兄弟",
       "type"       : 3,
       "api"        : "./py/兄弟影视.min.py",
       "searchable" : 1,
@@ -1164,7 +1164,7 @@
     },
     {
       "key"        : "php_官方资源",
-      "name"       : "🏆｜官方资源｜(PHP)",
+      "name"       : "🥇｜官方资源｜(PHP)",
       "type"       : 4,
       "api"        : "https://php.doube.eu.org/spider/php/官方资源.php",
       "searchable" : 1,
@@ -1173,7 +1173,7 @@
     },
     {
       "key" : "python集合",
-      "name": "🏆｜python集合｜(老張)",
+      "name": "🥇｜python集合｜(老張)",
       "type": 4,
       "api" : "http://zhangqun1818.serv00.net/py.php"
     },

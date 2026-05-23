@@ -88,13 +88,6 @@
       "url": "http://iptv.4666888.xyz/FYTV.txt"
     },
     {
-      "name": "安博",
-      "type": 0,
-      "ua": "okhttp",
-      "url": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/安博.txt"
-    },
-
-    {
       "name": "香蕉-Gather",
       "url": "https://tv.iill.top/m3u/Gather",
       "ua": "okhttp/3.15",

@@ -109,7 +109,28 @@
       "api"        : "csp_FreeOk",
       "jar"        : "./jar/mi-0815.png;md5;66623623fe5ae34dad253ae2e0802416"
     },
-        {
+    {
+      "key"        : "csp_Uvod",
+      "name"       : "🏆｜優視｜藍光◎無廣",
+      "type"       : 3,
+      "api"        : "csp_Uvod",
+      "jar"        : "./jar/lem0106.jar;md5;8A3F412E42E8B36750E238B066AC4D7A",
+      "searchable" : 1,
+      "quickSearch": 1,
+      "changeable" : 1
+    },
+    {
+      "key": "Qile优视频2",
+      "name": "🏆｜Uvod｜藍光◎無廣",
+      "type": 3,
+      "searchable": 1,
+      "changeable": 1,
+      "api": "csp_Uvod",
+      "jar": "./jar/custom_spider.jar;md5;5e53c8f9ddd4ede5359c16bee091db93",
+      "playerType": 2,
+      "filterable": 1
+    },
+    {
             "key": "py_jieyingshi",
             "name": "🏆｜金牌｜無廣",
             "type": 3,
@@ -470,28 +491,6 @@
       "quickSearch": 1,
       "changeable" : 1,
       "ext"        : "./json/獨播庫.json"
-    },
-
-    {
-      "key"        : "csp_Uvod",
-      "name"       : "🏆｜優視｜高清◎無廣",
-      "type"       : 3,
-      "api"        : "csp_Uvod",
-      "jar"        : "./jar/lem0106.jar;md5;8A3F412E42E8B36750E238B066AC4D7A",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "changeable" : 1
-    },
-    {
-      "key": "Qile优视频2",
-      "name": "🏆｜Uvod｜高清◎無廣",
-      "type": 3,
-      "searchable": 1,
-      "changeable": 1,
-      "api": "csp_Uvod",
-      "jar": "./jar/custom_spider.jar;md5;5e53c8f9ddd4ede5359c16bee091db93",
-      "playerType": 2,
-      "filterable": 1
     },
     {
       "key": "py_非凡资源无广",

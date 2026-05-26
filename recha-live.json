@@ -3,7 +3,17 @@
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://tv.nxog.top/m/t/",
   "lives": [
-
+        {
+            "name": "Dream",
+            "url": "http://dbmlosa.sylu.net:8080/dream.txt",
+            "playerType": 2,
+            "epg": "http://epg.52sw.top:668/?ch={name}&date={date},https://tv.mxdyeah.top/epgphp/t.xml.gz",
+            "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png",
+            "catchup": {
+                "type": "append",
+                "source": "&playseek=${(b)yyyyMMddHHmmss}-${(e)yyyyMMddHHmmss}"
+            }
+        },
             {
             "name": "欧华(需32位影视)",
             "url": "http://dbmlosa.sylu.net:8080/ouhua.txt",
@@ -11,7 +21,27 @@
             "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
             "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
         },
-
+        {
+            "name": "CloudTV(需32位影视)",
+            "url": "http://dbmlosa.sylu.net:8080/CloudTV.txt",
+            "playerType": 2,
+            "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
+            "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
+        },
+        {
+            "name": "四季线上",
+            "url": "http://dreamtv.sylu.cc:2082/vtg4.m3u?token=dbm",
+            "playerType": 2,
+            "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
+            "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
+        },        
+        {
+            "name": "四季欧飞二合一",
+            "url": "http://dbmactw.sylu.cc:2082/channel?type=m3u&token=7ZJ42qIlyWRAXT4L6c7AyDIQAfEkh18h2WHWrUBoLMO3eqhZ85rd7PYIHCvHBFac&proxy=true",
+            "playerType": 2,
+            "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
+            "logo": "https://gcore.jsdelivr.net/gh/taksssss/tv/icon/{name}.png"
+        },        
     {
       "name": "tv123",
       "type": 0,
@@ -60,21 +90,6 @@
             "ua": "okhttp",
             "url": "https://php.946985.filegear-sg.me/jackTV.m3u"
         },
-
-
-
-
-
-    {
-      "name": "Free Man TV",
-      "url": "https://media0501.github.io/Freemedia/520freerecha@tv.txt",
-      "type": 0,
-      "timeout": 10,
-      "playerType": 2,
-      "ua": "okhttp/3.8.1 okhttp/3.15 okhttp/4.12.0 Herissmon/2016 judy/5.2.1 RobYang/5.2.1 Lavf/58.12.100 catvod.com Goiptv/8.8.8 Goiptv/0.0.1 xieanqishiwoerzi/0.0.1 okHttp/Mod-1.0.0",
-      "logo": "https://epg.112114.xyz/logo/{name}.png",
-      "epg": "http://epg.112114.xyz/?ch={name}&date={date}"
-    },
     {
       "name": "FreeTV.fun",
       "type": 0,
@@ -87,13 +102,6 @@
       "ua": "okhttp",
       "url": "http://iptv.4666888.xyz/FYTV.txt"
     },
-    {
-      "name": "安博",
-      "type": 0,
-      "ua": "okhttp",
-      "url": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/安博.txt"
-    },
-
     {
       "name": "香蕉-Gather",
       "url": "https://tv.iill.top/m3u/Gather",

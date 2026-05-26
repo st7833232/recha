@@ -1,5 +1,5 @@
 {
-  "spider": "https://zl.wpscdn.cn/2026/05/26/space_img/bb215af6-2009-4398-8678-37132f58924c.png;md5;63c66a3c40867a03ec991db78691e1c4",
+  "spider": "https://zl.wpscdn.cn/2026/05/26/space_img/bb215af6-2009-4398-8678-37132f58924c.png",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.05.24_Ver.8\n🏆藍光特選\n🥇高清無廣\n🥈普清尚可\n🥉僅無廣告",
@@ -14,19 +14,6 @@
             "filterable": 0,
             "quickSearch": 0,
             "changeable": 0
-        },
-        {
-            "name": "⭐瓜子|秒播",
-            "key": "Guazi",
-            "type": 3,
-            "api": "csp_GuaziAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": {
-                "sites": "",
-                "filters": "https://file.icve.com.cn/file_doc/822/528/CD984013F5776F759DFC815995F87BFB.aowu"
-            }
         },
         {
             "name": "⭐韩剧|秒播",

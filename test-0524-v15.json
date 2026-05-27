@@ -2,13 +2,13 @@
   "spider": "./jar/aowu-0527.jar;md5;f6cc0883f796684dc6faa9fa1b355716",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.05.27_Ver.4 點播&直播 2合1",
+  "notice": "115.05.27_Ver.5 點播&直播 2合1",
   "sites": [
 
 
         {
-            "name": "❤️‍🔥｜大師｜",
             "key": "AppV6Dxs",
+            "name": "❤️‍🔥｜大師｜",
             "type": 3,
             "api": "csp_AppV6Amns",
             "searchable": 1,
@@ -17,8 +17,8 @@
             "ext": "fbe15714a2413f05151fea6864509533510f3a0bb290dd40e3a2c65650bcf144db38b7a8945b776cf8933cb38e93a7d5d36988f5cbd33db73a1432681073eb45b4ce8224060c20ef229653f6b45f4e3a327a40e74bc51f710207b43b74b9bc3f9a2f70608e9c4783ddefc066662fb396be2d3c44dd2df48630d381176fd82e54565eccc47d944de1ff2bad4be0be043beaebd8fdcc0b6df5b1c2c3ec1f7d02b0e3f57e9af680cff3627e68d389379a8d3efdadb70e25135a3c473ddf249277ad12c9fa11002df91d7303627b06ac6bddd67ea082a758c6805628c06dcb22cafb109efad1389006e9c9518c7f85b2ab546315a1005adbf726ffe50d1f679fcf3b40e05f14698f8f5b6d1d829d6871d912056f1eee83cc1df1d9a126422781356e81cf24598a0216206fa59d2645a5812cc73e603190521454e77cc06c3640ea0799b83d60a3a0eaf5e28a7797ab77181d2b91aff50d9e1af419f10b839dc9fc61fb392ce138aaa6126f9eb3be09e94a87b96ac883c72c26d4b81d52de2696f40593b059ddd2279c354dc23d72a1f98150ec0be0dc0a5f6fdb93583b092c768b7fb8dd1bd43b59622810382fd21385606490610364fcd13e908f57a012f26e4cd4d1cee74c000bdc19edf27cb469f085c99cc9b8d9ae0f8b21473240c4a048a7dc8c6e5663258cc9184b1925ad8cb4e377f1cb78f06ee983263f47db396bb64d7118a2bb732d566408125f8ea1cb4158e6b70ac0bcff54ad45274772aaf96ca6183abfa8f0b3606404543823afc801edb734912f6777c30170a8fd0ddc9f69a3dc63885e23014f424e7a9fb8c29572d9d3004ea65a9dcf623f9c5c40abc52dc1c26e22ee9339b1ecdb0a3fe6e015cbeab7b7e091d8e7174fbbebdf82f2e1460ca94a61d3124272394619f9d84ac2b3be2fe70dfb9fa12fa8e153125327cb504b970380bf4bac66bcbf3fc3dd64855698ef82a4b0d88ef29e6bc89fe87a3354c941161e8c04a360402e906d30f095587c46ce26b9b7e1d15f7108cb01ff86c9b5a6c7bdfa9258d92602f04c6a77200754c0d4e8b1b5221e465ee36198100b53eb85eb59558016af86125162a95f24e329f87e371906d7f3fbed0f4994acd9a5b3fc2b206a5fcbc4316152f6fb6ac53b8dcffb65e2fde676f32cc9e24a2a954ade411b5ee92e809a86f8a8ac741aba21ce17a7dfb194a2ad36f5f44240669543e9051dc21c7a887d80f4a5cdfbab54903e7caaa2b7daa9ed00903093e33a95682a8fad5b5361a71a9f14f6917c964870994a6b9bca00732473bd6eed0c9e7d7a068d84cf395ae20639c545a1916786b27e85d5eb3189233da8e3361279a7d76ee6605fade068462ad8387a5be98a90d866807a98506d3efac36846329350701d3d0996f1c35009ac46493a76eccb702fd1762cd10bc50e22f3ea34c8902e2d92f07f9d519768e564c23fda9172b9b359bb8d3b508554bb4bf488f283c30f89a7320a542ba985b2df0ec20401a4ddf120f2cc427604c84d7b9340c323169cfd0a5e17d47991eb1bcc0d031297370df81f4ea242bdd5f4c76caac6f5651ba28683d2623ea5b988d3a5c938f2126bd9b49ee4579227ba7458a61bf7b2f88a0f6879242a1584593ca13d9915ec150110997cf3526d3dbdd70d9b1ef0f9c20ec0b7e394f9ae34d5b3b549805553434e9ad0baff73e8eb2dc58bcc38d2b377bb999dc5f940fed55a97951dfc5cda514c37dcdc88aff46de8617a66cfe1372c55e5bfc7d70634a51f39c665beb4bd95b7de9473da306ad9d3de48a301f01187864ff4682cb6852eb865aabb8bdb7de43daeedba1ebb755aba14d954d4a290fc6ac4e0af70577fe9850b631259eb63dfda69026955a6332fbbf84a63cba9d9253581771a61f2aa108c06e1e449637781d8c830b0e3ac20f10de7088175be90761afd66da37adead8a7241fcb4e2a571885bde71811daa240012cb6effe2fc7380027b3e85cf32c0dd40569775983451603ee7687273eeaad5825d58adec12b9489d5a22e8ba08978984f0274dc53537ecd285e2c12dafec32cd3419dde63a1639794bf70c102b6b53fa1fdff744d757c0d6c05a30a9b561821a8846ce9ef0f26"
         },
         {
-            "name": "❤️‍🔥｜特狗｜",
             "key": "AppV6Tg",
+            "name": "❤️‍🔥｜特狗｜",
             "type": 3,
             "api": "csp_AppV6Amns",
             "searchable": 1,
@@ -28,8 +28,8 @@
         },
 
         {
-            "name": "❤️‍🔥｜獨播庫｜",
             "key": "Dubk",
+            "name": "❤️‍🔥｜獨播庫｜",
             "type": 3,
             "api": "csp_DubkAmns",
             "searchable": 1,
@@ -38,17 +38,8 @@
             "ext": "https://nos.netease.com/youdata-netease/public-utilUpload-dETsDhhkydVym6T7qzn7WB.gz"
         },
         {
-            "name": "❤️‍🔥｜愛瓜｜",
-            "key": "AiGua",
-            "type": 3,
-            "api": "csp_AiGuaAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0
-        },
-        {
-            "name": "❤️‍🔥｜優視｜",
             "key": "Ysp",
+            "name": "❤️‍🔥｜優視｜",
             "type": 3,
             "api": "csp_YspAmns",
             "searchable": 1,
@@ -56,8 +47,8 @@
             "changeable": 0
         },
         {
-            "name": "❤️‍🔥｜歐樂｜",
             "key": "Olyy",
+            "name": "❤️‍🔥｜歐樂｜",
             "type": 3,
             "api": "csp_OlyyAmns",
             "searchable": 1,
@@ -65,8 +56,8 @@
             "changeable": 0
         },
         {
-            "name": "❤️‍🔥｜愛壹帆｜",
             "key": "Aiyf",
+            "name": "❤️‍🔥｜愛壹帆｜",
             "type": 3,
             "api": "csp_AiyfAmns",
             "searchable": 1,
@@ -74,8 +65,8 @@
             "changeable": 0
         },                        
         {
-            "name": "❤️‍🔥｜哔嘀｜2K",
             "key": "Bidys",
+            "name": "❤️‍🔥｜哔嘀｜2K",
             "type": 3,
             "api": "csp_BidysAmns",
             "searchable": 1,
@@ -84,8 +75,8 @@
             "ext": "https://www.xlys02.com,https://xl02.com.de"
         },
         {
-            "name": "🐱嗷嗚｜动漫",
             "key": "AowuDmAw",
+            "name": "🐱嗷嗚｜动漫",
             "type": 3,
             "api": "csp_AowuDmAmns",
             "searchable": 1,
@@ -94,8 +85,8 @@
             "ext": "563357143fce50cabe524135fd3fb26e4af09034942cb186addd2322edf17ab6c9b78627645980399087f30260707c8613b0ad40dab539ddb35d7ac9f78fcf015b7e10bc9ca2f37e127890269cdd3efdfa6ce6789494fdc5352c9e544f3b048a43885af6fb083f8545f6bfa3d33291ea4210bb397b004f1b5c2660408febda99840eec91efa7142878bb1e553ad0872a0851f903d7748b0bdee1ad7975b8f4c4838fda079f1bdebb0ab77f51da3dfa8eb30ca3c0bf56e584abfd70e025a03aeff2bca60aa9075588a4953a1b7fef021b"
         },
         {
-            "name": "🐱番茶｜动漫",
             "key": "AowuDmFc",
+            "name": "🐱番茶｜动漫",
             "type": 3,
             "api": "csp_AowuDmAmns",
             "searchable": 1,
@@ -104,8 +95,8 @@
             "ext": "a2a157143fce50cabe524135fd3fb26e4af09034942cb186addd2360d64a7fb5c9b7ddaede42dd983c638ddd5064f276cfa6afb8c43429de354b19c59f234352d43c095b60cf88bba8346f1b792fdc917ed229f084939e631faf8eed7cc1d53bdfd143be9e1c38ef8228663806c2e74f046ea6dae90f06581eafc6b6a4ee34ae6ac583ae5beb6bc49e710536a49f66feb74afc1950841752c37975c85f1b60cc0408b4f3b4c80e2b187fe843378e7ebfbfcd128e48a2195bfc5d1104cfc58ed98ccf5c17428aafdce4d3b14ada75f28c5c2f8856"
         },
         {
-            "name": "🐱喵物｜动漫",
             "key": "AowuDmMw",
+            "name": "🐱喵物｜动漫",
             "type": 3,
             "api": "csp_AowuDmAmns",
             "searchable": 1,
@@ -114,8 +105,8 @@
             "ext": "db8b57143fce50cabe524135fd3fb26e4af09034942cb186addd2322edf17ab6c9b7862764598039301c43cf706efcd55499494d72c680001c30550747b3dc5994760e3d6e17208e5ed771b2b4162f65e72b3e530fdd9622474e1c5f8aecda41dcd17901c7ddc61193a63fd8aaa1a96dc8673f93a8116755fd04bb1baaa93215334aaa1327972f2dd7292eb3d593e60cad0b9a3dde2a1158640cfc93dac5af45ddd8f971e3be0ccb5c776752b9b92a7f67dc89375d7ad442bddb0c661554a03c420029010a932d2dd8e65d6dc5"
         },
         {
-            "name": "🎬好看｜短剧",
             "key": "HHkk",
+            "name": "🎬好看｜短剧",
             "type": 3,
             "api": "csp_HHkkAmns",
             "searchable": 1,
@@ -124,8 +115,8 @@
             "genre": "shortdrama"
         },
         {
-            "name": "🎬盒马｜短剧",
             "key": "Hema",
+            "name": "🎬盒马｜短剧",
             "type": 3,
             "api": "csp_HemaAmns",
             "searchable": 1,
@@ -134,8 +125,8 @@
             "genre": "shortdrama"
         },
         {
-            "name": "🎬拜拜｜短剧",
             "key": "Bddj",
+            "name": "🎬拜拜｜短剧",
             "type": 3,
             "api": "csp_BddjAmns",
             "searchable": 1,
@@ -144,8 +135,8 @@
             "genre": "shortdrama"
         },
         {
-            "name": "🎬围观｜短剧",
             "key": "Wgdj",
+            "name": "🎬围观｜短剧",
             "type": 3,
             "api": "csp_WgdjAmns",
             "searchable": 1,
@@ -154,8 +145,8 @@
             "genre": "shortdrama"
         },
         {
-            "name": "🎬喵喵｜短剧",
             "key": "Qmdj",
+            "name": "🎬喵喵｜短剧",
             "type": 3,
             "api": "csp_QmdjAmns",
             "searchable": 1,
@@ -164,8 +155,8 @@
             "genre": "shortdrama"
         },
         {
-            "name": "🎬星星｜短剧",
             "key": "Xydj",
+            "name": "🎬星星｜短剧",
             "type": 3,
             "api": "csp_XydjAmns",
             "searchable": 1,
@@ -268,33 +259,23 @@
       "api"        : "csp_FreeOk",
       "jar"        : "./jar/mi-0815.png;md5;66623623fe5ae34dad253ae2e0802416"
     },
-    {
-      "key"        : "py_jieyingshi",
-      "name"       : "🏆｜金牌｜無廣",
-      "type"       : 3,
-      "api"        : "./lib/jys.py",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 0,
-      "changeable" : 1
-    },
-    {
-      "key": "金牌",
-      "name": "🏆｜銀牌｜高清(無廣告)",
-      "type": 3,
-      "api": "csp_AppQi",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
-      "searchable": 1,
-      "changeable": 1,
-      "ext": {
-        "url"    : "https://qj4.catbb.xyz",
-        "dataKey": "eecbio48dsq13kkk",
-        "dataIv" : "eecbio48dsq13kkk",
-        "search" : "searchList4",
-        "init"   : "initV122",
-        "ua"     : "okhttp/3.10.0"
-      }
-    },
+        {
+            "key": "金牌影视",
+            "name": "🏆｜金牌｜高清(無廣告)",
+            "type": 3,
+            "api": "csp_Jpys",
+            "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+            "ext": "https://y2s52n7.com,https://m.hkybqufgh.com,https://m.sizhengxt.com,https://m.9zhoukj.com,https://m.sizhengxt.com,https://m.jiabaide.cn"
+        },
+        {
+            "key": "AiGua",
+            "name": "🏆｜銀牌｜高清(無廣告)",
+            "type": 3,
+            "api": "csp_AiGuaAmns",
+            "searchable": 1,
+            "quickSearch": 1,
+            "changeable": 0
+        },        
     {
       "key"        : "奥特",
       "name"       : "🏆｜銅牌｜高清(無廣告)",
@@ -946,14 +927,6 @@
         "version": "2.0.0.1",
         "decrypt": "0"
       }
-    },
-    {
-      "key": "金牌影视",
-      "name": "🥇｜金牌｜無廣",
-      "type": 3,
-      "api": "csp_Jpys",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
-      "ext": "https://y2s52n7.com,https://m.hkybqufgh.com,https://m.sizhengxt.com,https://m.9zhoukj.com,https://m.sizhengxt.com,https://m.jiabaide.cn"
     },
     {
       "key"        : "4kmx",

@@ -1162,13 +1162,6 @@
       "ext"        : {"site": "https://www.gs4x7nq4.com"}
     },
     {
-      "key": "新金牌影视",
-      "name": "🥇｜金牌系列-全家餐",
-      "type": 3,
-      "api": "csp_Jpys",
-      "ext": "https://y2s52n7.com,https://m.hkybqufgh.com,https://m.sizhengxt.com,https://m.9zhoukj.com,https://m.sizhengxt.com,https://m.jiabaide.cn"
-    },
-    {
       "key"        : "py_文才",
       "name"       : "🥇｜金牌系列-文才",
       "type"       : 3,
@@ -1192,14 +1185,14 @@
     },
     {
       "key"        : "py_又是一個金牌",
-      "name"       : "🥇｜金牌系列-jpyy",
+      "name"       : "🥇｜金牌系列-x8kb9k8",
       "type"       : 3,
       "api"        : "./py/又是一個金牌.py",
       "searchable" : 1,
       "quickSearch": 1,
       "filterable" : 1,
       "ext"        : {
-        "site": "https://jpyy.com,https://www.jiabaide.cn,https://cqzuoer.com,https://www.jpyy2.com"
+        "site": "https://www.x8kb9k8.com,https://www.jiabaide.cn,https://cqzuoer.com,https://www.jpyy2.com"
       }
     },
     {

@@ -2,7 +2,7 @@
   "spider": "./jar/aowu-0527.jar;md5;f6cc0883f796684dc6faa9fa1b355716",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.05.27_Ver.3 點播&直播 2合1",
+  "notice": "115.05.27_Ver.4 點播&直播 2合1",
   "sites": [
 
 
@@ -1185,14 +1185,14 @@
     },
     {
       "key"        : "py_又是一個金牌",
-      "name"       : "🥇｜金牌系列-x8kb9k8",
+      "name"       : "🥇｜金牌系列-jiabaide",
       "type"       : 3,
       "api"        : "./py/又是一個金牌.py",
       "searchable" : 1,
       "quickSearch": 1,
       "filterable" : 1,
       "ext"        : {
-        "site": "https://www.x8kb9k8.com,https://www.jiabaide.cn,https://cqzuoer.com,https://www.jpyy2.com"
+        "site": "https://www.jiabaide.cn,https://cqzuoer.com,https://www.jpyy2.com"
       }
     },
     {

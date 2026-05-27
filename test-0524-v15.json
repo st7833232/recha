@@ -1179,18 +1179,6 @@
       "ext"        : {
         "site": "https://cqzuoer.com"
       }
-    },    
-    {
-      "key"        : "py_jpyy2",
-      "name"       : "🥇｜金牌系列-cqzuoer",
-      "type"       : 3,
-      "api"        : "./py/又是一個金牌.py",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "ext"        : {
-        "site": "https://www.jpyy2.com"
-      }
     },        
     {
       "key"        : "py_xiong_di_ying_shi",

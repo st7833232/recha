@@ -2,7 +2,7 @@
   "spider": "./jar/aowu-0527.jar;md5;f6cc0883f796684dc6faa9fa1b355716",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.05.28_Ver.1 點播&直播 2合1",
+  "notice": "115.05.28_Ver.7 修復異界",
   "sites": [
 
     {
@@ -10,7 +10,7 @@
       "name": "🇹🇼｜熱播排行榜｜自動切換",
       "type": 3,
       "api": "csp_Douban",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "searchable": 0,
       "quickSearch": 1,
       "changeable": 1
@@ -42,7 +42,7 @@
       "name": "📺｜聚合短劇",
       "type": 3,
       "api": "./drpy_js/聚合短剧.js",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "changeable": 1
     },
     {
@@ -104,7 +104,7 @@
             "name": "🏆｜金牌｜高清(無廣告)",
             "type": 3,
             "api": "csp_Jpys",
-            "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+            "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
             "ext": "https://y2s52n7.com,https://m.hkybqufgh.com,https://m.sizhengxt.com,https://m.9zhoukj.com,https://m.sizhengxt.com,https://m.jiabaide.cn"
         },
         {
@@ -157,15 +157,13 @@
       "playerType": 2,
       "filterable": 1
     },    
-    {
-      "key"       : "異界",
-      "name"      : "🏆｜異界｜高清(無廣告)",
-      "type"      : 3,
-      "api"       : "./py/界.py",
-      "searchable": 1,
-      "filterable": 0,
-      "changeable": 1
-    },
+        {
+            "key": "py_jieyingshi",
+            "name": "🏆｜異界｜高清(無廣告)",
+            "type": 3,
+            "api": "csp_Jys",
+            "ext": "https://www.ndhfiohk.com/"
+        },    
         {
             "key": "AppV6Dxs",
             "name": "🏆｜大師｜",
@@ -247,7 +245,7 @@
       "name": "🥇｜鬼鬼｜4K◎隱藏",
       "type": 3,
       "api": "csp_AppQi",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "changeable": 1,
       "searchable": 1,
       "quickSearch": 1,
@@ -301,7 +299,7 @@
       "name": "庭馨4K｜⭐星河⭐",
       "type": 3,
       "api" : "csp_App99",
-      "jar" : "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar" : "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "ext" : {
         "host": "https://api.12321app.com/api",
         "LoginPath": "/app/log",
@@ -318,14 +316,14 @@
       "name": "🥇｜三秋｜普畫◎秒播",
       "type": 3,
       "api" : "csp_App3Q",
-      "jar" : "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708"
+      "jar" : "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193"
     },
     {
       "key" : "听心99",
       "name": "🥇｜聽心｜高清◎秒播",
       "type": 3,
       "api" : "csp_App99",
-      "jar" : "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar" : "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "ext" : {
         "host": "https://api.12321app.com/api",
         "LoginPath": "/app/log",
@@ -342,7 +340,7 @@
       "name": "🥇｜橙子丨高清◎秒播",
       "type": 3,
       "api" : "csp_App99",
-      "jar" : "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar" : "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "ext" : {
         "host": "http://113.31.180.218:19987/app/bn",
         "LoginPath": "/app/log",
@@ -359,7 +357,7 @@
       "name": "🥇｜追番｜高清◎秒播",
       "type": 3,
       "api" : "csp_App99",
-      "jar" : "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar" : "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "ext" : {
         "host": "https://api.hboqy.cn.hboqy.cn/api",
         "LoginPath": "/app/log",
@@ -376,7 +374,7 @@
       "name": "🥇｜咕噜丨普畫◎秒播",
       "type": 3,
       "api" : "csp_App99",
-      "jar" : "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar" : "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "ext" : {
         "host": "http://103.45.132.22:19987/app/bn",
         "LoginPath": "/app/log",
@@ -393,7 +391,7 @@
       "name": "🥇｜天堂｜高清◎秒播",
       "type": 3,
       "api": "csp_AppDrama",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
@@ -414,7 +412,7 @@
       "name": "🥇｜橘汁｜高清◎秒播",
       "type": 3,
       "api": "csp_AppDrama",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
@@ -435,7 +433,7 @@
       "name": "🥇｜薯條｜高清◎秒播",
       "type": 3,
       "api": "csp_AppDrama",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
@@ -456,7 +454,7 @@
       "name": "🥇｜奴娜丨高清◎秒播",
       "type": 3,
       "api": "csp_AppYsV2",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
@@ -467,7 +465,7 @@
       "name": "🥇｜閃影｜高清◎秒播",
       "type": 3,
       "api": "csp_AppYsV2",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
@@ -478,7 +476,7 @@
       "name": "🥇｜飛飛丨高清◎秒播",
       "type": 3,
       "api": "csp_AppYsV2",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
@@ -489,7 +487,7 @@
       "name": "🥇｜云播｜高清◎秒播",
       "type": 3,
       "api": "csp_AppFox",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "searchable": 1,
       "changeable": 1,
       "ext": {"host": "http://app.hktvyb.cc"}
@@ -499,7 +497,7 @@
       "name": "🥇｜藍鷹｜高清◎秒播",
       "type": 3,
       "api": "csp_AppQi",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "searchable": 1,
       "changeable": 1,
       "ext": {
@@ -515,7 +513,7 @@
       "name": "🥇｜獵豹｜高清◎秒播",
       "type": 3,
       "api": "csp_AppGet",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "searchable": 1,
       "changeable": 1,
       "ext": {
@@ -529,7 +527,7 @@
       "name": "🥇｜秒看｜高清◎秒播",
       "type": 3,
       "api": "csp_AppGet",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "searchable": 1,
       "changeable": 1,
       "ext": {
@@ -544,7 +542,7 @@
       "name": "🥇｜茉莉｜高清◎秒播",
       "type": 3,
       "api": "csp_AppGet",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "searchable": 1,
       "changeable": 1,
       "ext": {
@@ -558,7 +556,7 @@
       "name": "🥇｜灵虎｜高清◎秒播",
       "type": 3,
       "api": "csp_AppGet",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "searchable": 1,
       "changeable": 1,
       "ext": {
@@ -583,7 +581,7 @@
       "name": "🥇｜咕噜｜高清◎秒播",
       "type": 3,
       "api": "csp_AppQi",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "changeable": 1,
       "searchable": 1,
       "quickSearch": 1,
@@ -601,7 +599,7 @@
       "name": "🥇｜愛盈｜高清◎秒播",
       "type": 3,
       "api": "csp_AppQi",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "changeable": 1,
       "searchable": 1,
       "quickSearch": 1,
@@ -693,7 +691,7 @@
       "name": "🥇｜故我丨普畫◎普速",
       "type": 3,
       "api" : "csp_App99",
-      "jar" : "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar" : "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "ext" : {
         "host": "http://117.50.200.113:19987/app/bn",
         "LoginPath": "/app/log",
@@ -798,7 +796,7 @@
       "name": "🥇｜農民｜無廣",
       "type": 3,
       "api" : "csp_Wwys",
-      "jar" : "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar" : "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "ext" : "https://vip.wwgz.cn:5200"
     },
     {
@@ -808,7 +806,7 @@
       "searchable": 1,
       "changeable": 1,
       "api": "csp_AppGet",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "ext": {
         "url"    : "https://cms140.yhg.one/",
         "dataKey": "bM7iC9eA3oZ1nB7z",
@@ -820,7 +818,7 @@
       "name": "🥇｜星河｜無廣",
       "type": 3,
       "api": "csp_AppDrama",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
@@ -1138,7 +1136,7 @@
       "type": 3,
       "quickSearch": 1,
       "api": "csp_XYQHiker",
-      "jar": "./jar/river-0524.jar;md5;c18934f252d3681ff234e32e8a99c708",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "ext": "./json/农民影视.json"
     },
     {

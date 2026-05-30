@@ -2,7 +2,7 @@
   "spider": "./jar/aowu-0527.jar;md5;f6cc0883f796684dc6faa9fa1b355716",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.05.30_Ver.1 經由測試組測試後，最新接口內容",
+  "notice": "115.05.30_Ver.2 經由測試組測試後，最新接口內容",
   "sites": [
 
     {
@@ -147,16 +147,6 @@
       "playerType": 2,
       "filterable": 1
     },
-    {
-      "key"        : "csp_Uvod",
-      "name"       : "🏆｜優視｜藍光◎秒播",
-      "type"       : 3,
-      "api"        : "csp_Uvod",
-      "jar"        : "./jar/lem0106.jar;md5;8A3F412E42E8B36750E238B066AC4D7A",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "changeable" : 1
-    },    
         {
             "key": "Ysp",
             "name": "🏆｜優影｜",

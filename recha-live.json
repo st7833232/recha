@@ -5,8 +5,6 @@
   "lives": [
     {
       "name": "酒店-211",
-      "type": 0,
-      "ua": "okhttp",
       "url": "./live/台湾211.txt"
     },    
         {

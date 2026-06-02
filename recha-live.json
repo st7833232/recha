@@ -4,15 +4,6 @@
   "wallpaper": "https://tv.nxog.top/m/t/",
   "lives": [
         {
-      "name": "酒店-211",
-      "type": 0,
-      "url": "./live/台湾211.txt",
-      "ua": "okhttp/4.12.0",
-      "timeout": 5,
-      "epg": "https://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Hong_Kong",
-      "logo": "https://epg.112114.xyz/logo/{name}.png"
-    },
-        {
             "name": "Dream",
             "url": "http://dbmlosa.sylu.net:8080/dream.txt",
             "playerType": 2,

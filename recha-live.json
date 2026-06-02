@@ -3,10 +3,15 @@
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://tv.nxog.top/m/t/",
   "lives": [
-    {
+        {
       "name": "酒店-211",
-      "url": "./live/台湾211.txt"
-    },    
+      "type": 0,
+      "url": "./live/台湾211.txt",
+      "ua": "okhttp/4.12.0",
+      "timeout": 5,
+      "epg": "https://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Hong_Kong",
+      "logo": "https://epg.112114.xyz/logo/{name}.png"
+    },
         {
             "name": "Dream",
             "url": "http://dbmlosa.sylu.net:8080/dream.txt",

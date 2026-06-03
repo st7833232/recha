@@ -2,7 +2,7 @@
   "spider": "./jar/aowu-0527.jar;md5;f6cc0883f796684dc6faa9fa1b355716",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.06.03_Ver.1 測試小蘋果",
+  "notice": "115.06.04_Ver.2 測試兩個新站源",
   "sites": [
 
 
@@ -21,48 +21,6 @@
                 "package": "com.iksp.adsys.jjsp",
                 "buildNumber": "2001",
                 "buildSignature": "03DD38CE4C3D62D0F0DEFACC06768D14EB382C7BD77A05B2EBF4D66E154A0D47"
-            }
-        },
-                {
-            "key": "天堂",
-            "name": "天堂｜APP",
-            "type": 3,
-            "api": "csp_AppDrama",
-            "jar": "./jar/xiaosa-0604.jar;md5;2b962da64b0264b72347f29ef611e72d",
-            "searchable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "ext": {
-                "appName": "电影天堂",
-                "publicKey": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCduNEnfxGaLuQRk5ABzXHhPV43zi00sCHjLo8BYc+Wi6xXm2b4v0i28Sq4WlNCKhseft9fz8kO/qLr6/022o1RcuOU7e4GFL3U9WnNODwRBYSYWd+K8nqpI/tAUDmZEBGRWqjrc7x6aMl3A+xpnWkLbPCLsuhbuuUE3tv09oeOpwIDAQAB",
-                "dataKey": "D2KREWRIBVNAUJJYEDL4VFHOY2Q0PQ==",
-                "dataIv": "OC1A06E197EF10CF3F6058CA7A803B5E",
-                "pkg": "com.dytiantang.one",
-                "host": "",
-                "site": "https://dyttandroid04-1372779881.cos.ap-shanghai.myqcloud.com/app_dyttandroid.txt",
-                "version": "3.0.0.7",
-                "decrypt": "0"
-            }
-        },
-                {
-            "key": "华谊",
-            "name": "华谊｜APP",
-            "type": 3,
-            "api": "csp_AppDrama",
-            "jar": "./jar/xiaosa-0604.jar;md5;2b962da64b0264b72347f29ef611e72d",
-            "searchable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "ext": {
-                "appName": "华谊",
-                "publicKey": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCp9Ek4wIlQAtwFnuBRlsFiow2tr+4UOciGeNKbY7nL74etUqUb6fvpOSOHhFEfaWlfwUpOB17x3JEL3No19nfjCeVYrYPjlJcgoqUWH/tfIfFAQWvtxBIBlKazkhw8d3ChysWmeWRikKqkBsVRY4oqNPuj4sjm6Zult0U4I4prRQIDAQAB",
-                "dataKey": "NDBYSZR1DMRRZ05NSUCWEJNIYWLBPT0=",
-                "dataIv": "OC1A06E197EF10CF3F6058CA7A803B5E",
-                "pkg": "com.muyue.tool",
-                "host": "",
-                "site": "https://vip.123pan.cn/1851089669/oss/az5.txt",
-                "version": "1.0.0.4",
-                "decrypt": "1"
             }
         },
         {
@@ -85,24 +43,7 @@
                 "version": "1.0.0.3",
                 "decrypt": "0"
             }
-        },      
-        {
-            "key": "金牌",
-            "name": "金牌｜APP",
-            "type": 3,
-            "api": "csp_AppQi",
-            "jar": "./jar/xiaosa-0604.jar;md5;2b962da64b0264b72347f29ef611e72d",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "url": "https://qj4.catbb.xyz",
-                "dataKey": "eecbio48dsq13kkk",
-                "dataIv": "eecbio48dsq13kkk",
-                "search": "searchList4",
-                "init": "initV122",
-                "ua": "okhttp/3.10.0"
-            }
-        },          
+        },             
     {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",

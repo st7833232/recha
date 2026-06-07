@@ -4,7 +4,13 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.06.04_Ver.2 測試兩個新站源",
   "sites": [
-
+    {
+    "key": "老王備註",
+    "name": "老王影視",
+    "type": 3,
+    "api": "csp_老王影视",
+    "homePage": "https://gitlab.com/tenrecha/recha/-/raw/main/test-0607-v1.json/wang.html"
+   },
    {
     "key": "Nostr",
     "name": "🐬Nostr推荐",

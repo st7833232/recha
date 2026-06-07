@@ -400,14 +400,7 @@
                 "buildSignature": "03DD38CE4C3D62D0F0DEFACC06768D14EB382C7BD77A05B2EBF4D66E154A0D47"
             }
         },    
-    {
-      "key"    : "3QQQ",
-      "name"   : "🥇｜大鵝｜4K◎秒播",
-      "type"   : 3,
-      "timeout": 15,
-      "api"    : "csp_App3Q",
-      "jar"    : "./jar/mi-0508.jar"
-    },    
+  
     {
       "key" : "橙子99",
       "name": "🥇｜橙子丨高清◎秒播",

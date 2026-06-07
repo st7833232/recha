@@ -160,7 +160,6 @@
       "logo": "https://epg.112114.xyz/logo/{name}.png",
       "epg": "http://epg.112114.xyz/?ch={name}&date={date}"
     },    
-    
     {
       "name": "台灣景點直播(freeman)",
       "playerType": 2,

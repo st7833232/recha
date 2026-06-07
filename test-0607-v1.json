@@ -5,7 +5,55 @@
   "notice": "115.06.04_Ver.2 測試兩個新站源",
   "sites": [
 
-
+   {
+    "key": "Nostr",
+    "name": "🐬Nostr推荐",
+    "type": 3,
+    "api": "csp_Nostr",
+    "homePage": "https://www.252035.xyz/xs/tvbox/nostr.html"
+   },
+     {
+        "key":"FY",
+        "name":"🐬枫叶影院(关梯子使用)",
+        "type":3,
+        "api":"csp_fy",
+        "homePage":"https://fgblh.github.io/uhuj.github.io/枫叶影院.html"
+      },
+       {
+        "key":"CZ",
+        "name":"🐬厂长资源(关梯子使用)",
+        "type":3,
+        "api":"csp_czjy",
+        "homePage":"https://fgblh.github.io/uhuj.github.io/厂长.html"
+      },
+      {
+        "key":"WB",
+        "name":"🐬歪比巴卜影视",
+        "type":3,
+        "api":"csp_wbbb",
+        "homePage":"https://fgblh.github.io/uhuj.github.io/歪比巴卜.html"
+      },
+      {
+        "key":"PTT",
+        "name":"🐬PTT视频",
+        "type":3,
+        "api":"csp_ptt",
+        "homePage":"https://fgblh.github.io/uhuj.github.io/ptt.html"
+      },
+      {
+        "key":"LIBVIO",
+        "name":"🐬LIBVIO影视",
+        "type":3,
+        "api":"csp_libvio",
+        "homePage":"https://fgblh.github.io/uhuj.github.io/libvio.html"
+      },
+      {
+        "key":"PPN",
+        "name":"🐬ppnix影视",
+        "type":3,
+        "api":"csp_ppnix",
+        "homePage":"https://fgblh.github.io/uhuj.github.io/ppnix.html"
+      },
             {
             "key": "听心99",
             "name": "听心｜APP",

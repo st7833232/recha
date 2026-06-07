@@ -163,6 +163,7 @@
     {
       "name": "台灣景點直播(freeman)",
       "playerType": 2,
+      "jar": "./jar/fm.jar",
       "url": "https://freeman.neocities.org/520free@TW-LiveCAM.txt",
       "ua": "okhttp/4.12",
       "epg": "http://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Taipei"

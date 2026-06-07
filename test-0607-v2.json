@@ -2,7 +2,7 @@
   "spider": "./jar/aowu-0527.jar;md5;f6cc0883f796684dc6faa9fa1b355716",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.06.07_Ver.7 測試新介面",
+  "notice": "115.06.07_Ver.8 測試新介面",
   "sites": [
    {
     "key": "Nostr",
@@ -11,7 +11,20 @@
     "api": "csp_Nostr",
     "homePage": "https://www.252035.xyz/xs/tvbox/nostr.html"
    },
-     {
+{
+"key": "hipy_py_瓜子",
+"name": "瓜子(hipy)",
+"type": 4,
+"api": "http://192.129.140.23:5757/api/瓜子?do=py&pwd=dzyyds",
+"searchable": 1,
+"filterable": 1,
+"quickSearch": 1,
+"title": "瓜子",
+"lang": "hipy",
+"ext": ""
+},
+
+   {
         "key":"FY",
         "name":"🐬枫叶影院(关梯子使用)",
         "type":3,
@@ -2508,7 +2521,15 @@
       "logo": "https://epg.112114.xyz/logo/{name}.png",
       "epg": "http://epg.112114.xyz/?ch={name}&date={date}"
     },
-        {
+{
+"name":"Free TV(備用)",
+"url":"https://freeman.neocities.org/520free-CC@tv.txt",
+"type":0,
+"timeout":10,
+"playerType":2,
+"logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
+},
+    {
             "name": "Dream",
             "url": "http://dbmlosa.sylu.net:8080/dream.txt",
             "playerType": 2,

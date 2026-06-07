@@ -2,7 +2,7 @@
   "spider": "./jar/aowu-0527.jar;md5;f6cc0883f796684dc6faa9fa1b355716",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.06.04_Ver.4 測試兩個新站源",
+  "notice": "115.06.07_Ver.7 測試新介面",
   "sites": [
    {
     "key": "Nostr",
@@ -17,13 +17,6 @@
         "type":3,
         "api":"csp_fy",
         "homePage":"https://fgblh.github.io/uhuj.github.io/枫叶影院.html"
-      },
-       {
-        "key":"CZ",
-        "name":"🐬厂长资源(关梯子使用)",
-        "type":3,
-        "api":"csp_czjy",
-        "homePage":"https://fgblh.github.io/uhuj.github.io/厂长.html"
       },
       {
         "key":"WB",

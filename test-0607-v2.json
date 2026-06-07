@@ -11,18 +11,6 @@
     "api": "csp_Nostr",
     "homePage": "https://www.252035.xyz/xs/tvbox/nostr.html"
    },
-{
-"key": "hipy_py_瓜子",
-"name": "瓜子(hipy)",
-"type": 4,
-"api": "http://192.129.140.23:5757/api/瓜子?do=py&pwd=dzyyds",
-"searchable": 1,
-"filterable": 1,
-"quickSearch": 1,
-"title": "瓜子",
-"lang": "hipy",
-"ext": ""
-},
 
    {
         "key":"FY",

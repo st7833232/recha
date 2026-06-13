@@ -4,21 +4,6 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.06.07_Ver.8 測試新介面",
   "sites": [
-            {
-            "name": "⭐瓜子|秒播",
-            "key": "Guazi",
-            "type": 3,
-            "api": "csp_GuaziAmns",
-            "jar": "https://zl.wpscdn.cn/2026/06/13/space_img/20ef3fa9-852a-4553-81d8-ff70e0d8f118.png;md5;9e6fbebbfc57c5708cd1565b4e995f3d",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ua": "Lavf/57.83.100",
-            "ext": {
-                "sites": "",
-                "filters": "https://file.icve.com.cn/file_doc/822/528/CD984013F5776F759DFC815995F87BFB.aowu"
-            }
-        },
    {
     "key": "Nostr",
     "name": "🐬Nostr推荐",

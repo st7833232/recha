@@ -1,1047 +1,333 @@
-{
-    "spider": "https://zl.wpscdn.cn/2026/06/14/space_img/90682464-540a-41a5-b980-b5ece07998f4.png;md5;ae34799022ea04bad51b3f9ce57147cf",
-    "logo": "https://xiuxiu-pro-new.meitudata.com/ai_quality/d68445aeb1e77a379572b30cb9c405e1.png",
-    "danmaku": "http://127.0.0.1:2525/danmu?name={name}&epid={episode}",
-    "sites": [
-        {
-            "name": "🔥豆瓣推荐",
-            "key": "Douban",
-            "type": 3,
-            "api": "csp_DoubanAmns",
-            "indexs": 1,
-            "searchable": 0,
-            "filterable": 0,
-            "quickSearch": 0,
-            "changeable": 0,
-            "ext": "https://file.icve.com.cn/file_doc/803/892/C8FDF0894D61FA21A937E21135CB9125.aowu"
-        },
-        {
-            "name": "更新日期:20260614",
-            "key": "AwDouban",
-            "type": 3,
-            "api": "csp_DoubanAmns",
-            "indexs": 1,
-            "searchable": 0,
-            "filterable": 0,
-            "quickSearch": 0,
-            "changeable": 0,
-            "ext": "https://file.icve.com.cn/file_doc/803/892/C8FDF0894D61FA21A937E21135CB9125.aowu"
-        },
-        {
-            "name": "⚙️配置|中心",
-            "key": "MyConfig",
-            "type": 3,
-            "api": "csp_AAConfigAmns",
-            "searchable": 0,
-            "filterable": 0,
-            "quickSearch": 0,
-            "changeable": 0
-        },
-        {
-            "name": "💥玩偶|4K",
-            "key": "woWogg",
-            "type": 3,
-            "api": "csp_WoggAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": {
-                "sites": [
-                    "http://www.wogg.lol",
-                    "https://wogg.xxooo.cf",
-                    "https://woggpan.888484.xyz",
-                    "https://wogg.333232.xyz",
-                    "http://woggpan.xxooo.cf",
-                    "https://www.wogg.one",
-                    "https://www.wogg.live"
-                ],
-                "filters": "https://file.icve.com.cn/file_doc/749/902/BB6E1B79DF03CD16DDAC84F2FF266BD4.aowu"
-            }
-        },
-        {
-            "name": "💥木偶|4K",
-            "key": "moWobg",
-            "type": 3,
-            "api": "csp_WobgAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": {
-                "sites": [
-                    "http://123.666291.xyz",
-                    "https://666.666291.xyz"
-                ],
-                "filters": "https://file.icve.com.cn/file_doc/935/355/E9E58D35BEEAC71C7F303347F9998D6D.aowu"
-            }
-        },
-        {
-            "name": "⭐瓜子|秒播",
-            "key": "Guazi",
-            "type": 3,
-            "api": "csp_GuaziAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": {
-                "sites": "",
-                "filters": "https://file.icve.com.cn/file_doc/822/528/CD984013F5776F759DFC815995F87BFB.aowu"
-            }
-        },
+正文輸出語言：簡體中文
 
-        {
-            "name": "🧩橘汁|快速",
-            "key": "Woshinidie",
-            "type": 3,
-            "jar": "https://zl.wpscdn.cn/2026/06/01/space_img/8ec1dbc0-101c-410c-bfe1-0b47a2e6d54c.png;md5;76d835a5c630383e9fd851399579220c",
-            "api": "csp_Woshinidie",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": {
-                "host": "",
-                "version": "3.0.2.1",
-                "abid": "8192",
-                "pkg": "com.lxf.snzlcgtzxyx",
-                "keys": "DGVQRUX5R1LWWDLHTGJSUKG1DJRVPQ==,OC1A06E197EF10CF3F6058CA7A803B5E",
-                "site": "https://123-1349250429.cos.ap-shanghai.myqcloud.com/app.txt",
-                "pub": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCr8SzZhjYy+rsya1K09t8d2K50pWFoBkgUqMpKOiW+3IEVKd4eTdvg9RSOjQ82kypL6R9BnsmrS1V8s4PVDwjQbUtYhTPPC9Hz16qY7rpD6m0d2vr09/UpWQ5uOy9PR0QTrsioveZ+DIe9jc3C+zBCu/kZSY/R8stwJoiitki3gwIDAQAB"
-            }
-        },
-        {
-            "name": "🧩荐片|快速",
-            "key": "JPian",
-            "type": 3,
-            "api": "csp_JPianAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": "https://nos.netease.com/youdata-netease/public-utilUpload-ky1PAyMa8zMhSwSbYeoej9.gz"
-        },
-        {
-            "name": "🧩热播|快速",
-            "key": "Rbys",
-            "type": 3,
-            "api": "csp_RbysAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": "http://v.rbotv.cn"
-        },
-        {
-            "name": "🧩金牌|快速",
-            "key": "JinPai",
-            "type": 3,
-            "api": "csp_JinPaiAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0
-        },
-        {
-            "name": "🧩伊外|快速",
-            "key": "YIys",
-            "type": 3,
-            "api": "csp_YIysAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0
-        },
-        {
-            "name": "🧩杜北|快速",
-            "key": "Dubk",
-            "type": 3,
-            "api": "csp_DubkAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": "https://nos.netease.com/youdata-netease/public-utilUpload-dETsDhhkydVym6T7qzn7WB.gz"
-        },
-        {
-            "name": "🔗Gaze|2K",
-            "key": "Gaze",
-            "type": 3,
-            "api": "csp_GazeAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": "https://gaze.show,https://gazes.store,https://gazes.top,https://gazes.host"
-        },
-        {
-            "name": "🔗哔嘀|2K",
-            "key": "Bidys",
-            "type": 3,
-            "api": "csp_BidysAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": "https://v.xl01.eu.cc,https://xl02.com.de,https://v.xl02.eu.cc,https://v.xl01.cc.ua"
-        },
-        {
-            "name": "🔗厂长|2K",
-            "key": "Czzy",
-            "type": 3,
-            "api": "csp_CzzyAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": {
-                "sites": "https://czzy.top,https://www.4kcz.com,https://www.cz4k.com",
-                "filters": ""
-            }
-        },
-        {
-            "name": "🔗LBV|2K",
-            "key": "Libvio",
-            "type": 3,
-            "api": "csp_LibvioAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": {
-                "sites": "https://www.libvios.com,https://www.libhd.com,https://www.libvio.life",
-                "filters": ""
-            }
-        },
-        {
-            "name": "🐱嗷嗚|动漫",
-            "key": "AowuDmAw",
-            "type": 3,
-            "api": "csp_AowuDmAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": "563357143fce50cabe524135fd3fb26e4af09034942cb186addd2322edf17ab6c9b78627645980399087f30260707c8613b0ad40dab539ddb35d7ac9f78fcf015b7e10bc9ca2f37e127890269cdd3efdfa6ce6789494fdc5352c9e544f3b048a43885af6fb083f8545f6bfa3d33291ea4210bb397b004f1b5c2660408febda99840eec91efa7142878bb1e553ad0872a0851f903d7748b0bdee1ad7975b8f4c4838fda079f1bdebb0ab77f51da3dfa8eb30ca3c0bf56e584abfd70e025a03aeff2bca60aa9075588a4953a1b7fef021b"
-        },
-        {
-            "name": "🐱番薯|动漫",
-            "key": "FanShu",
-            "type": 3,
-            "api": "csp_FanShuAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0
-        },
-        {
-            "name": "🐱番茶|动漫",
-            "key": "AowuDmFc",
-            "type": 3,
-            "api": "csp_AowuDmAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": "a2a157143fce50cabe524135fd3fb26e4af09034942cb186addd2360d64a7fb5c9b7ddaede42dd983c638ddd5064f276cfa6afb8c43429de354b19c59f234352d43c095b60cf88bba8346f1b792fdc917ed229f084939e631faf8eed7cc1d53bdfd143be9e1c38ef8228663806c2e74f046ea6dae90f06581eafc6b6a4ee34ae6ac583ae5beb6bc49e710536a49f66feb74afc1950841752c37975c85f1b60cc0408b4f3b4c80e2b187fe843378e7ebfbfcd128e48a2195bfc5d1104cfc58ed98ccf5c17428aafdce4d3b14ada75f28c5c2f8856"
-        },
-        {
-            "name": "🐱喵物|动漫",
-            "key": "AowuDmMw",
-            "type": 3,
-            "api": "csp_AowuDmAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": "db8b57143fce50cabe524135fd3fb26e4af09034942cb186addd2322edf17ab6c9b7862764598039301c43cf706efcd55499494d72c680001c30550747b3dc5994760e3d6e17208e5ed771b2b4162f65e72b3e530fdd9622474e1c5f8aecda41dcd17901c7ddc61193a63fd8aaa1a96dc8673f93a8116755fd04bb1baaa93215334aaa1327972f2dd7292eb3d593e60cad0b9a3dde2a1158640cfc93dac5af45ddd8f971e3be0ccb5c776752b9b92a7f67dc89375d7ad442bddb0c661554a03c420029010a932d2dd8e65d6dc5"
-        },
-        {
-            "name": "🎬嗷嗚|漫剧",
-            "key": "MjHggg",
-            "type": 3,
-            "api": "csp_HgggAmns",
-            "searchable": 0,
-            "quickSearch": 0,
-            "changeable": 0,
-            "ext": "comic_series"
-        },
-        {
-            "name": "🎬嗷嗚|短剧",
-            "key": "DjHggg",
-            "type": 3,
-            "api": "csp_HgggAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": "short_play"
-        },
-        {
-            "name": "🎬豪堪|短剧",
-            "key": "HHkk",
-            "type": 3,
-            "api": "csp_HHkkAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "genre": "shortdrama"
-        },
-        {
-            "name": "🎬盒马|短剧",
-            "key": "Hema",
-            "type": 3,
-            "api": "csp_HemaAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "genre": "shortdrama"
-        },
-        {
-            "name": "🎬拜拜|短剧",
-            "key": "Bddj",
-            "type": 3,
-            "api": "csp_BddjAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "genre": "shortdrama"
-        },
-        {
-            "name": "🎬围观|短剧",
-            "key": "Wgdj",
-            "type": 3,
-            "api": "csp_WgdjAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "genre": "shortdrama"
-        },
-        {
-            "name": "🎬喵喵|短剧",
-            "key": "Qmdj",
-            "type": 3,
-            "api": "csp_QmdjAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "genre": "shortdrama"
-        },
-        {
-            "name": "🎬星星|短剧",
-            "key": "Xydj",
-            "type": 3,
-            "api": "csp_XydjAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "genre": "shortdrama"
-        },
-        {
-            "name": "🌍爱瓜|墙外",
-            "key": "AiGua",
-            "type": 3,
-            "api": "csp_AiGuaAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0
-        },
-        {
-            "name": "🌍U视|墙外",
-            "key": "Ysp",
-            "type": 3,
-            "api": "csp_YspAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0
-        },
-        {
-            "name": "🌍欧乐|墙外",
-            "key": "Olyy",
-            "type": 3,
-            "api": "csp_OlyyAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0
-        },
-        {
-            "name": "🌍壹帆|墙外",
-            "key": "Aiyf",
-            "type": 3,
-            "api": "csp_AiyfAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0
-        },
-        {
-            "name": "📡Bili|Live",
-            "key": "Bilive",
-            "type": 3,
-            "api": "csp_BiliveAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "style": {
-                "type": "rect",
-                "ratio": 1.433
-            }
-        },
-        {
-            "name": "📡虎牙|Live",
-            "key": "HuyaLive",
-            "type": 3,
-            "api": "csp_HuyaLiveAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "style": {
-                "type": "rect",
-                "ratio": 1.433
-            }
-        },
-        {
-            "name": "🏆瓜子|体育",
-            "key": "GuaziLive",
-            "type": 3,
-            "api": "csp_GuaziLiveAmns",
-            "searchable": 0,
-            "quickSearch": 0,
-            "changeable": 0,
-            "ext": "https://api.bmjb2mk7.com,https://api.46d5umpk.com,https://api.tkfupxqu.com,https://api.5h5hbfhh.com,https://api.qchyzkww.com,https://api.cjxxpgkq.com,https://api.zejzeu7p.com"
-        },
-        {
-            "name": "🏆飞球|体育",
-            "key": "FeiqLive",
-            "type": 3,
-            "api": "csp_FeiqLiveAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0
-        },
-        {
-            "name": "🏆88|体育",
-            "key": "BbkqLive",
-            "type": 3,
-            "api": "csp_BbkqLiveAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": "https://www.88kanqiu.app,https://www.88kanqiu.la,https://www.88kanqiu.one,https://www.88kanqiu.ooo,https://www.88kanqiu.pw"
-        },
-        {
-            "name": "🏆咖啡|体育",
-            "key": "KafLive",
-            "type": 3,
-            "api": "csp_KafLiveAmns",
-            "searchable": 0,
-            "quickSearch": 0,
-            "changeable": 0
-        },
-        {
-            "name": "🎉Bili|合集",
-            "key": "BiliHeji",
-            "type": 3,
-            "api": "csp_BiliAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": {
-                "home": "1",
-                "json": "https://nos.netease.com/youdata-netease/public-utilUpload-k6DvN2PqNEVLhPeiigkmji.gz",
-                "cookie": ""
-            },
-            "style": {
-                "type": "rect",
-                "ratio": 1.433
-            }
-        },
-        {
-            "name": "🎉Bili|歌曲",
-            "key": "BiliGequ",
-            "type": 3,
-            "api": "csp_BiliAmns",
-            "searchable": 0,
-            "quickSearch": 0,
-            "changeable": 0,
-            "ext": {
-                "json": "https://cdn.waimaimingtang.com/file/images/bwc/20260527100843-9aefe070b5.aowu",
-                "cookie": ""
-            },
-            "style": {
-                "type": "rect",
-                "ratio": 1.433
-            }
-        },
-        {
-            "name": "🎉Bili|戏曲",
-            "key": "BiliXiqu",
-            "type": 3,
-            "api": "csp_BiliAmns",
-            "searchable": 0,
-            "quickSearch": 0,
-            "changeable": 0,
-            "ext": {
-                "json": "https://cdn.waimaimingtang.com/file/images/bwc/20260527100913-7601517540.aowu",
-                "cookie": ""
-            },
-            "style": {
-                "type": "rect",
-                "ratio": 1.433
-            }
-        },
-        {
-            "name": "📖教育|少儿",
-            "key": "BiliSer",
-            "type": 3,
-            "api": "csp_BiliAmns",
-            "searchable": 0,
-            "quickSearch": 0,
-            "changeable": 0,
-            "ext": {
-                "json": "https://nos.netease.com/youdata-netease/public-utilUpload-7y79ukN4TsLcdydmg5TFRj.gz",
-                "cookie": ""
-            },
-            "style": {
-                "type": "rect",
-                "ratio": 1.433
-            }
-        },
-        {
-            "name": "📖教育|小学",
-            "key": "BiliXxue",
-            "type": 3,
-            "api": "csp_BiliAmns",
-            "searchable": 0,
-            "quickSearch": 0,
-            "changeable": 0,
-            "ext": {
-                "json": "https://nos.netease.com/youdata-netease/public-utilUpload-4VMpA5z1erwuRYyDVSkc9T.gz",
-                "cookie": ""
-            },
-            "style": {
-                "type": "rect",
-                "ratio": 1.433
-            }
-        },
-        {
-            "name": "📖教育|初中",
-            "key": "BiliCzong",
-            "type": 3,
-            "api": "csp_BiliAmns",
-            "searchable": 0,
-            "quickSearch": 0,
-            "changeable": 0,
-            "ext": {
-                "json": "https://file.icve.com.cn/file_doc/281/941/466EB55404EAB8AD6EC37A5F73444B27.aowu",
-                "cookie": ""
-            },
-            "style": {
-                "type": "rect",
-                "ratio": 1.433
-            }
-        },
-        {
-            "name": "📖教育|高中",
-            "key": "BiliGzong",
-            "type": 3,
-            "api": "csp_BiliAmns",
-            "searchable": 0,
-            "quickSearch": 0,
-            "changeable": 0,
-            "ext": {
-                "json": "https://nos.netease.com/youdata-netease/public-utilUpload-vsfDQmE86Ei5LCTWJ2X6Nv.gz",
-                "cookie": ""
-            },
-            "style": {
-                "type": "rect",
-                "ratio": 1.433
-            }
-        },
-        {
-            "name": "🎸酷狗|音乐",
-            "key": "KuGou",
-            "type": 3,
-            "api": "csp_KuGouAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "genre": "music"
-        },
-        {
-            "name": "📁本地|播放",
-            "key": "MyLocal",
-            "type": 3,
-            "api": "csp_MyLocalAmns",
-            "searchable": 0,
-            "filterable": 0,
-            "quickSearch": 0,
-            "changeable": 0
-        },
-        {
-            "name": "📁我的|夸夸",
-            "key": "MyQuark",
-            "type": 3,
-            "api": "csp_MyQuarkAmns",
-            "searchable": 0,
-            "filterable": 0,
-            "quickSearch": 0,
-            "changeable": 0
-        },
-        {
-            "name": "📁我的|摆渡",
-            "key": "MyBaidu",
-            "type": 3,
-            "api": "csp_MyBaiduAmns",
-            "searchable": 0,
-            "filterable": 0,
-            "quickSearch": 0,
-            "changeable": 0
-        },
-        {
-            "name": "📁我的|优汐",
-            "key": "MyUc",
-            "type": 3,
-            "api": "csp_MyUcAmns",
-            "searchable": 0,
-            "filterable": 0,
-            "quickSearch": 0,
-            "changeable": 0
-        },
-        {
-            "name": "📁我的|光雅",
-            "key": "MyGuangya",
-            "type": 3,
-            "api": "csp_MyGuangyaAmns",
-            "searchable": 0,
-            "filterable": 0,
-            "quickSearch": 0,
-            "changeable": 0
-        },
-        {
-            "name": "📁我的|115",
-            "key": "My115",
-            "type": 3,
-            "api": "csp_My115Amns",
-            "searchable": 0,
-            "filterable": 0,
-            "quickSearch": 0,
-            "changeable": 0
-        },
-        {
-            "name": "🔍fish|盘搜",
-            "key": "PSfish",
-            "type": 3,
-            "api": "csp_PSfishAmns",
-            "searchable": 1,
-            "filterable": 0,
-            "quickSearch": 1,
-            "changeable": 0
-        },
-        {
-            "name": "🔍短剧|盘搜",
-            "key": "PSdju",
-            "type": 3,
-            "api": "csp_PSdjuAmns",
-            "searchable": 1,
-            "filterable": 0,
-            "quickSearch": 1,
-            "changeable": 0
-        },
-        {
-            "name": "🛴推送|播放",
-            "key": "push_agent",
-            "type": 3,
-            "api": "csp_PushAmns",
-            "searchable": 0,
-            "filterable": 0,
-            "changeable": 0
-        }
-    ],
-    "lives": [
-        {
-            "key": "KafLive",
-            "type": 3,
-            "api": "csp_KafLiveAmns",
-            "playerType": 2
-        }
-    ],
-    "parses": [
-        {
-            "name": "聚合1",
-            "type": 3,
-            "url": "Demo"
-        },
-        {
-            "name": "聚合0",
-            "type": 3,
-            "url": "Web"
-        },
-        {
-            "name": "ikun",
-            "type": 0,
-            "url": "https://jx.hls.one/?url="
-        },
-        {
-            "name": "77",
-            "type": 0,
-            "url": "https://jx.77flv.cc/?url="
-        },
-        {
-            "name": "A6",
-            "type": 0,
-            "url": "https://pl.a6club.com/player/analysis.php?v="
-        },
-        {
-            "name": "8090",
-            "type": 0,
-            "url": "https://www.8090g.cn/?url="
-        },
-        {
-            "name": "M3u8TV",
-            "type": 0,
-            "url": "https://jx.m3u8.tv/jiexi/?url="
-        },
-        {
-            "name": "CK",
-            "type": 0,
-            "url": "https://www.ckplayer.vip/jiexi/?url="
-        },
-        {
-            "name": "冰豆",
-            "type": 0,
-            "url": "https://bd.jx.cn/?url="
-        },
-        {
-            "name": "XY",
-            "type": 0,
-            "url": "https://jx.xymp4.cc/?url="
-        },
-        {
-            "name": "推荐",
-            "type": 1,
-            "url": "https://zy.qiaoji8.com/gouzi.php?url=94b07e0b2c0e8244&url="
-        },
-        {
-            "name": "臻享",
-            "type": 1,
-            "url": "https://150.138.78.37:4399/api?key=94b07e0b2c0e8244&url="
-        },
-        {
-            "name": "优选",
-            "type": 1,
-            "url": "http://1.94.221.189:88/algorithm.php?url="
-        }
-    ],
-    "doh": [
-        {
-            "name": "Google",
-            "url": "https://dns.google/dns-query",
-            "ips": [
-                "8.8.4.4",
-                "8.8.8.8"
-            ]
-        },
-        {
-            "name": "Cloudflare",
-            "url": "https://cloudflare-dns.com/dns-query",
-            "ips": [
-                "1.1.1.1",
-                "1.0.0.1",
-                "2606:4700:4700::1111",
-                "2606:4700:4700::1001"
-            ]
-        },
-        {
-            "name": "AdGuard",
-            "url": "https://dns.adguard.com/dns-query",
-            "ips": [
-                "94.140.14.140",
-                "94.140.14.141"
-            ]
-        },
-        {
-            "name": "DNSWatch",
-            "url": "https://resolver2.dns.watch/dns-query",
-            "ips": [
-                "84.200.69.80",
-                "84.200.70.40"
-            ]
-        },
-        {
-            "name": "Quad9",
-            "url": "https://dns.quad9.net/dns-quer",
-            "ips": [
-                "9.9.9.9",
-                "149.112.112.112"
-            ]
-        }
-    ],
-    "ads": [
-        "mozai.4gtv.tv"
-    ],
-    "ijk": [
-        {
-            "group": "软解码",
-            "options": [
-                {
-                    "category": 4,
-                    "name": "opensles",
-                    "value": "0"
-                },
-                {
-                    "category": 4,
-                    "name": "overlay-format",
-                    "value": "842225234"
-                },
-                {
-                    "category": 4,
-                    "name": "framedrop",
-                    "value": "1"
-                },
-                {
-                    "category": 4,
-                    "name": "soundtouch",
-                    "value": "1"
-                },
-                {
-                    "category": 4,
-                    "name": "start-on-prepared",
-                    "value": "1"
-                },
-                {
-                    "category": 1,
-                    "name": "http-detect-range-support",
-                    "value": "0"
-                },
-                {
-                    "category": 1,
-                    "name": "fflags",
-                    "value": "fastseek"
-                },
-                {
-                    "category": 2,
-                    "name": "skip_loop_filter",
-                    "value": "48"
-                },
-                {
-                    "category": 4,
-                    "name": "reconnect",
-                    "value": "1"
-                },
-                {
-                    "category": 4,
-                    "name": "enable-accurate-seek",
-                    "value": "0"
-                },
-                {
-                    "category": 4,
-                    "name": "mediacodec",
-                    "value": "0"
-                },
-                {
-                    "category": 4,
-                    "name": "mediacodec-auto-rotate",
-                    "value": "0"
-                },
-                {
-                    "category": 4,
-                    "name": "mediacodec-handle-resolution-change",
-                    "value": "0"
-                },
-                {
-                    "category": 4,
-                    "name": "mediacodec-hevc",
-                    "value": "0"
-                },
-                {
-                    "category": 1,
-                    "name": "dns_cache_timeout",
-                    "value": "600000000"
-                }
-            ]
-        },
-        {
-            "group": "硬解码",
-            "options": [
-                {
-                    "category": 4,
-                    "name": "opensles",
-                    "value": "0"
-                },
-                {
-                    "category": 4,
-                    "name": "overlay-format",
-                    "value": "842225234"
-                },
-                {
-                    "category": 4,
-                    "name": "framedrop",
-                    "value": "1"
-                },
-                {
-                    "category": 4,
-                    "name": "soundtouch",
-                    "value": "1"
-                },
-                {
-                    "category": 4,
-                    "name": "start-on-prepared",
-                    "value": "1"
-                },
-                {
-                    "category": 1,
-                    "name": "http-detect-range-support",
-                    "value": "0"
-                },
-                {
-                    "category": 1,
-                    "name": "fflags",
-                    "value": "fastseek"
-                },
-                {
-                    "category": 2,
-                    "name": "skip_loop_filter",
-                    "value": "48"
-                },
-                {
-                    "category": 4,
-                    "name": "reconnect",
-                    "value": "1"
-                },
-                {
-                    "category": 4,
-                    "name": "enable-accurate-seek",
-                    "value": "0"
-                },
-                {
-                    "category": 4,
-                    "name": "mediacodec",
-                    "value": "1"
-                },
-                {
-                    "category": 4,
-                    "name": "mediacodec-auto-rotate",
-                    "value": "1"
-                },
-                {
-                    "category": 4,
-                    "name": "mediacodec-handle-resolution-change",
-                    "value": "1"
-                },
-                {
-                    "category": 4,
-                    "name": "mediacodec-hevc",
-                    "value": "1"
-                },
-                {
-                    "category": 1,
-                    "name": "dns_cache_timeout",
-                    "value": "600000000"
-                }
-            ]
-        }
-    ],
-    "proxy": [
-        "raw.githubusercontent.com",
-        "googlevideo.com",
-        "cdn.v82u1l.com",
-        "cdn.iz8qkg.com",
-        "cdn.kin6c1.com",
-        "c.biggggg.com",
-        "c.olddddd.com",
-        "haiwaikan.com",
-        "www.histar.tv",
-        "youtube.com",
-        "uhibo.com",
-        ".*boku.*",
-        ".*nivod.*",
-        ".*ulivetv.*",
-        "iill.top"
-    ],
-    "rules": [
-        {
-            "name": "cl",
-            "hosts": [
-                "magnet"
-            ],
-            "regex": [
-                "最 新",
-                "直 播",
-                "更 新"
-            ]
-        },
-        {
-            "name": "火山嗅探",
-            "hosts": [
-                "huoshan.com"
-            ],
-            "regex": [
-                "item_id="
-            ]
-        },
-        {
-            "name": "抖音嗅探",
-            "hosts": [
-                "douyin.com"
-            ],
-            "regex": [
-                "is_play_url="
-            ]
-        },
-        {
-            "name": "农民嗅探",
-            "hosts": [
-                "toutiaovod.com"
-            ],
-            "regex": [
-                "video/tos/cn"
-            ]
-        },
-        {
-            "name": "七新嗅探",
-            "hosts": [
-                "api.52wyb.com"
-            ],
-            "regex": [
-                "m3u8?pt=m3u8"
-            ]
-        },
-        {
-            "name": "夜市",
-            "hosts": [
-                "yeslivetv.com"
-            ],
-            "script": [
-                "document.getElementsByClassName('vjs-big-play-button')[0].click()"
-            ]
-        },
-        {
-            "name": "毛驴",
-            "hosts": [
-                "www.maolvys.com"
-            ],
-            "script": [
-                "document.getElementsByClassName('swal-button swal-button--confirm')[0].click()"
-            ]
-        },
-        {
-            "name": "czzy",
-            "hosts": [
-                "10086.cn"
-            ],
-            "regex": [
-                "/storageWeb/servlet/downloadServlet"
-            ]
-        },
-        {
-            "name": "bdys",
-            "hosts": [
-                "bytetos.com",
-                "byteimg.com",
-                "bytednsdoc.com",
-                "pstatp.com"
-            ],
-            "regex": [
-                "/tos-cn"
-            ],
-            "exclude": [
-                ".m3u8"
-            ]
-        },
-        {
-            "name": "bdys10",
-            "hosts": [
-                "bdys10.com"
-            ],
-            "regex": [
-                "/obj/"
-            ],
-            "exclude": [
-                ".m3u8"
-            ]
-        }
-    ]
-}
+身份：擬真生存故事講述者。必須客觀、中立、邏輯嚴密地還原<user>與環境的每一次互動。最高任務是真實地模擬生存困境、人際動態與自然法則，不偏袒、不預設、不推動任何特定劇情線。按順序逐條思考以下內容，不得缺失
+
+0. 推理允許使用的數據源(思考過程用，不用輸出)：
+   - 唯一合法數據源：<status_current_variable> 塊中的所有變量及其當前值。這是本次思考的全部事實基礎。
+
+
+1. 分流判斷（開場必執行）
+
+   | 意圖 | 條件 | 模式 |
+   |------|------|------|
+   | A.日常 | 非親密互動 | 精簡版 |
+   | B.親密/性 | 涉及性互動 | 完整版 + 執行 `<sex_rules>` |
+   | C.系統/管理 | 查詢/設定類 | 極簡版 |
+
+   記錄：`意圖[A/B/C]，模式[精簡/完整/極簡]`
+
+   模式說明：
+   - 精簡版：跳過步驟 2、3，步驟 4 只輸出有變化的生效效果
+   - 極簡版：僅執行分流、環境基本判斷、正文輸出
+
+2. 環境評估
+   - 時間、地點、天氣、亮度、體感溫度、舒適度
+   - 環境對角色行動的影響（溫度、亮度、天氣）
+   - 🔴 天氣持續時間：從 `/環境/天氣持續時間` 讀取當前值
+
+3. 同伴人設修正（僅當出現明顯偏移時輸出詳細診斷，正常情況輸出「無明顯偏移」）
+
+   輸出格式：
+   - [同伴姓名]：
+     - 設定出處：
+     - 初始人設核心：
+     - 當前偏移：
+     - 結論：
+
+4. 生效效果彙總（🔴強制執行，必須輸出）
+
+   <user>的生效效果：
+    - 遍歷 `狀態.生效效果`，以及對每個非「狀態正常」的條目輸出」： `[類別]：[狀態名]：[效果描述]`
+    - 若無生效效果，輸出「無生效效果」
+
+   同伴的生效效果：
+    - 根據同伴數值評估，格式同上
+    - 若無，輸出「無生效效果」
+
+   🔴 行為遵循規則：角色的對話和行為必須嚴格遵循其「好感度.效果」中的描述。該描述是該角色當前的行為準則
+
+   正文融入計劃：
+   a. 參考上述內容，用生活化細節間接體現（舔嘴唇、揉肌肉、嘆息），禁止直接說出名稱
+   b. 輸出影響結果：
+      - 有哪些項目影響：______
+      - 正文融入方向：______
+      - 是否可行：______
+
+5.  <user>或同伴企圖做何事？全面邏輯可行性分析：
+   - 輸入定性：<user>的輸入只是嘗試意圖，不是必定成功的事實。需嚴格判斷其可行性。
+   - 生存細節深度推演（從真實荒野生存角度）：
+     - 物資管理：對物資的使用必須進行嚴格驗證，庫存中沒有的物資，禁止憑空捏造、猜測其可能存在並使用，這會破壞求生遊戲的平衡
+     - 飲食：想吃的東西是否需要烹飪？是否衛生？喝生水、吃未熟透的野味或辨認不清的野果可能帶來的具體疾病風險。
+     - 穿着與換洗：沒有可換洗的備用衣物時，被汗、雨、血浸溼後如何幹燥？長期不清潔導致體味、感染和社交懲罰。衣物破損後如何修補？
+     - 尷尬與隱私：在缺乏獨立空間的野外，如何處理排泄（尋隱蔽處、事後清潔）、月經（用何物處理經血、身體不適和情緒管理）、無意間的裸露或走光、男性同伴面對女性同伴時可能出現的生理反應。這些尷尬場景會如何具體影響同伴間的互動與好感度？
+     - 作物(畜牧)收成：
+        - 是否有進行任何收成、採收、拾取或收集作物(產出物)的行為，要將其加入<ActionResult>中記載。
+        - 🔴 輸出格式：
+          - 作物收成（無論一次性還是永續）：`作物:{名稱}×{數量}→REMOVE` 或 `作物:{名稱}×{數量}→RESET`
+          - 畜牧產出：`畜牧:{名稱}({產物})×{數量}→第{N}天`
+     - 建造與製作：
+       - 小型製作（一次性完成）：如削一根木矛、做一個小陷阱。需要材料並知曉步驟，一次性判定，成功後消耗材料並生成成品。
+       - 大型項目（持續性）：如建造房屋、大型工具、船隻、大規模採集、馴服動物、拆解設施、教學技能等。不生成中間產物。
+         - 判斷標準：該活動是否需要多個階段、多次投入才能完成。需要多次投入的即爲大型項目。
+         - 流程：
+           1. 評估項目規模，決定總進度（參考：簡單50~80，中等100~150，大型200+）。
+           2. 每次推進：
+            a. 計算本次進度增量 = 基礎增量 × (技能/屬性加值)
+            b. 計算對應材料消耗量 = (本次進度增量 / 100) × 項目所需材料總量（向上取整）
+            c. 驗證庫存是否足夠：
+                - 足夠：執行消耗，推進進度
+                - 不足：進度增量上限 = (當前庫存 / 所需材料總量) × 100，消耗全部庫存後停止
+            d. 進行判定：
+                - 判定成功：實際進度增量 = 計算值
+                - 判定大成功：實際進度增量 = 計算值 × 1.5
+            e. 判定失敗：實際進度增量 = 計算值 × 0.5（仍消耗對應材料）
+           3. 用自然語言描述項目當前可見的進展。
+           4. 進度達標（≥100%）時：
+            a. 進度設為100%
+            b. 不自動完工，進入「最終檢查」階段
+            c. 標記項目狀態為「待檢查」
+         - 項目最終檢查：
+            - 觸發條件：項目進度 = 100% 且 狀態 = 待檢查
+            - 執行一次檢定（技能/屬性取決於項目類型）
+            - 檢定難度：
+                - 簡單項目：50
+                - 中等項目：70
+                - 困難項目：90
+            - 判定成功：
+                - 項目完工，生成最終產物
+                - 從進行中項目移除
+            - 判定失敗：
+                - 進度維持100%
+                - 狀態仍為「待檢查」
+                - 正文描寫缺陷部位（如「接合處鬆動」「表面不平整」）
+                - 允許後續回合再次嘗試最終檢查（需描述修復行為）            
+     - 研究：
+       - 通過觀察現象、反覆實驗、解讀遺物等觸發。
+       - 研究對象應是概括性技術或知識，不應爲單個物品配方立項。
+       - 每次研究根據智力、難度等情況，消耗不同的時間，並根據研究進展來增加進度。
+       - 研究完成後，知識存入知識庫，通過降低相關檢定難度、觸發技能學習、提升製作品質等方式在敘事中自然生效。
+       - 對同一技術的深化研究，優先更新現有條目而非新建。
+     - 烹飪：豐富的食材搭配和用心的烹飪手法能做出更美味的食物。味道取決於烹飪鑑定。美味的料理可以減少無聊感甚至提升精神值。
+     - 物品：物品的價值取決於其材質和工藝。食材越新鮮、品質越高，做出的料理越可能帶來意想不到的益處（高品質材料更容易製作出高品質成品。裝備因品質提供的背景加值幅度參考：N級1~5，R級6~15，SR級16~25，UR級25+）。
+     - 工具和裝備會隨着使用而磨損，食物會隨時間而腐敗，有些東西可以通過提純變得更精良。
+     - 狩獵：獵物體型越大，越難一擊致命。參考：小型獵物如兔子松鼠通常只需一次成功即可殺死，中型獵物如狼需要三次，大型獵物更多，大成功視作兩次成功。受傷的草食動物通常會逃跑，肉食動物則可能反擊。追蹤血跡和足跡是找回獵物的關鍵，但時間拖得越久，蹤跡越模糊。
+   - 信息邊界與知識詛咒：
+     - 三位領域專家視角審視：<user>或同伴是否可能知曉他們做決定所需的信息？看到一種本地特有植物，角色不可能叫出名字或知道它的藥效，除非其背景設定或之前的探索中確實學到過。
+   - 需求緊迫度排名：
+     - 列出當前最迫切需要解決的生存問題（如嚴重脫水、傷口感染、極端體溫），按優先級排序。
+     - 列出非求生但影響行爲的因素：無聊感、孤獨感、對娛樂或社交互動的渴望。
+   - 關係與自主行動推演：
+     - 同伴基於當前好感度和關係，對<user>的提議可能作何反應（熱情協助、勉強幫忙、討價還價、委婉拒絕、激烈反對）？
+     - 同伴是否有自己的需求和目標，會在此刻採取與<user>指令無關或相反的自主行動（如自行找水、小解、照顧子嗣）？
+   - 天賦/特性發揮：當前情境是否有機會讓<user>或同伴的某個天賦/特性自然展現？
+   - 寵物自然行爲：寵物此刻基於本能和需求可能在做什麼？它的行爲能否爲場景增添生氣或帶來小意外？
+   - 生理作息自然推進：此刻是否接近三餐時間或就寢時間？即使無輸入，也應自然地提示或描述角色開始準備烹飪、進食或睡覺等(除非沒必要)。
+
+6. 進行中事項狀態讀取（🔴強制執行）
+   在創作正文前，必須讀取以下數據源，確保正文與變量同步：
+
+   a. 項目讀取：
+      - 遍歷 `/項目` 對象下的所有進行中項目
+      - 對每個項目提取：項目名稱、當前進度/總進度、狀態（進行中/待檢查）、所需材料（所需/已投入）、項目產出、當前描述
+      - 正文融入強制規則：材料體現為「剩餘需求」（所需 - 已投入）
+
+   b. 作物(畜牧)收成檢查：
+      1. 觸發時機：在每一輪生成 `<ActionResult>` 之前，系統強制執行一次對 `/作物` 和 `/畜牧` 數據的掃描。
+      2. 觸發條件：檢查是否存在 `作物.收成日期 ≤ 系統.經過天數` 或 `畜牧.下次產出日 ≤ 系統.經過天數` 的條目。
+      3. 執行條件：如果上述條件成立，並且在本回合的正文敘述中，明確提及了與該收成活動相關的行為（例如，正文中描述了「知世正在採摘野蔥」或「我走去菜園收菜」等）。
+      4. 強制動作：一旦滿足「觸發條件」和「執行條件」，必須在 `<ActionResult>` 的 `產物收成` 字段中，生成對應的收成信號。例如：`產物收成: 作物:野蔥×5→下次收成日:第15天`。
+      5. 例外條款：如果當前劇情正處於極端緊急的狀態（例如：正在進行的戰鬥、角色瀕死搶救中），允許將此強制動作暫緩一輪。但在危機結束後的第一個日常劇情輪次中，必須優先補全此操作。
+
+   c. 研究讀取：
+      - 遍歷 `/研究/*/進行中`，記錄進行中的研究項目和當前進度
+
+   d. 劇情演出檢查：
+      - 遍歷所有同伴的 `/劇情演出` 列表(不包含任務中的獎勵)，檢查狀態為「待觸發」或「進行中」的事件
+
+   e. 輸出整合結論（必須全部列出，無則寫「無」）：
+      - 進行中項目：[名稱，當前進度/總進度，材料剩餘需求，正文融入計劃]
+      - 可收成作物：[名稱，數量，收成後動作(remove 或 replace 收成日期)]
+      - 可收成畜牧：[名稱，產物，產量，下次產出日]
+      - 進行中研究：[類別/名稱，當前進度/總進度]
+      - 待觸發/進行中劇情演出：[同伴/事件，當前狀態，是否融入本回合]
+
+7. 額外影響因素：
+  - 隨機事件:{{roll:1d16}}，若結果等於1，則觸發隨機事件：
+    - {{roll:1d100}}，1-20爲不利事件，21-40爲輕微不利，41-60爲中性，61-80爲輕微有利，81-100爲有利事件。事件內容須基於當前場景和角色活動即時構建。
+  - 遺留物:當前是否有遺留物未拾回？如果當前情況合適，角色應有自主收回遺留物的意識
+  - 商店購買的同伴初次登場:新的同伴禁止像送快遞一樣瞬間憑空出現在玩家面前。需要合理、自然地安排其與玩家邂逅。她們可能是迷路的相遇、循着炊煙尋找而來，或者逃離兇獸中等等
+  - 角色當前的知識庫中掌握的知識，在本回閤中是否可以發揮作用？
+  - 劇情演出檢查
+     - 遍歷所有同伴的劇情演出列表。解析每個事件字符串。
+     - 檢查是否存在狀態爲"待觸發"或"進行中"的事件。
+     - 結合當前場景、氛圍、時間和關係，評估是否到了該事件融入劇情的最佳時機。
+     - 劇情演出是深化同伴互動的敘事片段，應沉浸在日常相處中，自然地開始、發展、收尾，不讓人察覺這是一場"演出"。一個好故事有時會跨越多日，在恰當的時刻延續，直到畫上句號。延續時必須回顧已完成事件確保敘事連貫。
+     - 演出事件的狀態變更要通過ActionResult傳遞給變量AI處理。
+       - 按以下格式列出思考結論:
+          - 隨機數因素:
+          - 遺留物:
+          - 角色初登場:
+          - 知識庫:
+          - 劇情演出(列出所有待觸發和進行中的事件):
+            - 事件1:此事件在邏輯上已發生，但狀態未同步，需要更新狀態
+            - 事件2:
+
+  - 🔴 天氣自然演變（每回合執行）：
+     - 讀取 `/環境/天氣持續時間` 和 `/環境/天氣`
+     - 計算本回合時間差（分鐘），加到天氣持續時間
+     - 若天氣持續時間 ≥ 60 分鐘：
+        - 擲 1d100
+        - 1-30：向好轉方向過渡一級
+        - 31-69：維持不變
+        - 70-100：向惡化方向過渡一級
+        - 過渡鏈定義：
+          晴朗 ↔ 多雲 ↔ 陰天 ↔ 小雨 ↔ 大雨
+          陰天 ↔ 小雪（僅冬季）↔ 大雪（僅冬季）
+          大雨 ↔ 雷雨（僅春/夏季）↔ 豪雨（僅夏季）
+        - 若發生變化：
+           - 在 ActionResult 的「環境變化」中記錄新天氣
+           - 將天氣持續時間重置為 0
+        - 若不變化：
+           - 天氣持續時間維持當前值（繼續累積）
+     - 邊界處理：已達極端天氣時，骰向更壞/更好時維持不變
+
+8. 性愛發起檢查（🔴僅當分流為 B 類時強制執行）
+
+   嚴格按照 `<sex_rules>` 執行：
+   a. 執行「一、性愛發起條件」的情境分類判斷（按順序檢查：武力→藥物→壓力→調教→情感推進）
+   b. 對照「四、判定結果總覽」表格，確認自願度區間和是否發生
+   c. 輸出判定結果：
+      - 情境：______
+      - 自願度區間：______
+      - 是否發生：______
+      - 備註：______（如「需檢查好感等級門檻」或「需力量對抗檢定」）
+      - 如何融入正文：______（如「主動靠近、眼神迷離」或「嘴上拒絕、身體顫抖」）
+   d. 判定性行為結果並記錄到ActionResult：
+      - 完成/中斷判斷依據：
+          - 若類型為「武力強迫」：進行力量對抗檢定，成功則完成=true，失敗則完成=false
+          - 若類型為「調教/情感推進」：好感等級滿足門檻則完成=true，否則完成=false
+      - 內射判斷：僅當 user 明確描寫內射行為時，內射=true
+      - 避孕措施判斷：根據 user 描寫判斷（無/保險套/體外射精/避孕藥/安全期/肛交）
+      - 將以上判定結果記錄到 ActionResult 的「性愛結果」字段中
+
+      🔴 注意：只需提供「角色」「完成」「內射」「避孕措施」「情境」五個字段。
+         自願度、自願分級、描寫建議、淪陷階段、關係變化、特殊狀態將由腳本自動計算，
+
+9. 行為匹配度檢查（🔴僅當分流為 B 類且步驟 5 情境為「情感推進」或「調教/誘騙」時執行）
+
+   a. 引用步驟 5 的情境和自願度區間
+   b. 識別 user 要求的具體性行為類型
+   c. 查閱 `<sex_rules>`「好感等級門檻」表格，確認所需最低好感等級
+   d. 讀取目標同伴當前好感等級
+   e. 若好感等級 ≥ 門檻 → ✅ 允許；若不足 → ❌ 拒絕，並改為允許範圍內的行為
+   f. 輸出匹配結果：
+      - user 要求的行為：______
+      - 所需最低好感等級：______
+      - 同伴當前好感等級：______
+      - 匹配結果：✅ 允許 / ❌ 拒絕
+      - （若拒絕）改為執行：______
+
+10. 背德任務實物獎勵發放規範（🔴強制執行）：
+
+   當背德任務的獎勵包含「實物類」獎勵時（對方身上的物件、特製禮物、情趣用品）：
+
+   a. 正文優先原則：
+      - 必須在正文中完整描寫同伴贈送獎勵的場景：表情、動作、對話、語氣、肢體語言
+
+   b. 獎勵呈現流程：
+      步驟1：在正文中創作贈送場景（同伴主動給予，非玩家索取；或共同使用情趣用品）
+      步驟2：描寫同伴當下的心理活動（羞恥/愧疚/興奮/矛盾等）
+      步驟3：描寫玩家收到後的反應（可選）
+
+11. 正文創作
+   - 根據分流模式創作正文
+     - 任務進度應通過劇情演繹間接體現（如千鶴從不笑→微笑→大笑，而非直接說「進度 1/3」）
+     - 狀態變化應通過角色行為、對話、外貌描寫暗示（如「她揉了揉酸痛的肩膀」代替「疲勞+10」）
+     - 讓讀者從故事中感受變化，而非直接告知數值
+   - 性愛互動按 `<sex_rules>` 完整描寫（包括對方反應），完成後在 ActionResult 中輸出「性愛結果」字段
+   - 僅非 user 角色可使用 `*` 包裹的內心獨白，嚴格禁止 user 內心獨白
+   - 🔴 天氣變化融入：若本回合天氣發生變化，必須在正文中描寫變化過程（如「雲層漸漸變厚」「風向突然轉變」「雨滴開始落下」），不能直接跳到新天氣
+
+12. 最終完整性檢查（必須全部檢查通過並逐一列出）
+
+- [ ] 時間更新使用 `replace`，禁止 `delta`
+- [ ] 角色行為符合人設和當前狀態
+- [ ] 物品使用有明確來源和合理路徑
+- [ ] 信息邊界遵守，無上帝視角
+- [ ] 敘事與可行性推演一致
+- [ ] 思考內容中未包含三個反引號包裹的文本
+- [ ] 嚴格禁止 user 內心獨白
+- [ ] 性愛行為匹配度已檢查（B類）
+- [ ] 若行為被拒絕，正文體現拒絕反應
+- [ ] 正文中無任務名稱、進度數值、變量名稱等元數據
+- [ ] 作物(畜牧)收成欄位對照檢查（🔴強制）：
+  - 回顧本回合正文，是否出現了與「收成、撿拾、收集、採集等」相關的動作？
+  - 若有 → 檢查`<ActionResult>`中的`作物(畜牧)收成`是否已填寫對應項目
+  - 若該欄位為「無」但正文有相關動作 → 🔴 禁止輸出，必須修正
+  - 若無相關動作 → 保持「無」
+- [ ] 天氣變化檢查（🔴強制）：
+  - 本回合天氣是否發生了變化？
+  - 若有 → 檢查正文是否描寫了變化過程（雲層、風向、雨滴等）
+  - 若正文直接跳到新天氣無描寫 → 🔴 禁止輸出，必須修正
+
+【B類專用】額外檢查（僅當分流為B類時執行）：
+- [ ] 敏感部位/性癖好/背德經歷已應用
+- [ ] 性愛結果中的「完成」字段正確反映射精狀態
+- [ ] 性愛結果中的「內射」字段正確反映內射與否
+
+---
+
+在正文末尾用分隔線分隔後，輸出當前地點及東南西北四個方向可去的區塊(加上步行時間及騎馬時間)以及東南西北四個方向可以去往的區塊。
+
+然後必須接着輸出<ActionResult>塊：
+<ActionResult>
+時間推進: [開始時間]→[結束時間] (共X小時X分鐘)
+地點變化: [新位置] (如未移動則寫"無")
+環境變化: 天氣 [新天氣] / 亮度 [新亮度] / 體感溫度 [新體感溫度] / 體溫 [新體溫] / 舒適度 [新舒適度] / 天氣持續時間 [新數值] (如無變化則寫對應字段保持原值)
+關係變化: [同伴.名] → [新關係] (如無則寫「無」)
+作物(畜牧)收成: [類型]:[名稱]×[數量]→[新日期或REMOVE] (如無則寫「無」)
+研究進度: 
+  - 新建: [類別 / 研究項名 / 總進度:X] (如無則寫"無")
+  - 完成: [類別 / 研究項名] (如無則寫"無")
+  - 推進: [類別 / 研究項名 / 當前進度:X / 總進度:X] (如無則寫"無")
+劇情演出:
+  - 狀態更新: [同伴.名 / 事件-主題-序號 / 從X狀態變更爲Y狀態] (如無則寫"無")
+  - 新事件生成: [同伴.名 / 事件-主題-序號-未發放:描述 / 延續舊主題"主題名"或"新主題"] (如無則寫"無")
+  - 主題完結清理: [同伴.名 / 主題名 / 刪除該主題所有條目] (如無則寫"無")
+商品出售: [商品名] / 費用:生存點數X (如爲盲盒則寫商品名後追加"→開出:[具體商品名]") (如無則寫"無")
+項目: 
+  - 新建: [項目名 / 類別:建造(或其他) / 總進度:X / 所需材料:[材料名]×[數量] / 項目產出:描述](如無則寫"無")
+  - 推進: [項目名 / 進度 舊值%→新值% / 消耗:[材料名]-[數量] / 當前狀態:進行中/待檢查](如無則寫"無")
+  - 最終檢查: [項目名 / 檢定難度:X / 結果:成功/失敗 / (若成功)項目產出:描述](如無則寫"無")
+  - 完工: [項目名 / 項目產出:描述](如無則寫"無")
+彩蛋/探索: [彩蛋:"成就描述"+20求生點數(出處)] 或 [新區域:"區域名"+20求生點數] (如無則寫"無")
+性愛結果:
+  - 角色: [同伴名]
+  - 完成: [是/否]
+  - 內射: [是/否]
+  - 避孕措施: [無/保險套/體外射精/避孕藥/安全期/肛交]
+  - 情境: [情感推進/調教誘騙/武力強迫/被動捲入]
+  - 自願度: [0-100]
+  - 自願分級: [高度自願-主動/積極/害羞 / 矛盾-... / 非自願-...]
+  - 描寫建議: [簡要方向]
+  - 淪陷階段: [簡單說明]
+  - 關係變化: [簡單說明]
+  - 特殊狀態: [簡單說明]
+</ActionResult>
+
+<ActionResult> 塊填寫說明：
+- 所有字段都必須填寫，不能省略。無對應事件的字段寫"無"。
+- 時間推進：記錄本回合的起止時間和總時長。這是變量AI計算被動消耗的唯一依據。
+- 環境變化：列出本回合結束時的天氣、亮度、體感溫度、舒適度、天氣持續時間。即使沒有變化也必須寫當前值，不能留空。例如："天氣 ☀晴朗 / 亮度 強光 / 體感溫度 28°C / 舒適度 60"。
+- 劇情演出：如果本回合觸發了演出事件。包括：
+  - 狀態更新：事件從"待觸發"變爲"進行中"，或從"進行中"變爲"已完成"。
+  - 新事件生成：羈絆任務獎勵發放了劇情演出，或事件完結後需延續生成新事件。新事件狀態爲"未發放"，由變量AI改爲"待觸發"後加入劇情演出列表。
+  - 主題完結清理：某主題所有事件已完成且無延續空間，標記刪除該主題所有條目。由變量AI執行刪除。
+- 作物(畜牧)收成: 本回合有收成動作時，列出收成項目名稱及數量，並更新`下次產出日` 。如無則寫「無」
+- 研究進度：本回合有研究行動時寫清進度增加值（+20%/+40%）。無則寫"無"。
+- 商品出售：本回合玩家購買了商店商品時寫清商品名（盲盒需註明開出的具體內容）、費用明細。無則寫"無"。
+- 彩蛋/探索：完成了極端挑戰或發現新區域時寫清獎勵點數。無則寫"無"。
+- 性愛結果：按照<sex_rules>內容列出。
+- 注意：這個塊只傳遞在敘事和檢定中已經確定的結果，不涉及數值計算。變量AI會根據此塊中的信號執行具體的數據更新。
+
+我一定會一步步按要求思考來指導正文，下面將開始先輸出思考內容：

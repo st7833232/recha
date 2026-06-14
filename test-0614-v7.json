@@ -1623,21 +1623,6 @@
       "changeable" : 0
     },
     {
-      "key"        : "php_官方资源",
-      "name"       : "🥇｜官方资源｜(PHP)",
-      "type"       : 4,
-      "api"        : "https://php.doube.eu.org/spider/php/官方资源.php",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "changeable" : 0
-    },
-    {
-      "key" : "python集合",
-      "name": "🥇｜python集合｜(老張)",
-      "type": 4,
-      "api" : "http://zhangqun1818.serv00.net/py.php"
-    },
-    {
       "key"        : "csp_看片狂人",
       "name"       : "🥇｜狂人｜藍光(超多線路)",
       "type"       : 3,
@@ -1869,28 +1854,6 @@
       "quickSearch": 1,
       "filterable": 1
     },
-    {
-      "key": "剧王短剧",
-      "name": "📺｜劇王短劇",
-      "type": 3,
-      "api": "https://git.yylx.win/raw.githubusercontent.com/PizazzGY/NewTVBox/main/movie/py/JWDJ.py",
-      "searchable": 1,
-      "changeable": 1,
-      "quickSearch": 1,
-      "filterable": 1
-    },
-    {
-      "key": "T4-hongguo",
-      "name": "📺｜紅果短劇｜(T4)",
-      "type": 4,
-      "api": "https://catbox.n13.club/ai/%E7%BA%A2%E6%9E%9C%E7%9F%AD%E5%89%A7.php"
-    },
-    {
-      "key" : "T4-xingzhige",
-      "name": "📺｜新奇短劇｜(T4)",
-      "type": 4,
-      "api" : "https://catbox.n13.club/t9/xingzhige.php"
-    },
         {
             "key": "HHkk",
             "name": "📺｜好看短剧",
@@ -1923,7 +1886,7 @@
         },
         {
             "key": "Wgdj",
-            "name": "📺｜围观短剧",
+            "name": "📺｜圍觀短剧",
             "type": 3,
             "api": "csp_WgdjAmns",
             "searchable": 1,
@@ -2084,26 +2047,6 @@
       "searchable" : 1,
       "quickSearch": 1,
       "filterable" : 1
-    },
-    {
-      "key"        : "New6v",
-      "name"       : "🧲｜新6V",
-      "type"       : 3,
-      "api"        : "csp_New6v",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "ext"        : "https://www.xb6v.com"
-    },
-    {
-      "key"        : "采集集合go",
-      "name"       : "🧲｜采集集合｜高清◎順播(浮水印廣告)",
-      "type"       : 1,
-      "api"        : "http://zhangqun1818.serv00.net:5053",
-      "searchable" : 1,
-      "style"      : {"type": "rect", "ratio": 1.33},
-      "quickSearch": 1,
-      "changeable" : 1
     },
     {
       "key"        : "QD4K",
@@ -2447,6 +2390,7 @@
       "type"       : 3,
       "quickSearch": 1,
       "api"        : "csp_AppGet",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "ext"        : {
         "url"    : "https://new.app.bytegooty.com",
         "dataKey": "N4yj7l7xKxHF4*gz",
@@ -2459,6 +2403,7 @@
       "type"       : 3,
       "quickSearch": 1,
       "api"        : "csp_AppGet",
+      "jar": "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
       "ext"        : {
         "url"    : "https://app.omofun1.top",
         "dataKey": "66dc309cbeeca454",
@@ -2563,21 +2508,6 @@
         "api"    : "/api.php/getappapi",
         "datakey": "2c4h36abd96se10u",
         "dataiv" : "2c4h36abd96se10u"
-      }
-    },
-    {
-      "key"        : "py_番薯_APP",
-      "name"       : "🎡｜番薯",
-      "type"       : 3,
-      "api"        : "./py/app/getapp.py",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "ext"        : {
-        "host"   : "https://new.app.bytegooty.com",
-        "api"    : "/api.php/getappapi",
-        "datakey": "N4yj7l7xKxHF4*gz",
-        "dataiv" : "N4yj7l7xKxHF4*gz"
       }
     },
     {
@@ -2711,18 +2641,6 @@
         "分类": "日本动漫$6#国产动漫$7#欧美动漫$8#海外动漫$21#劇场版$9",
         "地区": "日本&大陆&美国"
       }
-    },
-    {
-      "key"        : "hipy_js_NT动漫[漫]",
-      "name"       : "🎡｜牛顿动漫",
-      "type"       : 3,
-      "api"        : "./drpy_libs/drpy2.min.js",
-      "jar"        : "./jar/fm.jar",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "order_num"  : 0,
-      "ext"        : "./drpy_js/NT动漫[漫].js"
     },
     {
       "key"        : "drpy_js_去看吧",

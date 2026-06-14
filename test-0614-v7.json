@@ -2,7 +2,7 @@
   "spider": "./jar/aowu-0614.jar;md5;ae34799022ea04bad51b3f9ce57147cf",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.06.14_Ver.5 測試幾個新站源",
+  "notice": "115.06.14_Ver.8 測試幾個新站源",
   "sites": [
 
     {
@@ -447,58 +447,6 @@
             "searchable": 0,
             "quickSearch": 0,
             "changeable": 0
-        },
-        {
-            "name": "🎉Bili|合集",
-            "key": "BiliHeji",
-            "type": 3,
-            "api": "csp_BiliAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": {
-                "home": "1",
-                "json": "https://nos.netease.com/youdata-netease/public-utilUpload-k6DvN2PqNEVLhPeiigkmji.gz",
-                "cookie": ""
-            },
-            "style": {
-                "type": "rect",
-                "ratio": 1.433
-            }
-        },
-        {
-            "name": "🎉Bili|歌曲",
-            "key": "BiliGequ",
-            "type": 3,
-            "api": "csp_BiliAmns",
-            "searchable": 0,
-            "quickSearch": 0,
-            "changeable": 0,
-            "ext": {
-                "json": "https://cdn.waimaimingtang.com/file/images/bwc/20260527100843-9aefe070b5.aowu",
-                "cookie": ""
-            },
-            "style": {
-                "type": "rect",
-                "ratio": 1.433
-            }
-        },
-        {
-            "name": "🎉Bili|戏曲",
-            "key": "BiliXiqu",
-            "type": 3,
-            "api": "csp_BiliAmns",
-            "searchable": 0,
-            "quickSearch": 0,
-            "changeable": 0,
-            "ext": {
-                "json": "https://cdn.waimaimingtang.com/file/images/bwc/20260527100913-7601517540.aowu",
-                "cookie": ""
-            },
-            "style": {
-                "type": "rect",
-                "ratio": 1.433
-            }
         },
                 {
             "name": "🎸酷狗|音乐",

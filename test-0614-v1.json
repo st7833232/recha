@@ -3047,21 +3047,7 @@
             "playerType": 2,
             "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
             "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
-        },
-        {
-            "name": "四季线上",
-            "url": "http://dreamtv.sylu.cc:2082/vtg4.m3u?token=dbm",
-            "playerType": 2,
-            "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
-            "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
-        },        
-        {
-            "name": "四季欧飞二合一",
-            "url": "http://dbmactw.sylu.cc:2082/channel?type=m3u&token=7ZJ42qIlyWRAXT4L6c7AyDIQAfEkh18h2WHWrUBoLMO3eqhZ85rd7PYIHCvHBFac&proxy=true",
-            "playerType": 2,
-            "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
-            "logo": "https://gcore.jsdelivr.net/gh/taksssss/tv/icon/{name}.png"
-        },        
+        }, 
     {
       "name": "tv123",
       "type": 0,
@@ -3128,13 +3114,6 @@
       "url": "http://iptv.4666888.xyz/FYTV.txt"
     },
     {
-      "name": "安博",
-      "type": 0,
-      "ua": "okhttp",
-      "url": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/安博.txt"
-    },
-
-    {
       "name": "香蕉-Gather",
       "url": "https://tv.iill.top/m3u/Gather",
       "ua": "okhttp/3.15",
@@ -3182,23 +3161,7 @@
       "ua": "okhttp/3.8.1 okhttp/3.15 okhttp/4.12.0 Herissmon/2016 judy/5.2.1 RobYang/5.2.1 Lavf/58.12.100 catvod.com Goiptv/8.8.8 Goiptv/0.0.1 xieanqishiwoerzi/0.0.1 okHttp/Mod-1.0.0",
       "logo": "https://epg.112114.xyz/logo/{name}.png",
       "epg": "http://epg.112114.xyz/?ch={name}&date={date}"
-    },
-    {
-      "name": "🔞午夜劇場",
-      "url": "https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/%E5%8D%88%E5%A4%9C%E5%89%A7%E5%9C%BA.txt",
-      "type": 0,
-      "timeout": 10,
-      "ua": "okhttp/3.8.1 okhttp/3.15 okhttp/4.12.0 Herissmon/2016 judy/5.2.1 RobYang/5.2.1 Lavf/58.12.100 catvod.com Goiptv/8.8.8 Goiptv/0.0.1 xieanqishiwoerzi/0.0.1 okHttp/Mod-1.0.0",
-      "logo": "https://epg.112114.xyz/logo/{name}.png",
-      "epg": "http://epg.112114.xyz/?ch={name}&date={date}"
-    },        
-    {
-      "name": "台灣景點直播(freeman)",
-      "playerType": 2,
-      "url": "https://freeman.neocities.org/520free@TW-LiveCAM.txt",
-      "ua": "okhttp/4.12",
-      "epg": "http://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Taipei"
-    }    
+    } 
   ],
   "ijk": [
     {

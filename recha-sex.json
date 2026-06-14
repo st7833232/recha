@@ -179,6 +179,15 @@
       "changeable" : 1
     },
     {
+      "key"       : "py_愛豆AV",
+      "name"      : "⏭｜愛豆AV｜PYTHON",
+      "type"      : 3,
+      "api"       : "./py/愛豆AV.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 0
+    },    
+    {
       "key" : "py_coomer",
       "name": "⏭｜coomer(沐辰)｜國外",
       "type": 3,

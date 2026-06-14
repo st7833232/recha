@@ -2,8 +2,58 @@
   "spider": "./jar/aowu-0614.jar;md5;ae34799022ea04bad51b3f9ce57147cf",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.06.07_Ver.8 測試新介面",
+  "notice": "115.06.14_Ver.2 測試幾個新站源",
   "sites": [
+   {
+    "key": "永樂視頻",
+    "name": "🐬永樂視頻",
+    "type": 3,
+    "api": "csp_永樂",
+    "homePage": "./html/永樂視頻.html"
+   },
+   {
+    "key": "supjay",
+    "name": "🐬supjay",
+    "type": 3,
+    "api": "csp_supjay",
+    "homePage": "./html/supjay.html"
+   },   
+    {
+      "key"       : "py_愛豆AV",
+      "name"      : "🏆｜愛豆AV｜藍光(無廣告)",
+      "type"      : 3,
+      "api"       : "./py/愛豆AV.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 0
+    },
+    {
+      "key"       : "py_耐看点播",
+      "name"      : "🏆｜耐看点播｜藍光(無廣告)",
+      "type"      : 3,
+      "api"       : "./py/耐看点播.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 0
+    },    
+    {
+      "key"       : "py_永乐视频",
+      "name"      : "🏆｜永乐视频｜藍光(無廣告)",
+      "type"      : 3,
+      "api"       : "./py/永乐视频修复搜索.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 0
+    },
+    {
+      "key"       : "py_西瓜卡通",
+      "name"      : "🏆｜西瓜卡通｜藍光(無廣告)",
+      "type"      : 3,
+      "api"       : "./py/西瓜卡通.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 0
+    },        
 
         {
             "name": "⭐韩剧|秒播",

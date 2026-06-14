@@ -2,14 +2,14 @@
   "spider": "./jar/aowu-0614.jar;md5;ae34799022ea04bad51b3f9ce57147cf",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.06.14_Ver.3 測試幾個新站源",
+  "notice": "115.06.14_Ver.4 測試幾個新站源",
   "sites": [
    {
-    "key": "永樂視頻",
-    "name": "🐬永樂視頻",
+    "key": "威视視頻",
+    "name": "🐬威视視頻",
     "type": 3,
-    "api": "csp_永樂",
-    "homePage": "./html/永樂視頻.html"
+    "api": "csp_威视",
+    "homePage": "./html/威视.html"
    },
    {
     "key": "supjay",

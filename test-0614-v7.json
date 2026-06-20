@@ -2,7 +2,7 @@
   "spider": "./jar/aowu-0614.jar;md5;ae34799022ea04bad51b3f9ce57147cf",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.06.20_Ver.2 測試個新站源",
+  "notice": "115.06.20_Ver.3 測試個新站源",
   "sites": [
 {
       "key": "php_无水印资源",
@@ -19,14 +19,15 @@
     },
     {
       "key": "如意",
-      "name": "🦃如意之源🦃",
+      "name": "如意之源",
       "type": 1,
       "api": "https://cj.rycjapi.com/api.php/provide/vod",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 1,
       "filterable": 1,
-      "timeout": 10
+      "timeout": 10,
+      "categories" : ["电影片","连续剧","综艺片","动漫片","动作片","喜剧片","爱情片","科幻片","恐怖片","剧情片","战争片","国产剧","香港剧","韩国剧","欧美剧","记录片","台湾剧","日本剧","海外剧","泰国剧","大陆综艺","港台综艺","日韩综艺","欧美综艺","国产动漫","日韩动漫","欧美动漫","港台动漫","海外动漫","伦理片","电影解说","体育","足球","篮球","网球","斯诺克","预告片","短剧","动画电影"]
     },    
     {
     "key": "YouTube♓️SO",

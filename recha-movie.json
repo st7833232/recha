@@ -2,7 +2,7 @@
   "spider": "./jar/aowu-0527.jar;md5;f6cc0883f796684dc6faa9fa1b355716",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.06.06_Ver.1 經由測試組測試後，同意新增「蘋果、聽心」",
+  "notice": "115.06.21_Ver.1 我女兒說追番壞了，已刪除",
   "sites": [
 
     {
@@ -315,41 +315,6 @@
         "site"   : "https://bind.315999.xyz/89.txt",
         "dataKey": "#getapp@TMD@2025",
         "dataIv" : "#getapp@TMD@2025"
-      }
-    },    
-    {
-      "key" : "追番达人99",
-      "name": "🏆｜追番98｜高清◎秒播",
-      "type": 3,
-      "api" : "csp_App99",
-      "jar" : "./jar/mi-0508.jar",
-      "ext" : {
-        "host": "https://app2026.ystva.com",
-        "LoginPath": "/app/log",
-        "version": "f341a4e57976d59e",
-        "appkey": "f3a8a193a7dc782cbc294159fcd91faf",
-        "versionName": "6.1.1",
-        "name": "追番达人",
-        "package": "com.yuaiweiwu.aixue.zfdr",
-        "buildNumber": "2001",
-        "buildSignature": "03DD38CE4C3D62D0F0DEFACC06768D14EB382C7BD77A05B2EBF4D66E154A0D47"
-      }
-    },
-    {
-      "key" : "追番99",
-      "name": "🏆｜追番99｜高清◎秒播",
-      "type": 3,
-      "api" : "csp_App99",
-      "jar" : "./jar/river-0528.jar;md5;b4c6f82dd9e7c040db52eb9dfc7a5193",
-      "ext" : {
-        "host": "https://api.hboqy.cn.hboqy.cn/api",
-        "LoginPath": "/app/log",
-        "appkey": "a0a18659a9977a47e53442cd084b536c",
-        "versionName": "6.1.7",
-        "name": "追番达人",
-        "package": "com.android.packageinstaller",
-        "buildNumber": "2002",
-        "buildSignature": "A40DA80A59D170CAA950CF15C18C454D47A39B26989D8B640ECD745BA71BF5DC"
       }
     },    
         {

@@ -4,6 +4,19 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.06.14_Ver.10 測試幾個新站源",
   "sites": [
+{
+      "key": "php_无水印资源",
+      "name": "无水印资源(T4)",
+      "type": 4,
+      "api": "https://php.doube.eu.org/php/",
+      "searchable": 1,
+      "quickSearch": 0,
+      "changeable": 0,
+      "ext": {
+        "module_name": "CmsSuggest",
+        "url": "https://api.wsyzy.net/api.php/provide/vod"
+      }
+    },
     {
     "key": "YouTube♓️SO",
     "name": "YouTube",

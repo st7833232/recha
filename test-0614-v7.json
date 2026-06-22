@@ -147,14 +147,6 @@
             }
         },
         {
-            "key": "韩圈",
-            "name": "韩圈影视",
-            "type": 3,
-            "api": "csp_Hxq",
-      "jar": "./jar/river-0622.jar;md5;741ef4c6deaecb205bc2e24b31557cf6",
-            "ext": "http://www.小不点.com/api/2026/fishhxq.php"
-        },
-        {
             "key": "py_jieyingshi",
             "name": "界界影视️",
             "type": 3,

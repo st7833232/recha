@@ -2,7 +2,7 @@
   "spider": "./jar/aowu-0614.jar;md5;ae34799022ea04bad51b3f9ce57147cf",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.06.22_Ver.3 偷偷偷",
+  "notice": "115.06.22_Ver.4 偷偷偷",
   "sites": [
 
         {
@@ -152,7 +152,7 @@
             "type": 3,
             "api": "csp_Hxq",
       "jar": "./jar/river-0622.jar;md5;741ef4c6deaecb205bc2e24b31557cf6",
-            "ext": "http://www.小不点.com/api//2026/fishhxq.php"
+            "ext": "http://www.小不点.com/api/2026/fishhxq.php"
         },
         {
             "key": "py_jieyingshi",

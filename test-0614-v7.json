@@ -12,6 +12,7 @@
       "jar": "./jar/dream.jar;md5;fdd9f115337eff2f015afe3bca99a5e4",
       "searchable": 1,
       "quickSearch": 1,
+      "changeable": 0,
       "filterable": 1,
       "order_num": 0,
       "ext": "http://dbmlosa.sylu.cc:8080/lib/mg.js"

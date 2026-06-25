@@ -2,19 +2,19 @@
   "spider": "./jar/aowu-0614.jar;md5;ae34799022ea04bad51b3f9ce57147cf",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.06.25_Ver.10 開始整理接口排序",
+  "notice": "115.06.25_Ver.11 開始整理接口排序",
   "sites": [
     {
       "key": "hipy_js_mg",
       "name": "芒果",
       "type": 3,
-      "api": "./lib/drpy2.min.js",
+      "api": "http://dbmlosa.sylu.cc:8080/lib/drpy2.min.js",
       "jar": "./jar/dream.jar;md5;fdd9f115337eff2f015afe3bca99a5e4",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
       "order_num": 0,
-      "ext": "./js/mg.js"
+      "ext": "http://dbmlosa.sylu.cc:8080/lib/mg.js"
     },
     {
       "key": "bubutv",

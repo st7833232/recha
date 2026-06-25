@@ -307,15 +307,6 @@
             "changeable": 0
         },
         {
-            "name": "🧩伊外|快速",
-            "key": "YIys",
-            "type": 3,
-            "api": "csp_YIysAmns",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0
-        },
-        {
             "name": "🔗Gaze|2K",
             "key": "Gaze",
             "type": 3,

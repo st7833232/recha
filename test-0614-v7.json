@@ -4,22 +4,12 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.06.26_Ver.6 開始整理接口排序",
   "sites": [
-    {
-      "key"        : "楓葉影視",
-      "name"       : "？｜楓葉｜？",
-      "type"      : 3,
-      "api"        : "./py/枫叶影院.py",
-      "searchable" : 1,
-      "changeable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1
-    },
+
         {
             "name": "🧩伊外|快速",
             "key": "YIys",
             "type": 3,
             "api": "csp_YIysAmns",
-            //"jar": "https://zl.wpscdn.cn/2026/06/26/space_img/d67174e6-600a-4b8c-95b3-bc278ecb915f.png;md5;535760fe28ee8451386c5eb1f0e219b7",            
             "searchable": 1,
             "quickSearch": 1,
             "changeable": 0

@@ -4,6 +4,12 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.06.28_Ver.7 移除老源，接口初步排序完成，待驗證",
   "sites": [
+    		{
+			"key": "fY",
+			"name": "🐬枫叶影院(关梯子使用)",
+			"type": 3,
+			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/py/枫叶影院.py"
+		},
     {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",

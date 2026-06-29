@@ -5,40 +5,9 @@
   "notice": "115.06.29_Ver.8 F大幫忙偷改Auwo包",
   "sites": [
 
-
-    {
-            "key": "YGP",
-            "name": "🔔┆新片┆预告",
-            "type": 3,
-            "api": "csp_YGP",
-            "jar": "./jar/fish06281030.jar",
-            "searchable": 1,
-            "quickSearch": 1,
-            "filterable": 1
-        },
-        {
-            "key": "BuBu",
-            "name": "🧸┆布布┆4K",
-            "type": 3,
-            "api": "csp_BuBu",
-            "jar": "./jar/fish06281030.jar",
-            "searchable": 1,
-            "changeable": 1,
-            "filterable": 1
-        },
-        {
-            "key": "huaisang",
-            "name": "🎄┆怀桑┆4K",
-            "type": 3,
-            "api": "csp_AppQi",
-            "jar": "./jar/fish06281030.jar",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": "AdYEovlEKsDy77+R58YGahWCxrDZyBxExcQNC2NSeH0n1b5mu6tvh8b4Eh0RCpoPF6eivKdrR1Hsb8X4sSVBS8zF6jkwLW+wze9yh+hSY5iimm4gM9mAtmt0obTi+6Iox/Jp4GCsN4MQyFebMK162SKnILklpXc1UMiJv9gnPOe5aOPUxCftL+x7/UGhBdFYWIegpiHvKeavUtCUkhxtDyC8KqVVPPW0StI5GdmUA3WBbnnrNiKqNc5GBmrffd6pDN+Cf9IIjzNNvos/5KXJmBbe/baAzTLkoafeIoDhO451"
-        },
         {
             "key": "景仪",
-            "name": "🎈┆景仪┆4K",
+            "name": "🎈｜景仪｜4K",
             "type": 3,
             "api": "csp_App88",
             "jar": "./jar/fish06281030.jar",
@@ -48,7 +17,7 @@
         },
         {
             "key": "枫眠",
-            "name": "🍁┆枫眠┆4K",
+            "name": "🍁｜枫眠｜4K",
             "type": 3,
             "api": "csp_App88",
             "jar": "./jar/fish06281030.jar",
@@ -56,7 +25,7 @@
         },
         {
             "key": "悯善",
-            "name": "☀️┆悯善┆4K",
+            "name": "☀️｜悯善｜4K",
             "type": 3,
             "api": "csp_App88",
             "jar": "./jar/fish06281030.jar",
@@ -64,7 +33,7 @@
         },
         {
             "key": "长泽",
-            "name": "😗┆长泽┆4K",
+            "name": "😗｜长泽｜4K",
             "type": 3,
             "api": "csp_App88",
             "jar": "./jar/fish06281030.jar",
@@ -72,7 +41,7 @@
         },
         {
             "key": "知予",
-            "name": "🍒┆知予┆4K",
+            "name": "🍒｜知予｜4K",
             "api": "csp_AppNox",
             "jar": "./jar/fish06281030.jar",
             "type": 3,
@@ -80,7 +49,7 @@
         },
         {
             "key": "清沅",
-            "name": "❄️┆清沅┆4K",
+            "name": "❄️｜清沅｜4K",
             "api": "csp_AppNox",
             "jar": "./jar/fish06281030.jar",
             "type": 3,
@@ -88,7 +57,7 @@
         },
         {
             "key": "zhiqiu",
-            "name": "☘️┆听风┆知秋",
+            "name": "☘️｜听风｜知秋",
             "type": 3,
             "api": "csp_zhiqiu",
             "jar": "./jar/fish06281030.jar",
@@ -96,32 +65,8 @@
             "ext": "http://www.小不点.com/api//2026/zhiqiu.php"
         },
         {
-            "key": "fishhxq",
-            "name": "💃┆韩圈┆影视",
-            "type": 3,
-            "api": "csp_FishHxq",
-            "jar": "./jar/fish06281030.jar",
-            "searchable": 1,
-            "ext": "http://www.小不点.com/api//2026/fishhxq.php"
-        },
-        {
-            "key": "Kan360",
-            "name": "🫐┆三六┆影视",
-            "type": 3,
-            "api": "csp_Kan360",
-            "jar": "./jar/fish06281030.jar",
-            "searchable": 1,
-            "filterable": 1,
-            "ext": {
-                "filter": "https://open.wya6.com/d/down/2026/json/360.json",
-                "fishjx": [
-                    "https://jx.xmflv.com/?url="
-                ]
-            }
-        },
-        {
             "key": "Rebo",
-            "name": "🍓┆热播┆APP",
+            "name": "🍓｜热播｜APP",
             "type": 3,
             "api": "csp_AppRJ",
             "jar": "./jar/fish06281030.jar",
@@ -133,18 +78,8 @@
             }
         },
         {
-            "key": "三秋影视",
-            "name": "🍂┆三秋┆APP",
-            "api": "csp_App3Q",
-            "jar": "./jar/fish06281030.jar",
-            "type": 3,
-            "searchable": 1,
-            "quickSearch": 1,
-            "filterable": 0
-        },
-        {
             "key": "厌离",
-            "name": "🧨┆厌离┆APP",
+            "name": "🧨｜厌离｜APP",
             "type": 3,
             "api": "csp_AppGet",
             "jar": "./jar/fish06281030.jar",
@@ -152,48 +87,11 @@
             "changeable": 1,
             "ext": "AVtyVJ6kSXgrT2v7QqBCLTWZ8hn5XSV5GG6qsT+XxkJuK5qltmoj5gYYzsctl+IDQvsTRlIrdveFw6UiEV/J0AkhFys3+/L7wVwBMTC84tEk66wkwAQIBCu4Ufij4OfwYoVuFQmvSOBefPHLVqqeV83lWUIT0ydlc5U4fcgTTs0uijudZON1U5xO5KeJ9cvf7mW5erAHfalAaeN6iNIXrGA="
         },
-        {
-            "key": "Wwys",
-            "name": "🍙┆糯米┆影视",
-            "type": 3,
-            "api": "csp_Wwys",
-            "jar": "./jar/fish06281030.jar",
-            "searchable": 1,
-            "filterable": 1,
-            "changeable": 1,
-            "ext": "https://vip.wwgz.cn:5200"
-        },
-        {
-            "key": "wencai",
-            "name": "✏️┆文才┆影视",
-            "type": 3,
-            "api": "csp_WenCai",
-            "jar": "./jar/fish06281030.jar",
-            "searchable": 1,
-            "ext": "https://www.tjrongze.com,https://y2s52n7.com,https://m.hkybqufgh.com,https://m.sizhengxt.com,https://m.9zhoukj.com,https://m.jiabaide.cn"
-        },
-        {
-            "key": "TvDy",
-            "name": "👼┆天堂┆影视",
-            "type": 3,
-            "api": "csp_TvDy",
-            "jar": "./jar/fish06281030.jar",
-            "searchable": 1,
-            "filterable": 1
-        },
-        {
-            "key": "Duboku",
-            "name": "🎯┆独播┆影视",
-            "type": 3,
-            "api": "csp_Duboku",
-            "jar": "./jar/fish06281030.jar",
-            "searchable": 1,
-            "filterable": 1,
-            "changeable": 1
-        },
+
+
         {
             "key": "Ikanbot",
-            "name": "🥰┆爱看┆影视",
+            "name": "🥰｜爱看｜影视",
             "type": 3,
             "api": "csp_Ikanbot",
             "jar": "./jar/fish06281030.jar",
@@ -224,6 +122,16 @@
       "changeable": 0,
       "ext": "https://file.icve.com.cn/file_doc/803/892/C8FDF0894D61FA21A937E21135CB9125.aowu"
     },
+    {
+            "key": "YGP",
+            "name": "🇹🇼｜預告片",
+            "type": 3,
+            "api": "csp_YGP",
+            "jar": "./jar/fish06281030.jar",
+            "searchable": 1,
+            "quickSearch": 1,
+            "filterable": 1
+        },    
     {
       "key"        : "YouTube",
       "name"       : "♓️｜YouTube｜SO",
@@ -375,6 +283,16 @@
       "changeable": 0,
       "ext": "https://nos.netease.com/youdata-netease/public-utilUpload-dETsDhhkydVym6T7qzn7WB.gz"
     },
+        {
+            "key": "Duboku",
+            "name": "🏆｜獨播庫｜備用",
+            "type": 3,
+            "api": "csp_Duboku",
+            "jar": "./jar/fish06281030.jar",
+            "searchable": 1,
+            "filterable": 1,
+            "changeable": 1
+        },    
     {
       "key"        : "php_无水印资源",
       "name"       : "🏆｜無水｜(T4)",
@@ -456,6 +374,15 @@
         "decrypt": "0"
       }
     },
+        {
+            "key": "TvDy",
+            "name": "🏆｜天堂｜備用",
+            "type": 3,
+            "api": "csp_TvDy",
+            "jar": "./jar/fish06281030.jar",
+            "searchable": 1,
+            "filterable": 1
+        },    
     {
       "key": "灵虎",
       "name": "🏆｜靈虎｜高清◎秒播",
@@ -646,15 +573,44 @@
         "decrypt": "0"
       }
     },
+        {
+            "key": "huaisang",
+            "name": "🥇｜怀桑｜高清",
+            "type": 3,
+            "api": "csp_AppQi",
+            "jar": "./jar/fish06281030.jar",
+            "searchable": 1,
+            "changeable": 1,
+            "ext": "AdYEovlEKsDy77+R58YGahWCxrDZyBxExcQNC2NSeH0n1b5mu6tvh8b4Eh0RCpoPF6eivKdrR1Hsb8X4sSVBS8zF6jkwLW+wze9yh+hSY5iimm4gM9mAtmt0obTi+6Iox/Jp4GCsN4MQyFebMK162SKnILklpXc1UMiJv9gnPOe5aOPUxCftL+x7/UGhBdFYWIegpiHvKeavUtCUkhxtDyC8KqVVPPW0StI5GdmUA3WBbnnrNiKqNc5GBmrffd6pDN+Cf9IIjzNNvos/5KXJmBbe/baAzTLkoafeIoDhO451"
+        },    
     {
-      "name"       : "🥇｜韩剧｜秒播",
       "key"        : "Hxq",
+      "name"       : "🥇｜韓圈｜高清",
       "type"       : 3,
       "api"        : "csp_HxqAmns",
       "searchable" : 1,
       "quickSearch": 1,
       "changeable" : 0
     },
+        {
+            "key": "fishhxq",
+            "name": "🥇｜韓圈｜備用",
+            "type": 3,
+            "api": "csp_FishHxq",
+            "jar": "./jar/fish06281030.jar",
+            "searchable": 1,
+            "ext": "http://www.小不点.com/api//2026/fishhxq.php"
+        },    
+        {
+            "key": "BuBu",
+            "name": "🥇｜布布｜1080P",
+            "type": 3,
+            "api": "csp_BuBu",
+            "jar": "./jar/fish06281030.jar",
+            "searchable": 1,
+            "changeable": 1,
+            "filterable": 1
+        },        
     {
       "name": "🥇｜夏天｜秒播",
       "key": "NewGrV2",
@@ -989,6 +945,17 @@
         "buildSignature": "5AD4436C4730FFE26910C86278B80F3E661C317FFC3616F702D20A729262624A"
       }
     },
+        {
+            "key": "Wwys",
+            "name": "🥇｜糯米｜影视",
+            "type": 3,
+            "api": "csp_Wwys",
+            "jar": "./jar/fish06281030.jar",
+            "searchable": 1,
+            "filterable": 1,
+            "changeable": 1,
+            "ext": "https://vip.wwgz.cn:5200"
+        },    
     {
       "key" : "农民影视",
       "name": "🥇｜農民｜無廣",
@@ -1231,7 +1198,7 @@
     },
     {
       "key"        : "py_文才",
-      "name"       : "🥇｜金牌系列-文才",
+      "name"       : "🥇｜金牌系列-界界",
       "type"       : 3,
       "api"        : "./py/又是一個金牌.py",
       "searchable" : 1,
@@ -1241,6 +1208,15 @@
         "site": "https://www.hkybqufgh.com,https://www.sizhengxt.com,https://0996zp.com,https://9zhoukj.com/"
       }
     },
+        {
+            "key": "wencai",
+            "name": "🥇｜金牌系列-文才",
+            "type": 3,
+            "api": "csp_WenCai",
+            "jar": "./jar/fish06281030.jar",
+            "searchable": 1,
+            "ext": "https://www.tjrongze.com,https://y2s52n7.com,https://m.hkybqufgh.com,https://m.sizhengxt.com,https://m.9zhoukj.com,https://m.jiabaide.cn"
+        },    
     {
       "key"        : "py_zjuys.py",
       "name"       : "🥇｜金牌系列-zjuys",

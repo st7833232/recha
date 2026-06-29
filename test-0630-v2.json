@@ -668,7 +668,7 @@
       "key" : "三秋影视",
       "name": "🥇｜三秋｜普畫◎秒播",
       "type": 3,
-      "api" : "csp_App3Q",
+      "api" : "csp_App3Q"
     },
     {
       "key" : "听心99",
@@ -1808,7 +1808,7 @@
       "searchable" : 1,
       "quickSearch": 1,
       "filterable" : 1,
-      "api"        : "https://blackwallvideo.online/api.php/provide/vod/",
+      "api"        : "https://blackwallvideo.online/api.php/provide/vod/"
     },
     {
       "key"        : "vod_黑木耳资源",

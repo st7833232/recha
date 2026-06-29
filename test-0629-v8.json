@@ -1,20 +1,11 @@
 {
-  "spider": "./jar/c5a5d9c2-5f0c-419c-b388-ac5b0f1a64a0.png;md5;0e1439a2e9e227aad3de4ae3987d3b73",
+  "spider": "./jar/c5a5d9c2-5f0c-419c-b388-ac5b0f1a64a0.png",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.06.29_Ver.1 研究刪掉那些fan的站",
+  "notice": "115.06.29_Ver.8 F大幫忙偷改Auwo包",
   "sites": [
 
-        {
-            "key": "华人so",
-            "name": "華人影視",
-            "type": 3,
-            "api": "csp_Hua",
-            "jar": "./jar/華人影視.so",
-            "searchable": 1,
-            "quickSearch": 1,
-            "filterable": 1
-        },
+
     {
             "key": "YGP",
             "name": "🔔┆新片┆预告",
@@ -86,14 +77,6 @@
             "jar": "./jar/fish06281030.jar",
             "type": 3,
             "ext": "AXa/dhw2PLXN7GTzaamHOCEf9KWdx8b5bp7n8hAmf9Boa6AZrB5/hhb4qGO6kjkz/Oh5Uei9rzPWsZlQhgxQGSu7Zb/ZmT15NpqUP+qEjAXGPyOlfFWZbr4rxW3WZSqH6i+OT49idbNqqJdm1jXPR00G5O44GJb+9H7f1iioaW5GOEXjTbDGfBqd4uVVCz6vPPgb/k1NVY/Ze+bb5AsQMmZyAcHWgow8PEaTln0cVXxkb5VmKMQfj5sEq9ZnWGHbu4/32qI2Jjtkmj6VijcdWZSyxuwW/O1i8QbrqQZMeYyr16m5gwNFIyv3ppAxMfyjSz6P7J9dbMfS5PaT3xL3TKTAnZFjS0KyZIKYrJBLj9lXwgox8aFmPV1fT2CBX5t/dHX6gL8CfkhYGjFj7LnVLZo5se/1WjuMkzPTSZharqLvXySQsKpiGKLhfs8DsgQppW4BP8Lv2wPFDmbwB2op21RJDJNQhJXbOW6Z4rI5uXZJAW6LuvudGVKVD/RF3/yUlM4Boda3iuV/7ER45wPegGXouEiiuS7QHjYCgiMLVmUEiYLVhiTe3qDU6VlHqn5YhP7+1kibrXrRQ7JzyQ0sOxljdVHQw6IIRTQwzSBJLoDiiCddIncVXxYmKuhW6Pxen1bOfQgd723GkDyLB1Y5U9KXbzS9y6+ko37HVfmwUzDEcG+DYyxa2lJTCIXbdPbl8LBGUGMURx1S43wMLh1rurnz41qwPL5/WULQJmx4bt4E30dcTi/KfIBD8EUM8YZk8z7JSG5bi3oyYToXXRJCXK/qNpxaJ5I0s27MfnJRE/xF2k7Pv0YtFPmwdQr6Z3neEzOo/Vt1E5WlC0JiURC2bO+MWqA70m6B5WJkmnd46qPLtaofki6EzbH81AMvgsYAgjf8iAO6nYWFcrVoAsYMMgJkyPExJEUQStc+TB4gvUFUT9VeTHMXNSWiHMrhGkAQIA37PXzfig3c0sAUy+9iNlKXZv/lfbVFRgV9w8k0eDLrcR40Ma1Pmgnwq7v05RqJiSQCngiXOQgzR4wFar5anDJT73LmmP77+zaoJDH0aZeY"
-        },
-        {
-            "key": "沐辞",
-            "name": "🍫┆沐辞┆4K",
-            "api": "csp_AppNox",
-            "jar": "./jar/fish06281030.jar",
-            "type": 3,
-            "ext": "AQUucLUJRH9RFWo2llKlyTrMCyVJ0Kpob6GGGwM0j5jiyraPW+SaJOKlkFrgd1ZhRMCnf0G74bm9C+4z5cinWObAMVMVtYf3sq6ftyqkjscrCwmACTm3lYdUtHGXFJI5MibkogunAZdw4jqNzeJW5yZmcvtvNWAB2u3HpiPCZ/7BBa+frYoJk64v5fZCFR9ywNGr0nXP+F3iwSBdiuzG3EiSTWwdh66EiviaRCI17Qad4cXfy3SMDsy39ejvXzdTrN0VOAx2XDqhFRpL6JnxweIDg8NZ75R0qJDpn9hLiTUxiIB2fT9pjD+Da10ThaLJbcf49f2N2AbwIYaL0+7lGdPD4/WSG1B/MsJYbNVEIPVn4d3lWofSBf904ualn0Yx+RE8SQfoXWXiHowqIU01uQfWuFXV+1LwHTc3ZkTfdAd9SRqQgkfl4QwyogKb9KXE51rexjvPo7heswXhKJVnginjrFrCSuPbQ5I4G9mY0ivmsNLhl4YgezZ8nNLYJTisU7gn4Q5tSUdGCo4NGVmTAm9hRLKz5ao1FNnQ6zbq33/IRtiwfHPlGZf543z+wA4ZCXukLVd2HKmNniR7dnIScjvSENMatCmS60pm6xW0ZapgZZd6rDnSivtChrU+GetWYQBBA1d/FeFgOSGhd175JvnInnwe0sGlQ+aoSyaANoEDXjk8LSzJPScRIqEn4sUBHehjWBQyQjb8wGFjciWlQETGYFYyXn4SEAhqk/KSNNHbAO7nDTZrVJatDtF/e1W0+ryHzoY+UWoVoHqm2zbsqNezbSpumOfaIJIfM5GmcpiMdjAh7w/HpGngmX/MI574TixdhpqWvtagwEVu61hxxmK5ZDJXER2wjFxZBMn2T5QelhNRHUNT7HoxkrHs8VXBwkYbLjoXs05vtXVpkLkokEi2QJU/Qjh0lCCyvHHIE2cvEzcpAqRfvzGHksXSWwZzV1MO4iHjd86Sgo/8Xp7RLQMe4G57+bg+HoZXY5YDQzK+ESXGIs1p3agfPhvaP/0fkUhUSHkLCsoO3yCuQarGPR4qgDVN8bayFm7Ya3rK9zD4"
         },
         {
             "key": "清沅",
@@ -233,7 +216,8 @@
       "key"        : "豆瓣-搜索",
       "name"       : "🇹🇼｜熱播排行榜｜可選站",
       "type": 3,
-      "api": "csp_DoubanAmns",
+      "api": "csp_Douban",
+      "jar": "./jar/fish06281030.jar",
       "indexs": 1,
       "searchable": 0,
       "quickSearch": 0,
@@ -646,7 +630,7 @@
       "name": "🏆｜苹果｜秒播",
       "type": 3,
       "api": "csp_AppDrama",
-      "jar": "./jar/xiaosa-0604.jar;md5;2b962da64b0264b72347f29ef611e72d",
+      "jar" : "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,

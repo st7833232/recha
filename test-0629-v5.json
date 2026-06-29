@@ -7,7 +7,7 @@
 
         {
             "key": "华人so",
-            "name": "🐬华人影视",
+            "name": "華人影視",
             "type": 3,
             "api": "csp_Hua",
             "jar": "./jar/華人影視.so",

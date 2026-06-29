@@ -2,15 +2,15 @@
   "spider": "./jar/c5a5d9c2-5f0c-419c-b388-ac5b0f1a64a0.png;md5;0e1439a2e9e227aad3de4ae3987d3b73",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.06.29_Ver.1 研究刪掉那些fan的站",
+  "notice": "115.06.29_Ver.6 刪掉fan，改用摸魚包",
   "sites": [
 
         {
             "key": "华人so",
-            "name": "🐬华人影视",
+            "name": "華人影視",
             "type": 3,
             "api": "csp_Hua",
-            "jar": "https://files.catbox.moe/hmml4f.txt",
+            "jar": "./jar/華人影視.so",
             "searchable": 1,
             "quickSearch": 1,
             "filterable": 1

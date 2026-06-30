@@ -2,7 +2,7 @@
   "spider": "./jar/fm.jar;md5;b0adab2fad1de8871b9533527f407cdf",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.06.30_Ver.6 全面整理",
+  "notice": "115.06.30_Ver.7 全面整理",
   "sites": [  
 
     {
@@ -1839,6 +1839,7 @@
       "key"        : "FanShu",
       "type"       : 3,
       "api"        : "csp_FanShuAmns",
+      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
       "searchable" : 1,
       "quickSearch": 1,
       "changeable" : 0
@@ -1848,52 +1849,18 @@
       "name"       : "🎡｜巴士",
       "type"       : 3,
       "api"        : "csp_Dm84Guard",
+      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
       "timeout"    : 10,
       "searchable" : 1,
       "quickSearch": 1,
       "changeable" : 1
     },
     {
-      "key": "番薯动漫",
-      "name": "🎡｜番薯",
-      "type": 3,
-      "quickSearch": 1,
-      "api": "csp_AppGet",
-      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
-      "ext": {
-        "url"    : "https://new.app.bytegooty.com",
-        "dataKey": "N4yj7l7xKxHF4*gz",
-        "dataIv" : "N4yj7l7xKxHF4*gz"
-      }
-    },
-    {
-      "key": "曼波动漫",
-      "name": "🎡｜曼波",
-      "type": 3,
-      "quickSearch": 1,
-      "api": "csp_AppGet",
-      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
-      "ext": {
-        "url"    : "https://app.omofun1.top",
-        "dataKey": "66dc309cbeeca454",
-        "dataIv" : "66dc309cbeeca454"
-      }
-    },
-    {
-      "key"        : "py_椰子_APP",
-      "name"       : "🎡｜椰子",
-      "type"       : 3,
-      "api"        : "./py/app/appfox.py",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "ext"        : {"host": "http://nico.oiio.fun", "ver": "2"}
-    },
-    {
       "key": "AowuDmAw",
       "name": "🎡｜嗷嗚",
       "type": 3,
       "api": "csp_AowuDmAmns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
@@ -1904,6 +1871,7 @@
       "name": "🎡｜番茶",
       "type": 3,
       "api": "csp_AowuDmAmns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
@@ -1914,40 +1882,11 @@
       "name": "🎡｜喵物",
       "type": 3,
       "api": "csp_AowuDmAmns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
       "ext": "db8b57143fce50cabe524135fd3fb26e4af09034942cb186addd2322edf17ab6c9b7862764598039301c43cf706efcd55499494d72c680001c30550747b3dc5994760e3d6e17208e5ed771b2b4162f65e72b3e530fdd9622474e1c5f8aecda41dcd17901c7ddc61193a63fd8aaa1a96dc8673f93a8116755fd04bb1baaa93215334aaa1327972f2dd7292eb3d593e60cad0b9a3dde2a1158640cfc93dac5af45ddd8f971e3be0ccb5c776752b9b92a7f67dc89375d7ad442bddb0c661554a03c420029010a932d2dd8e65d6dc5"
-    },
-    {
-      "key"        : "py_丫丫_APP",
-      "name"       : "🎡｜丫丫",
-      "type"       : 3,
-      "api"        : "./py/app/getapp.py",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "ext"        : {
-        "host"   : "http://tv.yy-fun.cc",
-        "api"    : "/api.php/getappapi",
-        "datakey": "qkxnwkfjwpcnwycl",
-        "dataiv" : "qkxnwkfjwpcnwycl"
-      }
-    },
-    {
-      "key"        : "py_漫屋_APP",
-      "name"       : "🎡｜漫屋",
-      "type"       : 3,
-      "api"        : "./py/app/getapp.py",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "ext"        : {
-        "host"   : "https://www.yunwuee.icu",
-        "api"    : "/api.php/getappapi",
-        "datakey": "ygcnb9bdcmb8aeiw",
-        "dataiv" : "ygcnb9bdcmb8aeiw"
-      }
     },
     {
       "key"        : "py_方舟_APP",
@@ -2171,57 +2110,50 @@
       "ext"        : "./drpy_js/异世界.js"
     },
     {
-      "name"       : "📡虎牙｜Live",
-      "key"        : "HuyaLive",
-      "type"       : 3,
-      "api"        : "csp_HuyaLiveAmns",
-      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
-      "searchable" : 1,
+      "key": "虎牙",
+      "name": "📡｜虎牙｜Live",
+      "type": 3,
+      "api": "http://itv666.cc/%E6%98%9F%E6%B2%B3/py/网络直播.py",
+      "searchable": 1,
+      "changeable": 1,
       "quickSearch": 1,
-      "changeable" : 0,
-      "style"      : {"type": "rect", "ratio": 1.433}
-    },
+      "filterable": 1
+    },        
     {
+      "key": "瓜子体育",
       "name": "⚽｜瓜子｜體育",
-      "key": "GuaziLive",
       "type": 3,
-      "api": "csp_GuaziLiveAmns",
+      "api": "csp_GuaziTY",
       "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
-      "searchable": 0,
-      "quickSearch": 0,
-      "changeable": 0,
-      "ext": "https://api.bmjb2mk7.com,https://api.46d5umpk.com,https://api.tkfupxqu.com,https://api.5h5hbfhh.com,https://api.qchyzkww.com,https://api.cjxxpgkq.com,https://api.zejzeu7p.com"
+      "style": {
+        "type": "list"
+      }
     },
     {
-      "name"       : "⚽｜飛球｜體育",
-      "key"        : "FeiqLive",
-      "type"       : 3,
-      "api"        : "csp_FeiqLiveAmns",
-      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
-      "searchable" : 1,
+      "key": "咖啡",
+      "name": "⚽｜咖啡｜體育",
+      "type": 3,
+      "api": "http://itv666.cc/%E6%98%9F%E6%B2%B3/py/kafei2.py",
+      "searchable": 1,
+      "changeable": 1,
       "quickSearch": 1,
-      "changeable" : 0
+      "filterable": 1,
+      "style": {
+        "type": "list"
+      }
     },
     {
+      "key": "88看球",
       "name": "⚽｜88｜體育",
-      "key": "BbkqLive",
-      "type": 3,
-      "api": "csp_BbkqLiveAmns",
-      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
+      "type": 4,
+      "api": "http://itv666.cc/吼吼吼吼吼/bbkq.php",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
-      "ext": "https://www.88kanqiu.app,https://www.88kanqiu.la,https://www.88kanqiu.one,https://www.88kanqiu.ooo,https://www.88kanqiu.pw"
-    },
-    {
-      "name"       : "⚽｜咖啡｜體育",
-      "key"        : "KafLive",
-      "type"       : 3,
-      "api"        : "csp_KafLiveAmns",
-      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
-      "searchable" : 1,
-      "quickSearch": 0,
-      "changeable" : 0
+      "gridview": 3,
+      "style": {
+        "type": "list"
+      }
     },
         {
             "key": "TingBook",

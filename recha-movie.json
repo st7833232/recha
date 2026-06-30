@@ -1094,19 +1094,6 @@
       "timeout"    : 20
     },
     {
-      "key"        : "drpyS_听友[听]",
-      "name"       : "🎧｜听友｜有聲書",
-      "type"       : 4,
-      "api"        : "http://149.118.133.251:5757/api/听友[听]",
-      "searchable" : 2,
-      "filterable" : 1,
-      "quickSearch": 1,
-      "title"      : "听友[听]",
-      "类型"         : "听书",
-      "lang"       : "ds",
-      "ext"        : ""
-    },
-    {
       "key"        : "py_愛電影.py",
       "name"       : "🥇｜金牌系列-愛電影",
       "type"       : 3,
@@ -2224,18 +2211,18 @@
       "changeable" : 0
     },
         {
-            "key": "TingBook",
-            "name": "📻｜六月｜有声",
-            "type": 3,
-            "api": "csp_TingBook",
-            "jar": "./jar/fish06281030.jar;md5;5d14ddf4289dcbcc4bd55705d3315369",
-            "searchable": 1,
-            "indexs": 0,
-            "ext": "https://app.365ting.com",
-            "style": {
-                "type": "list"
-            }
-        },
+      "key"        : "drpyS_听友[听]",
+      "name"       : "📻｜听友｜有聲書",
+      "type"       : 4,
+      "api"        : "http://149.118.133.251:5757/api/听友[听]",
+      "searchable" : 2,
+      "filterable" : 1,
+      "quickSearch": 1,
+      "title"      : "听友[听]",
+      "类型"         : "听书",
+      "lang"       : "ds",
+      "ext"        : ""
+    },
         {
             "key": "TingBookJinXia",
             "name": "📻｜堇夏｜有声",

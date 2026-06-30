@@ -2,7 +2,7 @@
   "spider": "./jar/c5a5d9c2-5f0c-419c-b388-ac5b0f1a64a0.png",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.06.29_Ver.8 F大幫忙偷改Auwo包",
+  "notice": "115.06.30_Ver.2 F大幫忙偷改Auwo包",
   "sites": [  
 
     {
@@ -179,6 +179,15 @@
       "quickSearch": 1,
       "changeable" : 0
     },
+    {
+    "key": "瓜子",
+    "name": "🏆｜瓜子｜",
+    "type": 4,
+    "api": "http://192.129.140.23:5757/api/瓜子?do=py&pwd=dzyyds",
+    "searchable": 1,
+    "filterable": 1,
+    "quickSearch": 1
+    },    
     {
       "key" : "py_jieyingshi",
       "name": "🏆｜異界｜高清",

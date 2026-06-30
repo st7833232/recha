@@ -171,16 +171,6 @@
       "changeable" : 1
     },
     {
-    "key": "瓜子",
-    "name": "🏆｜瓜子｜",
-    "type": 4,
-    "api": "http://192.129.140.23:5757/api/瓜子?do=py&pwd=dzyyds",
-    "searchable": 1,
-    "filterable": 1,
-    "quickSearch": 1,
-    "changeable": 1 
-    },
-    {
     "key": "drpyS_枫林影视",
     "name": "楓林影視",
     "type": 4,

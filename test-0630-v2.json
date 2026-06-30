@@ -1062,19 +1062,6 @@
       "filterable" : 0
     },
     {
-      "key"        : "hipy_js_mg",
-      "name"       : "🥭｜芒果｜藍光◎秒播(解析切到芒果4K)",
-      "type"       : 3,
-      "api"        : "http://dbmlosa.sylu.cc:8080/lib/drpy2.min.js",
-      "jar"        : "./jar/dream.jar;md5;fdd9f115337eff2f015afe3bca99a5e4",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "changeable" : 0,
-      "filterable" : 1,
-      "order_num"  : 0,
-      "ext"        : "http://dbmlosa.sylu.cc:8080/lib/mg.js"
-    },
-    {
       "key"        : "bilimd",
       "name"       : "🎖︎｜bilbil｜官源",
       "type"       : 3,
@@ -2277,11 +2264,6 @@
     }
   ],
   "parses": [
-    {
-      "name": "芒果4K",
-      "url" : "https://niubi.69mini.com/jsonapi/?url=",
-      "type": 1
-    },
     {"name": "聚合1", "type": 3, "url": "Demo"},
     {"name": "聚合0", "type": 3, "url": "Web"},
     {"name": "ikun", "type": 0, "url": "https://jx.hls.one/?url="},

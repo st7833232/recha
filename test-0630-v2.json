@@ -2224,31 +2224,86 @@
       "type"       : 3,
       "api"        : "csp_KafLiveAmns",
       "jar": "./jar/aowu-0626.jar",
-      "searchable" : 0,
+      "searchable" : 1,
       "quickSearch": 0,
       "changeable" : 0
     },
+        {
+            "key": "TingBook",
+            "name": "📻｜六月｜有声",
+            "type": 3,
+            "api": "csp_TingBook",
+            "jar": "./jar/fish06281030.jar",
+            "searchable": 1,
+            "indexs": 0,
+            "ext": "https://app.365ting.com",
+            "style": {
+                "type": "list"
+            }
+        },
+        {
+            "key": "TingBookJinXia",
+            "name": "📻｜堇夏｜有声",
+            "type": 3,
+            "api": "csp_TingBookJinXia",
+            "jar": "./jar/fish06281030.jar",
+            "searchable": 1,
+            "filterable": 1,
+            "indexs": 0,
+            "ext": "https://m.ting15.com",
+            "style": {
+                "type": "list"
+            }
+        },        
+        {
+            "key": "Buguyy",
+            "name": "🎧｜布谷｜音乐",
+            "type": 3,
+            "api": "csp_Buguyy",
+            "jar": "./jar/fish06281030.jar",
+            "searchable": 1,
+            "filterable": 1,
+            "changeable": 1
+        },
+        {
+            "key": "ChuXin",
+            "name": "🎧｜初心｜音乐",
+            "type": 3,
+            "api": "csp_ChuXin",
+            "jar": "./jar/fish06281030.jar",
+            "searchable": 1,
+            "quickSearch": 1,
+            "filterable": 0
+        },
+        {
+            "key": "aiting",
+            "name": "🎧｜爱听｜音乐",
+            "type": 3,
+            "api": "csp_AiTingMusic",
+            "jar": "./jar/fish06281030.jar",
+            "searchable": 1,
+            "quickSearch": 1,
+            "filterable": 0
+        },
+        {
+            "key": "Music24bit",
+            "name": "🎧｜无损｜音乐",
+            "type": 3,
+            "api": "csp_Music24bit",
+            "jar": "./jar/fish06281030.jar",
+            "searchable": 1,
+            "changeable": 1
+        },    
     {
       "key"        : "KuGou-1",
-      "name"       : "🎸｜酷狗音樂",
+      "name"       : "🎧｜酷狗音樂",
       "type"       : 3,
       "api"        : "csp_KuGouAmns",
-      "jar": "./jar/aowu-0626.jar",
+      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
       "searchable" : 1,
       "quickSearch": 1,
       "changeable" : 0,
       "genre"      : "music"
-    },
-    {
-      "key"        : "KuGou-2",
-      "name"       : "🎧｜酷狗音樂",
-      "type"       : 3,
-      "api"        : "csp_KuGouAmns",
-      "jar": "./jar/aowu-0626.jar",
-      "searchable" : 1,
-      "filterable" : 1,
-      "quickSearch": 1,
-      "changeable" : 0
     },
     {
       "key" : "网易云音乐",

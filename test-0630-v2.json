@@ -1856,42 +1856,6 @@
       "changeable" : 1
     },
     {
-      "key": "番薯动漫",
-      "name": "🎡｜番薯",
-      "type": 3,
-      "quickSearch": 1,
-      "api": "csp_AppGet",
-      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
-      "ext": {
-        "url"    : "https://new.app.bytegooty.com",
-        "dataKey": "N4yj7l7xKxHF4*gz",
-        "dataIv" : "N4yj7l7xKxHF4*gz"
-      }
-    },
-    {
-      "key": "曼波动漫",
-      "name": "🎡｜曼波",
-      "type": 3,
-      "quickSearch": 1,
-      "api": "csp_AppGet",
-      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
-      "ext": {
-        "url"    : "https://app.omofun1.top",
-        "dataKey": "66dc309cbeeca454",
-        "dataIv" : "66dc309cbeeca454"
-      }
-    },
-    {
-      "key"        : "py_椰子_APP",
-      "name"       : "🎡｜椰子",
-      "type"       : 3,
-      "api"        : "./py/app/appfox.py",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "ext"        : {"host": "http://nico.oiio.fun", "ver": "2"}
-    },
-    {
       "key": "AowuDmAw",
       "name": "🎡｜嗷嗚",
       "type": 3,

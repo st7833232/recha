@@ -1835,27 +1835,6 @@
       "changeable": 0
     },
     {
-      "name"       : "🎡｜番薯",
-      "key"        : "FanShu",
-      "type"       : 3,
-      "api"        : "csp_FanShuAmns",
-      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "changeable" : 0
-    },
-    {
-      "key"        : "Dm84",
-      "name"       : "🎡｜巴士",
-      "type"       : 3,
-      "api"        : "csp_Dm84Guard",
-      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
-      "timeout"    : 10,
-      "searchable" : 1,
-      "quickSearch": 1,
-      "changeable" : 1
-    },
-    {
       "key": "AowuDmAw",
       "name": "🎡｜嗷嗚",
       "type": 3,

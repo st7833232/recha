@@ -132,6 +132,17 @@
       "changeable" : 1
     },
     {
+      "key"        : "奥特",
+      "name"       : "🏆｜銅牌｜高清(無廣告)",
+      "type"       : 3,
+      "api"        : "csp_AueteGuard",
+      "jar"        : "./jar/fan-0628.jar;md5;b651deb915a5cb34e0882cdfeffa8eef",
+      "timeout"    : 10,
+      "searchable" : 1,
+      "quickSearch": 1,
+      "changeable" : 1
+    },    
+    {
       "key"       : "py_aidianying",
       "name"      : "🏆｜鐵牌｜藍光",
       "type"      : 3,
@@ -140,6 +151,18 @@
       "filterable": 0,
       "changeable": 1
     },
+    {
+      "key": "猫猫",
+      "name": "🏆｜猫猫｜高清◎秒播(無廣告)",
+      "type": 3,
+      "api": "csp_AppSxGuard",
+      "jar": "./jar/fan-0628.jar;md5;b651deb915a5cb34e0882cdfeffa8eef",
+      "timeout": 10,
+      "searchable": 1,
+      "quickSearch": 1,
+      "changeable": 1,
+      "ext": "rfOb1uAWbkRHp7hdxprG9un3+TDC2t/rlTwlcMr+ChdbeV8Q9y9xsKxqfbtO0M05tGWcacFVm2c45jhyH6t1Rt6A6PjICGqxV+uN1uOqS2/x0Vp5J0Vfo8usQADpHg=="
+    },    
     {
       "key": "Qile优视频2",
       "name": "🏆｜Uvod｜藍光◎秒播",
@@ -553,6 +576,30 @@
         "decrypt": "0"
       }
     },
+    {
+      "key": "花花",
+      "name": "🥇｜花花｜高清◎秒播(無廣告)",
+      "type": 3,
+      "api": "csp_AppSxGuard",
+      "jar": "./jar/fan-0628.jar;md5;b651deb915a5cb34e0882cdfeffa8eef",
+      "timeout": 10,
+      "searchable": 1,
+      "quickSearch": 1,
+      "changeable": 1,
+      "ext": "rfOb1uAWbkRHp7hdxprG9un3+TbEn4q2l2kibom2DB9cJ0IB72Vu7apib64Gl9Ew6WDTJcIVzWsluDxqEaBqWIyM77GBXCPqCPmCyOr3RGfwjlsjchkArMHzTFT1VY9QUooz8m8BXA2mSa/whkG7SpZP100qUm6hMmTjm8YQQ51m6mxEE7hhEK1eNQ=="
+    },
+    {
+      "key"        : "文采",
+      "name"       : "🥇｜文采｜高清◎秒播(無廣告)",
+      "type"       : 3,
+      "api"        : "csp_JpysGuard",
+      "jar"        : "./jar/fan-0628.jar;md5;b651deb915a5cb34e0882cdfeffa8eef",
+      "timeout"    : 10,
+      "playerType" : 2,
+      "searchable" : 1,
+      "quickSearch": 1,
+      "changeable" : 1
+    },    
         {
             "key": "huaisang",
             "name": "🥇｜怀桑｜高清",
@@ -1826,6 +1873,7 @@
       "key"        : "FanShu",
       "type"       : 3,
       "api"        : "csp_FanShuAmns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable" : 1,
       "quickSearch": 1,
       "changeable" : 0
@@ -1835,6 +1883,7 @@
       "name"       : "🎡｜巴士",
       "type"       : 3,
       "api"        : "csp_Dm84Guard",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "timeout"    : 10,
       "searchable" : 1,
       "quickSearch": 1,
@@ -1881,6 +1930,7 @@
       "name": "🎡｜嗷嗚",
       "type": 3,
       "api": "csp_AowuDmAmns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
@@ -1891,6 +1941,7 @@
       "name": "🎡｜番茶",
       "type": 3,
       "api": "csp_AowuDmAmns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
@@ -1901,6 +1952,7 @@
       "name": "🎡｜喵物",
       "type": 3,
       "api": "csp_AowuDmAmns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,

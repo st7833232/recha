@@ -20,12 +20,11 @@
       "name"       : "🇹🇼｜熱播排行榜｜可選站",
       "type": 3,
       "api": "csp_Douban",
-      "jar": "./jar/fish06281030.jar",
+      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
       "indexs": 1,
       "searchable": 0,
       "quickSearch": 0,
-      "changeable": 0,
-      "ext": "https://file.icve.com.cn/file_doc/803/892/C8FDF0894D61FA21A937E21135CB9125.aowu"
+      "changeable": 0
     },
     {
             "key": "YGP",

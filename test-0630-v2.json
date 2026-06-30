@@ -266,7 +266,7 @@
             "ext": "AScEBDU8ZGTviWgGR4VE0GGkVwxm9FRojDfGdLd7Uq6yQW7ma68i5+t2StAnXVayevGqI3Kb0rJi2eqa1R3PW9cxHiFDbXAhtGajyY69GUpDZQ615h6l9jBlh/RMkOo3RfAvtXJdZasUTDhxflfJPCn0T5P68L/XHUV9ylgYmABoOSghqLVoMUNWDS5E2PAMVkm39vpIJOyKNEIhVd3EQmPxDSjSoDE56akhNdBPWsT+tZVbLO8rEccdRYGvxYsXmVjhxaXhmzQEoEme5LF/0+x+M2A880NZ5akhrKIl5ZjfREZCgQ6FClx7+L8f8fb2VNiLtFu5538MrSRozjub6WRKe1m5OOdgdOTsAXJXw5QG5IQ/Y/i9VBZTZUjqP+0TpP4h92QjLynjJAFzwSr3bAOOIvEJW2LsK+hocK72wpyVG93vl42XQpU5s95dAVJOOOnbawZUsOq8a0ctuSsSdWQ="
         },         
     {
-      "name"       : "🏆｜伊外|高清◎秒播",
+      "name"       : "🏆｜伊外｜高清◎秒播",
       "key"        : "YIys",
       "type"       : 3,
       "api"        : "csp_YIysAmns",
@@ -1061,27 +1061,6 @@
       "quickSearch": 1,
       "filterable" : 0
     },
-    {"key": "三六零", "name": "🎖︎｜愛看360｜官源", "type": 3, "api": "csp_SP360"},
-    {
-      "key"        : "drpy_js_360影视",
-      "name"       : "🎖︎｜愛看360｜官源(道長)",
-      "type"       : 3,
-      "searchable" : 1,
-      "quickSearch": 1,
-      "jar"        : "./jar/fm.jar",
-      "api"        : "./drpy_libs/drpy2.min.js",
-      "ext"        : "./drpy_js/360影视[官].js"
-    },
-    {
-      "key"        : "hipy_js_奇珍异兽[官]",
-      "name"       : "🥝｜愛奇異｜官源(道長)",
-      "type"       : 3,
-      "searchable" : 1,
-      "quickSearch": 1,
-      "jar"        : "./jar/fm.jar",
-      "api"        : "./drpy_libs/drpy2.min.js",
-      "ext"        : "./drpy_js/奇珍异兽[官].js"
-    },
     {
       "key"        : "hipy_js_mg",
       "name"       : "🥭｜芒果｜藍光◎秒播(解析切到芒果4K)",
@@ -1138,20 +1117,6 @@
       "类型"         : "听书",
       "lang"       : "ds",
       "ext"        : ""
-    },
-    {
-      "key"  : "喜马拉雅",
-      "name" : "🎖︎｜喜馬拉雅｜有聲書",
-      "type" : 3,
-      "api"  : "./py/喜马拉雅.py",
-      "style": {"type": "rect", "ratio": 1.333},
-      "ext"  : ""
-    },
-    {
-      "key" : "喜马拉雅2",
-      "name": "🎖︎｜喜馬拉雅2｜有聲書",
-      "type": 3,
-      "api" : "./py/ximalaya.py"
     },
     {
       "key"        : "py_愛電影.py",
@@ -1354,7 +1319,7 @@
     },
     {
       "key"        : "py_缘梦_APP",
-      "name"       : "📱｜緣夢｜高清(無廣告+PY)",
+      "name"       : "📱｜緣夢｜APP",
       "type"       : 3,
       "api"        : "./py/app/getapp.py",
       "searchable" : 1,
@@ -1369,7 +1334,7 @@
     },
     {
       "key"        : "py_哇哇APP",
-      "name"       : "📱｜哇哇｜高清(無廣告+py)",
+      "name"       : "📱｜哇哇｜APP",
       "type"       : 3,
       "api"        : "./py/哇哇APP.py",
       "searchable" : 1,
@@ -1379,7 +1344,7 @@
     },
     {
       "key"        : "py_爱影_APP",
-      "name"       : "📱｜爱影",
+      "name"       : "📱｜爱影｜APP",
       "type"       : 3,
       "api"        : "./py/app/qijiapp.py",
       "searchable" : 1,
@@ -1394,7 +1359,7 @@
     },
     {
       "key"        : "py_数字_APP",
-      "name"       : "📱｜数字",
+      "name"       : "📱｜数字｜APP",
       "type"       : 3,
       "api"        : "./py/app/getapp.py",
       "searchable" : 1,
@@ -1409,7 +1374,7 @@
     },
     {
       "key"        : "py_八天_APP",
-      "name"       : "📱｜八天",
+      "name"       : "📱｜八天｜APP",
       "type"       : 3,
       "api"        : "./py/app/getapp.py",
       "searchable" : 1,
@@ -1498,14 +1463,6 @@
       "quickSearch": 1,
       "changeable" : 0,
       "genre"      : "shortdrama"
-    },
-    {
-      "key"  : "六月听书",
-      "name" : "🎖︎｜六月｜有聲書",
-      "type" : 3,
-      "api"  : "csp_TingBook",
-      "jar"        : "./jar/xmbjm.jar;md5;9bec13821a07b616e14f510ab6da8281",
-      "style": {"type": "list"}
     },
     {
       "key"       : "bilitingshu",

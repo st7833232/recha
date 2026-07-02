@@ -167,6 +167,7 @@
       "name"       : "🏆｜優影｜",
       "type"       : 3,
       "api"        : "csp_YspAmns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",     
       "searchable" : 1,
       "quickSearch": 1,
       "changeable" : 1
@@ -176,6 +177,7 @@
       "name"       : "🏆｜歐樂｜",
       "type"       : 3,
       "api"        : "csp_OlyyAmns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable" : 1,
       "quickSearch": 1,
       "changeable" : 1
@@ -940,7 +942,7 @@
     },
         {
             "key": "zhiqiu",
-            "name": "🥇｜听风｜高清◎挑線路",
+            "name": "🥇｜聽風｜高清◎挑線路",
             "type": 3,
       "searchable" : 1,
       "quickSearch": 1,

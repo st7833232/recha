@@ -2,9 +2,34 @@
   "spider": "./jar/fm.jar;md5;b0adab2fad1de8871b9533527f407cdf",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.06.30_Ver.6 全面整理",
+  "notice": "115.07.04_Ver.1 新增Uvod.py",
   "sites": [  
-
+    {
+      "key": "Uvod",
+      "name": "Uvod.py",
+      "type": 3,
+      "api": "./py/Uvod.py",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "order_num": 0,
+      "style": {
+        "type": "rect"
+      },
+      "ext": ""
+    },
+		{
+			"key": "dttv",
+			"name": "蛋塔.py",
+			"type": 3,
+			"api": "./py/蛋挞TV.py"
+		},
+		{
+			"key": "hgdj",
+			"name": "红果短劇.py",
+			"type": 3,
+			"api": "./py/红果短剧.py"
+		},    
     {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",
@@ -127,22 +152,11 @@
       "name"       : "🏆｜銀牌｜高清",
       "type"       : 3,
       "api"        : "csp_AiGuaAmns",
-      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
+"jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable" : 1,
       "quickSearch": 1,
       "changeable" : 1
     },
-    {
-      "key"        : "奥特",
-      "name"       : "🏆｜銅牌｜高清(無廣告)",
-      "type"       : 3,
-      "api"        : "csp_AueteGuard",
-      "jar"        : "./jar/fan-0628.jar;md5;b651deb915a5cb34e0882cdfeffa8eef",
-      "timeout"    : 10,
-      "searchable" : 1,
-      "quickSearch": 1,
-      "changeable" : 1
-    },    
     {
       "key"       : "py_aidianying",
       "name"      : "🏆｜鐵牌｜藍光",
@@ -152,18 +166,6 @@
       "filterable": 0,
       "changeable": 1
     },
-    {
-      "key": "猫猫",
-      "name": "🏆｜猫猫｜高清◎秒播(無廣告)",
-      "type": 3,
-      "api": "csp_AppSxGuard",
-      "jar": "./jar/fan-0628.jar;md5;b651deb915a5cb34e0882cdfeffa8eef",
-      "timeout": 10,
-      "searchable": 1,
-      "quickSearch": 1,
-      "changeable": 1,
-      "ext": "rfOb1uAWbkRHp7hdxprG9un3+TDC2t/rlTwlcMr+ChdbeV8Q9y9xsKxqfbtO0M05tGWcacFVm2c45jhyH6t1Rt6A6PjICGqxV+uN1uOqS2/x0Vp5J0Vfo8usQADpHg=="
-    },    
     {
       "key": "Qile优视频2",
       "name": "🏆｜Uvod｜藍光◎秒播",
@@ -190,7 +192,7 @@
       "name"       : "🏆｜歐樂｜",
       "type"       : 3,
       "api"        : "csp_OlyyAmns",
-      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",     
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable" : 1,
       "quickSearch": 1,
       "changeable" : 1
@@ -297,6 +299,7 @@
       "key"        : "YIys",
       "type"       : 3,
       "api"        : "csp_YIysAmns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable" : 1,
       "quickSearch": 1,
       "changeable" : 1
@@ -306,6 +309,7 @@
       "key"        : "JinPai",
       "type"       : 3,
       "api"        : "csp_JinPaiAmns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable" : 1,
       "quickSearch": 1,
       "changeable" : 0
@@ -388,6 +392,7 @@
       "name"       : "🏆｜哔嘀｜2K",
       "type"       : 3,
       "api"        : "csp_BidysAmns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable" : 1,
       "quickSearch": 1,
       "changeable" : 0,
@@ -398,6 +403,7 @@
       "name"       : "🏆｜愛壹帆｜",
       "type"       : 3,
       "api"        : "csp_AiyfAmns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable" : 1,
       "quickSearch": 1,
       "changeable" : 0
@@ -553,6 +559,7 @@
       "key": "Bidys",
       "type": 3,
       "api": "csp_BidysAmns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
@@ -579,30 +586,6 @@
         "decrypt": "0"
       }
     },
-    {
-      "key": "花花",
-      "name": "🥇｜花花｜高清◎秒播(無廣告)",
-      "type": 3,
-      "api": "csp_AppSxGuard",
-      "jar": "./jar/fan-0628.jar;md5;b651deb915a5cb34e0882cdfeffa8eef",
-      "timeout": 10,
-      "searchable": 1,
-      "quickSearch": 1,
-      "changeable": 1,
-      "ext": "rfOb1uAWbkRHp7hdxprG9un3+TbEn4q2l2kibom2DB9cJ0IB72Vu7apib64Gl9Ew6WDTJcIVzWsluDxqEaBqWIyM77GBXCPqCPmCyOr3RGfwjlsjchkArMHzTFT1VY9QUooz8m8BXA2mSa/whkG7SpZP100qUm6hMmTjm8YQQ51m6mxEE7hhEK1eNQ=="
-    },
-    {
-      "key"        : "文采",
-      "name"       : "🥇｜文采｜高清◎秒播(無廣告)",
-      "type"       : 3,
-      "api"        : "csp_JpysGuard",
-      "jar"        : "./jar/fan-0628.jar;md5;b651deb915a5cb34e0882cdfeffa8eef",
-      "timeout"    : 10,
-      "playerType" : 2,
-      "searchable" : 1,
-      "quickSearch": 1,
-      "changeable" : 1
-    },    
         {
             "key": "huaisang",
             "name": "🥇｜怀桑｜高清",
@@ -618,6 +601,7 @@
       "name"       : "🥇｜韓圈｜高清",
       "type"       : 3,
       "api"        : "csp_HxqAmns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable" : 1,
       "quickSearch": 1,
       "changeable" : 0
@@ -657,6 +641,7 @@
       "key": "NewGrV2",
       "type": 3,
       "api": "csp_NewGrV2Amns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
@@ -667,6 +652,7 @@
       "key": "AppV6Dxs",
       "type": 3,
       "api": "csp_AppV6Amns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
@@ -677,6 +663,7 @@
       "key": "AppV6Tg",
       "type": 3,
       "api": "csp_AppV6Amns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
@@ -687,6 +674,7 @@
       "key": "AppV7Fz",
       "type": 3,
       "api": "csp_AppV7Amns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
@@ -697,6 +685,7 @@
       "key": "AppV7Xy",
       "type": 3,
       "api": "csp_AppV7Amns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
@@ -707,6 +696,7 @@
       "key": "AppV7Zjdr",
       "type": 3,
       "api": "csp_AppV7Amns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
@@ -717,6 +707,7 @@
       "key": "AppV7Xyz",
       "type": 3,
       "api": "csp_AppV7Amns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
@@ -727,6 +718,7 @@
       "key": "AppV7Xnm",
       "type": 3,
       "api": "csp_AppV7Amns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
@@ -737,6 +729,7 @@
       "key": "AppV7Mtq",
       "type": 3,
       "api": "csp_AppV7Amns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
@@ -747,6 +740,7 @@
       "key": "AppV7Llq",
       "type": 3,
       "api": "csp_AppV7Amns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
@@ -757,6 +751,7 @@
       "key": "AppV7Xsz",
       "type": 3,
       "api": "csp_AppV7Amns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
@@ -767,6 +762,7 @@
       "key": "AppV7Xhr",
       "type": 3,
       "api": "csp_AppV7Amns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
@@ -824,6 +820,7 @@
       "name": "🥇｜大師｜",
       "type": 3,
       "api": "csp_AppV6Amns",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 1,
@@ -979,7 +976,7 @@
     },
         {
             "key": "zhiqiu",
-            "name": "🥇｜听风｜高清◎挑線路",
+            "name": "🥇｜聽風｜高清◎挑線路",
             "type": 3,
       "searchable" : 1,
       "quickSearch": 1,
@@ -1142,6 +1139,19 @@
         "json"  : "./json/哔哩合集.json"
       },
       "timeout"    : 20
+    },
+    {
+      "key"        : "drpyS_听友[听]",
+      "name"       : "🎧｜听友｜有聲書",
+      "type"       : 4,
+      "api"        : "http://149.118.133.251:5757/api/听友[听]",
+      "searchable" : 2,
+      "filterable" : 1,
+      "quickSearch": 1,
+      "title"      : "听友[听]",
+      "类型"         : "听书",
+      "lang"       : "ds",
+      "ext"        : ""
     },
     {
       "key"        : "py_愛電影.py",
@@ -1872,6 +1882,27 @@
       "changeable": 0
     },
     {
+      "name"       : "🎡｜番薯",
+      "key"        : "FanShu",
+      "type"       : 3,
+      "api"        : "csp_FanShuAmns",
+      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
+      "searchable" : 1,
+      "quickSearch": 1,
+      "changeable" : 0
+    },
+    {
+      "key"        : "Dm84",
+      "name"       : "🎡｜巴士",
+      "type"       : 3,
+      "api"        : "csp_Dm84Guard",
+      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
+      "timeout"    : 10,
+      "searchable" : 1,
+      "quickSearch": 1,
+      "changeable" : 1
+    },
+    {
       "key": "AowuDmAw",
       "name": "🎡｜嗷嗚",
       "type": 3,
@@ -2172,18 +2203,18 @@
       }
     },
         {
-      "key"        : "drpyS_听友[听]",
-      "name"       : "📻｜听友｜有聲書",
-      "type"       : 4,
-      "api"        : "http://149.118.133.251:5757/api/听友[听]",
-      "searchable" : 2,
-      "filterable" : 1,
-      "quickSearch": 1,
-      "title"      : "听友[听]",
-      "类型"         : "听书",
-      "lang"       : "ds",
-      "ext"        : ""
-    },
+            "key": "TingBook",
+            "name": "📻｜六月｜有声",
+            "type": 3,
+            "api": "csp_TingBook",
+            "jar": "./jar/fish06281030.jar;md5;5d14ddf4289dcbcc4bd55705d3315369",
+            "searchable": 1,
+            "indexs": 0,
+            "ext": "https://app.365ting.com",
+            "style": {
+                "type": "list"
+            }
+        },
         {
             "key": "TingBookJinXia",
             "name": "📻｜堇夏｜有声",

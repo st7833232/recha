@@ -1,114 +1,306 @@
+#coding=utf-8
 import sys
 import re
+import json
+import html as html_module
 import requests
+sys.path.append('..')
 from base.spider import Spider
-from urllib3 import disable_warnings
-disable_warnings()
 
 class Spider(Spider):
-    host = "https://cn1.xgcartoon.com"
-    headers = {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-            }
-    def getName(self):return "西瓜卡通"
-    def init(self, extend=""):pass
+    def __init__(self):
+        super().__init__()
+        self.site = 'https://cn1.xgcartoon.com'
+        self.video_base = 'https://xgct-video.bzcdn.net'
+        self.frame_base = 'https://pframe.xgcartoon.com'
+        self.session = requests.Session()
+        self.ua = 'Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36'
+        self.session.headers.update({'User-Agent': self.ua})
+        self.cateManual = {}
+
+    def _fetch_categories(self):
+        html = self._get(f'{self.site}/classify')
+        if not html:
+            return
+        for m in re.finditer(r'href="/classify\?type=([^&"]+)[^"]*"[^>]*>([^<]*)<', html):
+            tid = m.group(1).replace('%2a', '*').strip()
+            name = m.group(2).strip()
+            if name and name != '\u5168\u90e8' and tid != '*' and tid not in self.cateManual:
+                self.cateManual[tid] = name
+
+    def _clean(self, text):
+        if not text:
+            return ''
+        text = re.sub(r'<[^>]+>', '', text)
+        text = html_module.unescape(text)
+        text = text.replace('&amp;', '&').replace('\xa0', ' ').replace('\u3000', ' ')
+        text = ' '.join(text.split())
+        return text.strip()
+
+    def _get(self, url):
+        try:
+            r = self.session.get(url, timeout=15, headers={'Referer': self.site})
+            r.encoding = 'utf-8'
+            return r.text
+        except:
+            return ''
+
+    def _fetch_api_list(self, page, tid='', limit=36):
+        videos = []
+        api_type = tid if tid else '*'
+        url = f'{self.site}/api/amp_query_cartoon_list?type={api_type}&region=*&filter=*&filter=*&page={page}&limit={limit}&language=cn'
+        html = self._get(url)
+        if not html:
+            return videos, 0
+        try:
+            data = json.loads(html)
+            items = data.get('items', [])
+            next_url = data.get('next', '')
+            has_more = 1 if next_url else 0
+        except:
+            return videos, 0
+        for item in items:
+            cartoon_id = item.get('cartoon_id', '')
+            name = item.get('name', '')
+            author = item.get('author', '')
+            region = item.get('region_name', '')
+            topic_img = item.get('topic_img', '')
+            type_names = item.get('type_names', [])
+            if not cartoon_id or not name:
+                continue
+            pic = f'https://static-a.xgcartoon.com/cover/{topic_img}' if topic_img else ''
+            tag_str = '/'.join(type_names[:2]) if type_names else ''
+            remarks = author if author else region
+            if tag_str:
+                remarks = f'{remarks} {tag_str}' if remarks else tag_str
+            videos.append({
+                'vod_id': cartoon_id,
+                'vod_name': name,
+                'vod_pic': pic,
+                'vod_remarks': remarks[:40]
+            })
+        return videos, has_more
+
+    def _extract_list(self, html):
+        videos = []
+        seen = set()
+        for m in re.finditer(r'href="/detail/([^"]+)"', html):
+            vid = m.group(1).strip()
+            if vid in seen:
+                continue
+            seen.add(vid)
+            snippet = html[m.start():m.start()+1000]
+            title = ''
+            tm = re.search(r'class="h3[^"]*"[^>]*>\s*(.*?)\s*</h3>', snippet, re.DOTALL)
+            if tm:
+                title = self._clean(tm.group(1))
+            if not title:
+                tm = re.search(r'class="h3[^"]*"[^>]*>\s*(.*?)\s*</div>', snippet, re.DOTALL)
+                if tm:
+                    title = self._clean(tm.group(1))
+            if not title:
+                tm = re.search(r'class="title"[^>]*>\s*(.*?)\s*</(?:a|h\d|div)>', snippet, re.DOTALL)
+                if tm:
+                    title = self._clean(tm.group(1))
+            if not title:
+                tm = re.search(r'<h2[^>]*>(.*?)</h2>', snippet, re.DOTALL)
+                if tm:
+                    title = self._clean(tm.group(1))
+            pic = ''
+            pm = re.search(r'src="(https://static-a\.xgcartoon\.com/[^"]+\.jpg[^"]*)"', snippet)
+            if pm:
+                pic = pm.group(1).strip().replace('&amp;', '&')
+            tags = re.findall(r'class="tag[^"]*"[^>]*>\s*(.*?)\s*<', snippet)
+            tag_str = ' '.join(t.strip() for t in tags if t.strip())[:30]
+            author = ''
+            am = re.search(r'(?:class="author"|topic-list-item--author)[^>]*>\s*(.*?)\s*<', snippet, re.DOTALL)
+            if am:
+                author = self._clean(am.group(1))
+            remarks = tag_str
+            if author:
+                remarks = (author + ' ' + remarks) if remarks else author
+            if title and pic:
+                videos.append({
+                    'vod_id': vid,
+                    'vod_name': title,
+                    'vod_pic': pic,
+                    'vod_remarks': remarks[:40]
+                })
+        return videos
+
+    def init(self, extend=''):
+        pass
+
+    def getName(self):
+        return '西瓜卡通'
+
+    def isVideoFormat(self, url):
+        pass
+
+    def manualVideoCheck(self):
+        pass
+
     def homeContent(self, filter):
-        classes = [
-            {"type_id": "%2a", "type_name": "全部"},
-            {"type_id": "cn", "type_name": "国漫"},
-            {"type_id": "jp", "type_name": "日漫"},
-            {"type_id": "kr", "type_name": "韩漫"},
-        ]
-        return {"class": classes}
+        result = {'class': [], 'filters': {}, 'list': [], 'parse': 0, 'jx': 0}
+        if not self.cateManual:
+            self._fetch_categories()
+        for tid, name in self.cateManual.items():
+            result['class'].append({'type_id': str(tid), 'type_name': str(name)})
+        return result
+
+    def homeVideoContent(self):
+        result = {'list': [], 'parse': 0, 'jx': 0}
+        videos, _ = self._fetch_api_list(1)
+        result['list'] = videos
+        return result
 
     def categoryContent(self, tid, pg, filter, extend):
-        curr_pg = int(pg)
-        url = f"{self.host}/classify?type=%2a&region={tid}&state=%2a&filter=%2a&page={curr_pg}"
-        res = requests.get(url, headers=self.headers, verify=False, timeout=10)
-        html = res.text
-        blocks = re.findall(r'<div class="[^"]*topic-list-box"[^>]*>(.*?)</a>\s*</div>', html, re.S)
-        vod_list = []
-        for block in blocks:
-            id_match = re.search(r'href="(/detail/[^"]+)"', block)
-            pic_match = re.search(r'<amp-img\s+src="([^"]+)"', block)
-            name_match = re.search(r'class="h3[^"]*"[^>]*>([^<]+)</div>', block)
-            if id_match and name_match:
-                vod_pic = pic_match.group(1).replace("&amp;", "&")                
-                vod_list.append({
-                    "vod_id": id_match.group(1).replace('/detail/', '').strip(),
-                    "vod_name": name_match.group(1).strip(),
-                    "vod_pic": vod_pic,
-                    "vod_remarks": ""
-                })
-        last_page = curr_pg + 1 if len(vod_list) >= 12 else curr_pg
-        return {
-            "page": curr_pg,
-            "pagecount": last_page,
-            "limit": len(vod_list),
-            "total": 999,
-            "list": vod_list
-        }
-
-    def searchContent(self, key, quick, pg="1"):
-        url = f"{self.host}/search?q={key}"
-        res = requests.get(url, headers=self.headers, verify=False, timeout=10)
-        html = res.text
-        blocks = re.findall(r'<div class="[^"]*topic-list-box"[^>]*>(.*?)</a>\s*</div>', html, re.S)
-        vod_list = []
-        for block in blocks:
-            id_match = re.search(r'href="(/detail/[^"]+)"', block)
-            pic_match = re.search(r'<amp-img\s+src="([^"]+)"', block)
-            name_match = re.search(r'class="h3[^"]*"[^>]*>([^<]+)</div>', block)
-            if id_match and name_match:
-                vod_pic = pic_match.group(1).replace("&amp;", "&")                
-                vod_list.append({
-                    "vod_id": id_match.group(1).replace('/detail/', '').strip(),
-                    "vod_name": name_match.group(1).strip(),
-                    "vod_pic": vod_pic,
-                    "vod_remarks": ""
-                })
-            
-        return {"list": vod_list}
+        result = {'list': [], 'parse': 0, 'jx': 0}
+        page = int(pg) if pg else 1
+        videos, has_more = self._fetch_api_list(page, tid=tid)
+        result['list'] = videos
+        result['page'] = page
+        result['pagecount'] = page + 1 if has_more else page
+        result['limit'] = len(videos)
+        result['total'] = len(videos)
+        return result
 
     def detailContent(self, ids):
-        mid = ids[0]
-        url = f"{self.host}/detail/{mid}"
-        res = requests.get(url, headers=self.headers, verify=False, timeout=10)
-        html = res.text
-        name_match = re.search(r'class="h1[^"]*"[^>]*>([^<]+)</h1>', html)
-        if not name_match:
-            name_match = re.search(r'class="title2">([^<]+)</h2>', html) # 备用
-        pic_match = re.search(r'<img[^>]+src="([^"]+)"[^>]+class="[^"]*replaced-content', html)
-        play_list_matches = re.findall(r'cartoon_id=([^&"\'\s]+)(?:&amp;|&)chapter_id=([^"\'\s]+)"\s+title="([^"]+)"', html)
-        play_urls = []
-        for cid, chap_id, title in play_list_matches:
-            p_url = f"{cid}/{chap_id}"
-            play_urls.append(f"{title}${p_url}")
+        result = {'list': [], 'parse': 0, 'jx': 0}
+        vid = ''
+        if isinstance(ids, list):
+            vid = ids[0] if ids else ''
+        elif ids:
+            vid = str(ids)
+        if not vid:
+            return result
+
+        detail_html = self._get(f'{self.site}/detail/{vid}')
+
+        title = ''
+        tm = re.search(r'<h1[^>]*class="h1"[^>]*>(.*?)</h1>', detail_html, re.DOTALL)
+        if tm:
+            title = self._clean(tm.group(1))
+        if not title:
+            tm = re.search(r'<title>([^<]+)', detail_html)
+            if tm:
+                title = self._clean(re.sub(r'\s*[-–—|].*$', '', tm.group(1)))
+
+        pic = ''
+        pm = re.search(r'src="(https://static-a\.xgcartoon\.com/[^"]+\.jpg[^"]*)"', detail_html)
+        if pm:
+            pic = pm.group(1).strip().replace('&amp;', '&')
+
+        tags = re.findall(r'class="tag[^"]*"[^>]*>\s*(.*?)\s*</div>', detail_html, re.DOTALL)
+        tag_str = ' / '.join(self._clean(t) for t in tags if self._clean(t))
+
+        desc = ''
+        desc_block = re.search(r'detail-right__desc[^>]*data-v[^>]*>.*?</div>\s*<p[^>]*>\s*(.*?)\s*</p>', detail_html, re.DOTALL)
+        if desc_block:
+            desc = self._clean(desc_block.group(1))
+
+        author = ''
+        am = re.search(r'</h1>\s*<div[^>]*>\s*(.*?)\s*</div>', detail_html, re.DOTALL)
+        if am:
+            author = self._clean(am.group(1))
+        if not author:
+            am = re.search(r'detail-right__title.*?<div[^>]*>\s*(.*?)\s*</div>', detail_html, re.DOTALL)
+            if am:
+                author = self._clean(am.group(1))
+
+        episodes = []
+        seen_ch = set()
+        for em in re.finditer(r'href="(/user/page_direct\?[^"]+)"[^>]*title="([^"]*)"', detail_html):
+            href = em.group(1).replace('&amp;', '&')
+            label = self._clean(em.group(2))
+            cm = re.search(r'chapter_id=([^&]+)', href)
+            cid = cm.group(1) if cm else ''
+            if cid in seen_ch:
+                continue
+            seen_ch.add(cid)
+            if not label:
+                label = cid
+            episodes.append(f'{label}${href}')
+
+        if not episodes:
+            for em in re.finditer(r'iframe[^>]*src="https://pframe\.xgcartoon\.com/player\.htm\?vid=([^&"]+)', detail_html):
+                v_id = em.group(1)
+                if v_id not in seen_ch:
+                    seen_ch.add(v_id)
+                    m3u8 = f'{self.video_base}/{v_id}/playlist.m3u8'
+                    episodes.append(f'\u64ad\u653e${m3u8}')
+
         vod = {
-            "vod_id": mid,
-            "vod_name": name_match.group(1).strip() if name_match else "未知影片",
-            "vod_pic": pic_match.group(1) if pic_match else "",
-            "vod_play_from": "西瓜线路",
-            "vod_play_url": "#".join(play_urls),
-            "vod_content": "暂无简介"
+            'vod_id': vid,
+            'vod_name': title,
+            'vod_pic': pic,
+            'type_name': tag_str,
+            'vod_year': '',
+            'vod_area': '',
+            'vod_remarks': author,
+            'vod_actor': author,
+            'vod_director': bytes.fromhex('e6989fe6b2b3').decode('utf-8'),
+            'vod_content': desc,
+            'vod_play_from': '\u64ad\u653e',
+            'vod_play_url': '#'.join(episodes) if episodes else ''
         }
-        return {"list": [vod]}
+        result['list'].append(vod)
+        return result
 
     def playerContent(self, flag, id, vipFlags):
-        play_page_url = f"https://www.cnxgct.com/video/{id}.html"
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            "Referer": f"{self.host}/"
-        }
+        result = {}
         try:
-            res = requests.get(play_page_url, headers=headers, verify=False, timeout=10)
-            html = res.text
-            vid_match = re.search(r'vid=([a-f0-9\-]+)', html)
-            if vid_match:
-                vid = vid_match.group(1)
-                final_url = f"https://xgct-video.bzcdn.net/{vid}/playlist.m3u8"
-                return {"parse": 0, "url": final_url, "header": headers}
-        except Exception as e:
-            pass
-        return {"parse": 1, "url": play_page_url, "header": headers}
+            if id.startswith('http') and '.m3u8' in id:
+                result['parse'] = 0
+                result['url'] = id
+                result['jx'] = 0
+                result['header'] = {
+                    'User-Agent': self.ua,
+                    'Referer': self.frame_base + '/'
+                }
+                return result
 
+            if not id.startswith('http'):
+                play_url = self.site + id
+            else:
+                play_url = id
+
+            html = self._get(play_url)
+            m = re.search(r'iframe[^>]*src="https://pframe\.xgcartoon\.com/player\.htm\?vid=([^&"]+)', html)
+            if m:
+                vid = m.group(1)
+                m3u8 = f'{self.video_base}/{vid}/playlist.m3u8'
+                result['parse'] = 0
+                result['url'] = m3u8
+                result['jx'] = 0
+                result['header'] = {
+                    'User-Agent': self.ua,
+                    'Referer': self.frame_base + '/'
+                }
+                return result
+
+            result['parse'] = 1
+            result['url'] = play_url
+            result['jx'] = 0
+            result['header'] = {
+                'User-Agent': self.ua,
+                'Referer': self.site + '/'
+            }
+        except Exception as e:
+            print(f'playerContent error: {e}')
+
+        if not result:
+            result = {'parse': 1, 'url': '', 'jx': 0, 'header': {}}
+        return result
+
+    def searchContent(self, key, quick, pg='1'):
+        result = {'list': [], 'parse': 0, 'jx': 0}
+        wd = requests.utils.quote(key)
+        url = f'{self.site}/search?q={wd}'
+        html = self._get(url)
+        if html:
+            result['list'] = self._extract_list(html)
+        return result
+
+    def localProxy(self, params):
+        return [200, "video/MP2T", {}, ""]

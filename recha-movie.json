@@ -2,34 +2,10 @@
   "spider": "./jar/fm.jar;md5;b0adab2fad1de8871b9533527f407cdf",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.07.04_Ver.1 新增Uvod.py",
+  "notice": "115.07.04_Ver.2 新增Uvod.py",
   "sites": [  
-    {
-      "key": "Uvod",
-      "name": "Uvod.py",
-      "type": 3,
-      "api": "./py/Uvod.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "order_num": 0,
-      "style": {
-        "type": "rect"
-      },
-      "ext": ""
-    },
-		{
-			"key": "dttv",
-			"name": "蛋塔.py",
-			"type": 3,
-			"api": "./py/蛋挞TV.py"
-		},
-		{
-			"key": "hgdj",
-			"name": "红果短劇.py",
-			"type": 3,
-			"api": "./py/红果短剧.py"
-		},    
+
+  
     {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",
@@ -178,8 +154,28 @@
       "filterable": 1
     },
     {
+      "key": "Uvod",
+      "name": "🏆｜Uvod｜備用",
+      "type": 3,
+      "api": "./py/Uvod.py",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "order_num": 0,
+      "style": {
+        "type": "rect"
+      },
+      "ext": ""
+    },
+		{
+			"key": "dttv",
+			"name": "🏆｜蛋塔｜高清",
+			"type": 3,
+			"api": "./py/蛋挞TV.py"
+		},    
+    {
       "key"        : "Ysp",
-      "name"       : "🏆｜優影｜",
+      "name"       : "🏆｜優影｜高清",
       "type"       : 3,
       "api"        : "csp_YspAmns",
       "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",     
@@ -189,7 +185,7 @@
     },
     {
       "key"        : "Olyy",
-      "name"       : "🏆｜歐樂｜",
+      "name"       : "🏆｜歐樂｜高清",
       "type"       : 3,
       "api"        : "csp_OlyyAmns",
       "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
@@ -1422,6 +1418,12 @@
         "dataiv" : "1111111111111111"
       }
     },
+    		{
+			"key": "hgdj",
+			"name": "📺｜红果短劇",
+			"type": 3,
+			"api": "./py/红果短剧.py"
+		},  
     {
       "key": "星芽短剧",
       "name": "📺｜星芽短劇",

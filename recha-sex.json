@@ -10,7 +10,7 @@
   ],
   "logo"     : ".美.gif",
   "wallpaper": "https://picsum.photos/1080/",
-  "notice"   : "版本：115.04.06.Ver.2",
+  "notice"   : "版本：115.07.04.Ver.2",
   "sites"    : [
         {
       "key": "netflav",
@@ -28,7 +28,7 @@
       "api": "csp_GM",
       "jar": "./jar/GM.jar;md5;a36831ed798998bbf38bb5862c32f96d",
       "ext": {
-        "userScript": "./File/js/Abalone/netflav.user.js",
+        "userScript": "./js/netflav.user.js",
         "debug": false,
         "webViewSettings": {
           "blockNetworkImage": true,
@@ -81,7 +81,7 @@
       "api": "csp_GM",
       "jar": "./jar/GM.jar;md5;a36831ed798998bbf38bb5862c32f96d",
       "ext": {
-        "userScript": "./File/js/Abalone/123av.user.js",
+        "userScript": "./js/123av.user.js",
         "debug": false,
         "webViewSettings": {
           "blockNetworkImage": true,
@@ -121,62 +121,6 @@
       }
     },
     {
-      "key": "MissAV",
-      "name": "MissAV",
-      "type": 3,
-      "quickSearch": 1,
-      "searchable": 1,
-      "changeable": 0,
-      "filterable": 1,
-      "timeout": 60,
-      "style": {
-        "type": "rect",
-        "ratio": 1.49
-      },
-      "api": "csp_GM",
-      "jar": "./jar/GM.jar;md5;a36831ed798998bbf38bb5862c32f96d",
-      "ext": {
-        "userScript": "./File/js/Abalone/missav.user.js",
-        "debug": false,
-        "webViewSettings": {
-          "blockNetworkImage": true,
-          "blockList": [
-            "*.ico",
-            "*.png",
-            "*.css",
-            "*.svg",
-            "https://*.cloudflareinsights.com/*",
-            "https://*.googletagmanager.com/*",
-            "https://*.ktkjmp.com/*",
-            "https://*.magsrv.com/*",
-            "https://*.mnaspm.com/*",
-            "https://*.myavlive.com/*",
-            "https://*.recombee.com/*",
-            "https://*.rmhfrtnd.com/*",
-            "https://*.trackwilltrk.com/*",
-            "https://*.tsyndicate.com/*",
-            "https://missav.com/fonts/*",
-            "https://tsyndicate.com/*",
-            "https://hartattenuate.com/*"
-          ]
-        },
-        "spider": {
-          "homeContent": {
-            "loadUrl": "https://missav.ws/cn/"
-          },
-          "categoryContent": {
-            "loadUrl": "https://missav.ws/cn/${tid}?page=${pg:-1}${filter:-}${sort:-}"
-          },
-          "detailContent": {
-            "loadUrl": "https://missav.ws/cn/${id}"
-          },
-          "searchContent": {
-            "loadUrl": "https://missav.ws/cn/search/${key}?page=${pg:-1}"
-          }
-        }
-      }
-    },
-    {
       "key": "supjav",
       "name": "SupJav",
       "type": 3,
@@ -192,7 +136,7 @@
       "api": "csp_GM",
       "jar": "./jar/GM.jar;md5;a36831ed798998bbf38bb5862c32f96d",
       "ext": {
-        "userScript": "./File/js/Abalone/supjav.user.js",
+        "userScript": "./js/supjav.user.js",
         "debug": false,
         "webViewSettings": {
           "blockNetworkImage": true,
@@ -263,7 +207,7 @@
       "api": "csp_GM",
       "jar": "./jar/GM.jar;md5;a36831ed798998bbf38bb5862c32f96d",
       "ext": {
-        "userScript": "./File/js/Abalone/xojav.user.js",
+        "userScript": "./js//xojav.user.js",
         "debug": false,
         "webViewSettings": {
           "blockNetworkImage": true,

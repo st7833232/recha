@@ -4,6 +4,20 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.07.01_Ver.1 新增蛋塔跟紅果",
   "sites": [  
+    {
+      "key": "Uvod",
+      "name": "Uvod.py",
+      "type": 3,
+      "api": "./py/Hunter/Uvod.py",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "order_num": 0,
+      "style": {
+        "type": "rect"
+      },
+      "ext": ""
+    },
 		{
 			"key": "dttv",
 			"name": "蛋塔.py",

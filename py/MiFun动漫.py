@@ -246,4 +246,3 @@ class Spider(Spider):
         h = MD5.new()
         h.update(text.encode('utf-8'))
         return h.hexdigest()
-

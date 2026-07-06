@@ -2,10 +2,83 @@
   "spider": "./jar/fm.jar;md5;b0adab2fad1de8871b9533527f407cdf",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.07.05_Ver.1 修復摸魚包不適配",
+  "notice": "115.07.06_Ver.1 嘗試PHP源",
   "sites": [  
-
-  
+        {
+            "key": "legado_novel",
+            "name": "📚 整合小说源",
+            "type": 3,
+            "api": "csp_ProxySpider",
+            "ext": {
+                "class": "LegadoSpider",
+                "ext": "http://zhangqun1818.serv00.net/zq/sources.json"
+            },
+            "style": {
+                "type": "rect",
+                "ratio": 1.33
+            }
+        },
+          {
+            "key": "爱瓜TV",
+            "name": "愛瓜TV｜PHP",
+            "type": 4,
+            "api": "http://zhangqun1818.serv00.net/aigua1.php",
+            "searchable": 1,
+            "style": {
+                "type": "rect",
+                "ratio": 1.33
+            },
+            "changeable": 1
+        },
+        {
+            "key": "采集集合",
+            "name": "采集集合｜PHP",
+            "type": 4,
+            "api": "http://zhangqun1818.serv00.net/cj/cjjh.php",
+            "searchable": 1,
+            "style": {
+                "type": "rect",
+                "ratio": 1.33
+            },
+            "ext": "0",
+            "changeable": 1
+        },
+        {
+            "key": "js集合",
+            "name": "js集合｜PHP",
+            "type": 4,
+            "api": "http://zhangqun1818.serv00.net/js.php",
+            "searchable": 1,
+            "style": {
+                "type": "rect",
+                "ratio": 1.33
+            },
+            "changeable": 1
+        },
+        {
+            "key": "php集合",
+            "name": "php集合｜PHP",
+            "type": 4,
+            "api": "http://zhangqun1818.serv00.net/php.php",
+            "searchable": 1,
+            "style": {
+                "type": "rect",
+                "ratio": 1.33
+            },
+            "changeable": 1
+        },
+        {
+            "key": "python集合",
+            "name": "python集合｜PHP",
+            "type": 4,
+            "api": "http://zhangqun1818.serv00.net/py.php",
+            "searchable": 1,
+            "style": {
+                "type": "rect",
+                "ratio": 1.33
+            },
+            "changeable": 1
+        },        
     {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",

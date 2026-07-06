@@ -9,6 +9,7 @@
             "name": "📚 整合小说源",
             "type": 3,
             "api": "csp_ProxySpider",
+            "jar": "./jar/pro.jar",
             "ext": {
                 "class": "LegadoSpider",
                 "ext": "http://zhangqun1818.serv00.net/zq/sources.json"
@@ -23,6 +24,7 @@
             "name": "愛瓜TV｜PHP",
             "type": 4,
             "api": "http://zhangqun1818.serv00.net/aigua1.php",
+            "jar": "./jar/pro.jar",
             "searchable": 1,
             "style": {
                 "type": "rect",
@@ -35,6 +37,7 @@
             "name": "采集集合｜PHP",
             "type": 4,
             "api": "http://zhangqun1818.serv00.net/cj/cjjh.php",
+            "jar": "./jar/pro.jar",
             "searchable": 1,
             "style": {
                 "type": "rect",
@@ -48,6 +51,7 @@
             "name": "js集合｜PHP",
             "type": 4,
             "api": "http://zhangqun1818.serv00.net/js.php",
+            "jar": "./jar/pro.jar",
             "searchable": 1,
             "style": {
                 "type": "rect",
@@ -60,6 +64,7 @@
             "name": "php集合｜PHP",
             "type": 4,
             "api": "http://zhangqun1818.serv00.net/php.php",
+            "jar": "./jar/pro.jar",
             "searchable": 1,
             "style": {
                 "type": "rect",
@@ -69,9 +74,10 @@
         },
         {
             "key": "python集合",
-            "name": "python集合｜PHP",
+            "name": "python集合",
             "type": 4,
             "api": "http://zhangqun1818.serv00.net/py.php",
+            "jar": "./jar/pro.jar",
             "searchable": 1,
             "style": {
                 "type": "rect",

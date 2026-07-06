@@ -4,21 +4,6 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.07.06_Ver.2 嘗試PHP源",
   "sites": [  
-        {
-            "key": "legado_novel",
-            "name": "📚 整合小说源",
-            "type": 3,
-            "api": "csp_ProxySpider",
-            "jar": "./jar/pro.jar",
-            "ext": {
-                "class": "LegadoSpider",
-                "ext": "http://zhangqun1818.serv00.net/zq/sources.json"
-            },
-            "style": {
-                "type": "rect",
-                "ratio": 1.33
-            }
-        },
           {
             "key": "爱瓜TV",
             "name": "愛瓜TV｜PHP",
@@ -45,46 +30,7 @@
             },
             "ext": "0",
             "changeable": 1
-        },
-        {
-            "key": "js集合",
-            "name": "js集合｜PHP",
-            "type": 4,
-            "api": "http://zhangqun1818.serv00.net/js.php",
-            "jar": "./jar/pro.jar",
-            "searchable": 1,
-            "style": {
-                "type": "rect",
-                "ratio": 1.33
-            },
-            "changeable": 1
-        },
-        {
-            "key": "php集合",
-            "name": "php集合｜PHP",
-            "type": 4,
-            "api": "http://zhangqun1818.serv00.net/php.php",
-            "jar": "./jar/pro.jar",
-            "searchable": 1,
-            "style": {
-                "type": "rect",
-                "ratio": 1.33
-            },
-            "changeable": 1
-        },
-        {
-            "key": "python集合",
-            "name": "python集合",
-            "type": 4,
-            "api": "http://zhangqun1818.serv00.net/py.php",
-            "jar": "./jar/pro.jar",
-            "searchable": 1,
-            "style": {
-                "type": "rect",
-                "ratio": 1.33
-            },
-            "changeable": 1
-        },        
+        },     
     {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",

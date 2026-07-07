@@ -1,5 +1,5 @@
 {
-	"spider":"./pg.jar",
+	"spider":"./jar/pg.jar",
 	"sites":[
 		{
 			"key": "豆瓣",
@@ -25,7 +25,7 @@
                 "type": "rect",
                   "ratio": 1.48
             },
-            "ext": "null$$$https://sukebei.nyaa.si$$$proxy"
+            "ext": "https://sukebei.nyaa.si"
         },
 		{"key":"TGDouban","name":"TG豆瓣","type":3,"api":"csp_TGDouban","timeout":120, 
 			"ext":{

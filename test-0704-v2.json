@@ -4,6 +4,38 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.07.06_Ver.2 嘗試PHP源",
   "sites": [  
+    {
+      "key"       : "py_aidianying",
+      "name"      : "？｜愛壹帆｜測試",
+      "type"      : 3,
+      "api"       : "./py/爱壹帆影视.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 1
+    },
+    {
+      "key"       : "py_aidianying",
+      "name"      : "？｜騰訊｜測試",
+      "type"      : 3,
+      "api"       : "./py/腾讯视频.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 1
+    },        
+    {
+            "key": "Guazi",
+            "name": "？｜瓜子|秒播",
+            "type": 3,
+            "api": "csp_GuaziAmns",
+            "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
+            "searchable": 1,
+            "quickSearch": 1,
+            "changeable": 0,
+            "ext": {
+                "sites": "",
+                "filters": "https://file.icve.com.cn/file_doc/822/528/CD984013F5776F759DFC815995F87BFB.aowu"
+            }
+    },    
           {
             "key": "爱瓜TV",
             "name": "愛瓜TV｜PHP",
@@ -134,7 +166,7 @@
       "name"       : "🏆｜銀牌｜高清",
       "type"       : 3,
       "api"        : "csp_AiGuaAmns",
-"jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
+      "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
       "searchable" : 1,
       "quickSearch": 1,
       "changeable" : 1

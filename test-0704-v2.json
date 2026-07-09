@@ -2,7 +2,7 @@
   "spider": "./jar/fm.jar;md5;b0adab2fad1de8871b9533527f407cdf",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.07.09_Ver.2 添加聽世界、愛壹帆、騰訊",
+  "notice": "115.07.09_Ver.3 添加聽世界、愛壹帆、騰訊",
   "sites": [ 
         {
             "key": "TingShijie",
@@ -17,7 +17,7 @@
             }
         },     
     {
-      "key"       : "py_aidianying",
+      "key"       : "py_愛壹帆",
       "name"      : "？｜愛壹帆｜測試",
       "type"      : 3,
       "api"       : "./py/爱壹帆影视.py",
@@ -26,7 +26,7 @@
       "changeable": 1
     },
     {
-      "key"       : "py_aidianying",
+      "key"       : "py_騰訊",
       "name"      : "？｜騰訊｜測試",
       "type"      : 3,
       "api"       : "./py/腾讯视频.py",

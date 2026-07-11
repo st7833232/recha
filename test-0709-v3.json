@@ -4,89 +4,8 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.07.09_Ver.5 添加聽友、聽世界、愛壹帆、騰訊",
   "sites": [ 
-        {
-            "key": "TingShijie",
-            "name": "🎧｜聽世界｜有声",
-            "type": 3,
-            "api": "csp_TingShijie",
-            "jar": "./jar/fish07100101.jar;md5;2842ac71d2d05492ed808c4ac9faa533",
-            "searchable": 1,
-            "indexs": 0,
-            "style": {
-                "type": "list"
-            }
-        },
-        {
-            "key": "TingYou",
-            "name": "🎧｜听友｜有声",
-            "type": 3,
-            "api": "csp_TingYou",
-            "jar": "./jar/fish07100101.jar;md5;2842ac71d2d05492ed808c4ac9faa533",
-            "searchable": 1,
-            "indexs": 0,
-            "style": {
-                "type": "list"
-            }
-        },         
-    {
-      "key"       : "py_愛壹帆",
-      "name"      : "？｜愛壹帆｜測試",
-      "type"      : 3,
-      "api"       : "./py/爱壹帆影视.py",
-      "searchable": 1,
-      "filterable": 0,
-      "changeable": 1
-    },
-    {
-      "key"       : "py_騰訊",
-      "name"      : "？｜騰訊｜測試",
-      "type"      : 3,
-      "api"       : "./py/腾讯视频.py",
-      "searchable": 1,
-      "filterable": 0,
-      "changeable": 1
-    },        
-    {
-            "key": "Guazi",
-            "name": "？｜瓜子|秒播",
-            "type": 3,
-            "api": "csp_GuaziAmns",
-            "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": {
-                "sites": "",
-                "filters": "https://file.icve.com.cn/file_doc/822/528/CD984013F5776F759DFC815995F87BFB.aowu"
-            }
-    },    
-          {
-            "key": "爱瓜TV",
-            "name": "愛瓜TV｜PHP",
-            "type": 4,
-            "api": "http://zhangqun1818.serv00.net/aigua1.php",
-            "jar": "./jar/pro.jar",
-            "searchable": 1,
-            "style": {
-                "type": "rect",
-                "ratio": 1.33
-            },
-            "changeable": 1
-        },
-        {
-            "key": "采集集合",
-            "name": "采集集合｜PHP",
-            "type": 4,
-            "api": "http://zhangqun1818.serv00.net/cj/cjjh.php",
-            "jar": "./jar/pro.jar",
-            "searchable": 1,
-            "style": {
-                "type": "rect",
-                "ratio": 1.33
-            },
-            "ext": "0",
-            "changeable": 1
-        },     
+      
+  
     {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",
@@ -636,6 +555,19 @@
         "decrypt": "0"
       }
     },
+          {
+            "key": "爱瓜TV",
+            "name": "🏆｜愛瓜｜PHP",
+            "type": 4,
+            "api": "http://zhangqun1818.serv00.net/aigua1.php",
+            "jar": "./jar/pro.jar",
+            "searchable": 1,
+            "style": {
+                "type": "rect",
+                "ratio": 1.33
+            },
+            "changeable": 1
+        },     
         {
             "key": "huaisang",
             "name": "🥇｜怀桑｜高清",
@@ -1403,6 +1335,20 @@
       }
     },
     {
+            "key": "Guazi",
+            "name": "🥇｜瓜子｜高清",
+            "type": 3,
+            "api": "csp_GuaziAmns",
+            "jar": "./jar/aowu-0630.jar;md5;8b072350342614f78ff61cba57dc94b4",
+            "searchable": 1,
+            "quickSearch": 1,
+            "changeable": 0,
+            "ext": {
+                "sites": "",
+                "filters": "https://file.icve.com.cn/file_doc/822/528/CD984013F5776F759DFC815995F87BFB.aowu"
+            }
+    },        
+    {
       "key"        : "py_缘梦_APP",
       "name"       : "📱｜緣夢｜APP",
       "type"       : 3,
@@ -1625,6 +1571,20 @@
       "searchable" : 1,
       "quickSearch": 1
     },
+        {
+            "key": "采集集合",
+            "name": "🧲｜采集集合｜PHP",
+            "type": 4,
+            "api": "http://zhangqun1818.serv00.net/cj/cjjh.php",
+            "jar": "./jar/pro.jar",
+            "searchable": 1,
+            "style": {
+                "type": "rect",
+                "ratio": 1.33
+            },
+            "ext": "0",
+            "changeable": 1
+        },      
     {
       "key"       : "vod_360",
       "name"      : "🧲｜360｜高清",
@@ -2273,6 +2233,30 @@
         "type": "list"
       }
     },
+        {
+            "key": "TingShijie",
+            "name": "🎧｜聽世界｜有声",
+            "type": 3,
+            "api": "csp_TingShijie",
+            "jar": "./jar/fish07100101.jar;md5;2842ac71d2d05492ed808c4ac9faa533",
+            "searchable": 1,
+            "indexs": 0,
+            "style": {
+                "type": "list"
+            }
+        },
+        {
+            "key": "TingYou",
+            "name": "🎧｜听友｜有声",
+            "type": 3,
+            "api": "csp_TingYou",
+            "jar": "./jar/fish07100101.jar;md5;2842ac71d2d05492ed808c4ac9faa533",
+            "searchable": 1,
+            "indexs": 0,
+            "style": {
+                "type": "list"
+            }
+        },       
         {
             "key": "TingBook",
             "name": "📻｜六月｜有声",

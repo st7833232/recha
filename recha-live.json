@@ -4,31 +4,6 @@
   "wallpaper": "https://tv.nxog.top/m/t/",
   "lives": [
         {
-            "name": "Dream",
-            "url": "http://dbmlosa.sylu.net:8080/dream.txt",
-            "playerType": 2,
-            "epg": "http://epg.52sw.top:668/?ch={name}&date={date},https://tv.mxdyeah.top/epgphp/t.xml.gz",
-            "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png",
-            "catchup": {
-                "type": "append",
-                "source": "&playseek=${(b)yyyyMMddHHmmss}-${(e)yyyyMMddHHmmss}"
-            }
-        },
-            {
-            "name": "欧华(需32位影视)",
-            "url": "http://dbmlosa.sylu.net:8080/ouhua.txt",
-            "playerType": 2,
-            "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
-            "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
-        },
-        {
-            "name": "CloudTV(需32位影视)",
-            "url": "http://dbmlosa.sylu.net:8080/CloudTV.txt",
-            "playerType": 2,
-            "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
-            "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
-        },
-        {
             "name": "四季线上",
             "url": "http://dreamtv.sylu.cc:2082/vtg4.m3u?token=dbm",
             "playerType": 2,

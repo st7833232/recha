@@ -3,25 +3,6 @@
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://tv.nxog.top/m/t/",
   "lives": [
-    {
-      "name": "Dream",
-      "url": "http://dbmlosa.sylu.cc:8080/dream.txt",
-      "playerType": 2,
-      "epg": "http://epg.52sw.top:668/?ch={name}&date={date},https://epg.myxcwh.com/t.xml/",
-      "logo": "https://upload.112114.xyz/logo/{name}.png",
-      "catchup": {
-        "type": "append",
-        "source": "&playseek=${(b)yyyyMMddHHmmss}-${(e)yyyyMMddHHmmss}"
-      }
-    },
-    
-    {
-      "name": "世界杯-小红书",
-      "url": "https://sports.de5.net/xiaohongshu/xhsworldcup.m3u",
-      "playerType": 2,
-      "epg": "http://epg.52sw.top:668/?ch={name}&date={date},https://epg.myxcwh.com/t.xml/",
-      "logo": "https://upload.112114.xyz/logo/{name}.png"
-},
         {
       "name": "欧华(需32位影视仅港有效)",
       "url": "http://dbmlosa.sylu.cc:8080/ouhua.txt",
@@ -52,57 +33,6 @@
       "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
       "logo": "https://gcore.jsdelivr.net/gh/taksssss/tv/icon/{name}.png"
     },
-        {
-      "name": "斯玛特官方(需后台App)",
-      "url": "http://127.0.0.1:18081/index.m3u",
-      "playerType": 2,
-      "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
-      "logo": "https://gcore.jsdelivr.net/gh/taksssss/tv/icon/{name}.png"
-    },
-        {
-      "name": "山东",
-      "url": "http://dbmlosa.sylu.cc:8080/sd.txt",
-      "playerType": 2,
-      "type": 3,
-      "epg": "https://gitee.com/taksssss/tv/raw/main/epg/112114.xml.gz,https://gitee.com/taksssss/tv/raw/main/epg/epgpw_tw.xml.gz，http://epg.52sw.top:668/?ch={name}&date={date}",
-      "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
-    },
-
-    {
-      "name": "河北组播",
-      "url": "http://dbmlosa.sylu.cc:8080/hebzb.txt",
-      "playerType": 2,
-      "type": 3,
-      "epg": "https://gitee.com/taksssss/tv/raw/main/epg/112114.xml.gz,https://gitee.com/taksssss/tv/raw/main/epg/epgpw_tw.xml.gz，http://epg.52sw.top:668/?ch={name}&date={date}",
-      "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
-    },
-
-    {
-      "name": "珠江有线",
-      "url": "http://43.248.187.60:2026/zjyx.txt",
-      "playerType": 2,
-      "type": 3,
-      "epg": "https://gitee.com/taksssss/tv/raw/main/epg/112114.xml.gz,https://gitee.com/taksssss/tv/raw/main/epg/epgpw_tw.xml.gz，http://epg.52sw.top:668/?ch={name}&date={date}",
-      "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
-    },
-    {
-      "name": "广东组播",
-      "url": "http://dbmlosa.sylu.cc:8080/gdzb.txt",
-      "playerType": 2,
-      "type": 3,
-      "epg": "https://gitee.com/taksssss/tv/raw/main/epg/112114.xml.gz,https://gitee.com/taksssss/tv/raw/main/epg/epgpw_tw.xml.gz，http://epg.52sw.top:668/?ch={name}&date={date}",
-      "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
-    },
-
-    {
-      "name": "深圳酒店",
-      "url": "http://dbmlosa.sylu.cc:8080/szjd.txt",
-      "playerType": 2,
-      "type": 3,
-      "epg": "https://gitee.com/taksssss/tv/raw/main/epg/112114.xml.gz,https://gitee.com/taksssss/tv/raw/main/epg/epgpw_tw.xml.gz，http://epg.52sw.top:668/?ch={name}&date={date}",
-      "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
-    },
-
         {
             "name": "四季线上",
             "url": "http://dreamtv.sylu.cc:2082/vtg4.m3u?token=dbm",
@@ -136,30 +66,12 @@
              "ua": "okhttp",
 			 "url": "https://gh-proxy.org/https://github.com/bang359/dsj/raw/main/dsjcs.txt"
          },
-         {
-            "name": "🐬地方直播",
-            "type": 0,
-            "ua": "okhttp/5.3.2",
-            "url": "https://ghfast.top/https://raw.githubusercontent.com/develop202/migu_video/refs/heads/main/interface.txt"
-        }, 
-         {
-            "name": "🐬地方直播2",
-            "type": 0,
-            "ua": "okhttp/5.3.2",
-            "url": "https://raw.githubusercontent.com/Guovin/iptv-api/gd/output/ipv4/result.m3u"
-        },   
 		{
             "name": "🐬薄荷直播",
             "type": 0,
             "ua": "okhttp/5.3.2",
             "url": "https://gh-proxy.org/https://raw.githubusercontent.com/wujiangliu/live-sources/refs/heads/main/bhmb.m3u"
         },  
-		{
-            "name": "🐬全球直播",
-            "type": 0,
-            "ua": "okhttp/5.3.2",
-            "url": "https://gh-proxy.org/https://raw.githubusercontent.com/wujiangliu/live-sources/refs/heads/main/%E5%85%A8%E7%90%83%E7%9B%B4%E6%92%AD.m3u"
-        },
 		{
             "name": "🐬咪咕直播",
             "type": 0,
@@ -172,12 +84,6 @@
             "ua": "okhttp/5.3.2",
             "url": "https://wget.la/https://raw.githubusercontent.com/vinkerq/iptv-api/refs/heads/master/iptv.txt"
         },
-		{
-            "name": "🐬juli",
-            "type": 0,
-            "ua": "okhttp/5.3.2",
-            "url": "https://files.catbox.moe/h3mb5a.txt"
-        },	
 	    {
             "name": "🐬小新TV",
             "type": 0,
@@ -197,34 +103,16 @@
             "url": "https://feer-cdn-bp.xpnb.qzz.io/xnkl.txt"
         },
 	    {
-            "name": "🐬台湾台",
-            "type": 0,
-            "ua": "okhttp",
-            "url": "https://epg.pw/test_channels_taiwan.m3u"
-        },
-	    {
             "name": "🐬体育台",
             "type": 0,
             "ua": "okhttp",
             "url": "http://82.156.243.185:33389/fwc.m3u"
         },
 	    {
-            "name": "🐬国际TV",
-            "type": 0,
-            "ua": "okhttp",
-            "url": "https://raw.githubusercontent.com/xJEYDAin/iptv/main/output/all_merged.m3u"
-        },
-	    {
             "name": "🐬裤佬TV",
             "type": 0,
             "ua": "okhttp",
             "url": "https://gh-proxy.org/https://raw.githubusercontent.com/Jsnzkpg/Jsnzkpg/Jsnzkpg/Jsnzkpg1.m3u"
-        },
-        {
-            "name": "🐬Gather",
-            "type": 0,
-            "ua": "okhttp",
-            "url": "https://iptv.yang-1989.eu.org/m3u/Gather.m3u"
         },
         {
             "name": "🐬Mytv",
@@ -238,12 +126,6 @@
             "ua": "okhttp",
             "url": "http://xtvantsc.xyz/新加坡.m3u"
         },
-	    {
-            "name": "🐬黄蚂蚁先锋推流源",
-            "type": 0,
-            "ua": "okhttp",
-            "url": "http://ge.html-5.me//ii/黄蚂蚁先锋推流源.txt"
-        },
         {
             "name": "🐬风云源",
             "type": 0,
@@ -255,12 +137,6 @@
             "type": 0,
             "ua": "okhttp",
             "url": "https://gh-proxy.org/https://raw.githubusercontent.com/fafa002/yf2025/refs/heads/main/yiyifafa.txt"
-        },
-       {
-            "name": "🐬飞扬源",
-            "type": 0,
-            "ua": "okhttp",
-            "url": "https://www.985pan.com/down.php/bf5e9607ff407fcdd71f63928ea5bc79.txt"
         },
 	    {
             "name": "🐬港奥台国际",
@@ -280,12 +156,7 @@
             "ua": "okhttp",
             "url": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/4gtv.txt"
         },
-	    {
-            "name": "🐬4GTV怡淳酒店(梯子台湾节点)720p",
-            "type": 0,
-            "ua": "okhttp",
-            "url": "http://xtvantsc.xyz/4gtv.txt"
-        },
+
 		{
             "name": "🐬4GTV(免梯子)1080p",
             "type": 0,

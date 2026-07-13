@@ -1759,17 +1759,6 @@
       "filterable": 0,
       "changeable": 0
     },
-    {
-      "key"        : "Dm84",
-      "name"       : "🎡｜巴士",
-      "type"       : 3,
-      "api"        : "csp_Dm84Guard",
-      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
-      "timeout"    : 10,
-      "searchable" : 1,
-      "quickSearch": 1,
-      "changeable" : 1
-    },
         {
             "name": "🎡｜稀飯",
             "key": "DMxifan",
@@ -1909,34 +1898,6 @@
       }
     },
     {
-      "key"        : "csp_桵空",
-      "name"       : "🎡｜桵空动漫",
-      "type"       : 3,
-      "api"        : "csp_XBPQ",
-      "jar"        : "./jar/xyqxbpq.jar;md5;fd3cefc7302f3a39a442682f802b11e5",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "ext"        : {
-        "分类url": "https://www.maigo.cc/vodshow/{cateId}---{class}-----{catePg}---{year}/",
-        "分类": "电影$84#综艺$91#大陆劇$81#港台劇$82#海外劇$83#纪录片$88#动漫$1#日劇$32#日漫$46#国漫$47#美漫$85"
-      }
-    },
-    {
-      "key"        : "櫻花動漫2",
-      "name"       : "🎡｜櫻花动漫",
-      "type"       : 3,
-      "api"        : "csp_XBPQ",
-      "jar"        : "./jar/xyqxbpq.jar;md5;fd3cefc7302f3a39a442682f802b11e5",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "ext"        : {
-        "分类url": "https://www.857kan.com/show/{cateId}--------{catePg}---{year}.html",
-        "分类": "動漫電影$4#日本動漫$1#大陸動漫$3#歐美動漫$6"
-      }
-    },
-    {
       "key"       : "魔都",
       "name"      : "🎡｜魔都动漫",
       "type"      : 0,
@@ -1978,16 +1939,6 @@
       "filterable" : 1,
       "api"        : "./drpy_libs/drpy2.min.js",
       "ext"        : "./drpy_js/去看吧.js"
-    },
-    {
-      "key"        : "好看动漫",
-      "name"       : "🎡｜好看动漫",
-      "type"       : 3,
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "api"        : "./drpy_libs/drpy2.min.js",
-      "ext"        : "./drpy_js/HKDM.js"
     },
     {
       "key"        : "drpy_js_爱弹幕",
@@ -2076,7 +2027,7 @@
     },
         {
             "key": "TingShijie",
-            "name": "🎧｜聽世界｜有声(魚)",
+            "name": "📻｜聽世界｜有声(魚)",
             "type": 3,
             "api": "csp_TingShijie",
             "jar": "./jar/fish07100101.jar;md5;2842ac71d2d05492ed808c4ac9faa533",
@@ -2088,7 +2039,7 @@
         },
         {
             "key": "TingYou",
-            "name": "🎧｜听友｜有声(魚)",
+            "name": "📻｜听友｜有声(魚)",
             "type": 3,
             "api": "csp_TingYou",
             "jar": "./jar/fish07100101.jar;md5;2842ac71d2d05492ed808c4ac9faa533",
@@ -2100,7 +2051,7 @@
         },
     {
       "key"        : "drpyS_听友[听]",
-      "name"       : "🎧｜听友｜有聲(道長)",
+      "name"       : "📻｜听友｜有聲(道長)",
       "type"       : 4,
       "api"        : "http://149.118.133.251:5757/api/听友[听]",
       "searchable" : 2,

@@ -1194,21 +1194,6 @@
       "changeable" : 1
     },
     {
-      "key"        : "py_爱影_APP",
-      "name"       : "📱｜爱影｜APP",
-      "type"       : 3,
-      "api"        : "./py/app/qijiapp.py",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "ext"        : {
-        "host"   : "https://aysappto.oss-cn-chengdu.aliyuncs.com/qj2.txt",
-        "api"    : "/api.php/qijiappapi",
-        "datakey": "sada21321sdq231d",
-        "dataiv" : "sada21321sdq231d"
-      }
-    },
-    {
       "key"        : "py_数字_APP",
       "name"       : "📱｜数字｜APP",
       "type"       : 3,

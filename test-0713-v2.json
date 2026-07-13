@@ -2,7 +2,7 @@
   "spider": "./jar/fm.jar;md5;b0adab2fad1de8871b9533527f407cdf",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.07.13_Ver.6 移除非凡、天堂、特狗、9個app源",
+  "notice": "115.07.13_Ver.7 移除上午回報無法開啟的站源",
   "sites": [ 
       
   
@@ -724,7 +724,7 @@
     },
     {
       "key": "奴娜",
-      "name": "🥇｜奴娜丨高清◎秒播",
+      "name": "🥇｜奴娜丨高清◎秒播(d線)",
       "type": 3,
       "api": "csp_AppYsV2",
       "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
@@ -914,27 +914,6 @@
         "url"    : "https://cms140.yhg.one/",
         "dataKey": "bM7iC9eA3oZ1nB7z",
         "dataIv" : "bM7iC9eA3oZ1nB7z"
-      }
-    },
-    {
-      "key": "吉米",
-      "name": "🥇｜星河｜無廣",
-      "type": 3,
-      "api": "csp_AppDrama",
-      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "appName": "顾我追剧",
-        "publicKey": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCduNEnfxGaLuQRk5ABzXHhPV43zi00sCHjLo8BYc+Wi6xXm2b4v0i28Sq4WlNCKhseft9fz8kO/qLr6/022o1RcuOU7e4GFL3U9WnNODwRBYSYWd+K8nqpI/tAUDmZEBGRWqjrc7x6aMl3A+xpnWkLbPCLsuhbuuUE3tv09oeOpwIDAQAB",
-        "dataKey": "QK40VUWYWE45L0DOSTVOTEP0AM44PQ==",
-        "dataIv": "OC1A06E197EF10CF3F6058CA7A803B5E",
-        "pkg": "com.bingewatch.android",
-        "host": "",
-        "site": "https://guwoandroid-1372779881.cos.ap-guangzhou.myqcloud.com/app_guwozhuijuandroid.txt",
-        "version": "2.0.0.1",
-        "decrypt": "0"
       }
     },
     {
@@ -1576,15 +1555,6 @@
       "filterable" : 1
     },
     {
-      "key"        : "vod_卧龙",
-      "name"       : "🧲｜卧龍｜高清(浮水印廣告+成人)",
-      "type"       : 1,
-      "api"        : "https://collect.wolongzyw.com/api.php/provide/vod/",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1
-    },
-    {
       "key"       : "非凡采集资源",
       "name"      : "🧲｜非凡｜高清◎速播(賭城廣告+成人)",
       "type"      : 1,
@@ -1722,15 +1692,6 @@
         "动作片",  "爱情片",  "科幻片",  "战争片",  "劇情片",  "恐怖片",  "喜劇片",  "大陆劇",  "港澳劇",
         "台湾劇",  "欧美劇",  "动漫电影", "韩劇",   "日劇",   "泰劇"
       ]
-    },
-    {
-      "key"        : "vod_黑墙",
-      "name"       : "🧲｜黑墙｜高清◎慢播(浮水印廣告)",
-      "type"       : 1,
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "api"        : "https://blackwallvideo.online/api.php/provide/vod/"
     },
     {
       "key"        : "如意",

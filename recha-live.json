@@ -32,14 +32,7 @@
       "playerType": 2,
       "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
       "logo": "https://gcore.jsdelivr.net/gh/taksssss/tv/icon/{name}.png"
-    },
-        {
-            "name": "四季线上",
-            "url": "http://dreamtv.sylu.cc:2082/vtg4.m3u?token=dbm",
-            "playerType": 2,
-            "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
-            "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
-        },        
+    },  
     {
       "name": "tv123",
       "type": 0,
@@ -82,7 +75,7 @@
             "name": "🐬iptv直播",
             "type": 0,
             "ua": "okhttp/5.3.2",
-            "url": "https://wget.la/https://raw.githubusercontent.com/vinkerq/iptv-api/refs/heads/master/iptv.txt"
+            "url": "https://raw.githubusercontent.com/vinkerq/iptv-api/refs/heads/master/iptv.txt"
         },
 	    {
             "name": "🐬小新TV",
@@ -96,18 +89,6 @@
             "ua": "okhttp",
             "url": "https://ha.msbot.dpdns.org/wall.php"
         }, 
-        {
-            "name": "🐬港台",
-            "type": 0,
-            "ua": "okhttp",
-            "url": "https://feer-cdn-bp.xpnb.qzz.io/xnkl.txt"
-        },
-	    {
-            "name": "🐬体育台",
-            "type": 0,
-            "ua": "okhttp",
-            "url": "http://82.156.243.185:33389/fwc.m3u"
-        },
 	    {
             "name": "🐬裤佬TV",
             "type": 0,
@@ -120,12 +101,7 @@
             "ua": "okhttp",
             "url": "https://cdn.qd.je/live.m3u"
         },
-        {
-            "name": "🐬新加坡(梯子)",
-            "type": 0,
-            "ua": "okhttp",
-            "url": "http://xtvantsc.xyz/新加坡.m3u"
-        },
+
         {
             "name": "🐬风云源",
             "type": 0,
@@ -154,7 +130,7 @@
             "name": "🐬4GTV(梯子台湾节点)720p",
             "type": 0,
             "ua": "okhttp",
-            "url": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/4gtv.txt"
+            "url": "https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/4gtv.txt"
         },
 
 		{
@@ -193,12 +169,6 @@
       "ua": "okhttp/3.15",
       "epg": "http://epg.112114.xyz/?ch={name}&date={date}",
       "logo": "https://epg.112114.xyz/logo/{name}.png",
-      "pass": true
-    },
-    {
-      "name": "香蕉-MYTV",
-      "url": "https://tv.iill.top/m3u/MyTV",
-      "epg": "http://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Taipei",
       "pass": true
     },
     {

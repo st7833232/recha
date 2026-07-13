@@ -1724,6 +1724,27 @@
             "quickSearch": 1,
             "changeable": 0
         },
+        {
+            "name": "🎡｜番薯",
+            "key": "FanShu",
+            "type": 3,
+            "api": "csp_FanShuAmns",
+            "jar": "./jar/aowu-0713.jar;md5;dd6fbafde59756e7f5043a20c74b1961",
+            "searchable": 1,
+            "quickSearch": 1,
+            "changeable": 0
+        }, 
+    {
+      "key": "AowuDmMw",
+      "name": "🎡｜喵物",
+      "type": 3,
+      "api": "csp_AowuDmAmns",
+      "jar": "./jar/aowu-0713.jar;md5;dd6fbafde59756e7f5043a20c74b1961",
+      "searchable": 1,
+      "quickSearch": 1,
+      "changeable": 0,
+      "ext": "db8b57143fce50cabe524135fd3fb26e4af09034942cb186addd2322edf17ab6c9b7862764598039301c43cf706efcd55499494d72c680001c30550747b3dc5994760e3d6e17208e5ed771b2b4162f65e72b3e530fdd9622474e1c5f8aecda41dcd17901c7ddc61193a63fd8aaa1a96dc8673f93a8116755fd04bb1baaa93215334aaa1327972f2dd7292eb3d593e60cad0b9a3dde2a1158640cfc93dac5af45ddd8f971e3be0ccb5c776752b9b92a7f67dc89375d7ad442bddb0c661554a03c420029010a932d2dd8e65d6dc5"
+    },
 		{
 			"key": "MiFun",
 			"name": "🎡｜MiFun",

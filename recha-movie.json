@@ -1123,19 +1123,6 @@
       "timeout"    : 20
     },
     {
-      "key"        : "drpyS_听友[听]",
-      "name"       : "🎧｜听友｜有聲書",
-      "type"       : 4,
-      "api"        : "http://149.118.133.251:5757/api/听友[听]",
-      "searchable" : 2,
-      "filterable" : 1,
-      "quickSearch": 1,
-      "title"      : "听友[听]",
-      "类型"         : "听书",
-      "lang"       : "ds",
-      "ext"        : ""
-    },
-    {
       "key"        : "py_愛電影.py",
       "name"       : "🥇｜金牌系列-愛電影",
       "type"       : 3,
@@ -2235,7 +2222,7 @@
     },
         {
             "key": "TingShijie",
-            "name": "🎧｜聽世界｜有声",
+            "name": "🎧｜聽世界｜有声(魚)",
             "type": 3,
             "api": "csp_TingShijie",
             "jar": "./jar/fish07100101.jar;md5;2842ac71d2d05492ed808c4ac9faa533",
@@ -2247,7 +2234,7 @@
         },
         {
             "key": "TingYou",
-            "name": "🎧｜听友｜有声",
+            "name": "🎧｜听友｜有声(魚)",
             "type": 3,
             "api": "csp_TingYou",
             "jar": "./jar/fish07100101.jar;md5;2842ac71d2d05492ed808c4ac9faa533",
@@ -2256,10 +2243,23 @@
             "style": {
                 "type": "list"
             }
-        },       
+        },
+    {
+      "key"        : "drpyS_听友[听]",
+      "name"       : "🎧｜听友｜有聲(道長)",
+      "type"       : 4,
+      "api"        : "http://149.118.133.251:5757/api/听友[听]",
+      "searchable" : 2,
+      "filterable" : 1,
+      "quickSearch": 1,
+      "title"      : "听友[听]",
+      "类型"         : "听书",
+      "lang"       : "ds",
+      "ext"        : ""
+    },               
         {
             "key": "TingBook",
-            "name": "📻｜六月｜有声",
+            "name": "📻｜六月｜有声(魚)",
             "type": 3,
             "api": "csp_TingBook",
             "jar": "./jar/fish07100101.jar;md5;2842ac71d2d05492ed808c4ac9faa533",
@@ -2272,7 +2272,7 @@
         },
         {
             "key": "TingBookJinXia",
-            "name": "📻｜堇夏｜有声",
+            "name": "📻｜堇夏｜有声(魚)",
             "type": 3,
             "api": "csp_TingBookJinXia",
             "jar": "./jar/fish07100101.jar;md5;2842ac71d2d05492ed808c4ac9faa533",

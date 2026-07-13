@@ -165,16 +165,6 @@
       "changeable" : 1
     },
     {
-      "key"        : "Olyy",
-      "name"       : "🏆｜歐樂｜高清",
-      "type"       : 3,
-      "api"        : "csp_OlyyAmns",
-      "jar": "./jar/aowu-0714.jar;md5;dd6fbafde59756e7f5043a20c74b1961",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "changeable" : 1
-    },  
-    {
       "key" : "py_jieyingshi",
       "name": "🏆｜異界｜高清",
       "type": 3,
@@ -300,17 +290,6 @@
       "searchable": 1,
       "filterable": 0,
       "changeable": 1
-    },
-    {
-      "key": "飞飞",
-      "name": "🏆｜飛飛丨高清◎秒播",
-      "type": 3,
-      "api": "csp_AppYsV2",
-      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": "https://qpcj.69mini.com/api.php/app/"
     },
     {
       "key": "天堂",
@@ -1015,15 +994,6 @@
       "filterable" : 1
     },
     {
-      "key"        : "py_mv4r4",
-      "name"       : "🥇｜有兮｜高清",
-      "type"       : 3,
-      "api"        : "./py/1.py",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 0
-    },
-    {
       "key"        : "bilimd",
       "name"       : "🎖︎｜bilbil｜官源",
       "type"       : 3,
@@ -1233,6 +1203,16 @@
                 "sites": "",
                 "filters": "https://file.icve.com.cn/file_doc/822/528/CD984013F5776F759DFC815995F87BFB.aowu"
             }
+    },      
+    {
+      "key"        : "Olyy",
+      "name"       : "🥇｜歐樂｜似乎有廣告？",
+      "type"       : 3,
+      "api"        : "csp_OlyyAmns",
+      "jar": "./jar/aowu-0714.jar;md5;dd6fbafde59756e7f5043a20c74b1961",
+      "searchable" : 1,
+      "quickSearch": 1,
+      "changeable" : 1
     },        
     {
       "key"        : "py_缘梦_APP",
@@ -1289,12 +1269,6 @@
         "dataiv" : "1111111111111111"
       }
     },
-    		{
-			"key": "hgdj",
-			"name": "📺｜红果短劇",
-			"type": 3,
-			"api": "./py/红果短剧.py"
-		},  
     {
       "key": "星芽短剧",
       "name": "📺｜星芽短劇",
@@ -2091,7 +2065,7 @@
         },        
         {
             "key": "Buguyy",
-            "name": "🎧｜布谷｜音乐",
+            "name": "🎧｜布谷｜音樂",
             "type": 3,
             "api": "csp_Buguyy",
             "jar": "./jar/fish07100101.jar;md5;2842ac71d2d05492ed808c4ac9faa533",
@@ -2101,7 +2075,7 @@
         },
         {
             "key": "ChuXin",
-            "name": "🎧｜初心｜音乐",
+            "name": "🎧｜初心｜音樂",
             "type": 3,
             "api": "csp_ChuXin",
             "jar": "./jar/fish07100101.jar;md5;2842ac71d2d05492ed808c4ac9faa533",
@@ -2111,7 +2085,7 @@
         },
         {
             "key": "aiting",
-            "name": "🎧｜爱听｜音乐",
+            "name": "🎧｜爱听｜音樂",
             "type": 3,
             "api": "csp_AiTingMusic",
             "jar": "./jar/fish07100101.jar;md5;2842ac71d2d05492ed808c4ac9faa533",
@@ -2121,36 +2095,13 @@
         },
         {
             "key": "Music24bit",
-            "name": "🎧｜无损｜音乐",
+            "name": "🎧｜无损｜音樂",
             "type": 3,
             "api": "csp_Music24bit",
             "jar": "./jar/fish07100101.jar;md5;2842ac71d2d05492ed808c4ac9faa533",
             "searchable": 1,
             "changeable": 1
-        },    
-    {
-      "key"        : "KuGou-1",
-      "name"       : "🎧｜酷狗音樂",
-      "type"       : 3,
-      "api"        : "csp_KuGouAmns",
-      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "changeable" : 0,
-      "genre"      : "music"
-    },
-    {
-      "key" : "网易云音乐",
-      "name": "🎧｜網易雲1",
-      "type": 3,
-      "api" : "https://xn--fjq53n.xyz/Ting/yinyue/网易云音乐.py"
-    },
-    {
-      "key" : "网易云音乐1",
-      "name": "🎧｜網易雲2",
-      "type": 3,
-      "api" : "https://xn--fjq53n.xyz/Ting/yinyue/网易云音乐1.py"
-    }
+        }
   ],
   "parses": [
     {"name": "聚合1", "type": 3, "url": "Demo"},

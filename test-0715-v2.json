@@ -31,12 +31,6 @@
           "api": "./py/星河影视.py"
         },  
 		{
-			"key": "guanfeng",
-			"name": "待測｜观风影视.py",
-			"type": 3,
-			"api": "./py/观风影视.py"
-		},
-		{
 			"key": "SZ",
 			"name": "待測｜山楂影视.py",
 			"type": 3,

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# by @嗷呜
+# by @6666
 import concurrent.futures
 import json
 import re
@@ -23,7 +23,7 @@ class Spider(Spider):
         }
         self.cateConfig = {
             "12": [{"key": "cateId", "name": "类型", "value": [{"n": "国产剧", "v": "12"}]}],
-            "4-dm": [{"key": "cateId", "name": "类型", "value": [{"n": "动漫", "v": "4-dm"}]}],
+            "4": [{"key": "cateId", "name": "类型", "value": [{"n": "动漫", "v": "4"}]}],
             "1": [{"key": "cateId", "name": "类型", "value": [{"n": "电影", "v": "1"}]}],
             "2": [{"key": "cateId", "name": "类型", "value": [{"n": "电视剧", "v": "2"}]}],
             "3": [{"key": "cateId", "name": "类型", "value": [{"n": "综艺", "v": "3"}]}],
@@ -47,7 +47,7 @@ class Spider(Spider):
         result = {}
         classes = [
             {'type_name': '国产剧', 'type_id': '12'},
-            {'type_name': '动漫', 'type_id': '4-dm'},
+            {'type_name': '动漫', 'type_id': '4'},
             {'type_name': '电影', 'type_id': '1'},
             {'type_name': '电视剧', 'type_id': '2'},
             {'type_name': '综艺', 'type_id': '3'},

@@ -2,10 +2,100 @@
   "spider": "./jar/fm.jar;md5;b0adab2fad1de8871b9533527f407cdf",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.07.15_Ver.2 第二階段測試",
+  "notice": "115.07.15_Ver.3 第二階段測試",
   "sites": [ 
       
-  
+  		{
+      "key": "ppx",
+      "name": "待測｜皮皮虾.py",
+      "type": 3,
+      "api": "./py/皮皮虾.py",
+      "ext": "http://43.248.117.123:4680"
+       },
+		{
+			"key": "ddvm",
+			"name": "待測｜低端影视.py",
+			"type": 3,
+			"api": "./py/低端影视.py"
+		},
+		{
+			"key": "cbh",
+			"name": "待測｜茶杯狐.py",
+			"type": 3,
+			"api": "./py/茶杯狐.py"
+		},       
+		{
+          "key": "XH",
+          "name": "待測｜星河影视.py",
+          "type": 3,
+          "api": "./py/星河影视.py"
+        },  
+		{
+			"key": "guanfeng",
+			"name": "待測｜观风影视.py",
+			"type": 3,
+			"api": "./py/观风影视.py"
+		},
+		{
+			"key": "SZ",
+			"name": "待測｜山楂影视.py",
+			"type": 3,
+			"api": "./py/山楂影视.py"
+		},
+		{
+			"key": "qmvm",
+			"name": "待測｜七猫影视.py",
+			"type": 3,
+			"api": "./py/七猫影视.py"
+		},
+		{
+			"key": "nmvm",
+			"name": "待測｜农民影视.py",
+			"type": 3,
+			"api": "./py/农民影视.py"
+		},
+		{
+			"key": "xc",
+			"name": "待測｜星辰影院.py",
+			"type": 3,
+			"api": "./py/星辰影院.py"
+		},
+		{
+			"key": "hstv",
+			"name": "待測｜华数TV.py",
+			"type": 3,
+			"api": "./py/华数TV.py"
+		},
+		{
+           "key": "456dy",
+           "name": "待測｜456电影网.py",
+           "type": 3,
+           "api": "./py/456电影网.py"
+        },
+		{
+           "key": "qw",
+           "name": "待測｜七味.py",
+           "type": 3,
+           "api": "./py/七味.py"
+        },
+		{
+           "key": "8tdy",
+           "name": "待測｜八天电影.py",
+           "type": 3,
+           "api": "./py/八天电影.py"
+        },
+		{
+           "key": "ysxq",
+           "name": "待測｜映像星球.py",
+           "type": 3,
+           "api": "./py/映像星球.py"
+        },              
+		{
+			"key": "djjh",
+			"name": "待測｜短剧聚合.py",
+			"type": 3,
+			"api": "./py/短剧聚合.py"
+		},        
     {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",

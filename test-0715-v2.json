@@ -49,18 +49,6 @@
 			"api": "./py/农民影视.py"
 		},
 		{
-			"key": "xc",
-			"name": "待測｜星辰影院.py",
-			"type": 3,
-			"api": "./py/星辰影院.py"
-		},
-		{
-			"key": "hstv",
-			"name": "待測｜华数TV.py",
-			"type": 3,
-			"api": "./py/华数TV.py"
-		},
-		{
            "key": "456dy",
            "name": "待測｜456电影网.py",
            "type": 3,

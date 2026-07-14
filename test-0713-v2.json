@@ -52,41 +52,6 @@
       "ext"        : {"proxy": "", "youtube_txt": "./lib/Youtube.txt"}
     },
     {
-      "key": "csp_瓜皮",
-      "name": "🐙｜瓜皮｜只能搜索用",
-      "type": 3,
-      "api": "csp_XBPQ",
-      "playerType": 2,
-      "searchable": 1,
-      "quickSearch": 1,
-      "changeable": 1,
-      "filterable": 1,
-      "click": "document.querySelector(\"#playleft iframe\").contentWindow.document.querySelector(\"#start\").click();",
-      "timeout": 60,
-      "jar": "./jar/xyqxbpq.jar;md5;fd3cefc7302f3a39a442682f802b11e5",
-      "ext": {
-        "主页url": "https://www.gpvod.cc",
-        "副标题": "public-list-prb hide ft2\">&&</span>",
-        "数组": "class=\"public-list-div public-list-bj\">&&</div>",
-        "图片": "data-src=\"&&\"",
-        "标题": "title=\"&&\"",
-        "链接": "href=\"&&\"",
-        "搜索url": "https://www.gpvod.cc/vodsearch.html?wd={wd}",
-        "搜索数组": "class=\"left public-list-bj\">&&</div>",
-        "搜索图片": "data-src=\"&&\"",
-        "搜索标题": "alt=\"&&封面图\"referrerpolicy",
-        "搜索链接": "href=\"&&\"",
-        "搜索副标题": "public-list-prb hide ft2\">&&</span>",
-        "简介": "class=\"text cor3\">&&</div>",
-        "线路数组": "<a class=\"swiper-slide&&</a>",
-        "线路标题": "</i>&&<span",
-        "播放数组": "<ul class=\"anthology-list-play size\">&&</ul>",
-        "播放标题": "\">&&</a>",
-        "分类url": "https://www.gpvod.cc/vodshow/area/{area}/by/{by}/id/{cateId}/page/{catePg}/year/{year}.html",
-        "分类": "电影$dianying#电视劇$juji#综艺$zongyi#动漫$dongman#短劇$shuangju"
-      }
-    },   
-    {
       "key": "金牌影视",
       "name": "🏆｜金牌｜高清",
       "type": 3,
@@ -381,24 +346,6 @@
         "dataIv": "kj37zs29q22jk96t",
         "init": "initV122",
         "ua": "okhttp/3.10.0"
-      }
-    },
-    {
-      "key": "星夜",
-      "name": "🏆｜星夜｜4K",
-      "type": 3,
-      "api": "csp_AppQi",
-      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
-      "changeable": 1,
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "url"    : "https://qj4.catbb.xyz",
-        "dataKey": "eecbio48dsq13kkk",
-        "dataIv" : "eecbio48dsq13kkk",
-        "init"   : "initV122",
-        "ua"     : "Lavf/58.12.100"
       }
     },
     {
@@ -834,7 +781,7 @@
     },
     {
       "key"        : "4kmx",
-      "name"       : "🥇｜木兮｜藍光◎無廣",
+      "name"       : "🥇｜木兮｜只能看高清",
       "type"       : 3,
       "api"        : "http://itv666.cc/pyplugin/木兮.py",
       "searchable" : 1,
@@ -1280,7 +1227,7 @@
       "searchable" : 1,
       "quickSearch": 1,
       "changeable" : 1,
-      "categories": ["综艺","动漫","动作片","喜剧片","爱情片","科幻片","恐怖片","剧情片","战争片","国产剧","欧美剧","韩国剧","日本剧","港台剧","台湾剧","泰国剧","纪录片","海外剧","大陆综艺","日韩综艺","港台综艺","欧美综艺","国产动漫","日韩动漫","欧美动漫","动画片","港台动漫","海外动漫","演唱会","体育赛事","篮球","足球","预告片","斯诺克","影视解说","短剧","4K电影","有声动漫","女频恋爱","反转爽剧","古装仙侠","年代穿越","脑洞悬疑","现代都市","Netflix电影","Netflix自制剧","擦边短剧"]
+      "categories": ["动作片","喜剧片","爱情片","科幻片","恐怖片","剧情片","战争片","国产剧","欧美剧","韩国剧","日本剧","港台剧","台湾剧","泰国剧","纪录片","海外剧","大陆综艺","日韩综艺","港台综艺","欧美综艺","国产动漫","日韩动漫","欧美动漫","动画片","港台动漫","女频恋爱","反转爽剧","古装仙侠","年代穿越","脑洞悬疑","现代都市"]
     },
     {
       "key"        : "vod_豆瓣",

@@ -99,6 +99,16 @@
       "quickSearch": 0,
       "changeable": 0
     }, 
+        {
+            "key": "Hxq",
+            "name": "🏆｜韓劇｜高清",
+            "type": 3,
+            "api": "csp_HxqAmns",
+            "jar": "./jar/aowu-0714.jar;md5;dd6fbafde59756e7f5043a20c74b1961",     
+            "searchable": 1,
+            "quickSearch": 1,
+            "changeable": 0
+        },    
     {
       "key"        : "Ysp",
       "name"       : "🏆｜優影｜高清",

@@ -2,9 +2,19 @@
   "spider": "./jar/fm.jar;md5;b0adab2fad1de8871b9533527f407cdf",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.07.15_Ver.5 第二階段測試",
+  "notice": "115.07.15_Ver.6 第二階段測試",
   "sites": [        
     {
+      "key"        : "威視.py",
+      "name"       : "待測｜威視",
+      "type"       : 3,
+      "api"        : "./py/威视TV.py",
+      "searchable" : 1,
+      "quickSearch": 1,
+      "filterable" : 0,
+      "changeable" : 0
+    },
+  {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",
       "type": 3,

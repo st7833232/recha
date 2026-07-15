@@ -4,27 +4,6 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.07.15_Ver.5 第二階段測試",
   "sites": [ 
-{
-
-            "name": "瓜子(嗷嗚)",
-            "key": "Guazi",
-            "type": 3,
-            "api": "csp_GuaziAmns",
-            "jar": "https://files.catbox.moe/n95oun.txt",
-            "header": {
-                "User-Agent": "Lavf/57.83.100",
-                "Referer": "http://WJiZxLXA2.com/"
-            },
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "ext": {
-                "sites": "",
-                "filters": "https://files.catbox.moe/yyxz4t.json"
-                
-            }
-            
-        },     
   		{
       "key": "ppx",
       "name": "待測｜皮皮虾.py",

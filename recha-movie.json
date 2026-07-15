@@ -5,13 +5,7 @@
   "notice": "115.07.15 第一階段測試完畢",
   "sites": [ 
       
-            
-		{
-			"key": "djjh",
-			"name": "待測｜短剧聚合.py",
-			"type": 3,
-			"api": "./py/短剧聚合.py"
-		},  
+
     {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",
@@ -66,7 +60,14 @@
       "searchable" : 1,
       "quickSearch": 1,
       "changeable" : 1
-    },    
+    },
+  		{
+      "key": "皮皮虾",
+      "name": "🏆｜銅牌｜高清",
+      "type": 3,
+      "api": "./py/皮皮虾.py",
+      "ext": "http://43.248.117.123:4680"
+       },     
     {
       "key"       : "py_aidianying",
       "name"      : "🏆｜鐵牌｜藍光",
@@ -161,14 +162,7 @@
       "searchable" : 1,
       "quickSearch": 1,
       "changeable" : 0
-    },
-  		{
-      "key": "ppx",
-      "name": "🏆｜皮皮虾｜高清◎秒播",
-      "type": 3,
-      "api": "./py/皮皮虾.py",
-      "ext": "http://43.248.117.123:4680"
-       },    
+    },   
     {
       "key"       : "py_耐看点播",
       "name"      : "🏆｜耐看｜高清◎秒播",
@@ -890,6 +884,13 @@
         "dataiv" : "1111111111111111"
       }
     },
+            
+		{
+			"key": "djjh",
+			"name": "📺｜短剧聚合",
+			"type": 3,
+			"api": "./py/短剧聚合.py"
+		},      
     {
       "key": "星芽短剧",
       "name": "📺｜星芽短劇",

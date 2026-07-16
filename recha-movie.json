@@ -119,6 +119,34 @@
       "changeable" : 1
     },
     {
+      "key": "爱影",
+      "name": "🏆｜愛盈｜高清◎秒播",
+      "type": 3,
+      "api": "csp_AppQi",
+      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
+      "changeable": 1,
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": {
+        "site"   : "https://aysappto.oss-cn-chengdu.aliyuncs.com/q23.txt",
+        "dataKey": "nzEqOgYk3QzHuEP8",
+        "dataIv" : "nzEqOgYk3QzHuEP8",
+        "init"   : "initV122",
+        "ua"     : "Lavf/58.12.10"
+      }
+    },  
+        {
+            "key": "Hxq",
+            "name": "🏆｜韓劇｜高清",
+            "type": 3,
+            "api": "csp_HxqAmns",
+            "jar": "./jar/aowu-0714.jar;md5;dd6fbafde59756e7f5043a20c74b1961",     
+            "searchable": 1,
+            "quickSearch": 1,
+            "changeable": 0
+        },       
+    {
       "key" : "py_jieyingshi",
       "name": "🏆｜異界｜高清",
       "type": 3,
@@ -646,24 +674,6 @@
       }
     },
     {
-      "key": "爱影",
-      "name": "🥇｜愛盈｜高清◎秒播",
-      "type": 3,
-      "api": "csp_AppQi",
-      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
-      "changeable": 1,
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "site"   : "https://aysappto.oss-cn-chengdu.aliyuncs.com/q23.txt",
-        "dataKey": "nzEqOgYk3QzHuEP8",
-        "dataIv" : "nzEqOgYk3QzHuEP8",
-        "init"   : "initV122",
-        "ua"     : "Lavf/58.12.10"
-      }
-    },
-    {
       "key": "大师兄",
       "name": "🥇｜大師兄｜高清◎秒播",
       "type": 3,
@@ -918,17 +928,6 @@
       "name"       : "📺｜拜拜短剧",
       "type"       : 3,
       "api"        : "csp_BddjAmns",
-      "jar": "./jar/aowu-0714.jar;md5;dd6fbafde59756e7f5043a20c74b1961",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "changeable" : 0,
-      "genre"      : "shortdrama"
-    },
-    {
-      "key"        : "Wgdj",
-      "name"       : "📺｜圍觀短剧",
-      "type"       : 3,
-      "api"        : "csp_WgdjAmns",
       "jar": "./jar/aowu-0714.jar;md5;dd6fbafde59756e7f5043a20c74b1961",
       "searchable" : 1,
       "quickSearch": 1,
@@ -1346,21 +1345,6 @@
 			"type": 3,
 			"api": "./py/MiFun动漫.py"
 		},        
-    {
-      "key"        : "py_方舟_APP",
-      "name"       : "🎡｜方舟",
-      "type"       : 3,
-      "api"        : "./py/app/getapp.py",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "ext"        : {
-        "host"   : "https://www.cyfz.vip",
-        "api"    : "/api.php/getappapi",
-        "datakey": "e72cdfd629e8895d",
-        "dataiv" : "e72cdfd629e8895d"
-      }
-    },
     {
       "key"        : "py_元咲_APP",
       "name"       : "🎡｜元纓",

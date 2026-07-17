@@ -6,7 +6,7 @@
   "sites": [        
         {
             "key": "大眾",
-            "name": "大眾影視",
+            "name": "大眾影視｜1080P",
             "type": 3,
             "api": "./py/大众.py",
             "searchable": 1,
@@ -14,7 +14,7 @@
         },
         {
             "key": "花子",
-            "name": "花子動漫",
+            "name": "花子動漫｜1080P",
             "type": 3,
             "api": "./py/huazi.py",
             "searchable": 1,

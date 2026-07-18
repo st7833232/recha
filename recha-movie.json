@@ -321,26 +321,6 @@
         "ua": "okhttp/3.10.0"
       }
     },
-    {
-      "key" : "顾我99",
-      "name": "🏆｜顾我｜3線有賭港廣告",
-      "type": 3,
-      "searchable" : 1,
-      "quickSearch": 1,
-      "changeable" : 1,            
-      "api" : "csp_App99",
-      "jar" : "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
-      "ext" : {
-        "host": "http://117.50.200.113:19987/app/bn",
-        "LoginPath": "/app/log",
-        "appkey": "040f9b1bc5e942569b5c3e63943306ab",
-        "versionName": "4.3.1",
-        "name": "顾我追剧",
-        "package": "com.guwozhuijux.app",
-        "buildNumber": "2001",
-        "buildSignature": "5AD4436C4730FFE26910C86278B80F3E661C317FFC3616F702D20A729262624A"
-      }
-    },
 		{
 			"key": "qmvm",
 			"name": "🏆｜七猫｜高清◎秒播(浮水印廣告)",

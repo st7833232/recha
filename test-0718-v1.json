@@ -4,30 +4,7 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.07.18_Ver.3 最終階段測試",
   "sites": [        
-        {
-            "key": "大眾",
-            "name": "大眾影視｜1080P",
-            "type": 3,
-            "api": "./py/大众.py",
-            "searchable": 1,
-            "quickSearch": 1
-        },
-              {
-            "key": "悟空",
-            "name": "悟空影视｜1080P",
-            "type": 3,
-            "api": "./py/悟空影视.py",
-            "searchable": 1,
-            "quickSearch": 1
-        },
-        {
-            "key": "花子",
-            "name": "花子動漫｜1080P",
-            "type": 3,
-            "api": "./py/huazi.py",
-            "searchable": 1,
-            "quickSearch": 1
-        },        
+  
   {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",

@@ -2,9 +2,10 @@
   "spider": "./jar/fm.jar;md5;b0adab2fad1de8871b9533527f407cdf",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.07.15 第一階段測試完畢",
+  "notice": "115.07.19 全階段測試完畢",
   "sites": [ 
       
+
 
     {
       "key": "豆瓣",
@@ -772,16 +773,6 @@
       "ext"        : {"site": "https://cqzuoer.com"}
     },
     {
-      "key"        : "py_xiong_di_ying_shi",
-      "name"       : "🥇｜兄弟",
-      "type"       : 3,
-      "api"        : "./py/兄弟影视.min.py",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 0,
-      "changeable" : 0
-    },
-    {
       "key": "csp_Wwys",
       "name": "🥇｜农民｜高清",
       "type": 3,
@@ -842,7 +833,7 @@
     },
     {
       "key" : "永乐影视",
-      "name": "🥇｜永乐｜高清",
+      "name": "🥇｜永樂｜高清",
       "type": 3,
       "searchable" : 1,
       "quickSearch": 1,
@@ -856,7 +847,15 @@
         "分类": "电影$1#电视劇$2#综艺$3#动漫$4",
         "类型": "动作片$6#喜劇片$7#爱情片$8#科幻片$9#奇幻片$10#恐怖片$11#劇情片$12#战争片$20#动画片$26#悬疑片$22#冒险片$23#犯罪片$24#惊悚片$45#歌舞片$46#灾难片$47#网络片$48｜｜国产劇$13#港台劇$14#日劇$15#韩劇$33#欧美劇$16#泰劇$34#新马劇$35#其他劇$25｜｜内地综艺$27#港台综艺$28#日本综艺$29#韩国综艺$36#欧美综艺$30#新马泰综艺$37#其他综艺$38｜｜国产动漫$31#日本动漫$32#韩国动漫$39#港台动漫$40#新马泰动漫$41#欧美动漫$42#其他动漫$43"
       }
-    },  
+    }, 
+        {
+            "key": "大眾",
+            "name": "🥇｜大眾｜1080P",
+            "type": 3,
+            "api": "./py/大众.py",
+            "searchable": 1,
+            "quickSearch": 1
+        },     
     {
       "key"        : "Olyy",
       "name"       : "🥇｜歐樂｜(賭城廣告)",
@@ -866,7 +865,15 @@
       "searchable" : 1,
       "quickSearch": 1,
       "changeable" : 1
-    },        
+    },   
+              {
+            "key": "悟空",
+            "name": "🥇悟空｜1080P(廣告多)",
+            "type": 3,
+            "api": "./py/悟空影视.py",
+            "searchable": 1,
+            "quickSearch": 1
+        },             
     {
       "key"        : "py_哇哇APP",
       "name"       : "📱｜哇哇｜APP",
@@ -1177,15 +1184,6 @@
       "changeable": 1
     },
     {
-      "key"       : "魔抓采集资源",
-      "name"      : "🧲｜魔抓｜高清◎慢播(賭城廣告)",
-      "type"      : 1,
-      "api"       : "https://mozhuazy.com/api.php/provide/vod/",
-      "playerType": 1,
-      "searchable": 1,
-      "changeable": 1
-    },
-    {
       "key"        : "vod_艾旦",
       "name"       : "🧲｜艾旦｜高清(浮水印廣告+圖壞)",
       "type"       : 1,
@@ -1307,18 +1305,16 @@
       "changeable": 0
     },
         {
-            "name": "🎡｜稀飯",
-            "key": "DMxifan",
+            "key": "花子",
+            "name": "🎡｜花子｜1080P",
             "type": 3,
-            "api": "csp_DMxifanAmns",
-            "jar": "./jar/aowu-0714.jar;md5;dd6fbafde59756e7f5043a20c74b1961",
+            "api": "./py/huazi.py",
             "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0
-        },
+            "quickSearch": 1
+        },  
         {
-            "name": "🎡｜番薯",
             "key": "FanShu",
+            "name": "🎡｜番薯",
             "type": 3,
             "api": "csp_FanShuAmns",
             "jar": "./jar/aowu-0714.jar;md5;dd6fbafde59756e7f5043a20c74b1961",

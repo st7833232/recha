@@ -83,17 +83,6 @@
             "quickSearch": 1,
             "changeable": 1
         },        
-        //{
-            //"key": "甜圈短剧",
-            //"name": "📺｜甜圈短劇",
-            //"jar": "./jar/6420.jar;md5;987ad83cab7d1caad22d6891b834f82b",
-            //"type": 3,
-            //"api": "csp_TQdjAmns",
-            //"searchable": 1,
-            //"filterable": 1,
-            //"quickSearch": 1,
-            //"changeable": 0
-        //},
         {
             "key": "喵喵短剧",
             "name": "📺｜喵喵短劇",

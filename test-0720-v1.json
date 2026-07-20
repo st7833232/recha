@@ -336,7 +336,7 @@
     },
     {
       "key": "山楂",
-      "name": "🏆｜山楂｜？",
+      "name": "🏆｜山楂｜高清",
       "type": 3,
       "api": "./py/山楂.py",
       "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
@@ -346,7 +346,7 @@
     },
     {
       "key": "橘汁",
-      "name": "🏆｜橘子｜？",
+      "name": "🏆｜橘子｜普清",
       "type": 3,
       "api": "csp_AppDrama",
       "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",

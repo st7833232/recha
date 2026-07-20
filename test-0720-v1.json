@@ -1548,16 +1548,6 @@
       "ext"        : "./drpy_js/七色番[漫].js"
     },
     {
-      "key"        : "hipy_js_爱弹幕[漫]",
-      "name"       : "🎡｜爱动漫",
-      "type"       : 3,
-      "api"        : "./drpy_libs/drpy2.min.js",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "ext"        : "./drpy_js/爱弹幕[漫].js"
-    },
-    {
       "key": "虎牙",
       "name": "📡｜虎牙｜Live",
       "type": 3,

@@ -1,0 +1,9 @@
+
+{
+"urls":[
+        {"url":"https://gitlab.com/tenrecha/recha/-/raw/main/wang-movie.json","name":"老王_追劇專區"},
+        {"url":"https://gitlab.com/tenrecha/recha/-/raw/main/wang-live.json","name":"老王_直播專區"},
+        {"url":"https://gitlab.com/tenrecha/recha/-/raw/main/wang-short.json","name":"老王_短劇專區"},
+        {"url":"https://gitlab.com/tenrecha/recha/-/raw/main/wang-sex.json","name":"老王_私密專區"}
+       ]
+}

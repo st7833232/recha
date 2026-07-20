@@ -4,15 +4,7 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.07.20 ver.2 加入飯太硬測試",
   "sites": [ 
-    {
-      "key"       : "py_千千影视",
-      "name"      : "🏆｜千千｜？",
-      "type"      : 3,
-      "api"       : "./py/千千影视.py",
-      "searchable": 1,
-      "filterable": 0,
-      "changeable": 1
-    },
+
     {
       "key"       : "py_808影院",
       "name"      : "🏆｜818｜？",

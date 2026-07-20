@@ -1771,13 +1771,6 @@
       "playerType": 2,
       "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
     },
-           {
-      "name": "四季线上",
-      "url": "http://dreamtv.sylu.cc:2082/vtg4.m3u?token=dbm",
-      "playerType": 2,
-      "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
-      "logo": "https://gcore.jsdelivr.net/gh/taksssss/tv/icon/{name}.png"
-    },
    {
       "name": "日本斯玛特",
       "url": "http://dbm.de5.net/smt.php",

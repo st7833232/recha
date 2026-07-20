@@ -1771,107 +1771,130 @@
       "playerType": 2,
       "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
     },
-    {
-      "name": "Dream",
-      "url": "http://dbmlosa.sylu.net:8080/dream.txt",
-      "playerType": 2,
-      "epg": "http://epg.52sw.top:668/?ch={name}&date={date},https://tv.mxdyeah.top/epgphp/t.xml.gz",
-      "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png",
-      "catchup": {
-        "type"  : "append",
-        "source": "&playseek=${(b)yyyyMMddHHmmss}-${(e)yyyyMMddHHmmss}"
-      }
-    },
-    {
-      "name": "欧华(需32位影视)",
-      "url": "http://dbmlosa.sylu.net:8080/ouhua.txt",
+           {
+      "name": "四季线上",
+      "url": "http://dreamtv.sylu.cc:2082/vtg4.m3u?token=dbm",
       "playerType": 2,
       "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
-      "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
+      "logo": "https://gcore.jsdelivr.net/gh/taksssss/tv/icon/{name}.png"
     },
-    {
-      "name": "CloudTV(需32位影视)",
-      "url": "http://dbmlosa.sylu.net:8080/CloudTV.txt",
+   {
+      "name": "日本斯玛特",
+      "url": "http://dbm.de5.net/smt.php",
       "playerType": 2,
       "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
-      "logo": "https://gitee.com/mytv-android/myTVlogo/raw/main/img/{name}.png"
+      "logo": "https://gcore.jsdelivr.net/gh/taksssss/tv/icon/{name}.png",
+      "ua": "dream"
     },
+        {
+      "name": "美国斯玛特",
+      "url": "http://dbmlasvgas.sylu.cc:2086/trams.m3u?token=NqAERVyoLmQn0tNu9lona-PV7_EltgWnrAr6Rkaf8Ro=",
+      "playerType": 2,
+      "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
+      "logo": "https://gcore.jsdelivr.net/gh/taksssss/tv/icon/{name}.png"
+    },  
     {
       "name": "tv123",
       "type": 0,
-      "ua"  : "okhttp",
-      "url" : "http://tv123.vvvv.ee/tv.m3u"
-    },
-    {
-      "name": "🐬裤佬TV",
-      "type": 0,
       "ua": "okhttp",
-      "url": "https://gh-proxy.org/https://raw.githubusercontent.com/Jsnzkpg/Jsnzkpg/Jsnzkpg/Jsnzkpg1.m3u"
+      "url": "http://tv123.vvvv.ee/tv.m3u"
     },
-    {
-      "name": "🐬Gather",
-      "type": 0,
-      "ua"  : "okhttp",
-      "url" : "https://iptv.yang-1989.eu.org/m3u/Gather.m3u"
-    },
-    {
-      "name": "🐬黄蚂蚁先锋推流源",
-      "type": 0,
-      "ua"  : "okhttp",
-      "url" : "http://ge.html-5.me//ii/黄蚂蚁先锋推流源.txt"
-    },
-    {
-      "name": "🐬港台",
-      "type": 0,
-      "ua"  : "okhttp",
-      "url" : "https://feer-cdn-bp.xpnb.qzz.io/xnkl.txt"
-    },
-    {
-      "name": "🐬港奥台国际",
-      "type": 0,
-      "ua"  : "okhttp",
-      "url" : "http://tv123.vvvv.ee/tv.m3u"
-    },
-    {
-      "name": "🐬4GTV(梯子台湾节点)",
-      "type": 0,
-      "ua": "okhttp",
-      "url": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/4gtv"
-    },
-    {
-      "name": "🐬jackTV(梯子)",
-      "type": 0,
-      "ua"  : "okhttp",
-      "url" : "https://php.946985.filegear-sg.me/jackTV.m3u"
-    },
+         {
+            "name": "🐬各大源合集",
+            "type": 0,
+            "ua": "okhttp/5.3.2",
+            "url": "https://gh-proxy.org/https://raw.githubusercontent.com/807080747/zv/refs/heads/main/sese.txt"
+        }, 
+	     {
+            "name": "🐬综合直播",
+            "type": 0,
+            "playerType": 2,
+            "ua": "okhttp",
+			"url": "https://raw.githubusercontent.com/fleung49/star/refs/heads/main/mit"
+         },
+	     {
+            "name": "🐬电视家",
+            "type": 0,
+            "playerType": 2,
+             "ua": "okhttp",
+			 "url": "https://gh-proxy.org/https://github.com/bang359/dsj/raw/main/dsjcs.txt"
+         },
+		{
+            "name": "🐬薄荷直播",
+            "type": 0,
+            "ua": "okhttp/5.3.2",
+            "url": "https://gh-proxy.org/https://raw.githubusercontent.com/wujiangliu/live-sources/refs/heads/main/bhmb.m3u"
+        },  
+		{
+            "name": "🐬咪咕直播",
+            "type": 0,
+            "ua": "okhttp/5.3.2",
+            "url": "http://www.52top.com.cn:678/downloads/migu.txt"
+        },
+		{
+            "name": "🐬iptv直播",
+            "type": 0,
+            "ua": "okhttp/5.3.2",
+            "url": "https://raw.githubusercontent.com/vinkerq/iptv-api/refs/heads/master/iptv.txt"
+        },
+        {
+            "name": "🐬风云源",
+            "type": 0,
+            "ua": "okhttp",
+            "url": "http://iptv.4666888.xyz/FYTV.txt"
+        },
+        {
+            "name": "🐬易发源 有🔞",
+            "type": 0,
+            "ua": "okhttp",
+            "url": "https://gh-proxy.org/https://raw.githubusercontent.com/fafa002/yf2025/refs/heads/main/yiyifafa.txt"
+        },
+	    {
+            "name": "🐬港奥台国际",
+            "type": 0,
+            "ua": "okhttp",
+            "url": "http://tv123.vvvv.ee/tv.m3u"
+        },
+        {
+            "name": "🐬中港台直播源",
+            "type": 0,
+            "ua": "okhttp",
+            "url": "https://t.freetv.fun/m3u/playlist_all.txt"
+        },
+		{
+            "name": "🐬4GTV(免梯子)1080p",
+            "type": 0,
+            "ua": "okhttp",
+            "url": "http://4gtv.cnlive.club/4gtv.m3u"
+        },
+	    {
+            "name": "🐬4GTV(梯子任何节点)1080p",
+            "type": 0,
+            "ua": "okhttp",
+            "url": "https://ha.msbot.dpdns.org/4gtv_api.php"
+        },
     {
       "name": "FreeTV.fun",
       "type": 0,
-      "ua"  : "okhttp",
-      "url" : "https://t.freetv.fun/m3u/playlist.txt"
-    },
+      "ua": "okhttp",
+      "url": "https://t.freetv.fun/m3u/playlist.txt"
+    },    
     {
       "name": "風雲源",
       "type": 0,
-      "ua"  : "okhttp",
-      "url" : "http://iptv.4666888.xyz/FYTV.txt"
+      "ua": "okhttp",
+      "url": "http://iptv.4666888.xyz/FYTV.txt"
     },
     {
       "name": "香蕉-Gather",
-      "url" : "https://tv.iill.top/m3u/Gather",
-      "ua"  : "okhttp/3.15",
-      "epg" : "http://epg.112114.xyz/?ch={name}&date={date}",
+      "url": "https://tv.iill.top/m3u/Gather",
+      "ua": "okhttp/3.15",
+      "epg": "http://epg.112114.xyz/?ch={name}&date={date}",
       "logo": "https://epg.112114.xyz/logo/{name}.png",
       "pass": true
     },
     {
-      "name": "香蕉-MYTV",
-      "url": "https://tv.iill.top/m3u/MyTV",
-      "epg": "http://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Taipei",
-      "pass": true
-    },
-    {
-      "name": "RobYang｜ http://RobYang.dpdns.org",
+      "name": "RobYang| http://RobYang.dpdns.org",
       "type": 0,
       "url": "http://www1.RobYang.dpdns.org/VodLive/lb8ffa",
       "ua": "okhttp/4.12.0",
@@ -1881,7 +1904,7 @@
       "pass": true
     },
     {
-      "name": "RobYang備份｜ http://RobYang.rr.nu",
+      "name": "RobYang備份| http://RobYang.rr.nu",
       "type": 0,
       "url": "http://RobYang.runasp.net/VodLive/lb8ffa",
       "ua": "okhttp/4.12.0",
@@ -1894,17 +1917,26 @@
       "name": "🔞秘密基地",
       "type": 0,
       "ua": "okhttp",
-      "url": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/FG/refs/heads/main/xxx视频资源"
-    },
+      "url": "https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/xxx视频资源.txt"
+    },        
     {
       "name": "🔞祕密花園",
-      "url": "./live/福利.txt",
+      "url": "http://dbmlosa.sylu.cc:8080/live/福利.txt",
       "type": 0,
       "timeout": 10,
       "ua": "okhttp/3.8.1 okhttp/3.15 okhttp/4.12.0 Herissmon/2016 judy/5.2.1 RobYang/5.2.1 Lavf/58.12.100 catvod.com Goiptv/8.8.8 Goiptv/0.0.1 xieanqishiwoerzi/0.0.1 okHttp/Mod-1.0.0",
       "logo": "https://epg.112114.xyz/logo/{name}.png",
       "epg": "http://epg.112114.xyz/?ch={name}&date={date}"
     },
+    {
+      "name": "🔞午夜劇場",
+      "url": "https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/午夜剧场.txt",
+      "type": 0,
+      "timeout": 10,
+      "ua": "okhttp/3.8.1 okhttp/3.15 okhttp/4.12.0 Herissmon/2016 judy/5.2.1 RobYang/5.2.1 Lavf/58.12.100 catvod.com Goiptv/8.8.8 Goiptv/0.0.1 xieanqishiwoerzi/0.0.1 okHttp/Mod-1.0.0",
+      "logo": "https://epg.112114.xyz/logo/{name}.png",
+      "epg": "http://epg.112114.xyz/?ch={name}&date={date}"
+    },    
     {
       "name": "台灣景點直播(freeman)",
       "playerType": 2,

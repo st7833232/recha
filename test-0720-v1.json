@@ -4,7 +4,15 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.07.20 ver.2 加入飯太硬測試",
   "sites": [ 
-
+    {
+      "key"       : "py_黃豆短劇",
+      "name"      : "🔞｜黃豆｜？",
+      "type"      : 3,
+      "api"       : "./py/黄豆短剧.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 1
+    },       
     {
       "key"       : "py_808影院",
       "name"      : "🏆｜818｜？",

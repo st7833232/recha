@@ -1,163 +1,94 @@
-rule:
-  description:
-    - "Output update analysis at the end of response, following <status_current_variables> from previous turn"
-    - "Variable updates are omitted in context but you must still add them"
-    - "**CRITICAL**: NEVER include quotes inside string values. Write `\"秋青子\"` NOT `\"\\\"秋青子\\\"\"`"
-    - "**IMPORTANT**: All [0] suffixes have been REMOVED. Use direct object paths like `同伴/如夢/服裝/鞋子`"
-    - "3 commands available: `replace` (2-3 args), `insert` (2-3 args), `remove` (1-2 args), `delta` (2 args, numbers only)"
-    - "strictSet disabled: [0] suffix is no longer used"
+---
+# 變量詳細參考文檔 (Variable Reference)
 
-  command_usage:
-    - "{\"op\": \"replace\", \"path\": \"/同伴/如夢/服裝/鞋子\", \"value\": \"赤腳\"} - Replace existing value"
-    - "{\"op\": \"delta\", \"path\": \"/同伴/如夢/心跳\", \"value\": 10} - Add/subtract numbers only (正數=增加，負數=減少)"
-    - "{\"op\": \"insert\", \"path\": \"/同伴/如夢\", \"value\": {\"基礎信息\": {...}, \"服裝\": {...}}} - Insert new character with full structure (path不存在時建立完整物件)"
-    - "{\"op\": \"insert\", \"path\": \"/同伴/如夢/性癖好/足交\", \"value\": \"描述\"} - Insert single field to existing object"
-    - "{\"op\": \"remove\", \"path\": \"/同伴/如夢/服裝/鞋子\"} - Remove field"
+同伴: # 物件，以同伴名為鍵，記錄同伴的各種信息。
+  # {
+  #   "狀態": {
+  #     "當前狀態":"當前人物狀況的簡要說明(18個字內)",
+  #     "知道 user 手機號碼"：false,
+  #     "擁有 user 聯絡方式"：false,
+  #     "user 是否主動提供過號碼"：false
+  #   },
+  #   "生理": {
+  #     "排泄欲":0 
+  #   },
+  #   "關係": "陌生人(8個字內)",
+  #   "敏感部位": { "耳朵": {"被吹氣": "感覺耳朵的癢會傳導到下體，開始濕潤"}},
+  #   "基礎信息": {
+  #     "姓名": "",
+  #     "年齡": 0,
+  #     "身份": "",
+  #     "性別": "男性/女性/雙性人",
+  #     "外貌": {
+  #        "身高": 165,
+  #        "髮色": "黑色",
+  #        "髮型": "長直髮/短髮/馬尾/雙馬尾等",
+  #     }
+  #   },
+  #   "性經驗": {
+  #     "性交經驗": "無/生澀/熟練/專家/天才",
+  #     "口交經驗": "無/生澀/熟練/專家/天才",
+  #     "肛交經驗": "無/生澀/熟練/專家/天才",
+  #     "性幻想對象": "鄰居家的大哥哥",
+  #     "性行為次數": 0,
+  #     "性伴侶數量": 0
+  #   },
+  #   "生理狀態": {
+  #     "乳頭狀態": "勃起"
+  #   },
+  #   "心理狀態": { "當前所想": "" },
+  #   "性癖好": { "NTR": "從他人處獲得快感" },
+  #   "角色人設": "從角色的相關資料分析，寫出85-95字的完整的人設",
+  #   "背德經歷": {"初次偷情成功": { "描述": "成功與阿彬做愛，沒讓千鶴知道"}}
+  # }
 
-  analysis:
-    "You MUST follow this Chain-of-Thought (COT) analysis process step by step:"
-    
-    "**STEP 1: Scene Analysis (50 words max, IN ENGLISH)**"
-    - "Identify which female character is currently interacting with user"
-    - "Describe what is happening in this specific interaction"
-    - "Determine what physical/emotional/clothing changes might occur"
-    - "Example: \"User having dinner with secretary Qiu Qingzi. She removed heels, sitting relaxed. Warm atmosphere, happy mood. No sexual activity, just intimate conversation.\""
-    
-    "**STEP 2: Character Identity Check**"
-    - "Extract current character name from the story context"
-    - "Read 同伴/如夢/基礎信息/姓名 value from <status_current_variables>"
-    - "Compare: Did character change? [YES/NO]"
-    - "**IF YES**: You MUST do FULL UPDATE - mark ALL variables as Y and set them to new character's complete information"
-    - "**IF NO**: You MUST do PARTIAL UPDATE - only mark variables as Y if they actually changed in this interaction"
-    
-    "**STEP 3: Systematic Variable Review (check EVERY variable one by one)**"
-    "Go through each variable category systematically and mark Y (needs update) or N (no change):"
-    
-    同伴/如夢/狀態:
-      - "當前狀態: [Y/N] - If overall condition changed, mark Y and specify (max 18 Chinese characters)"
-    
-    同伴/如夢/基礎信息:
-      - "姓名: [Y/N] - If empty or character changed, mark Y and specify value"
-      - "年齡: [Y/N] - If empty/0 or character changed, mark Y and specify value"
-      - "身份: [Y/N] - If empty or character changed, mark Y and specify value"
-      - "性別: [Y/N] - If empty or character changed, mark Y and specify (男性/女性/雙性人)"
-      - "外貌/身高: [Y/N] - If empty or character changed, mark Y"
-      - "外貌/髮色: [Y/N] - If empty or character changed, mark Y"
-      - "外貌/髮型: [Y/N] - If changed (e.g., tied up, let down) or character changed, mark Y"
-    
-    同伴/如夢/服裝:
-      - "上衣: [Y/N] - If empty, changed, or character changed, mark Y and describe current top"
-      - "下裝: [Y/N] - If empty, changed, or character changed, mark Y and describe current bottom"
-      - "內衣: [Y/N] - If empty, changed, or character changed, mark Y"
-      - "內褲: [Y/N] - If empty, changed, or character changed, mark Y"
-      - "絲襪: [Y/N] - If empty, changed, or character changed, mark Y"
-      - "鞋子: [Y/N] - If empty, changed (e.g., took off shoes = \"赤腳\" or empty string \"\"), or character changed, mark Y"
-    
-    同伴/如夢/心理狀態:
-      - "當前所想: [Y/N] - If thoughts changed, mark Y and specify (max 20 Chinese characters)"
-    
-    同伴/如夢/心跳:
-      - "心跳: [Y/N] - If arousal/emotion changed, mark Y and specify BPM (40-200)"
-    
-    同伴/如夢/身體特徵:
-      - "類型: [Y/N] - If empty or character changed, mark Y (female / hermaphrodite)"
-      - "體型: [Y/N] - If empty or character changed, mark Y (幼女型/蘿莉型/少女型/御姐型/豐滿型/肉感型/貧乳型/健美型/年長型/誘惑型)"
-      - "三圍/胸圍: [Y/N] - If empty or character changed, mark Y"
-      - "三圍/腰圍: [Y/N] - If empty or character changed, mark Y"
-      - "三圍/臀圍: [Y/N] - If empty or character changed, mark Y"
-      - "三圍/罩杯: [Y/N] - If empty or character changed, mark Y"
-      - "乳房/形狀: [Y/N] - If empty or character changed, mark Y"
-      - "乳房/乳頭顏色: [Y/N] - If empty or character changed, mark Y"
-      - "私處/類型: [Y/N] - If empty or character changed, mark Y (白虎無毛/肥大陰唇/粉嫩短毛或AI自行構想四個字)"
-    
-    同伴/如夢/性經驗:
-      - "處女: [Y/N] - Only mark Y if first vaginal intercourse occurred or character changed (是/否)"
-      - "性交經驗: [Y/N] - Only mark Y if level changed (無/生澀/熟練/專家/天才) or character changed"
-      - "口交經驗: [Y/N] - Only mark Y if level changed or character changed"
-      - "肛交經驗: [Y/N] - Only mark Y if level changed or character changed"
-      - "性行為次數: [Y/N] - Only mark Y if intercourse occurred (increment by 1) or character changed"
-      - "性伴侶數量: [Y/N] - Only mark Y if new partner or character changed"
-      - "性幻想對象: [Y/N] - Only mark Y if changed or character changed"
-    
-    同伴/如夢/生理狀態:
-      - "乳頭狀態: [Y/N] - If arousal/stimulation changed, mark Y and specify [正常/微凸/勃起]"
-      - "陰蒂狀態: [Y/N] - If arousal/stimulation changed, mark Y and specify [正常/微凸/充血]"
-      - "月經週期: [Y/N] - Only mark Y if menstrual status changed or character changed (1-28)"
-      - "懷孕狀態: [Y/N] - Only mark Y if pregnancy occurs or character changed (未懷孕/懷孕初期/懷孕中期/懷孕後期)"
-      - "懷孕天數: [Y/N] - Only mark Y if pregnancy days changed or character changed"
-      - "授精者: [Y/N] - Only mark Y if pregnancy occurs or character changed"
-      - "懷孕日: [Y/N] - Only mark Y if pregnancy occurs or character changed"
-      - "流產風險累積: [Y/N] - Only mark Y if risk changed"
-      - "流產待處理: [Y/N] - Only mark Y if miscarriage needs processing (true/false, auto-reset to false after script)"
-      - "流產次數: [Y/N] - Only mark Y if miscarriage occurred"
-      - "上次流產日: [Y/N] - Only mark Y if miscarriage occurred"
-      - "體液分泌: [Y/N] - If arousal changed, mark Y and specify [乾燥/正常/濕潤/氾濫] (extensible)"
-    
-    同伴/如夢/關係:
-      - "關係: [Y/N] - If relationship description changed, mark Y and specify (max 8 Chinese characters)"
-    
-    同伴/如夢/技能:
-      - "技能: [Y/N] - If skill level/experience changed, mark Y"
-      - "好感(對阿彬): [Y/N] - If affection toward 阿彬 changed, mark Y"
-      - "  格式: {\"等級\": 1, \"當前經驗\": 0, \"升級所需經驗\": 100}"
-      - "  升級規則: 升級所需經驗 = 等級 * 100，當前經驗達到升級所需經驗時，等級+1，當前經驗歸零"
-      - "  範例: 等級1時升級需100經驗，等級2時升級需200經驗，以此類推"
-    
-    同伴/如夢/敏感部位:
-      - "This is an EMPTY extensible object initially, AI should add parts when:"
-      - "  a) Sexual/intimate interaction reveals a new sensitive area"
-      - "  b) Character changes (reset all parts to new character's sensitive areas)"
-      - "For EXISTING parts: [Y/N] - If reaction description changed, mark Y and use replace"
-      - "For NEW parts discovered: mark Y and use insert to add new field to object"
-      - "Common sensitive areas: 乳頭, 陰蒂, 耳朵, 頸部, 後腰, 大腿內側, 腳踝, 嘴唇, 鎖骨, 腋下, etc."
-      - "Each part must have unique reaction description matching character personality"
-    
-    同伴/如夢/性癖好:
-      - "性癖好: [Y/N] - If new fetish discovered or character changed, mark Y"
-      - "Use insert to add new field: {\"op\": \"insert\", \"path\": \"/同伴/如夢/性癖好/癖好名\", \"value\": \"描述\"}"
-    
-    同伴/如夢/背德經歷:
-      - "背德經歷: [Y/N] - If significant immoral event occurred or character changed, mark Y"
-      - "Use insert to add new field: {\"op\": \"insert\", \"path\": \"/同伴/如夢/背德經歷/事件名\", \"value\": {\"描述\": \"詳細說明\"}}"
-    
-    同伴/如夢/角色人設:
-      - "角色人設: [Y/N] - Only mark Y if character changed, specify 85-95 character full profile"
-    
-    "**STEP 4: Command Selection**"
-    "For each variable marked Y in STEP 3, determine which command to use:"
-    - "Use `replace` for: replacing values, setting empty fields, updating single values (most common)"
-    - "Use `delta` for: incrementing/decrementing numbers when you want relative change (性行為次數+1, 心跳+10)"
-    - "  * Note: replace is also valid for numbers, choose based on whether you know absolute value or relative delta"
-    - "Use `insert` for: adding new fields to objects (性癖好, 背德經歷, 敏感部位, 技能) OR creating new character with full structure"
-    - "Use `remove` for: deleting fields from objects (removing clothes, clearing data)"
-    - "**技能更新特殊規則**:"
-    - "  當好感經驗增加時，先計算當前等級的升級所需經驗（等級 * 100）"
-    - "  若當前經驗 + 增加量 >= 升級所需經驗，則等級+1，當前經驗歸零（或扣除升級所需經驗後剩餘的部分）"
-    - "  範例: 等級1，當前經驗80，增加30 → 80+30=110 >= 100 → 等級變為2，當前經驗變為10"
-    - "  使用 replace 更新整個好感物件: {\"op\": \"replace\", \"path\": \"/同伴/如夢/技能/好感(對阿彬)\", \"value\": {\"等級\": 2, \"當前經驗\": 10, \"升級所需經驗\": 200}}"
-    
-    "**STEP 5: Analyze Other Variable Systems (if present)**"
-    "IMPORTANT: The above deltaed COT (STEP 1-4) is ONLY for \"同伴/如夢\" (companion) system."
-    - "Mark: \"同伴/如夢 deltaed COT: COMPLETED\""
-    - "Check <status_current_variables>: Are there OTHER top-level variable groups? [YES/NO]"
-    - "If YES: Those other systems do NOT have their own COT rules, so YOU must analyze them here"
-    - "For EACH other variable group found:"
-    - "  a) Identify the variable group name"
-    - "  b) List all variables in that group"
-    - "  c) For each variable, mark Y/N: Does it need update based on current scene?"
-    - "  d) Specify which commands to use for Y variables"
-    - "Keep this analysis brief and focused, no need for full COT for other systems"
-    
-    "**STEP 6: Final Validation Checklist**"
-    "Before outputting commands, verify:"
-    - "All paths include character name (e.g., `/同伴/如夢/服裝/鞋子`)? [YES/NO]"
-    - "All paths use `/` as separator? [YES/NO]"
-    - "No `[0]` suffixes used? [YES/NO]"
-    - "All string values are written WITHOUT extra quotes (e.g., `\"秋青子\"` NOT `\"\\\"秋青子\\\"\"`)? [YES/NO]"
-    - "All Y variables (from ALL systems) have corresponding commands? [YES/NO]"
-    - "All commands have clear Chinese comments? [YES/NO]"
-    - "當前所想 is within 20 characters? [YES/NO]"
-    - "當前狀態 is within 18 characters? [YES/NO]"
-    - "心跳 is within 40-200 range? [YES/NO]"
-    - "關係 is within 8 characters? [YES/NO]"
-    - "技能升級時，升級所需經驗是否正確計算為 等級 * 100？ [YES/NO]"
+  # ========== 女性/雙性人 專屬字段（保持不變）==========
+  #   "身體特徵": {
+  #     "類型": "female / hermaphrodite",
+  #     "體型": "幼女型/蘿莉型/少女型/御姐型/豐滿型/肉感型/貧乳型/健美型/年長型/誘惑型",
+  #     "三圍": {
+  #       "胸圍": 0,
+  #       "腰圍": 0,
+  #       "臀圍": 0,
+  #       "罩杯": ""
+  #     },
+  #     "乳房": {
+  #       "形狀": "圓潤碗型",
+  #       "乳頭顏色": "粉紅色"
+  #     },
+  #     "私處": {
+  #       "類型": "白虎無毛/肥大陰脣/粉嫩短毛/或ai自行構想(四個字)"
+  #     }
+  #   },
+  #   "性經驗": {
+  #     "處女": "是/否"
+  #   },
+  #   "生理狀態": {
+  #     "陰蒂狀態": "正常",
+  #     "月經週期": 1-28,
+  #     "懷孕狀態": "未懷孕/懷孕初期/懷孕中期/懷孕後期",
+  #     "懷孕天數": 0,
+  #     "授精者": "姓名",
+  #     "懷孕日": 0,
+  #     "流產風險累積": 0,
+  #     "流產待處理": false  # 布爾值，腳本處理完後自動設為 false,
+  #     "流產次數": 0,       
+  #     "上次流產日": 0
+  #   }
+  # 
+  # ========== 男性/雙性人專屬字段（保持不變）==========
+  #   "身體特徵": {
+  #     "類型": "male / hermaphrodite",
+  #     "陰莖": {
+  #       "長度": 0,
+  #       "粗度": 0,
+  #       "類型": "包含但不限於：包莖/入珠/巨大/倒鉤/粗大/紋身/短小...等，由AI自行決定",
+  #     }
+  #   },
+  #   "性經驗": {
+  #     "處男": "是/否"
+  #   },
+  #   "生理狀態": {
+  #     "勃起狀態": "未勃起",
+  #     "射精狀態": "未射精"
+  #   }

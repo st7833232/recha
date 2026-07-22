@@ -917,6 +917,28 @@
       "quickSearch": 1,
       "filterable": 1
     },
+        {
+            "name": "📺｜嗷嗚漫劇",
+            "key": "MjHggg",
+            "type": 3,
+            "api": "csp_HgggAmns",
+            "jar": "./jar/aowu-0714.jar;md5;dd6fbafde59756e7f5043a20c74b1961",
+            "searchable": 0,
+            "quickSearch": 0,
+            "changeable": 0,
+            "ext": "comic_series"
+        },
+        {
+            "name": "📺｜嗷嗚｜短劇",
+            "key": "DjHggg",
+            "type": 3,
+            "api": "csp_HgggAmns",
+            "jar": "./jar/aowu-0714.jar;md5;dd6fbafde59756e7f5043a20c74b1961",
+            "searchable": 1,
+            "quickSearch": 1,
+            "changeable": 0,
+            "ext": "short_play"
+        },
     {
       "key"        : "HHkk",
       "name"       : "📺｜好看短剧",

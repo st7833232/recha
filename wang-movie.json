@@ -923,8 +923,8 @@
             "type": 3,
             "api": "csp_HgggAmns",
             "jar": "./jar/aowu-0722.jar;md5;065ee07e71679d9c273e18fab401f0c0",
-            "searchable": 0,
-            "quickSearch": 0,
+            "searchable": 1,
+            "quickSearch": 1,
             "changeable": 0,
             "ext": "comic_series"
         },

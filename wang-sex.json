@@ -207,7 +207,7 @@
     },
     {
       "key"        : "py_stripchat有彈幕",
-      "name"       : "⏭｜py_stripchat",
+      "name"       : "⏭｜py_stripchat有彈幕",
       "type"       : 3,
       "api"        : "./py/stripchat直播通用弹幕.py",
       "searchable" : 1,

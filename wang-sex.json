@@ -9,14 +9,15 @@
     }
   ],
   "logo"     : ".美.gif",
-  "wallpaper": "https://picsum.photos/1080/",
+  "wallpaper": "./long.jpg",
   "notice"   : "版本：115.07.04.Ver.2",
   "sites"    : [
 
 
     {
       "key"       : "麻豆",
-      "name"      : "🇹🇼【老王成人專區】🇹🇼",
+      //"name"      : "🇹🇼【老王成人專區】🇹🇼",
+      "name"      : "长寿【涩涩接口】",      
       "type"      : 3,
       "changeable": 1,
       "filterable": 1,

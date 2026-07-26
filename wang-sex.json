@@ -175,12 +175,6 @@
       "changeable": 0
     },    
     {
-      "key" : "py_coomer",
-      "name": "⏭｜coomer(沐辰)｜國外",
-      "type": 3,
-      "api" : "./py/coomer.py"
-    },
-    {
       "key"        : "py_stripchat",
       "name"       : "⏭｜py_stripchat",
       "type"       : 3,
@@ -207,16 +201,6 @@
       "searchable" : 1,
       "quickSearch": 1,
       "filterable" : 1
-    },
-    {
-      "key"        : "pornhub",
-      "name"       : "⏭｜91Pornhub｜PYTHON",
-      "type"       : 3,
-      "api"        : "./py/py_Phb.py",
-      "searchable" : 1,
-      "quickSearch": 0,
-      "filterable" : 0,
-      "changeable" : 0
     },
     {
       "key"        : "Zuise",

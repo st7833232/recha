@@ -92,7 +92,7 @@ def _with_year(*groups):
     return [{'key': 'year', 'name': '年份', 'value': years}] + list(groups)
 
 CATEGORY_FILTERS = {
-      'AI漫劇': _with_year(
+      '漫劇': _with_year(
         _filter_group('type', '類型', [
             ('奇幻', 'AI 奇幻 漫劇'),
             ('科幻', 'AI 科幻 漫劇'),
@@ -365,13 +365,6 @@ CATEGORY_FILTERS = {
             ('紀錄片', '紀錄片 movie'),
             ('家庭', '家庭 movie'),
         ]),
-        _filter_group('channel', '頻道主/熱門', [
-            ('電影解說', '電影解說'),
-            ('宇哥侃故事', '宇哥侃故事'),
-            ('牛叔電影', '牛叔電影'),
-            ('阿斗歸來', '阿斗歸來'),
-            ('老李說電影', '老李說電影'),
-        ])
     ),
     
     '紀錄片': _with_year(

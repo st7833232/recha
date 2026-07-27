@@ -18,7 +18,8 @@ DEBUG_LOG = '/sdcard/Download/0712youtube_trace.log'
 YOUTUBE_CLASSES = [
     {'type_id': '最新新聞', 'type_name': '新聞'},
     {'type_id': '新聞直播', 'type_name': '新聞直播'},
-    {'type_id': '漫劇', 'type_name': 'AI漫劇'},    
+    {'type_id': '漫劇', 'type_name': 'AI漫劇'}, 
+    {'type_id': '幼教', 'type_name': '幼兒教育'},    
     {'type_id': '音樂', 'type_name': '音樂'},
     {'type_id': '日漫', 'type_name': '日漫'},
     {'type_id': '短劇', 'type_name': '短劇'},
@@ -46,6 +47,7 @@ YOUTUBE_CLASSES = [
 
 CATEGORY_QUERY = {
     '日漫': '日漫',
+    '幼兒教育': '幼兒教育 兒童學習 早教 啟蒙 親子',
     '漫劇': '漫劇',
     '短劇': '短劇',
     '綜藝': '綜藝',
@@ -140,7 +142,50 @@ CATEGORY_FILTERS = {
         ('京都動畫', '京都アニメーション'),
     ]),
 ),
-    
+    '幼兒教育': (
+        _filter_group('subject', '學習主題', [
+            ('語言學習', '幼兒 語言學習 認字 發音'),
+            ('英語', '兒童英語 英語啟蒙 英文兒歌'),
+            ('注音/拼音', '注音 學習 拼音 學習'),
+            ('數學', '幼兒 數學 數數 加減法'),
+            ('自然科學', '幼兒 自然 科學 實驗'),
+            ('社會', '幼兒 社會 人際 情緒'),
+            ('藝術', '幼兒 美術 勞作 音樂'),
+            ('體能', '幼兒 運動 體能 遊戲'),
+            ('安全教育', '幼兒 安全 教育'),
+        ]),
+        _filter_group('type', '內容類型', [
+            ('兒歌', '兒歌 童謠 手指謠'),
+            ('故事', '兒童故事 繪本 睡前故事'),
+            ('動畫', '兒童動畫 卡通'),
+            ('教學', '兒童教學 學習影片'),
+            ('遊戲', '兒童遊戲 親子遊戲'),
+            ('勞作', '兒童勞作 手作 DIY'),
+            ('實驗', '兒童科學實驗'),
+        ]),
+        _filter_group('age', '年齡段', [
+            ('0-3歲', '0-3歲 幼兒 嬰兒'),
+            ('3-6歲', '3-6歲 學齡前 幼兒園'),
+            ('6-9歲', '6-9歲 國小 低年級'),
+            ('9-12歲', '9-12歲 國小 中年級'),
+        ]),
+        _filter_group('channel', '熱門頻道', [
+            ('寶寶巴士', '寶寶巴士 BabyBus'),
+            ('碰碰狐', '碰碰狐 Pinkfong'),
+            ('Super Simple', 'Super Simple Songs'),
+            ('CoComelon', 'CoComelon'),
+            ('Blippi', 'Blippi 兒童'),
+            ('Peppa Pig', 'Peppa Pig 小豬佩奇'),
+            ('巧虎', '巧虎 兒童'),
+            ('D Billions', 'D Billions'),
+            ('Little Angel', 'Little Angel 兒歌'),
+            ('Dave and Ava', 'Dave and Ava'),
+            ('汪汪隊', '汪汪隊 Paw Patrol'),
+            ('超級飛俠', '超級飛俠 Super Wings'),
+            ('愛探險的朵拉', 'Dora 朵拉 探險'),
+            ('海綿寶寶', '海綿寶寶 SpongeBob'),
+        ])
+    ),    
     '短劇': _with_year(
         _filter_group('region', '地區', [
             ('大陸', '大陸 短劇'),

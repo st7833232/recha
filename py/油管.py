@@ -18,14 +18,12 @@ DEBUG_LOG = '/sdcard/Download/0712youtube_trace.log'
 YOUTUBE_CLASSES = [
     {'type_id': '最新新聞', 'type_name': '新聞'},
     {'type_id': '新聞直播', 'type_name': '新聞直播'},
-    {'type_id': '歌曲', 'type_name': '歌曲'},
+    {'type_id': '音樂', 'type_name': '音樂'},
     {'type_id': '動畫', 'type_name': '動畫'},
     {'type_id': '短劇', 'type_name': '短劇'},
     {'type_id': '劇集', 'type_name': '劇集'},
     {'type_id': '電影', 'type_name': '電影'},
     {'type_id': '紀錄片', 'type_name': '紀錄片'},
-    {'type_id': '放松', 'type_name': '放松'},
-    {'type_id': '16K HDR', 'type_name': '16K HDR'},
     {'type_id': '科技', 'type_name': '科技'},
     {'type_id': '解說', 'type_name': '解說'},
     {'type_id': '台劇', 'type_name': '台劇'},
@@ -40,9 +38,10 @@ YOUTUBE_CLASSES = [
 ]
 
 CATEGORY_QUERY = {
-    '動畫片': '動畫 國漫 anime cartoon',
+    '動畫': '動畫 國漫 anime cartoon',
     '漫劇': '漫劇 ai漫劇 ai動畫',
     '短劇': '短劇',
+    '綜藝': '綜藝節目',
     '劇集': '電視劇 連續劇 劇集 drama',
     '電影': '電影 movie',
     '紀錄片': '紀錄片 documentary',
@@ -50,8 +49,7 @@ CATEGORY_QUERY = {
     '新聞': '新聞',
     '新聞直播': '新聞直播',
     '自然': '大自然 風景 動物 世界 nature wildlife scenery',
-    '16K HDR': '16K HDR video',
-    '歌曲': '歌曲 美國歌曲 韓國歌曲 日文歌曲',
+    '音樂': '音樂、歌曲、白噪音',
     '解說': '電影解說 故事解說',
 }
 
@@ -77,7 +75,7 @@ def _with_year(*groups):
 
 
 CATEGORY_FILTERS = {
-    '動畫片': _with_year(
+    '動畫': _with_year(
         _filter_group('topic', '中文', [
             ('國漫', '國漫 3D 動畫'), ('兒童早教', '兒童早教'), ('兒童歌曲', '兒童歌曲'),
             ('兒童音樂', '兒童音樂'), ('兒童繪畫', '兒童繪畫'), ('寶寶巴士', '寶寶巴士'),
@@ -132,6 +130,52 @@ CATEGORY_FILTERS = {
             ('Apple', 'apple movie'), ('Amazon', 'amazon movie'), ('HBO', 'hbo movie'),
         ])
     ),
+'綜藝': _with_year(
+    _filter_group('region', '地區', [
+        ('台灣', '台灣 綜藝'),
+        ('大陸', '大陸 綜藝'),
+        ('韓國', '韓國 綜藝'),
+        ('日本', '日本 綜藝'),
+        ('美國', '美國 綜藝'),
+        ('香港', '香港 綜藝'),
+        ('英國', '英國 綜藝'),
+        ('泰國', '泰國 綜藝'),
+    ]),
+    _filter_group('platform', '平台', [
+        ('台綜', 'TVBS 三立 中天 東森 八大 台視 中視 華視 民視 綜藝'),
+        ('陸綜', '湖南衛視 浙江衛視 東方衛視 江蘇衛視 北京衛視 綜藝'),
+        ('韓綜', 'KBS MBC SBS tvN JTBC 綜藝'),
+        ('日綜', '日本電視台 TBS 綜藝'),
+        ('美綜', 'ABC CBS NBC 綜藝'),
+        ('串流', 'Netflix Disney+ Amazon Prime HBO Max 綜藝'),
+    ]),
+    _filter_group('type', '類型', [
+        ('真人秀', '真人秀 綜藝'),
+        ('競賽/選秀', '競賽 選秀 綜藝'),
+        ('歌唱/音樂', '歌唱 音樂 綜藝'),
+        ('脫口秀/訪談', '脫口秀 訪談 綜藝'),
+        ('遊戲/益智', '遊戲 益智 綜藝'),
+        ('美食/旅遊', '美食 旅遊 綜藝'),
+        ('戀愛/親子', '戀愛 親子 綜藝'),
+        ('喜劇', '喜劇 綜藝'),
+    ]),
+    _filter_group('channel', '熱門節目', [
+        ('Running Man', 'Running Man'),
+        ('綜藝大熱門', '綜藝大熱門'),
+        ('綜藝玩很大', '綜藝玩很大'),
+        ('飢餓遊戲', '飢餓遊戲'),
+        ('認識的哥哥', '認識的哥哥'),
+        ('兩天一夜', '兩天一夜'),
+        ('奔跑吧', '奔跑吧'),
+        ('極限挑戰', '極限挑戰'),
+        ('王牌對王牌', '王牌對王牌'),
+        ('快樂大本營', '快樂大本營'),
+        ('歌手', '歌手'),
+        ('乘風破浪', '乘風破浪'),
+        ('嚮往的生活', '嚮往的生活'),
+        ('明星大偵探', '明星大偵探'),
+    ])
+), 
     '紀錄片': _with_year(
         _filter_group('topic', '主題', [
             ('歷史', '歷史 紀錄片'), ('野性', '野性 紀錄片 wild documentary'),
@@ -141,11 +185,14 @@ CATEGORY_FILTERS = {
             ('國家地理', '國家地理 National Geographic documentary'), ('Netflix', 'netflix 紀錄片 documentary'),
         ])
     ),
-    '放松': [
+    '音樂': [
         _filter_group('topic', '主題', [
             ('冥想', '冥想 放松 meditation relax'), ('睡眠', '睡眠 放松 sleep relax'),
             ('白噪音', '白噪音 放松 white noise'), ('自然聲音', '自然 聲音 放松 nature sounds'),
-            ('雨聲', '雨聲 放松 rain sounds'), ('海浪', '海浪 放松 ocean waves'),
+            ('中文歌曲', '中國 歌曲'), ('韓國歌曲', '韓國 歌曲'),
+            ('美國歌曲', '美國 音樂'), ('台灣歌曲', '台灣 歌曲 '),
+            ('搖滾樂', '搖滾 音樂'), ('輕音樂', '輕音樂'),
+            ('饒舌', '饒舌 歌曲'), ('古風歌曲', '古風 音樂 '),                                    
         ])
     ],
     '4K': [

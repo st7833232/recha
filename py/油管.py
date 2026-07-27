@@ -172,6 +172,7 @@ CATEGORY_FILTERS = {
         _filter_group('channel', '熱門頻道', [
             ('寶寶巴士', '寶寶巴士 BabyBus'),
             ('碰碰狐', '碰碰狐 Pinkfong'),
+            ('哆啦A夢', '哆啦A夢 Doraemon ドラえもん'),            
             ('Super Simple', 'Super Simple Songs'),
             ('CoComelon', 'CoComelon'),
             ('Blippi', 'Blippi 兒童'),
@@ -184,7 +185,7 @@ CATEGORY_FILTERS = {
             ('超級飛俠', '超級飛俠 Super Wings'),
             ('愛探險的朵拉', 'Dora 朵拉 探險'),
             ('海綿寶寶', '海綿寶寶 SpongeBob'),
-            ('哆啦a夢', '哆啦a夢'),
+            ('角落小夥伴', '角落小夥伴 Sumikko Gurashi'),
         ])
     ),    
     '短劇': _with_year(

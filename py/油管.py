@@ -141,18 +141,6 @@ CATEGORY_FILTERS = {
             ('運動', '運動 動畫'),
             ('音樂', '音樂 動畫'),
         ]),
-        _filter_group('channel', '頻道/平台', [
-            ('Bilibili', 'Bilibili 動畫'),
-            ('騰訊動漫', '騰訊動漫'),
-            ('愛奇藝動漫', '愛奇藝動漫'),
-            ('優酷動漫', '優酷動漫'),
-            ('閱文動漫', '閱文動漫'),
-            ('小豬佩奇', '小豬佩奇'),
-            ('CoComelon', 'CoComelon'),
-            ('Disney', 'Disney 動畫'),
-            ('Netflix', 'Netflix 動畫'),
-            ('Crunchyroll', 'Crunchyroll 動畫'),
-        ])
     ),
     
     '短劇': _with_year(

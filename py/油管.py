@@ -184,6 +184,7 @@ CATEGORY_FILTERS = {
             ('超級飛俠', '超級飛俠 Super Wings'),
             ('愛探險的朵拉', 'Dora 朵拉 探險'),
             ('海綿寶寶', '海綿寶寶 SpongeBob'),
+            ('哆啦a夢', '哆啦a夢'),
         ])
     ),    
     '短劇': _with_year(

@@ -20,7 +20,7 @@ YOUTUBE_CLASSES = [
     {'type_id': '新聞直播', 'type_name': '新聞直播'},
     {'type_id': '漫劇', 'type_name': 'AI漫劇'},    
     {'type_id': '音樂', 'type_name': '音樂'},
-    {'type_id': '動畫', 'type_name': '動畫'},
+    {'type_id': '卡通', 'type_name': '卡通'},
     {'type_id': '短劇', 'type_name': '短劇'},
     {'type_id': '劇集', 'type_name': '劇集'},
     {'type_id': '電影', 'type_name': '電影'},
@@ -45,7 +45,7 @@ YOUTUBE_CLASSES = [
 ]
 
 CATEGORY_QUERY = {
-    '動畫': '動畫',
+    '卡通': '卡通 動畫',
     '漫劇': '漫劇',
     '短劇': '短劇',
     '綜藝': '綜藝',
@@ -119,12 +119,12 @@ CATEGORY_FILTERS = {
             ('星河剧场', '星河剧场'),
         ]),
     ),
-    '動畫': _with_year(
+    '卡通': _with_year(
         _filter_group('region', '地區', [
-            ('國漫', '國漫 3D 動畫'),
-            ('日漫', '日本 動畫 anime'),
-            ('美漫', '美國 動畫 cartoon'),
-            ('韓漫', '韓國 動畫'),
+            ('中國動漫', '中國 動漫'),
+            ('日本動漫', '日本 動漫 anime'),
+            ('美國動漫', '美國 動漫 cartoon'),
+            ('韓國動漫', '韓國 動漫'),
         ]),
         _filter_group('type', '類型', [
             ('熱血', '熱血 動畫'),

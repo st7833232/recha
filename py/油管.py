@@ -16,7 +16,7 @@ sys.path.append('..')
 DEBUG_LOG = '/sdcard/Download/0712youtube_trace.log'
 
 YOUTUBE_CLASSES = [
-    {'type_id': '新聞', 'type_name': '最新新聞'},
+    {'type_id': '最新新聞', 'type_name': '新聞'},
     {'type_id': '新聞直播', 'type_name': '新聞直播'},
     {'type_id': '歌曲', 'type_name': '歌曲'},
     {'type_id': '動畫片', 'type_name': '動畫片'},

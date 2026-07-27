@@ -45,7 +45,7 @@ YOUTUBE_CLASSES = [
 ]
 
 CATEGORY_QUERY = {
-    '動畫': '動畫 國漫 anime cartoon',
+    '動畫': '動畫',
     '漫劇': '漫劇',
     '短劇': '短劇',
     '綜藝': '綜藝',

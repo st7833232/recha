@@ -20,7 +20,7 @@ YOUTUBE_CLASSES = [
     {'type_id': '新聞直播', 'type_name': '新聞直播'},
     {'type_id': '漫劇', 'type_name': 'AI漫劇'},    
     {'type_id': '音樂', 'type_name': '音樂'},
-    {'type_id': '動漫', 'type_name': '動漫'},
+    {'type_id': '日漫', 'type_name': '日漫'},
     {'type_id': '短劇', 'type_name': '短劇'},
     {'type_id': '劇集', 'type_name': '劇集'},
     {'type_id': '電影', 'type_name': '電影'},
@@ -45,7 +45,7 @@ YOUTUBE_CLASSES = [
 ]
 
 CATEGORY_QUERY = {
-    '動漫': '動漫',
+    '日漫': '日漫',
     '漫劇': '漫劇',
     '短劇': '短劇',
     '綜藝': '綜藝',
@@ -119,29 +119,27 @@ CATEGORY_FILTERS = {
             ('星河剧场', '星河剧场'),
         ]),
     ),
-    '動漫': _with_year(
-        _filter_group('region', '地區', [
-            ('中國動漫', '中國動漫'),
-            ('日本動漫', '日本動漫 anime'),
-            ('美國動漫', '美國動漫 cartoon'),
-            ('韓國動漫', '韓國動漫'),
-        ]),
-        _filter_group('type', '類型', [
-            ('熱血', '熱血 動畫'),
-            ('冒險', '冒險 動畫'),
-            ('奇幻', '奇幻 動畫'),
-            ('科幻', '科幻 動畫'),
-            ('戀愛', '戀愛 動畫'),
-            ('搞笑', '搞笑 動畫'),
-            ('日常', '日常 動畫'),
-            ('懸疑', '懸疑 動畫'),
-            ('戰鬥', '戰鬥 動畫'),
-            ('異世界', '異世界 動畫'),
-            ('機甲', '機甲 動畫'),
-            ('運動', '運動 動畫'),
-            ('音樂', '音樂 動畫'),
-        ]),
-    ),
+'日漫': _with_year(
+    _filter_group('title', '熱門作品', [
+        ('海賊王', 'onepiece ワンピース'),
+        ('火影忍者', 'naruto ナルト'),
+        ('咒術迴戰', 'jujutsu kaisen'),
+        ('鬼滅之刃', 'demon slayer 鬼滅の刃'),
+        ('進擊的巨人', 'attack on titan'),
+        ('我推的孩子', 'oshi no ko'),
+        ('葬送的芙莉蓮', 'frieren'),
+        ('間諜家家酒', 'spy x family'),
+    ]),
+    _filter_group('studio', '製作公司', [
+        ('東映', '東映アニメーション'),
+        ('MAPPA', 'MAPPA'),
+        ('ufotable', 'ufotable'),
+        ('WIT Studio', 'WIT Studio'),
+        ('CloverWorks', 'CloverWorks'),
+        ('A-1 Pictures', 'A-1 Pictures'),
+        ('京都動畫', '京都アニメーション'),
+    ]),
+),
     
     '短劇': _with_year(
         _filter_group('region', '地區', [

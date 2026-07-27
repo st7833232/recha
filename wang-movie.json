@@ -30,17 +30,14 @@
     },
     {
       "key"        : "YouTube",
-      "name"       : "♓️｜YouTube｜SO",
+      "name"       : "🇹🇼｜YouTube｜PY",
       "type"       : 3,
-      "api"        : "csp_Ytdl",
+			"api": "./py/油管.py",
       "searchable" : 1,
       "quickSearch": 1,
-      "playerType" : 2,
-      "timeout"    : 30,
       "filterable" : 1,
-      "style"      : {"type": "rect", "ratio": 1.33},
-      "jar"        : "./lib/Youtube.jar",
-      "ext"        : {"proxy": "", "youtube_txt": "./lib/Youtube.txt"}
+      "style"      : {"type": "rect", "ratio": 1.33}
+
     },
     {
       "key": "金牌影视",

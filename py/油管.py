@@ -914,6 +914,16 @@ class YouTubeLite:
         for response in responses:
             response_streaming = (response or {}).get('streamingData') or {}
             source_raw = (response_streaming.get('formats') or []) + (response_streaming.get('adaptiveFormats') or [])
+            hls = response_streaming.get('hlsManifestUrl')
+            if hls:
+                source_raw.append({
+                    'itag': 'hls',
+                    'url': hls,
+                    'mimeType': 'application/x-mpegURL; codecs="avc1"',
+                    'width': 1920,
+                    'height': 1080,
+                    'quality': 'hd1080'
+                })
             source_counts.append({'formats': len(response_streaming.get('formats') or []), 'adaptive': len(response_streaming.get('adaptiveFormats') or [])})
             for raw in source_raw:
                 key = (raw.get('itag'), raw.get('url') or raw.get('signatureCipher') or raw.get('cipher') or raw.get('mimeType'))
@@ -940,6 +950,7 @@ class YouTubeLite:
             'title': details.get('title') or video_id,
             'duration': int(details.get('lengthSeconds') or 0),
             'formats': formats,
+            'is_live': details.get('isLive') or False,
         }
         self.extract_cache[video_id] = {'data': data, 'expires': time.time() + self.extract_cache_ttl}
         debug_log('extract complete', {'video_id': video_id, 'cost_ms': int((time.time() - extract_started) * 1000), 'formats': len(formats)})
@@ -1627,6 +1638,12 @@ class Spider(Spider):
             if not video_tracks and all_tracks:
                 video_tracks = [all_tracks[0]]
             if video_tracks:
+                hls_track = next((t for t in data['formats'] if t.get('itag') == 'hls'), None)
+                if data.get('is_live') and hls_track:
+                    headers = self.header.copy()
+                    headers.update(hls_track.get('headers') or {})
+                    return {'parse': 0, 'jx': 0, 'url': hls_track['url'], 'header': headers, 'format': 'application/x-mpegURL'}
+                
                 audio = self.yt.choose_audio(data['formats'])
                 debug_log('selected track', {'requested': wanted_name, 'track': {'name': video_tracks[0].get('track_name'), 'itag': video_tracks[0].get('itag'), 'height': video_tracks[0].get('height'), 'mime': video_tracks[0].get('mimeType')}, 'audio': audio.get('itag') if audio else None})
                 if audio:

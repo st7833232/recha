@@ -1849,6 +1849,8 @@ class Spider(Spider):
 
     def _fetch_search_first_page(self, key):
         search_url = f'https://www.youtube.com/results?search_query={quote(str(key or ""))}'
+        if '直播' in str(key or ''):
+            search_url += '&sp=EgJAAQ%3D%3D'
         r = self.session.get(search_url, timeout=10)
         html_str = r.text
         data = self.yt._extract_json_after(html_str, 'ytInitialData') or {}

@@ -4,6 +4,16 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.07.20 ver.3 加入嗷嗚漫劇",
   "sites": [ 
+{
+"key": "枫叶4k影院",
+"name": "🍁枫叶┃PY",
+"type": 3,
+"api": "./py/枫叶影院.py",
+"ext":  {"cookie": ""  },
+"quickSearch": 1,
+"changeable": 1,
+"filterable": 1
+},
     {    
              "key":"csp_AppQi_爱影",
              "name":"[AppQi]┃爱影",

@@ -15,7 +15,7 @@
     },       
     {    
              "key":"csp_AppQi_爱影",
-             "name":"？｜愛影",
+             "name":"？｜愛影｜待測",
              "type":3,
              "api":"csp_AppQi",
              "jar":"./jar/愛影.jar",
@@ -40,7 +40,7 @@
      
     {
       "key"       : "py_808影院",
-      "name"      : "🏆｜818｜？",
+      "name"      : "？｜818｜待測",
       "type"      : 3,
       "api"       : "./py/808影院.py",
       "searchable": 1,
@@ -49,7 +49,7 @@
     },          
     {
       "key"       : "py_麒麟影视",
-      "name"      : "🏆｜麒麟｜？",
+      "name"      : "？｜麒麟｜待測",
       "type"      : 3,
       "api"       : "./py/麒麟影视.py",
       "searchable": 1,

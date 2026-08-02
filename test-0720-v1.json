@@ -4,6 +4,80 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.07.20 ver.3 加入嗷嗚漫劇",
   "sites": [ 
+        {
+      "key"       : "py_喜福短剧",
+      "name"      : "🏆｜喜福短剧｜？",
+      "type"      : 3,
+      "api"       : "./py/喜福短剧.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 1
+    },  
+        {
+      "key"       : "py_视觉影视",
+      "name"      : "🏆｜视觉影视｜？",
+      "type"      : 3,
+      "api"       : "./py/视觉影视(翻).py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 1
+    },  
+        {
+      "key"       : "py_悟圣短剧",
+      "name"      : "🏆｜悟圣短剧｜？",
+      "type"      : 3,
+      "api"       : "./py/悟圣短剧.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 1
+    },  
+        {
+      "key"       : "py_HS日本4K动漫🔞",
+      "name"      : "🏆｜HS日本4K动漫🔞｜？",
+      "type"      : 3,
+      "api"       : "./py/HS日本4K动漫🔞.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 1
+    },  
+        {
+      "key"       : "py_樱花动漫🔞",
+      "name"      : "🏆｜樱花动漫🔞｜？",
+      "type"      : 3,
+      "api"       : "./py/樱花动漫🔞.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 1
+    },  
+        {
+      "key"       : "py_动漫啦",
+      "name"      : "🏆｜动漫啦｜？",
+      "type"      : 3,
+      "api"       : "./py/动漫啦.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 1
+    },  
+{
+      "key": "奇妙",
+      "name": "奇妙资源",
+      "type": 1,
+      "api": "https://cj.jusj.top/api.php/provide/vod/",
+      "searchable": 1,
+      "changeable": 1,
+      "playerType": 2,
+      "categories": [
+        "电影",
+        "剧集",
+        "综艺",
+        "动漫",
+        "短剧",
+        "少儿",
+        "纪录片"
+      ],
+      "quickSearch": 1,
+      "filterable": 1
+    },    
     {    
              "key":"csp_AppQi_爱影",
              "name":"[AppQi]┃爱影",

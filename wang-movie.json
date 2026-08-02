@@ -979,6 +979,25 @@
       "changeable" : 0,
       "genre"      : "shortdrama"
     },
+        {
+      "key"       : "py_喜福短剧",
+      "name"      : "📺｜喜福短剧",
+      "type"      : 3,
+      "api"       : "./py/喜福短剧.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 1
+    },  
+ 
+        {
+      "key"       : "py_悟圣短剧",
+      "name"      : "📺｜悟圣短剧",
+      "type"      : 3,
+      "api"       : "./py/悟圣短剧.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 1
+    },      
     {
       "key"       : "bilitingshu",
       "name"      : "🎖︎｜bili聽書趣",
@@ -1476,6 +1495,15 @@
         "地区": "日本&大陆&美国"
       }
     },
+        {
+      "key"       : "py_樱花动漫",
+      "name"      : "🎡｜櫻花動漫",
+      "type"      : 3,
+      "api"       : "./py/樱花动漫🔞.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 1
+    },     
     {
       "key"        : "drpy_js_去看吧",
       "name"       : "🎡｜去看动漫",

@@ -4,47 +4,18 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.08.03 ver.1 加入",
   "sites": [ 
-        {
-      "key"       : "py_喜福短剧",
-      "name"      : "🏆｜喜福短剧｜？",
-      "type"      : 3,
-      "api"       : "./py/喜福短剧.py",
-      "searchable": 1,
-      "filterable": 0,
-      "changeable": 1
-    },  
-        {
+       {
       "key"       : "py_视觉影视",
-      "name"      : "🏆｜视觉影视｜？",
+      "name"      : "？｜視覺影视｜待測",
       "type"      : 3,
       "api"       : "./py/视觉影视(翻).py",
       "searchable": 1,
       "filterable": 0,
       "changeable": 1
-    },  
-        {
-      "key"       : "py_悟圣短剧",
-      "name"      : "🏆｜悟圣短剧｜？",
-      "type"      : 3,
-      "api"       : "./py/悟圣短剧.py",
-      "searchable": 1,
-      "filterable": 0,
-      "changeable": 1
-    },  
-
-        {
-      "key"       : "py_樱花动漫",
-      "name"      : "🏆｜樱花动漫｜？",
-      "type"      : 3,
-      "api"       : "./py/樱花动漫🔞.py",
-      "searchable": 1,
-      "filterable": 0,
-      "changeable": 1
-    },  
- 
+    },       
     {    
              "key":"csp_AppQi_爱影",
-             "name":"[AppQi]┃爱影",
+             "name":"？｜愛影",
              "type":3,
              "api":"csp_AppQi",
              "jar":"./jar/愛影.jar",

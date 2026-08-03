@@ -4,58 +4,15 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.08.03 ver.1 加入",
   "sites": [ 
-       {
-      "key"       : "py_视觉影视",
-      "name"      : "？｜視覺影视｜待測",
-      "type"      : 3,
-      "api"       : "./py/视觉影视(翻).py",
-      "searchable": 1,
-      "filterable": 0,
-      "changeable": 1
-    },       
-    {    
-             "key":"csp_AppQi_爱影",
-             "name":"？｜愛影｜待測",
-             "type":3,
-             "api":"csp_AppQi",
-             "jar":"./jar/愛影.jar",
-             "searchable":1,"quickSearch":1,
-             "filterable":1,
-             "changeable":1,
-             "ext":{"url":"http://222.211.75.252:16118",
-             "dataKey":"0UKM8jkasM8tdzgW",
-             "dataIv":"0UKM8jkasM8tdzgW",
-             "init":"initV122",
-            "search":"mineInfo",
-            "ua":"okhttp/3.10.0"
-        }
-        },
+ 
+
     		{
             "key":"youtube",
             "name":"youtube",
 			"type": 3,
       "style"     : {"ratio": 1.7},
 			"api": "./py/油管.py"
-		},
-     
-    {
-      "key"       : "py_808影院",
-      "name"      : "？｜818｜待測",
-      "type"      : 3,
-      "api"       : "./py/808影院.py",
-      "searchable": 1,
-      "filterable": 0,
-      "changeable": 1
-    },          
-    {
-      "key"       : "py_麒麟影视",
-      "name"      : "？｜麒麟｜待測",
-      "type"      : 3,
-      "api"       : "./py/麒麟影视.py",
-      "searchable": 1,
-      "filterable": 0,
-      "changeable": 1
-    },        
+		},            
 
     {
       "key": "豆瓣",
@@ -180,7 +137,7 @@
             "searchable": 1,
             "quickSearch": 1,
             "changeable": 1
-        },    
+        },
     {
       "key": "Uvod",
       "name": "🏆｜Uvod｜備用",
@@ -367,6 +324,15 @@
       "quickSearch": 1,
       "filterable" : 1
     },
+    {
+      "key"       : "py_麒麟影视",
+      "name"      : "🏆｜麒麟｜3倍◎無廣",
+      "type"      : 3,
+      "api"       : "./py/麒麟影视.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 1
+    },      
     {
       "key": "山楂",
       "name": "🏆｜山楂｜高清",

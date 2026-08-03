@@ -1708,65 +1708,10 @@ class Spider(Spider):
         try:
             data = self.yt.extract(video_id)
 
-            # 如果是直播，嘗試獲取所有畫質的 HLS 流
-            if data.get('is_live'):
-                hls_track = next((t for t in data['formats'] if t.get('itag') == 'hls'), None)
-                if hls_track:
-                    # 獲取 m3u8 內容，解析畫質選項
-                    hls_url = hls_track['url']
-                    try:
-                        headers = self.header.copy()
-                        headers.update(hls_track.get('headers') or {})
-                        resp = self.session.get(hls_url, headers=headers, timeout=10)
-                        m3u8_content = resp.text
-
-                        # 解析 m3u8 中的畫質等級
-                        # 查找 #EXT-X-STREAM-INF 標籤，包含畫質信息
-                        qualities = {}
-                        for line in m3u8_content.split('\n'):
-                            if line.startswith('#EXT-X-STREAM-INF'):
-                                # 解析 RESOLUTION
-                                resolution_match = re.search(r'RESOLUTION=(\d+)x(\d+)', line)
-                                if resolution_match:
-                                    width = int(resolution_match.group(1))
-                                    height = int(resolution_match.group(2))
-                                    # 下載下一行是 URL
-                                    continue
-                            elif line.strip() and not line.startswith('#'):
-                                # 這是 URL 行
-                                if 'height' in locals():
-                                    qualities[height] = line.strip()
-                    
-                        # 如果解析到多個畫質，選擇目標畫質
-                        if qualities:
-                            target_height = 2160 if quality == '4k' else 1440 if quality == '2k' else 1080
-                            # 找最接近目標畫質的流
-                            available_heights = sorted(qualities.keys(), reverse=True)
-                            selected_height = min([h for h in available_heights if h >= target_height], 
-                                                default=available_heights[0] if available_heights else 1080)
-                            selected_url = qualities.get(selected_height, hls_url)
-
-                            debug_log('live quality selected', {
-                                'target': target_height,
-                                'available': available_heights,
-                                'selected': selected_height,
-                                'url': selected_url[:100] + '...'
-                            })
-
-                            headers = self.header.copy()
-                            headers.update(hls_track.get('headers') or {})
-                            return {'parse': 0, 'jx': 0, 'url': selected_url, 'header': headers, 'format': 'application/x-mpegURL'}
-
-                    except Exception as e:
-                        debug_log('m3u8 parse error', repr(e))
-                        # 如果解析失敗，使用原始 HLS URL
-                        headers = self.header.copy()
-                        headers.update(hls_track.get('headers') or {})
-                        return {'parse': 0, 'jx': 0, 'url': hls_url, 'header': headers, 'format': 'application/x-mpegURL'}
-
-            # 非直播或無法獲取多畫質，使用原來的邏輯
+            # 傳入正確的 quality 參數
             all_tracks = self.yt.choose_video_tracks(data['formats'], quality)
-        
+
+            # 如果請求 HDR 但沒有 HDR 軌道，使用 SDR
             if quality == 'hdr':
                 wanted_name = 'HDR'
             else:
@@ -1777,10 +1722,19 @@ class Spider(Spider):
                 video_tracks = [all_tracks[0]]
 
             if video_tracks:
+                # 處理直播
+                hls_track = next((t for t in data['formats'] if t.get('itag') == 'hls'), None)
+                if data.get('is_live') and hls_track:
+                    headers = self.header.copy()
+                    headers.update(hls_track.get('headers') or {})
+                    return {'parse': 0, 'jx': 0, 'url': hls_track['url'], 'header': headers, 'format': 'application/x-mpegURL'}
+
+                # 獲取音頻
                 audio = self.yt.choose_audio(data['formats'])
                 debug_log('selected track', {'requested': wanted_name, 'track': {'name': video_tracks[0].get('track_name'), 'itag': video_tracks[0].get('itag'), 'height': video_tracks[0].get('height'), 'mime': video_tracks[0].get('mimeType')}, 'audio': audio.get('itag') if audio else None})
 
                 if audio:
+                    # 有音頻，使用 DASH 模式
                     cache_key = f'yt_{video_id}_{quality}'
                     self.setCache(cache_key, {
                         'video_tracks': video_tracks,
@@ -1792,12 +1746,13 @@ class Spider(Spider):
                         'expires': time.time() + 300,
                     })
                     return {'parse': 0, 'jx': 0, 'url': f'http://127.0.0.1:9978/proxy?do=py&type=mpd&vid={video_id}&quality={quality}', 'format': 'application/dash+xml'}
-        
+            
+                # 沒有音頻，直接播放視頻
                 playable = video_tracks[0]
                 headers = self.header.copy()
                 headers.update(playable.get('headers') or {})
                 return {'parse': 0, 'jx': 0, 'url': playable['url'], 'header': headers}
-
+        
             raise Exception(f'沒有可直接播放的 {quality} 視頻流格式')
 
         except Exception as e:

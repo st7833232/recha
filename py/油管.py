@@ -126,10 +126,10 @@ CATEGORY_FILTERS = {
     '即時影像': [  # 新增
         _filter_group('region', '地區', [
             ('台灣', '即時影像 台灣'),
-            ('日本', '即時影像 日本'),
-            ('韓國', '即時影像 韓國'),
-            ('美國', '即時影像 美國'),
-            ('歐洲', '即時影像 歐洲'),
+            ('日本', 'Japan Livecam'),
+            ('韓國', 'Korea Livecam'),
+            ('美國', 'USA Livecam'),
+            ('歐洲', 'Europe Livecam'),
         ]),
         _filter_group('type', '類型', [
             ('交通', '即時影像 交通 道路 車流'),

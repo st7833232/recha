@@ -63,90 +63,6 @@
             }
         },
         {
-            "key": "天堂",
-            "name": "天堂 • APP",
-            "type": 3,
-            "api": "csp_AppDrama",
-            "jar": "./jar/xiaosa-0804.jar;md5;29d86702d0f8f6f4b8744f4b44ab6c7d",
-            "searchable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "ext": {
-                "appName": "电影天堂",
-                "publicKey": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCduNEnfxGaLuQRk5ABzXHhPV43zi00sCHjLo8BYc+Wi6xXm2b4v0i28Sq4WlNCKhseft9fz8kO/qLr6/022o1RcuOU7e4GFL3U9WnNODwRBYSYWd+K8nqpI/tAUDmZEBGRWqjrc7x6aMl3A+xpnWkLbPCLsuhbuuUE3tv09oeOpwIDAQAB",
-                "dataKey": "D2KREWRIBVNAUJJYEDL4VFHOY2Q0PQ==",
-                "dataIv": "OC1A06E197EF10CF3F6058CA7A803B5E",
-                "pkg": "com.dytiantang.one",
-                "host": "",
-                "site": "https://dyttandroid04-1372779881.cos.ap-shanghai.myqcloud.com/app_dyttandroid.txt",
-                "version": "3.0.0.7",
-                "decrypt": "0"
-            }
-        },
-        {
-            "key": "橘汁",
-            "name": "橘汁 • APP",
-            "type": 3,
-            "api": "csp_AppDrama",
-            "jar": "./jar/xiaosa-0804.jar;md5;29d86702d0f8f6f4b8744f4b44ab6c7d",
-            "searchable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "ext": {
-                "appName": "橘汁",
-                "publicKey": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCr8SzZhjYy+rsya1K09t8d2K50pWFoBkgUqMpKOiW+3IEVKd4eTdvg9RSOjQ82kypL6R9BnsmrS1V8s4PVDwjQbUtYhTPPC9Hz16qY7rpD6m0d2vr09/UpWQ5uOy9PR0QTrsioveZ+DIe9jc3C+zBCu/kZSY/R8stwJoiitki3gwIDAQAB",
-                "dataKey": "DGVQRUX5R1LWWDLHTGJSUKG1DJRVPQ==",
-                "dataIv": "OC1A06E197EF10CF3F6058CA7A803B5E",
-                "pkg": "com.lxf.snzlcgtzxyx",
-                "host": "",
-                "site": "https://123-1349250429.cos.ap-shanghai.myqcloud.com/app.txt",
-                "version": "3.0.2.1",
-                "decrypt": "1"
-            }
-        },
-        {
-            "key": "苹果",
-            "name": "苹果 • APP",
-            "type": 3,
-            "api": "csp_AppDrama",
-            "jar": "./jar/xiaosa-0804.jar;md5;29d86702d0f8f6f4b8744f4b44ab6c7d",
-            "searchable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "ext": {
-                "appName": "小苹果",
-                "publicKey": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCduNEnfxGaLuQRk5ABzXHhPV43zi00sCHjLo8BYc+Wi6xXm2b4v0i28Sq4WlNCKhseft9fz8kO/qLr6/022o1RcuOU7e4GFL3U9WnNODwRBYSYWd+K8nqpI/tAUDmZEBGRWqjrc7x6aMl3A+xpnWkLbPCLsuhbuuUE3tv09oeOpwIDAQAB",
-                "dataKey": "S0VNDTJHOFHHCNMRAW5IV2TOS2PBPQ==",
-                "dataIv": "OC1A06E197EF10CF3F6058CA7A803B5E",
-                "pkg": "com.juechufsh.android.xpg1",
-                "host": "",
-                "site": "https://xpgandroid03-1372779881.cos.ap-beijing.myqcloud.com/app_xpg_android.txt",
-                "version": "1.0.0.3",
-                "decrypt": "0"
-            }
-        },
-        {
-            "key": "薯条",
-            "name": "薯条 • APP",
-            "type": 3,
-            "api": "csp_AppDrama",
-            "jar": "./jar/xiaosa-0804.jar;md5;29d86702d0f8f6f4b8744f4b44ab6c7d",
-            "searchable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "ext": {
-                "appName": "薯条影视",
-                "publicKey": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCduNEnfxGaLuQRk5ABzXHhPV43zi00sCHjLo8BYc+Wi6xXm2b4v0i28Sq4WlNCKhseft9fz8kO/qLr6/022o1RcuOU7e4GFL3U9WnNODwRBYSYWd+K8nqpI/tAUDmZEBGRWqjrc7x6aMl3A+xpnWkLbPCLsuhbuuUE3tv09oeOpwIDAQAB",
-                "dataKey": "A1VACZJWDKRZY1P3MFV0DDRAZ3F3PT0=",
-                "dataIv": "OC1A06E197EF10CF3F6058CA7A803B5E",
-                "pkg": "com.st.standroid",
-                "host": "",
-                "site": "https://dyttandroid-1372779881.cos.ap-guangzhou.myqcloud.com/app_dyttandroid.txt",
-                "version": "5.0.0.1",
-                "decrypt": "0"
-            }
-        },
-        {
             "key": "飞飞",
             "name": "飞飞 • APP",
             "type": 3,
@@ -175,7 +91,7 @@
         },
         {
             "key": "不戳",
-            "name": "不戳 • APP",
+            "name": "不錯 • APP",
             "type": 3,
             "api": "csp_AppGet",
             "jar": "./jar/xiaosa-0804.jar;md5;29d86702d0f8f6f4b8744f4b44ab6c7d",
@@ -1909,15 +1825,6 @@
       "searchable": 1,
       "changeable": 1,
       "categories": ["国产动漫", "日韩动漫", "欧美动漫", "港台动漫", "动漫电影", "里番动漫"]
-    },
-    {
-      "key"       : "魔都资源",
-      "name"      : "🎡｜魔資动漫",
-      "type"      : 1,
-      "api"       : "https://caiji.moduapi.cc/api.php/provide/vod",
-      "jar"       : "./jar/panda1123.jar;md5;d9004aa2e16f60b04baed361713fb710",
-      "searchable": 1,
-      "changeable": 1
     },
     {
       "key"        : "csp_AG動漫",

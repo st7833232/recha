@@ -243,7 +243,7 @@ CATEGORY_FILTERS = {
             ('角落小夥伴', '角落小夥伴 Sumikko Gurashi'),
         ])
     ),    
-    '短劇': _with_year(
+    '短劇': (
         _filter_group('duration', '時長', [
             ('全部', ''),
             ('短 (<10分鐘)', 'short'),

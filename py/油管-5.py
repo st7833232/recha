@@ -1984,7 +1984,7 @@ class Spider(Spider):
             # 更新 next token
             new_next = self._extract_continuation_token(data)
             session['next'] = new_next
-         debug_log('page loaded', {'page_num': len(session['pages']), 'next_token': new_next[:20] if new_next else None})
+            debug_log('page loaded', {'page_num': len(session['pages']), 'next_token': new_next[:20] if new_next else None})
     
         pages = session.get('pages', [])
         videos = pages[page - 1] if len(pages) >= page else []

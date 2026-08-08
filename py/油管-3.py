@@ -1957,12 +1957,14 @@ class Spider(Spider):
         videos, _ = self._search_youtube_page(key, 1)
         return videos
 
-    def _search_youtube_page(self, key, page=1):
+    def _search_youtube_page(self, key, page=1, extra_params=None):
         page = max(1, int(page or 1))
         cache_key = self._search_cache_key(key)
+        if extra_params:
+            cache_key += '_' + urlencode(sorted(extra_params.items()))
         session = self.search_page_cache.get(cache_key)
         if page == 1 or not session:
-            session = self._fetch_search_first_page(key)
+            session = self._fetch_search_first_page(key, extra_params=extra_params)
             self.search_page_cache[cache_key] = session
         while len(session.get('pages', [])) < page and session.get('next'):
             data = self._fetch_search_continuation(session)
@@ -1974,8 +1976,10 @@ class Spider(Spider):
         has_more = bool(session.get('next')) or len(pages) > page
         return videos, has_more
 
-    def _fetch_search_first_page(self, key):
+    def _fetch_search_first_page(self, key, extra_params=None):
         search_url = f'https://www.youtube.com/results?search_query={quote(str(key or ""))}'
+        if extra_params:
+            search_url += '&' + urlencode(extra_params)
         key_lower = str(key or '').lower()
         if any(kw in key_lower for kw in ['直播', '即時影像', 'livecam', 'live cam', 'live camera', 'cctv', ' 4k live', '8k live', ' live']):
             search_url += '&sp=EgJAAQ%3D%3D'
@@ -1996,25 +2000,6 @@ class Spider(Spider):
             'pages': [self._extract_videos_from_api(data, 30)],
             'next': self._extract_continuation_token(data),
         }
-
-    def _fetch_search_continuation(self, session):
-        token = session.get('next')
-        api_key = session.get('api_key')
-        if not token or not api_key:
-            return {}
-        url = f'https://www.youtube.com/youtubei/v1/search?key={quote(api_key)}'
-        headers = self.header.copy()
-        headers.update({
-            'Content-Type': 'application/json',
-            'Origin': 'https://www.youtube.com',
-            'Referer': session.get('referer') or 'https://www.youtube.com/',
-            'X-YouTube-Client-Name': str(self.yt._client_name_id(session.get('client_name'))),
-            'X-YouTube-Client-Version': session.get('client_version') or '2.20240310.01.00',
-        })
-        payload = {'context': session.get('context') or {}, 'continuation': token}
-        r = self.session.post(url, json=payload, headers=headers, timeout=10)
-        r.raise_for_status()
-        return r.json()
 
     def _extract_continuation_token(self, data):
         tokens = []

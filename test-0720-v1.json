@@ -4,9 +4,37 @@
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
   "notice": "115.08.07 ver.2 還是瀟灑",
   "sites": [ 
+
+      {
+      "key"       : "Javmenu.py",
+      "name"      : "🏆｜Javmenu｜？",
+      "type"      : 3,
+      "api"       : "./py/Javmenu.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 1
+    },
+    {
+      "key"       : "FreeOK.py",
+      "name"      : "🏆｜FreeOK｜？",
+      "type"      : 3,
+      "api"       : "./py/FreeOK.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 1
+    },
+    {
+      "key"       : "真狼影视.py",
+      "name"      : "🏆｜真狼影视｜？",
+      "type"      : 3,
+      "api"       : "./py/真狼影视.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 1
+    },        
         {
             "key": "一起影视",
-            "name": "一起 • APP",
+            "name": "一起｜畫質爛 + APP",
             "type": 3,
             "api": "csp_AppYQK",
             "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
@@ -16,7 +44,7 @@
         },    
         {
             "key": "爱影",
-            "name": "爱影 • APP",
+            "name": "愛影｜畫質普通 + APP",
             "type": 3,
             "api": "csp_AppQi",
             "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",

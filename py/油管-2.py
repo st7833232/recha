@@ -114,9 +114,9 @@ CATEGORY_FILTERS = {
         ]),
         _filter_group('duration', '時長', [      # 新增
             ('全部', ''),
-            ('短 (<10分鐘)', 'duration:1-10'),
-            ('中 (10-30分鐘)', 'duration:10-30'),
-            ('長 (>60分鐘)', 'duration:60-999'),
+            ('短 (<10分鐘)', 'short'),
+            ('中 (10-30分鐘)', 'medium'),
+            ('長 (>60分鐘)', 'long'),
         ]),        
         _filter_group('platform', '頻道', [
             ('关关解说', '关关解说'),
@@ -1659,14 +1659,22 @@ class Spider(Spider):
         page = int(page)
         filters = ext if isinstance(ext, dict) else {}
         query = self._build_category_keyword(cid, filters)
+        extra_params = {}
 
-        # 处理漫劇的時長篩選（其它分类可类似扩展）
         if cid == '漫劇':
             duration = filters.get('duration')
-            if duration:   # duration 是如 'duration:1-10' 的字符串
-                query += f" {duration}"   # 追加到搜索词
+            if duration:
+                # 映射 duration 值到 sp
+                sp_map = {
+                    'short': 'EgIIAW',
+                    'medium': 'EgIIAQ',
+                    'long': 'EgIIAw',
+                }
+                sp = sp_map.get(duration)
+                if sp:
+                    extra_params['sp'] = sp
 
-        videos, has_more = self._search_youtube_page(query, page)
+        videos, has_more = self._search_youtube_page(query, page, extra_params=extra_params)
     
         # 保留原有的直播过滤（如果需要）
         if cid in ('即時影像', '新聞直播') or any(kw in query.lower() for kw in ['即時影像', 'livecam', 'live cam', 'cctv', '直播']):

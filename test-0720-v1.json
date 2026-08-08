@@ -1132,6 +1132,10 @@
       "type": 3,
       "api" : "csp_XBPQ",
       "jar" : "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
       "ext" : {
         "请求头"  : "User-Agent$MOBILE_UA",
         "编码"   : "UTF-8",

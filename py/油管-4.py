@@ -1966,14 +1966,30 @@ class Spider(Spider):
         if page == 1 or not session:
             session = self._fetch_search_first_page(key, extra_params=extra_params)
             self.search_page_cache[cache_key] = session
+    
+        # 确保 pages 列表存在
+        if 'pages' not in session:
+            session['pages'] = []
+    
+        # 加载需要的页面
         while len(session.get('pages', [])) < page and session.get('next'):
+            debug_log('loading next page', {'current_pages': len(session.get('pages', [])), 'has_next': bool(session.get('next'))})
             data = self._fetch_search_continuation(session)
+            if not data:
+                debug_log('no continuation data', {})
+                session['next'] = None
+                break
             videos = self._extract_videos_from_api(data, 30)
             session.setdefault('pages', []).append(videos)
-            session['next'] = self._extract_continuation_token(data)
+            # 更新 next token
+            new_next = self._extract_continuation_token(data)
+            session['next'] = new_next
+         debug_log('page loaded', {'page_num': len(session['pages']), 'next_token': new_next[:20] if new_next else None})
+    
         pages = session.get('pages', [])
         videos = pages[page - 1] if len(pages) >= page else []
         has_more = bool(session.get('next')) or len(pages) > page
+        debug_log('search_youtube_page result', {'key': key, 'page': page, 'videos': len(videos), 'has_more': has_more, 'total_pages': len(pages)})
         return videos, has_more
 
     def _fetch_search_first_page(self, key, extra_params=None):

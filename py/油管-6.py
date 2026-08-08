@@ -2017,6 +2017,33 @@ class Spider(Spider):
             'next': self._extract_continuation_token(data),
         }
 
+    def _fetch_search_continuation(self, session):
+        token = session.get('next')
+        api_key = session.get('api_key')
+        if not token or not api_key:
+            debug_log('fetch continuation missing', {'has_token': bool(token), 'has_api_key': bool(api_key)})
+            return {}
+        url = f'https://www.youtube.com/youtubei/v1/search?key={quote(api_key)}'
+        headers = self.header.copy()
+        headers.update({
+            'Content-Type': 'application/json',
+            'Origin': 'https://www.youtube.com',
+            'Referer': session.get('referer') or 'https://www.youtube.com/',
+            'X-YouTube-Client-Name': str(self.yt._client_name_id(session.get('client_name'))),
+            'X-YouTube-Client-Version': session.get('client_version') or '2.20240310.01.00',
+        })
+        payload = {'context': session.get('context') or {}, 'continuation': token}
+        debug_log('fetch continuation request', {'url': url, 'token': token[:20] + '...'})
+        try:
+            r = self.session.post(url, json=payload, headers=headers, timeout=10)
+            r.raise_for_status()
+            data = r.json()
+            debug_log('fetch continuation response', {'has_data': bool(data), 'keys': list(data.keys()) if data else []})
+            return data
+        except Exception as e:
+            debug_log('fetch continuation error', {'error': repr(e)})
+            return {}
+
     def _extract_continuation_token(self, data):
         tokens = []
         def scan(obj):

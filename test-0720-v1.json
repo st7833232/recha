@@ -5,18 +5,10 @@
   "notice": "115.08.07 ver.2 還是瀟灑",
   "sites": [ 
 
-      {
-      "key"       : "Javmenu.py",
-      "name"      : "🏆｜Javmenu｜？",
-      "type"      : 3,
-      "api"       : "./py/Javmenu.py",
-      "searchable": 1,
-      "filterable": 0,
-      "changeable": 1
-    },
+
     {
       "key"       : "FreeOK.py",
-      "name"      : "🏆｜FreeOK｜？",
+      "name"      : "🏆｜FreeOK｜不怎麼樣",
       "type"      : 3,
       "api"       : "./py/FreeOK.py",
       "searchable": 1,

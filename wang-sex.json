@@ -449,7 +449,16 @@
           }
         }
       }
-    },    
+    },  
+      {
+      "key"       : "Javmenu.py",
+      "name"      : "🔞Javmenu",
+      "type"      : 3,
+      "api"       : "./py/Javmenu.py",
+      "searchable": 1,
+      "filterable": 0,
+      "changeable": 1
+    },      
     {
       "key"        : "csp_XYQHiker_njavtv.com",
       "name"       : "🔞Njavtv.com",

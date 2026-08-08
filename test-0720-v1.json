@@ -165,66 +165,6 @@
       "jar" : "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251"
     },
     {
-      "key": "喵呜动漫",
-      "name": "喵呜 • 动漫",
-      "type": 3,
-      "searchable": 1,
-      "api": "csp_MiaoWu",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251"
-    },
-    {
-      "key": "魔都动漫",
-      "name": "魔都 • 动漫",
-      "type": 3,
-      "searchable": 1,
-      "api": "csp_MoDu",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251"
-    },
-    {
-      "key" : "双星99",
-      "name": "双星 • 动漫",
-      "type": 3,
-      "api" : "csp_App99",
-      "jar" : "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
-      "ext" : {
-        "host": "http://175.178.65.250:19987/app/bn",
-        "LoginPath": "/app/log",
-        "appkey": "f66f65db127e48449f073c2c6eb0f993",
-        "versionName": "6.4.5",
-        "name": "双子星动漫",
-        "package": "com.yingfu.mobile.android.pgsp",
-        "buildNumber": "2003",
-        "buildSignature": "054FA8DDA4319C6B6A9B954CA5777541C993F00B1B0BD4394F7EDE48184C4594"
-      }
-    },
-    {
-      "key": "漫国动漫",
-      "name": "漫国 • 动漫",
-      "type": 3,
-      "searchable": 1,
-      "api": "csp_AppSy",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
-      "ext": {
-        "url"      : "http://114.66.27.208:806",
-        "siteKey"  : "rectangleadsadxa",
-        "listKey"  : "aassddwwxxllsx1x",
-        "parsesKey": "aassddwwxxllsx1x"
-      }
-    },
-    {
-      "key": "方舟动漫",
-      "name": "方舟 • 动漫",
-      "type": 3,
-      "searchable": 1,
-      "api": "csp_AppGet",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
-      "ext": {
-        "url"    : "https://www.cyfz.top",
-        "dataKey": "e72cdfd629e8895d",
-        "dataIv" : "e72cdfd629e8895d"
-      }
-    },
-    {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",
       "type": 3,
@@ -1698,6 +1638,50 @@
       ]
     },
     {
+      "key" : "双星99",
+      "name": "🎡｜双星动漫",
+      "type": 3,
+      "api" : "csp_App99",
+      "jar" : "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "ext" : {
+        "host": "http://175.178.65.250:19987/app/bn",
+        "LoginPath": "/app/log",
+        "appkey": "f66f65db127e48449f073c2c6eb0f993",
+        "versionName": "6.4.5",
+        "name": "双子星动漫",
+        "package": "com.yingfu.mobile.android.pgsp",
+        "buildNumber": "2003",
+        "buildSignature": "054FA8DDA4319C6B6A9B954CA5777541C993F00B1B0BD4394F7EDE48184C4594"
+      }
+    },
+    {
+      "key": "漫国动漫",
+      "name": "🎡｜漫国动漫",
+      "type": 3,
+      "searchable": 1,
+      "api": "csp_AppSy",
+      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "ext": {
+        "url"      : "http://114.66.27.208:806",
+        "siteKey"  : "rectangleadsadxa",
+        "listKey"  : "aassddwwxxllsx1x",
+        "parsesKey": "aassddwwxxllsx1x"
+      }
+    },
+    {
+      "key": "方舟动漫",
+      "name": "🎡｜方舟动漫",
+      "type": 3,
+      "searchable": 1,
+      "api": "csp_AppGet",
+      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "ext": {
+        "url"    : "https://www.cyfz.top",
+        "dataKey": "e72cdfd629e8895d",
+        "dataIv" : "e72cdfd629e8895d"
+      }
+    },    
+    {
       "key"       : "py_西瓜卡通",
       "name"      : "🎡｜西瓜",
       "type"      : 3,
@@ -1725,8 +1709,16 @@
       "changeable": 0
     },
     {
+      "key": "喵呜动漫",
+      "name": "🎡｜喵呜动漫｜瀟灑",
+      "type": 3,
+      "searchable": 1,
+      "api": "csp_MiaoWu",
+      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251"
+    },    
+    {
       "key": "AowuDmMw",
-      "name": "🎡｜喵物",
+      "name": "🎡｜喵嗚动漫",
       "type": 3,
       "api": "csp_AowuDmAmns",
       "jar": "./jar/aowu-0722.jar;md5;065ee07e71679d9c273e18fab401f0c0",
@@ -1738,7 +1730,7 @@
     {"key": "MiFun", "name": "🎡｜MiFun", "type": 3, "api": "./py/MiFun动漫.py"},
     {
       "key"        : "py_元咲_APP",
-      "name"       : "🎡｜元纓",
+      "name"       : "🎡｜元纓动漫",
       "type"       : 3,
       "api"        : "./py/app/getapp.py",
       "searchable" : 1,
@@ -1753,7 +1745,7 @@
     },
     {
       "key"        : "py_曼波_APP",
-      "name"       : "🎡｜曼波",
+      "name"       : "🎡｜曼波动漫",
       "type"       : 3,
       "api"        : "./py/app/getapp.py",
       "searchable" : 1,
@@ -1768,7 +1760,7 @@
     },
     {
       "key"        : "py_咕咕_APP",
-      "name"       : "🎡｜咕咕",
+      "name"       : "🎡｜咕咕动漫",
       "type"       : 3,
       "api"        : "./py/app/getapp.py",
       "searchable" : 1,
@@ -1822,6 +1814,14 @@
         "劇情": "玄幻&科幻&武侠&冒险&战斗&搞笑&恋爱&魔幻&竞技&热血&治愈&励志&机战&奇幻&悬疑&日常&校园&真人&推理&历史&经典&美食&偶像"
       }
     },
+    {
+      "key": "魔都动漫",
+      "name": "🎡｜魔都动漫｜瀟灑",
+      "type": 3,
+      "searchable": 1,
+      "api": "csp_MoDu",
+      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251"
+    },    
     {
       "key"       : "魔都",
       "name"      : "🎡｜魔都动漫",

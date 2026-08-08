@@ -32,7 +32,7 @@
       "key"        : "YouTube",
       "name"       : "🇹🇼｜YouTube｜PY",
       "type"       : 3,
-			"api": "./py/油管.py",
+			"api": "./py/油管-6.py",
       "searchable" : 1,
       "quickSearch": 1,
       "filterable" : 1,

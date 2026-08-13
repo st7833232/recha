@@ -63,7 +63,7 @@
             "name": "半日 • APP｜待測",
             "type": 3,
             "api": "csp_App99",
-            "jar" : "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+            "jar" : "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5",
             "ext": {
                 "host": "http://103.217.190.91:19987/app/bn",
                 "appkey": "24d625a8a29b4700a1a294c6f3b29e2c",
@@ -547,7 +547,7 @@
       "name": "🏆｜韓圈｜高畫 + 有點慢",
       "type": 3,
       "api" : "csp_Hxq",
-      "jar" : "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "jar" : "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5",
       "ext" : "http://www.小不点.com/api/2026/fishhxq.php"
     },
     {
@@ -555,7 +555,7 @@
       "name": "🏆｜劇圈｜高畫 + 開頭被剪掉",
       "type": 3,
       "api" : "csp_App99",
-      "jar" : "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "jar" : "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5",
       "ext" : {
         "host": "http://124.221.3.182:19987/app/bn",
         "appkey": "d1f0c269eab74d93821fffc9befdbbba",
@@ -571,7 +571,7 @@
       "name": "🏆｜不錯｜高畫 + 普通",
       "type": 3,
       "api": "csp_AppGet",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "jar": "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5",
       "searchable": 1,
       "changeable": 1,
       "ext": {
@@ -585,7 +585,7 @@
       "name": "🏆｜王子｜高畫 + 都採集",
       "type": 3,
       "api": "csp_AppGet",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "jar": "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5",
       "searchable": 1,
       "changeable": 1,
       "ext": {
@@ -726,7 +726,7 @@
       "name": "🥇｜山楂｜瀟灑",
       "type": 3,
       "api" : "csp_PianKu8",
-      "jar" : "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251"
+      "jar" : "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5"
     },      
     {
       "key"        : "nmvm",
@@ -1090,7 +1090,7 @@
       "name": "📱｜愛影｜普畫 + APP",
       "type": 3,
       "api": "csp_AppQi",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "jar": "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5",
       "searchable": 1,
       "changeable": 1,
       "ext": {
@@ -1106,7 +1106,7 @@
       "name": "📱｜懷桑｜普畫 + APP",
       "type": 3,
       "api": "csp_AppQi",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "jar": "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5",
       "searchable": 1,
       "changeable": 1,
       "ext": {
@@ -1122,7 +1122,7 @@
       "name": "📱｜雲朵｜普畫 + APP",
       "type": 3,
       "api" : "csp_App3Q",
-      "jar" : "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "jar" : "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5",
       "ext" : {
         "host": "https://ds3xy2yunsa.xyz",
         "finger": "SF-F5F11CB15897115AE6BCFE063C288F730CA865588F572C780A3E8477D0DD3776",
@@ -1139,14 +1139,14 @@
       "name": "📱｜飛魚｜很難形容",
       "type": 3,
       "api" : "csp_Feiyu",
-      "jar" : "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251"
+      "jar" : "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5"
     },    
     {
       "key": "一起影视",
       "name": "📱｜一起｜畫質爛 + APP",
       "type": 3,
       "api": "csp_AppYQK",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "jar": "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 0
@@ -1165,7 +1165,7 @@
       "name": "📺｜河马短剧｜瀟灑",
       "type": 3,
       "api": "csp_HemaDJ",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "jar": "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5",
       "searchable": 1,
       "changeable": 1,
       "quickSearch": 1,
@@ -1177,7 +1177,7 @@
       "name": "📺｜围观短剧｜瀟灑",
       "type": 3,
       "api": "csp_WeiguanDJ",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "jar": "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5",
       "searchable": 1,
       "changeable": 1,
       "quickSearch": 1,
@@ -1189,7 +1189,7 @@
       "name": "📺｜紅果短剧｜瀟灑",
       "type": 3,
       "api" : "csp_XBPQ",
-      "jar" : "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "jar" : "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5",
       "searchable": 1,
       "changeable": 1,
       "quickSearch": 1,
@@ -1218,7 +1218,7 @@
       "name": "📺｜星芽短剧｜瀟灑",
       "type": 3,
       "api": "./py/星芽短剧.py",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "jar": "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5",
       "searchable": 1,
       "changeable": 1,
       "quickSearch": 1,
@@ -1252,7 +1252,7 @@
       "name": "📺｜好看短剧｜瀟灑",
       "type": 3,
       "api": "csp_HaokanDJ",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "jar": "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5",
       "searchable": 1,
       "changeable": 1,
       "quickSearch": 1,
@@ -1286,7 +1286,7 @@
       "name": "📺｜七猫短剧｜瀟灑",
       "type": 3,
       "api": "csp_QimaoDJ",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "jar": "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5",
       "searchable": 1,
       "changeable": 1,
       "quickSearch": 1,
@@ -1678,7 +1678,7 @@
       "name": "🎡｜双星动漫",
       "type": 3,
       "api" : "csp_App99",
-      "jar" : "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "jar" : "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5",
       "ext" : {
         "host": "http://175.178.65.250:19987/app/bn",
         "LoginPath": "/app/log",
@@ -1696,7 +1696,7 @@
       "type": 3,
       "searchable": 1,
       "api": "csp_AppSy",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "jar": "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5",
       "ext": {
         "url"      : "http://114.66.27.208:806",
         "siteKey"  : "rectangleadsadxa",
@@ -1710,7 +1710,7 @@
       "type": 3,
       "searchable": 1,
       "api": "csp_AppGet",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+      "jar": "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5",
       "ext": {
         "url"    : "https://www.cyfz.top",
         "dataKey": "e72cdfd629e8895d",
@@ -1750,7 +1750,7 @@
       "type": 3,
       "searchable": 1,
       "api": "csp_MiaoWu",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251"
+      "jar": "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5"
     },    
     {
       "key": "AowuDmMw",
@@ -1856,7 +1856,7 @@
       "type": 3,
       "searchable": 1,
       "api": "csp_MoDu",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251"
+      "jar": "./jar/xiaosa-0807.jar;md5;d8f71fc80b0ae9561838ca59585077e5"
     },    
     {
       "key"       : "魔都",

@@ -30,7 +30,6 @@
 "分类片单链接": "a&&href",
 "分类片单图片": "img&&src",
 "分类片单副标题": "'❤️'+.float-right&&Text+'👁️'+.float-left&&Text",
-
 "分类片单链接加前缀": "https://ggjav.com",
 "分类片单链接加后缀": "",
 "搜索请求头参数": "User-Agent$PC_UA",

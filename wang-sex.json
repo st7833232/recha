@@ -156,29 +156,6 @@
       "quickSearch": 1,
       "filterable" : 1
     },
-    {
-      "key"        : "Zuise",
-      "name"       : "⏭｜最色",
-      "type"       : 3,
-      "api"        : "csp_Zuise",
-      "jar"        : "./jar/pg.jar",
-      "quickSearch": 1,
-      "changeable" : 1,
-      "filterable" : 1,
-      "timeout"    : 60,
-      "ext"        : "proxy"
-    },
-    {
-      "key"        : "csp_XYQHiker_ggjav",
-      "name"       : "🔞GGJAV",
-      "type"       : 3,
-      "api"        : "csp_XYQHiker",
-      "searchable" : 1,
-      "quickSearch": 0,
-      "filterable" : 0,
-      "ext"        : "./json/ggjav.json",
-      "style"      : {"type": "rect", "ratio": 1.6}
-    },
         {
       "key": "supjav",
       "name": "🔞SupJav",
@@ -249,13 +226,7 @@
           }
         }
       }
-    },
-		{
-			"key": "JAV36",
-			"name": "🔞JAV36.py",
-			"type": 3,
-			"api": "./py/JAV36.py"
-		},    
+    }, 
     {
       "key": "XOJAV",
       "name": "🔞XOJAV",
@@ -327,7 +298,7 @@
         "请求头": "User-Agent$MOBILE_UA",
         "首页": "0",
         "分类url": "https://njavtv.com/{cateId}?page={catePg}",
-        "分类": "新作$dm515/ja/new#FC2$dm150/ja/fc2#東京熱$dm29/ja/tokyohot#一本道$dm2469695/ja/1pondo#人妻斬り$dm24/ja/marriedslash#台湾AV$dm18/ja/twav#中文字幕$ja/clive#魔豆$dm35/ja/madou#FURUKE$dm15/ja/furuke#無修正$dm628/ja/uncensored-leak#HEYZO$dm1198483/ja/heyzo#天然むすめ$dm3710098/ja/10musume#加勒比$dm3959622/ja/caribbeancom#加勒比2$dm1342558/ja/pacopacomama#韩国$ja/klive#ガチん娘!$dm136/ja/gachinco#パコパコママ$dm1342558/ja/pacopacomama#トリプルエックス$dm29/ja/xxxav",
+        "分类": "新作$dm635/release#FC2$dm597/fc2#東京熱$dm42/tokyohot#一本道$dm5199603/1pondo#人妻斬$dm37/marriedslash#台湾AV$dm31/twav#中文字幕$dm278/chinese-subtitle#麻豆$dm63/madou#FURUKE$dm15/furuke#無修正$dm817/uncensored-leak#HEYZO$dm2208642/heyzo#天然むすめ$dm7208981/10musume#加勒比$dm7704788/caribbeancom#加勒比2$dm3600557/pacopacomama#韩国$klive#ガチん娘!$dm150/gachinco#トリプルエックス$dm42/xxxav",
         "数组": "p:.thumbnail.group",
         "图片": "p:img->data-src",
         "链接": "p:a->href",

@@ -84,16 +84,6 @@
             "quickSearch": 1,
             "changeable": 0
         },        
-        {
-            "key": "黄豆短剧",
-            "name": "黄豆短剧｜待測",
-            "type": 3,
-            "api": "./py/黄豆短剧.py",
-            "searchable": 1,
-            "changeable": 1,
-            "quickSearch": 1,
-            "filterable": 1
-        },        
     {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",
@@ -1181,7 +1171,7 @@
       "name": "📺｜紅果短剧｜瀟灑",
       "type": 3,
       "api" : "csp_XBPQ",
-      "jar" : "./jar/xyqxbpq.jar",
+      "jar" : "./jar/xiaosa-0813.jar;md5;a932698717d44bbf1780212ff05e3d6e",
       "searchable": 1,
       "changeable": 1,
       "quickSearch": 1,

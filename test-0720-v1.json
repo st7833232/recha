@@ -2,10 +2,98 @@
   "spider": "./jar/fm.jar;md5;b0adab2fad1de8871b9533527f407cdf",
   "logo": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-0813_6e2553f5708c414386eeca88b5f2674a~c5_300x300.jpeg?from=2956013662",
   "wallpaper": "https://gitlab.com/tenrecha/recha/-/raw/main/background.jpg",
-  "notice": "115.08.09 ver.6 今天下雨天",
+  "notice": "115.08.13 ver.1 偷py的一天",
   "sites": [
-
-
+        {
+            "key": "ayf",
+            "name": "爱壹帆影视.py",
+            "type": 3,
+            "api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/爱壹帆.py"
+        },
+          {
+            "key": "YK",
+            "name": "优酷视频.py",
+            "type": 3,
+            "api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/优酷视频.py"
+        },
+        {
+            "key": "MGtv",
+            "name": "芒果TV.py",
+            "type": 3,
+            "api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/芒果TV.py"
+        },        
+            {
+            "key": "txvm",
+            "name": "腾讯视频.py",
+            "type": 3,
+            "api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/腾讯视频.py"
+        },       
+        {
+            "key": "奈非工厂",
+            "name": "奈非工厂.py",
+            "type": 3,
+            "api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/奈非工厂.py"
+        },      
+        {
+            "key": "视觉影院",
+            "name": "视觉影院.py",
+            "type": 3,
+            "api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/视觉影院.py"
+        },    
+        {
+            "key": "QU",
+            "name": "奇优影院.py",
+            "type": 3,
+            "api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/奇优影院.py"
+        },
+        {
+            "key": "yl",
+            "name": "永乐视频.py",
+            "type": 3,
+            "api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/永乐视频.py"
+        },
+        {
+            "key": "ikbot",
+            "name": "爱看机器人.py",
+            "type": 3,
+            "api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/爱看机器人.py"
+        },                               
+        {
+            "key": "半日99",
+            "name": "半日 • APP",
+            "type": 3,
+            "api": "csp_App99",
+            "jar" : "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
+            "ext": {
+                "host": "http://103.217.190.91:19987/app/bn",
+                "appkey": "24d625a8a29b4700a1a294c6f3b29e2c",
+                "versionName": "3.5.8",
+                "name": "半日闲",
+                "package": "com.yf.lelian",
+                "buildNumber": "2001",
+                "buildSignature": "A40DA80A59D170CAA950CF15C18C454D47A39B26989D8B640ECD745BA71BF5DC"
+            }
+        },
+        {
+            "name": "囧途动漫",
+            "key": "DMcyc",
+            "type": 3,
+            "api": "csp_DMcycAmns",
+            "jar": "./jar/aowu-0722.jar;md5;065ee07e71679d9c273e18fab401f0c0",
+            "searchable": 1,
+            "quickSearch": 1,
+            "changeable": 0
+        },        
+        {
+            "key": "黄豆短剧",
+            "name": "黄豆短剧┃⭐星河⭐",
+            "type": 3,
+            "api": "./py/黄豆短剧.py",
+            "searchable": 1,
+            "changeable": 1,
+            "quickSearch": 1,
+            "filterable": 1
+        },        
     {
       "key": "豆瓣",
       "name": "🇹🇼｜熱播排行榜｜自動切換",

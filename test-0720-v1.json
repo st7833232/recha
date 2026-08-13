@@ -1161,35 +1161,27 @@
       "changeable": 1
     },    
     {
-      "key": "河马短剧",
-      "name": "📺｜河马短剧｜瀟灑",
-      "type": 3,
-      "api": "csp_HemaDJ",
-      "jar": "./jar/xiaosa-0813.jar;md5;a932698717d44bbf1780212ff05e3d6e",
-      "searchable": 1,
-      "changeable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "genre": "shortdrama"
+            "key": "河马短剧",
+            "name": "📺｜河馬 • 短剧",
+            "type": 3,
+            "api": "csp_ShortHema",
+            "jar" : "./jar/xiaosa-0813.jar;md5;a932698717d44bbf1780212ff05e3d6e",
+            "genre": "shortdrama"
     },
     {
-      "key": "围观短剧",
-      "name": "📺｜围观短剧｜瀟灑",
-      "type": 3,
-      "api": "csp_WeiguanDJ",
-      "jar": "./jar/xiaosa-0813.jar;md5;a932698717d44bbf1780212ff05e3d6e",
-      "searchable": 1,
-      "changeable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "genre": "shortdrama"
+            "key": "围观短剧",
+            "name": "📺｜圍觀 • 短剧",
+            "type": 3,
+            "api": "csp_ShortWeiguan",
+            "jar" : "./jar/xiaosa-0813.jar;md5;a932698717d44bbf1780212ff05e3d6e",
+            "genre": "shortdrama"
     },
     {
       "key" : "果果短剧",
       "name": "📺｜紅果短剧｜瀟灑",
       "type": 3,
       "api" : "csp_XBPQ",
-      "jar" : "./jar/xiaosa-0813.jar;md5;a932698717d44bbf1780212ff05e3d6e",
+      "jar" : "./jar/xyqxbpq.jar",
       "searchable": 1,
       "changeable": 1,
       "quickSearch": 1,

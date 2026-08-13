@@ -1016,22 +1016,6 @@
       }
     },
     {
-      "key"        : "csp_歐樂影院ORG",
-      "name"       : "🥇｜歐吉｜高清",
-      "type"       : 3,
-      "api"        : "csp_XBPQ",
-      "jar"        : "./jar/xyqxbpq.jar;md5;fd3cefc7302f3a39a442682f802b11e5",
-      "searchable" : 1,
-      "quickSearch": 1,
-      "filterable" : 1,
-      "ext"        : {
-        "简介": "content_desc context clearfix\">&&</span>",
-        "分类url": "https://www.oulevod.org/index.php/vod/show/area/{area}/by/{by}/id/{cateId}/page/{catePg}/year/{year}.html",
-        "分类": "電視劇$2#電影$1#動漫$4#綜藝$3#短劇$53",
-        "地区": "大陆&香港&台湾&美国&法国&英国&日本&韩国&德国&泰国&印度&意大利&西班牙&加拿大&其他"
-      }
-    },
-    {
       "key"        : "csp_YLSP",
       "name"       : "🥇｜永樂｜高清",
       "type"       : 3,
@@ -1067,14 +1051,6 @@
       }
     },
     {
-      "key"        : "大眾",
-      "name"       : "🥇｜大眾｜1080P",
-      "type"       : 3,
-      "api"        : "./py/大众.py",
-      "searchable" : 1,
-      "quickSearch": 1
-    },
-    {
       "key": "Olyy",
       "name": "🥇｜歐樂｜(賭城廣告)",
       "type": 3,
@@ -1083,14 +1059,6 @@
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 1
-    },
-    {
-      "key"        : "悟空",
-      "name"       : "🥇悟空｜1080P(廣告多)",
-      "type"       : 3,
-      "api"        : "./py/悟空影视.py",
-      "searchable" : 1,
-      "quickSearch": 1
     },
     {
       "key"        : "py_哇哇APP",

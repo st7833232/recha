@@ -182,6 +182,18 @@
         "ua"     : "okhttp/3.10.0"
       }
     },
+	{
+      "name": "🎯荐片",
+      "key": "薦片",
+      "type": 3,
+      "api": "csp_JPianAmns",
+      "jar": "https://gitlab.com/st7833232/recha/-/raw/main/jar/aowu.jar",
+      "searchable": 1,
+      "filterable": 1,
+      "quickSearch": 1,
+      "changeable": 1,
+      "ext": "https://raw.githubusercontent.com/st7833232/tvbox/refs/heads/own/json/jianpian.json"
+    },
     {
       "key": "爱影",
       "name": "🏆｜愛盈｜高清◎秒播",
@@ -1928,6 +1940,148 @@
       "lang"       : "ds",
       "ext"        : ""
     }
+  ],
+  "lives": [ 
+    {
+      "name": "日本斯玛特",
+      "url": "http://dbm.de5.net/smt.php",
+      "playerType": 2,
+      "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
+      "logo": "https://gcore.jsdelivr.net/gh/taksssss/tv/icon/{name}.png",
+      "ua": "dream"
+    },
+    {
+      "name": "美国斯玛特",
+      "url": "http://dbmlasvgas.sylu.cc:2086/trams.m3u?token=NqAERVyoLmQn0tNu9lona-PV7_EltgWnrAr6Rkaf8Ro=",
+      "playerType": 2,
+      "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
+      "logo": "https://gcore.jsdelivr.net/gh/taksssss/tv/icon/{name}.png"
+    },
+    {
+      "name": "tv123",
+      "type": 0,
+      "ua"  : "okhttp",
+      "url" : "http://tv123.vvvv.ee/tv.m3u"
+    },
+    {
+      "name": "🐬各大源合集",
+      "type": 0,
+      "ua": "okhttp/5.3.2",
+      "url": "https://gh-proxy.org/https://raw.githubusercontent.com/807080747/zv/refs/heads/main/sese.txt"
+    },
+    {
+      "name": "🐬综合直播",
+      "type": 0,
+      "playerType": 2,
+      "ua": "okhttp",
+      "url": "https://raw.githubusercontent.com/fleung49/star/refs/heads/main/mit"
+    },
+    {
+      "name": "🐬电视家",
+      "type": 0,
+      "playerType": 2,
+      "ua": "okhttp",
+      "url": "https://gh-proxy.org/https://github.com/bang359/dsj/raw/main/dsjcs.txt"
+    },
+    {
+      "name": "🐬薄荷直播",
+      "type": 0,
+      "ua": "okhttp/5.3.2",
+      "url": "https://gh-proxy.org/https://raw.githubusercontent.com/wujiangliu/live-sources/refs/heads/main/bhmb.m3u"
+    },
+    {
+      "name": "🐬咪咕直播",
+      "type": 0,
+      "ua"  : "okhttp/5.3.2",
+      "url" : "http://www.52top.com.cn:678/downloads/migu.txt"
+    },
+    {
+      "name": "🐬iptv直播",
+      "type": 0,
+      "ua": "okhttp/5.3.2",
+      "url": "https://raw.githubusercontent.com/vinkerq/iptv-api/refs/heads/master/iptv.txt"
+    },
+    {
+      "name": "🐬易发源 有🔞",
+      "type": 0,
+      "ua": "okhttp",
+      "url": "https://gh-proxy.org/https://raw.githubusercontent.com/fafa002/yf2025/refs/heads/main/yiyifafa.txt"
+    },
+    {
+      "name": "🐬港奥台国际",
+      "type": 0,
+      "ua"  : "okhttp",
+      "url" : "http://tv123.vvvv.ee/tv.m3u"
+    },
+    {
+      "name": "🐬中港台直播源",
+      "type": 0,
+      "ua"  : "okhttp",
+      "url" : "https://t.freetv.fun/m3u/playlist_all.txt"
+    },
+    {
+      "name": "🐬4GTV(梯子任何节点)1080p",
+      "type": 0,
+      "ua"  : "okhttp",
+      "url" : "https://ha.msbot.dpdns.org/4gtv_api.php"
+    },
+    {
+      "name": "FreeTV.fun",
+      "type": 0,
+      "ua"  : "okhttp",
+      "url" : "https://t.freetv.fun/m3u/playlist.txt"
+    },
+    {
+      "name": "風雲源",
+      "type": 0,
+      "ua"  : "okhttp",
+      "url" : "http://iptv.4666888.xyz/FYTV.txt"
+    },
+    {
+      "name": "RobYang http://RobYang.dpdns.org",
+      "type": 0,
+      "url": "http://www1.RobYang.dpdns.org/VodLive/lb8ffa",
+      "ua": "okhttp/4.12.0",
+      "timeout": 5,
+      "epg": "https://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Hong_Kong",
+      "logo": "https://epg.112114.xyz/logo/{name}.png",
+      "pass": true
+    },
+    {
+      "name": "RobYang備份 http://RobYang.rr.nu",
+      "type": 0,
+      "url": "http://RobYang.runasp.net/VodLive/lb8ffa",
+      "ua": "okhttp/4.12.0",
+      "timeout": 5,
+      "epg": "https://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Hong_Kong",
+      "logo": "https://epg.112114.xyz/logo/{name}.png",
+      "pass": true
+    },
+    {
+      "name": "🔞秘密基地",
+      "type": 0,
+      "ua": "okhttp",
+      "url": "https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/xxx视频资源.txt"
+    },
+    {
+      "name": "🔞午夜剧场",
+      "type": 0,
+      "playerType": 2,
+      "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+      "logo": "https://epg.112114.xyz/logo/{name}.png",
+      "url": "https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/午夜剧场.txt",
+      "header": {
+        "X-Api-key": "8692bd33270440d4d2941b814b81a25a1eb84a7205532971714c4299c57449e0..0..1738210005..5cf2c4ad-043b-4234-83a2-e84ae917"
+      }
+    },
+    {
+      "name": "台灣景點直播(freeman)",
+      "playerType": 2,
+      "jar": "./jar/fm.jar",
+      "url": "https://funnylife.neocities.org/TW-LiveCAM.txt",
+      "ua": "okhttp/4.12",
+      "epg": "http://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Taipei"
+    }        
   ],
   "parses": [
     {"name": "聚合1", "type": 3, "url": "Demo"},

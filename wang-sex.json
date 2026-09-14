@@ -80,14 +80,25 @@
       "api"        : "./py/射我里面😍.py",
       "playerType" : 2,
       "filterable" : 1
-    },    
+    }, 
+	{
+		"key": "花都影视(关梯)",
+		"name": "✨花都影视(关梯)✨",
+		"type": 3,
+		"api": "./py/花都影视(关梯).py"
+	},
+	{
+		"key": "黄色仓库动态版",
+		"name": "✨黄色仓库动态版✨",
+		"type": 3,
+		"api": "./py/黄色仓库动态版.py"
+	},	
     {
-      "key"  : "py_推特",
-      "name" : "⏭｜推特(嗷嗚)｜PYTHON",
-      "type" : 3,
-      "api"  : "./py/py_推特.py",
-      "style": {"type": "rect", "ratio": 1.5}
-    },
+		"key": "推特APP",
+		"name": "✨推特APP✨",
+		"type": 3,
+		"api": "./py/推特APP.py"
+	},
     {
       "key"        : "py_好色",
       "name"       : "⏭｜好色(恰逢)｜PYTHON",

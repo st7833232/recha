@@ -4,11 +4,11 @@
  * iOS + Android shared source.
  * IMPORTANT: no ES-module import/export syntax.
  *
- * Startup strategy:
- * - Android home() performs no HTTP request and returns a local startup item.
- * - Android homeVod() performs no HTTP request.
- * - iOS keeps its normal homepage list behavior.
- * - Real Android network loading begins only after the user selects a category.
+ * Android network strategy:
+ * - HTTP uses non-blocking Promise requests.
+ * - Empty/failed responses retry up to 3 times.
+ * - Retry backoff: 250ms, then 700ms.
+ * - iOS keeps synchronous requests with a small bounded retry.
  *
  * This avoids Android SiteApi.homeContent() waiting for a homepage HTTP
  * request before it can publish the home result.
@@ -101,6 +101,112 @@ function requestPage(url, referer, timeout) {
     return result.content || result.body || '';
 }
 
+
+var RETRY_ATTEMPTS = 3;
+var RETRY_DELAY_1 = 250;
+var RETRY_DELAY_2 = 700;
+var RETRY_TIMEOUT = 4000;
+
+function responseBody(result) {
+    if (!result) return '';
+    return result.content || result.body || '';
+}
+
+function requestPageSyncRetry(url, referer, timeout, attempts) {
+    var maxAttempts = attempts || RETRY_ATTEMPTS;
+    var body = '';
+
+    for (var i = 0; i < maxAttempts; i++) {
+        try {
+            body = requestPage(url, referer, timeout);
+        } catch (error) {
+            body = '';
+        }
+
+        if (body) return body;
+    }
+
+    return '';
+}
+
+function requestPageAsyncRetry(url, referer, timeout, attempts) {
+    var maxAttempts = attempts || RETRY_ATTEMPTS;
+    var requestTimeout = timeout || RETRY_TIMEOUT;
+
+    if (!isAndroidRuntime() || typeof http !== 'function') {
+        return Promise.resolve(
+            requestPageSyncRetry(
+                url,
+                referer,
+                requestTimeout,
+                maxAttempts
+            )
+        );
+    }
+
+    return new Promise(function(resolve) {
+        function run(attempt) {
+            var promise;
+
+            try {
+                promise = http(
+                    url,
+                    {
+                        method: 'GET',
+                        headers: requestHeaders(referer),
+                        timeout: requestTimeout
+                    }
+                );
+            } catch (error) {
+                promise = Promise.resolve(null);
+            }
+
+            Promise.resolve(promise)
+                .then(function(result) {
+                    var body = responseBody(result);
+
+                    if (body || attempt >= maxAttempts) {
+                        resolve(body || '');
+                        return;
+                    }
+
+                    var delay =
+                        attempt === 1
+                            ? RETRY_DELAY_1
+                            : RETRY_DELAY_2;
+
+                    setTimeout(
+                        function() {
+                            run(attempt + 1);
+                        },
+                        delay
+                    );
+                })
+                .catch(function() {
+                    if (attempt >= maxAttempts) {
+                        resolve('');
+                        return;
+                    }
+
+                    var delay =
+                        attempt === 1
+                            ? RETRY_DELAY_1
+                            : RETRY_DELAY_2;
+
+                    setTimeout(
+                        function() {
+                            run(attempt + 1);
+                        },
+                        delay
+                    );
+                });
+        }
+
+        run(1);
+    });
+}
+
+
 function originOf(url) {
     var match =
         /^(https?:\/\/[^/]+)/i.exec(
@@ -146,26 +252,6 @@ function isAndroidRuntime() {
         typeof _http === 'function'
     );
 }
-
-function androidStartupList() {
-    /*
-     * Android's native home flow auto-opens the first category
-     * when the home result has no list. A tiny local-only item
-     * prevents that first category request from firing during
-     * application startup.
-     *
-     * No HTTP request is performed here.
-     */
-    return [
-        {
-            vod_id: '__webhtv_start__',
-            vod_name: '請選擇上方分類',
-            vod_pic: '',
-            vod_remarks: '啟動完成'
-        }
-    ];
-}
-
 
 /* =========================================================
  * IMAGE
@@ -1225,87 +1311,63 @@ function apiInit(ext) {
 }
 
 function apiHome(filter) {
-    var result = {
+    return json({
         'class': [
-            {
-                type_id: '1',
-                type_name: '電影'
-            },
-            {
-                type_id: '2',
-                type_name: '連續劇'
-            },
-            {
-                type_id: '3',
-                type_name: '動漫'
-            },
-            {
-                type_id: '4',
-                type_name: '綜藝紀錄'
-            },
-            {
-                type_id: '6',
-                type_name: '短劇'
-            }
+            { type_id: '1', type_name: '電影' },
+            { type_id: '2', type_name: '連續劇' },
+            { type_id: '3', type_name: '動漫' },
+            { type_id: '4', type_name: '綜藝紀錄' },
+            { type_id: '6', type_name: '短劇' }
         ],
         filters: FILTERS
-    };
-
-    /*
-     * Android workaround:
-     *
-     * Result.list must be non-empty at application startup.
-     * Otherwise Android immediately opens the first category,
-     * which is exactly the startup request that causes the
-     * observed "KKYS first -> later sites stop loading" state.
-     *
-     * This item is local only and performs no network request.
-     */
-    if (isAndroidRuntime()) {
-        result.list = androidStartupList();
-    }
-
-    return json(result);
+    });
 }
 
 function apiHomeVod() {
-    /*
-     * Android:
-     *   absolutely no startup HTTP request.
-     *
-     * iOS:
-     *   preserve the normal homepage list behavior.
-     */
     if (isAndroidRuntime()) {
-        return json({
-            list: []
+        return requestPageAsyncRetry(
+            SITE + '/',
+            SITE + '/',
+            RETRY_TIMEOUT,
+            RETRY_ATTEMPTS
+        ).then(function(html) {
+            var list = html ? parseModuleList(html) : [];
+
+            if (list.length > 60) {
+                list = list.slice(0, 60);
+            }
+
+            return json({ list: list });
         });
     }
 
-    var html = '';
+    var html =
+        requestPageSyncRetry(
+            SITE + '/',
+            SITE + '/',
+            PAGE_TIMEOUT,
+            2
+        );
 
-    try {
-        html =
-            requestPage(
-                SITE + '/',
-                SITE + '/',
-                PAGE_TIMEOUT
-            );
-    } catch (error) {
-        html = '';
-    }
-
-    var list =
-        html
-            ? parseModuleList(html)
-            : [];
+    var list = html ? parseModuleList(html) : [];
 
     if (list.length > 60) {
         list = list.slice(0, 60);
     }
 
+    return json({ list: list });
+}
+
+function buildCategoryResult(html, page) {
+    var list = parseModuleList(html);
+    var next = hasNextPage(html);
+
     return json({
-        list: list
+        list: list,
+        page: page,
+        pagecount: next ? page + 1 : page,
+        limit: list.length || 18,
+        total: list.length
     });
 }
 
@@ -1328,35 +1390,57 @@ function apiCategory(
             extend || {}
         );
 
-    var html =
-        requestPage(
+    if (isAndroidRuntime()) {
+        return requestPageAsyncRetry(
             url,
             SITE + '/',
-            PAGE_TIMEOUT
-        );
+            RETRY_TIMEOUT,
+            RETRY_ATTEMPTS
+        ).then(function(html) {
+            return buildCategoryResult(
+                html,
+                page
+            );
+        });
+    }
 
-    var list =
-        parseModuleList(
+    return buildCategoryResult(
+        requestPageSyncRetry(
+            url,
+            SITE + '/',
+            PAGE_TIMEOUT,
+            2
+        ),
+        page
+    );
+}
+
+function buildDetailResult(value, html) {
+    if (!html) {
+        return json({ list: [] });
+    }
+
+    var playLists =
+        parsePlayLists(
             html
         );
 
-    var next =
-        hasNextPage(
-            html
-        );
+    if (!playLists.url) {
+        return json({ list: [] });
+    }
 
     return json({
-        list: list,
-        page: page,
-        pagecount:
-            next
-                ? page + 1
-                : page,
-        limit:
-            list.length ||
-            18,
-        total:
-            list.length
+        list: [
+            {
+                vod_id: value,
+                vod_name: detailTitle(html),
+                vod_pic: detailPicture(html),
+                vod_remarks: detailRemarks(html),
+                vod_content: detailDescription(html),
+                vod_play_from: playLists.from,
+                vod_play_url: playLists.url
+            }
+        ]
     });
 }
 
@@ -1376,9 +1460,7 @@ function apiDetail(id) {
     }
 
     if (!/^\d+$/.test(value)) {
-        return json({
-            list: []
-        });
+        return json({ list: [] });
     }
 
     var page =
@@ -1387,79 +1469,45 @@ function apiDetail(id) {
         value +
         '.html';
 
-    var html =
-        requestPage(
+    if (isAndroidRuntime()) {
+        return requestPageAsyncRetry(
             page,
             SITE + '/',
-            PAGE_TIMEOUT
-        );
-
-    if (!html) {
-        return json({
-            list: []
+            RETRY_TIMEOUT,
+            RETRY_ATTEMPTS
+        ).then(function(html) {
+            return buildDetailResult(
+                value,
+                html
+            );
         });
     }
 
-    var playLists =
-        parsePlayLists(
-            html
-        );
-
-    if (!playLists.url) {
-        return json({
-            list: []
-        });
-    }
-
-    return json({
-        list: [
-            {
-                vod_id: value,
-                vod_name:
-                    detailTitle(
-                        html
-                    ),
-                vod_pic:
-                    detailPicture(
-                        html
-                    ),
-                vod_remarks:
-                    detailRemarks(
-                        html
-                    ),
-                vod_content:
-                    detailDescription(
-                        html
-                    ),
-                vod_play_from:
-                    playLists.from,
-                vod_play_url:
-                    playLists.url
-            }
-        ]
-    });
+    return buildDetailResult(
+        value,
+        requestPageSyncRetry(
+            page,
+            SITE + '/',
+            PAGE_TIMEOUT,
+            2
+        )
+    );
 }
 
-function apiPlay(
-    flag,
-    id,
-    vipFlags
-) {
-    var playPage =
-        absolute(
-            id,
-            SITE + '/'
-        );
+function buildPlayResult(playPage, html) {
+    var media =
+        html
+            ? extractPlayerURL(
+                html
+            )
+            : '';
 
-    var media = '';
-
-    try {
+    if (media) {
         media =
-            resolvePlayPage(
+            absolute(
+                media,
                 playPage
             );
-    } catch (error) {
-        media = '';
     }
 
     if (media) {
@@ -1483,40 +1531,43 @@ function apiPlay(
     });
 }
 
-function apiSearch(
-    key,
-    quick,
-    pg
+function apiPlay(
+    flag,
+    id,
+    vipFlags
 ) {
-    var keyword =
-        clean(
-            key
+    var playPage =
+        absolute(
+            id,
+            SITE + '/'
         );
 
-    if (!keyword) {
-        return json({
-            list: []
+    if (isAndroidRuntime()) {
+        return requestPageAsyncRetry(
+            playPage,
+            SITE + '/',
+            RETRY_TIMEOUT,
+            RETRY_ATTEMPTS
+        ).then(function(html) {
+            return buildPlayResult(
+                playPage,
+                html
+            );
         });
     }
 
-    var page =
-        parseInt(
-            pg || '1',
-            10
-        ) || 1;
+    return buildPlayResult(
+        playPage,
+        requestPageSyncRetry(
+            playPage,
+            SITE + '/',
+            PLAY_TIMEOUT,
+            2
+        )
+    );
+}
 
-    var html = '';
-
-    try {
-        html =
-            searchRequest(
-                keyword,
-                page
-            );
-    } catch (error) {
-        html = '';
-    }
-
+function buildSearchResult(html, page) {
     var list =
         html
             ? parseSearchList(
@@ -1534,18 +1585,114 @@ function apiSearch(
     return json({
         list: list,
         page: page,
-        pagecount:
-            next
-                ? page + 1
-                : page,
-        limit:
-            list.length ||
-            20,
-        total:
-            list.length
+        pagecount: next ? page + 1 : page,
+        limit: list.length || 20,
+        total: list.length
     });
 }
 
+function searchRequestAsyncRetry(
+    keyword,
+    page
+) {
+    var encoded =
+        encodeURIComponent(
+            keyword
+        );
+
+    var seedURL =
+        SITE +
+        '/search?k=' +
+        encoded;
+
+    return requestPageAsyncRetry(
+        seedURL,
+        SITE + '/',
+        RETRY_TIMEOUT,
+        RETRY_ATTEMPTS
+    ).then(function(seedHTML) {
+        var token =
+            searchToken(
+                seedHTML
+            );
+
+        if (!token) {
+            return seedHTML;
+        }
+
+        var url =
+            SITE +
+            '/search?k=' +
+            encoded +
+            '&t=' +
+            encodeURIComponent(
+                token
+            );
+
+        if (page > 1) {
+            url +=
+                '&page=' +
+                page;
+        }
+
+        return requestPageAsyncRetry(
+            url,
+            seedURL,
+            RETRY_TIMEOUT,
+            RETRY_ATTEMPTS
+        );
+    });
+}
+
+function apiSearch(
+    key,
+    quick,
+    pg
+) {
+    var keyword =
+        clean(
+            key
+        );
+
+    if (!keyword) {
+        return json({ list: [] });
+    }
+
+    var page =
+        parseInt(
+            pg || '1',
+            10
+        ) || 1;
+
+    if (isAndroidRuntime()) {
+        return searchRequestAsyncRetry(
+            keyword,
+            page
+        ).then(function(html) {
+            return buildSearchResult(
+                html,
+                page
+            );
+        });
+    }
+
+    var html = '';
+
+    try {
+        html =
+            searchRequest(
+                keyword,
+                page
+            );
+    } catch (error) {
+        html = '';
+    }
+
+    return buildSearchResult(
+        html,
+        page
+    );
+}
 
 /* =========================================================
  * SHARED SPIDER

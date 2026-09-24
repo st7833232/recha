@@ -1,10 +1,12 @@
 /*
  * WebHTV CatVod JS Spider - 8Movie
- * Remote source version.
+ * Remote source
  *
- * Poster fix:
- * 1. Do not treat /movies/1/ ... /movies/6/ as movie IDs.
- * 2. Only accept /p/{movieId}-*.jpg style images as posters.
+ * v3:
+ * - Actual posters are fetched from each movie detail page.
+ * - Category IDs 1-6 are excluded from movie results.
+ * - Detail HTML / posters use in-memory cache.
+ * - Playback remains parse:1 -> WebHTV MediaSniffer.
  */
 
 var SITE = 'https://www.8movie.com';
@@ -14,8 +16,11 @@ var UA =
     'AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 ' +
     'Mobile/15E148 Safari/604.1';
 
+var DETAIL_CACHE = {};
+var POSTER_CACHE = {};
 
-function baseHeaders() {
+
+function headers() {
     return {
         'User-Agent': UA,
         'Referer': SITE + '/',
@@ -24,52 +29,20 @@ function baseHeaders() {
 }
 
 
-function mergeHeaders(extra) {
-    var out = baseHeaders();
-    var key;
+function http(url) {
+    var res = req(url, {
+        method: 'GET',
+        headers: headers(),
+        timeout: 20000
+    }) || {};
 
-    extra = extra || {};
-
-    for (key in extra) {
-        if (
-            Object.prototype.hasOwnProperty.call(
-                extra,
-                key
-            )
-        ) {
-            out[key] = extra[key];
-        }
-    }
-
-    return out;
+    return res.content || res.body || '';
 }
 
 
-function getText(url, extraHeaders) {
-    var result =
-        req(
-            url,
-            {
-                method: 'GET',
-                headers: mergeHeaders(
-                    extraHeaders || {}
-                ),
-                timeout: 20000
-            }
-        ) || {};
-
-    return (
-        result.content ||
-        result.body ||
-        ''
-    );
-}
-
-
-function trimText(value) {
+function clean(value) {
     return String(
-        value === undefined ||
-        value === null
+        value === undefined || value === null
             ? ''
             : value
     )
@@ -82,8 +55,8 @@ function trimText(value) {
 }
 
 
-function absoluteUrl(value) {
-    var url = trimText(value);
+function absolute(value) {
+    var url = clean(value);
 
     if (!url) {
         return '';
@@ -101,34 +74,239 @@ function absoluteUrl(value) {
         return SITE + url;
     }
 
-    return (
-        SITE +
-        '/' +
-        url.replace(/^\.\//, '')
-    );
+    return SITE + '/' + url.replace(/^\.\//, '');
 }
 
 
-function movieIdFromUrl(value) {
+function movieId(value) {
     var match =
         /\/movies\/(\d+)\/?(?:[?#].*)?$/i.exec(
             String(value || '')
         );
 
-    return match
-        ? match[1]
-        : '';
+    return match ? match[1] : '';
 }
 
 
-function isCategoryMovieId(id) {
+function isCategoryId(id) {
     return /^(1|2|3|4|5|6)$/.test(
         String(id || '')
     );
 }
 
 
-function playInfoFromUrl(value) {
+function movieUrl(id) {
+    return SITE + '/movies/' + id + '/';
+}
+
+
+function detailHtml(id) {
+    id = String(id || '');
+
+    if (!id) {
+        return '';
+    }
+
+    if (DETAIL_CACHE[id] !== undefined) {
+        return DETAIL_CACHE[id];
+    }
+
+    var html = '';
+
+    try {
+        html = http(
+            movieUrl(id)
+        );
+    } catch (e) {
+        html = '';
+    }
+
+    DETAIL_CACHE[id] = html;
+
+    return html;
+}
+
+
+function metaContent(
+    html,
+    propertyName,
+    nameValue
+) {
+    var value = '';
+
+    if (propertyName) {
+        value = pdfh(
+            html,
+            'meta[property="' +
+                propertyName +
+                '"]&&content'
+        );
+    }
+
+    if (!value && nameValue) {
+        value = pdfh(
+            html,
+            'meta[name="' +
+                nameValue +
+                '"]&&content'
+        );
+    }
+
+    return clean(value);
+}
+
+
+/*
+ * The actual 8Movie movie artwork uses:
+ *
+ * /p/{movieId}-xxxx.jpg
+ *
+ * Example:
+ * /p/15610-kytq.jpg
+ */
+function exactPosterFromHtml(
+    html,
+    id
+) {
+    var source =
+        String(html || '')
+            .replace(/\\\//g, '/')
+            .replace(/&amp;/gi, '&');
+
+    var movie =
+        String(id || '');
+
+    if (!movie) {
+        return '';
+    }
+
+    var pattern =
+        new RegExp(
+            "(https?:\\/\\/[^\"'<>\\s]+)?" +
+            "\\/p\\/" +
+            movie +
+            "[^\"'<>\\s)]*" +
+            "\\.(?:jpg|jpeg|png|webp|avif)",
+            'i'
+        );
+
+    var match =
+        pattern.exec(source);
+
+    if (!match) {
+        return '';
+    }
+
+    return absolute(
+        match[0]
+    );
+}
+
+
+function posterForMovie(id) {
+    id = String(id || '');
+
+    if (!id) {
+        return '';
+    }
+
+    if (POSTER_CACHE[id] !== undefined) {
+        return POSTER_CACHE[id];
+    }
+
+    var html =
+        detailHtml(id);
+
+    var poster =
+        exactPosterFromHtml(
+            html,
+            id
+        );
+
+
+    /*
+     * Fallback to og:image only when it still belongs
+     * to this movie's /p/{id} image.
+     */
+    if (!poster) {
+        var og =
+            absolute(
+                metaContent(
+                    html,
+                    'og:image',
+                    ''
+                )
+            );
+
+        if (
+            og &&
+            og.indexOf(
+                '/p/' + id
+            ) !== -1
+        ) {
+            poster = og;
+        }
+    }
+
+
+    /*
+     * Try ordinary images in the detail page,
+     * but never accept the generic 8movie image.
+     */
+    if (!poster) {
+        var images =
+            pdfa(
+                html,
+                'img'
+            );
+
+        var i;
+
+        for (
+            i = 0;
+            i < images.length;
+            i++
+        ) {
+            var src =
+                absolute(
+                    pdfh(
+                        images[i],
+                        'img&&data-original'
+                    ) ||
+                    pdfh(
+                        images[i],
+                        'img&&data-src'
+                    ) ||
+                    pdfh(
+                        images[i],
+                        'img&&data-lazy-src'
+                    ) ||
+                    pdfh(
+                        images[i],
+                        'img&&src'
+                    )
+                );
+
+            if (
+                src &&
+                src.indexOf(
+                    '/p/' + id
+                ) !== -1
+            ) {
+                poster = src;
+                break;
+            }
+        }
+    }
+
+    POSTER_CACHE[id] =
+        poster || '';
+
+    return POSTER_CACHE[id];
+}
+
+
+function playInfo(value) {
     var match =
         /\/play\/(\d+)\/(\d+)\/?(?:[?#].*)?$/i.exec(
             String(value || '')
@@ -151,164 +329,18 @@ function playInfoFromUrl(value) {
 }
 
 
-/*
- * 8Movie genuine poster paths currently use:
- *
- * /p/{movieId}-xxxx.jpg
- */
-function posterFromHtmlById(
+function parseList(
     html,
-    movieId
+    loadPosters
 ) {
-    var source =
-        String(html || '')
-            .replace(/\\\//g, '/')
-            .replace(/&amp;/gi, '&');
-
-    var id =
-        String(movieId || '');
-
-    if (!id) {
-        return '';
-    }
-
-    var expression =
-        new RegExp(
-            "(https?:\\/\\/[^\"'<>\\s]+)?" +
-            "\\/p\\/" +
-            id +
-            "[^\"'<>\\s)]*" +
-            "\\.(?:jpg|jpeg|png|webp|avif)",
-            'i'
-        );
-
-    var match =
-        expression.exec(source);
-
-    if (!match) {
-        return '';
-    }
-
-    return absoluteUrl(
-        match[0]
-    );
-}
-
-
-function validPosterForMovie(
-    url,
-    movieId
-) {
-    if (!url) {
-        return false;
-    }
-
-    var value =
-        String(url);
-
-    var id =
-        String(movieId || '');
-
-    return (
-        value.indexOf(
-            '/p/' + id
-        ) !== -1
-    );
-}
-
-
-function posterFromNode(
-    node,
-    movieId
-) {
-    var candidates = [
-        pdfh(
-            node,
-            'img&&data-original'
-        ),
-        pdfh(
-            node,
-            'img&&data-src'
-        ),
-        pdfh(
-            node,
-            'img&&data-lazy-src'
-        ),
-        pdfh(
-            node,
-            'img&&data-url'
-        ),
-        pdfh(
-            node,
-            'img&&data-image'
-        ),
-        pdfh(
-            node,
-            'img&&src'
-        )
-    ];
-
-    var i;
-
-    for (
-        i = 0;
-        i < candidates.length;
-        i++
-    ) {
-        var url =
-            absoluteUrl(
-                candidates[i]
-            );
-
-        if (
-            validPosterForMovie(
-                url,
-                movieId
-            )
-        ) {
-            return url;
-        }
-    }
-
-    return '';
-}
-
-
-function nodeHref(node) {
-    return (
-        pdfh(
-            node,
-            'a&&href'
-        ) ||
-        ''
-    );
-}
-
-
-function nodeText(node) {
-    return trimText(
-        pdfh(
-            node,
-            'a&&Text'
-        ) ||
-        pdfh(
-            node,
-            'Text'
-        ) ||
-        ''
-    );
-}
-
-
-function parseMovieList(html) {
     var nodes =
         pdfa(
             html,
             'a[href*="/movies/"]'
         );
 
-    var map = {};
     var order = [];
+    var map = {};
     var i;
 
 
@@ -317,38 +349,39 @@ function parseMovieList(html) {
         i < nodes.length;
         i++
     ) {
-
         var href =
-            nodeHref(
-                nodes[i]
-            );
+            pdfh(
+                nodes[i],
+                'a&&href'
+            ) || '';
 
         var id =
-            movieIdFromUrl(
-                href
-            );
-
+            movieId(href);
 
         if (!id) {
             continue;
         }
 
-
-        if (
-            isCategoryMovieId(id)
-        ) {
+        if (isCategoryId(id)) {
             continue;
         }
 
 
-        var raw =
-            nodeText(
-                nodes[i]
+        var text =
+            clean(
+                pdfh(
+                    nodes[i],
+                    'a&&Text'
+                ) ||
+                pdfh(
+                    nodes[i],
+                    'Text'
+                )
             );
 
 
         var title =
-            trimText(
+            clean(
                 pdfh(
                     nodes[i],
                     'a&&title'
@@ -357,64 +390,53 @@ function parseMovieList(html) {
                     nodes[i],
                     'img&&alt'
                 ) ||
-                raw
+                text
             );
 
 
         title =
-            title.replace(
-                /^\s*\d+\s*集\s*/,
-                ''
-            );
+            title
+                .replace(
+                    /^\s*\d+\s*集\s*/,
+                    ''
+                )
+                .replace(
+                    /^立即觀看\s*/i,
+                    ''
+                );
 
 
         title =
-            title.replace(
-                /^立即觀看\s*/i,
-                ''
-            );
-
-
-        title =
-            trimText(
-                title
-            );
+            clean(title);
 
 
         if (
             !title ||
-            /^More$/i.test(title) ||
             title === '分類' ||
             title === '最新' ||
             title === '排行' ||
-            title === '標籤'
+            title === '標籤' ||
+            /^More$/i.test(title)
         ) {
             continue;
         }
 
 
-        var remark = '';
-
-        var remarkMatch =
+        var episodeMatch =
             /(\d+)\s*集/.exec(
-                raw
+                text
             );
 
 
-        if (remarkMatch) {
-            remark =
-                remarkMatch[1] +
-                '集';
-        }
-
-
         if (!map[id]) {
-
             map[id] = {
                 vod_id: id,
-                vod_name: '',
+                vod_name: title,
                 vod_pic: '',
-                vod_remarks: ''
+                vod_remarks:
+                    episodeMatch
+                        ? episodeMatch[1] + '集'
+                        : ''
             };
 
             order.push(id);
@@ -422,7 +444,8 @@ function parseMovieList(html) {
 
 
         if (
-            !map[id].vod_name
+            !map[id].vod_name &&
+            title
         ) {
             map[id].vod_name =
                 title;
@@ -430,36 +453,12 @@ function parseMovieList(html) {
 
 
         if (
-            !map[id].vod_pic
+            !map[id].vod_remarks &&
+            episodeMatch
         ) {
-
-            map[id].vod_pic =
-                posterFromHtmlById(
-                    html,
-                    id
-                );
-        }
-
-
-        if (
-            !map[id].vod_pic
-        ) {
-
-            map[id].vod_pic =
-                posterFromNode(
-                    nodes[i],
-                    id
-                );
-        }
-
-
-        if (
-            remark &&
-            !map[id].vod_remarks
-        ) {
-
             map[id].vod_remarks =
-                remark;
+                episodeMatch[1] +
+                '集';
         }
     }
 
@@ -472,21 +471,25 @@ function parseMovieList(html) {
         i < order.length;
         i++
     ) {
-
         var item =
             map[
                 order[i]
             ];
 
-
-        if (
-            item &&
-            item.vod_name
-        ) {
-            list.push(
-                item
-            );
+        if (!item) {
+            continue;
         }
+
+
+        if (loadPosters) {
+            item.vod_pic =
+                posterForMovie(
+                    item.vod_id
+                );
+        }
+
+
+        list.push(item);
     }
 
 
@@ -494,67 +497,83 @@ function parseMovieList(html) {
 }
 
 
-function metaContent(
-    html,
-    propertyName,
-    nameValue
-) {
-    var value = '';
+function enrichPosters(list) {
+    var i;
+
+    for (
+        i = 0;
+        i < list.length;
+        i++
+    ) {
+        if (
+            list[i] &&
+            list[i].vod_id
+        ) {
+            list[i].vod_pic =
+                posterForMovie(
+                    list[i].vod_id
+                );
+        }
+    }
+
+    return list;
+}
 
 
-    if (propertyName) {
+function categoryUrl(tid) {
+    tid =
+        String(
+            tid || 'update'
+        );
 
-        value =
-            pdfh(
-                html,
-                'meta[property="' +
-                propertyName +
-                '"]&&content'
-            );
+
+    if (tid === 'update') {
+        return SITE +
+            '/movies/update/';
+    }
+
+
+    if (tid === 'rank') {
+        return SITE +
+            '/movies/rank/';
     }
 
 
     if (
-        !value &&
-        nameValue
+        /^[1-6]$/.test(
+            tid
+        )
     ) {
-
-        value =
-            pdfh(
-                html,
-                'meta[name="' +
-                nameValue +
-                '"]&&content'
-            );
+        return (
+            SITE +
+            '/movies/' +
+            tid +
+            '/'
+        );
     }
 
 
-    return trimText(
-        value
-    );
+    return SITE +
+        '/movies/update/';
 }
 
 
-function detailName(html) {
+function detailTitle(html) {
     var value =
-        trimText(
+        clean(
             pdfh(
                 html,
                 'h1&&Text'
             ) ||
-
             metaContent(
                 html,
                 'og:title',
                 ''
             ) ||
-
             pdfh(
                 html,
                 'title&&Text'
-            ) ||
-
-            ''
+            )
         );
 
 
@@ -572,98 +591,11 @@ function detailName(html) {
         );
 
 
-    return trimText(
-        value
-    );
+    return clean(value);
 }
 
 
-function detailPicture(
-    html,
-    movieId
-) {
-    var poster =
-        posterFromHtmlById(
-            html,
-            movieId
-        );
-
-
-    if (poster) {
-        return poster;
-    }
-
-
-    var values = [
-        metaContent(
-            html,
-            'og:image',
-            ''
-        ),
-
-        pdfh(
-            html,
-            'main img&&data-original'
-        ),
-
-        pdfh(
-            html,
-            'main img&&data-src'
-        ),
-
-        pdfh(
-            html,
-            'main img&&src'
-        ),
-
-        pdfh(
-            html,
-            'article img&&data-original'
-        ),
-
-        pdfh(
-            html,
-            'article img&&data-src'
-        ),
-
-        pdfh(
-            html,
-            'article img&&src'
-        )
-    ];
-
-
-    var i;
-
-
-    for (
-        i = 0;
-        i < values.length;
-        i++
-    ) {
-
-        var url =
-            absoluteUrl(
-                values[i]
-            );
-
-
-        if (
-            validPosterForMovie(
-                url,
-                movieId
-            )
-        ) {
-            return url;
-        }
-    }
-
-
-    return '';
-}
-
-
-function detailDescription(html) {
+function description(html) {
     var value =
         metaContent(
             html,
@@ -683,7 +615,6 @@ function detailDescription(html) {
             'h6'
         );
 
-
     var i;
 
 
@@ -692,14 +623,12 @@ function detailDescription(html) {
         i < nodes.length;
         i++
     ) {
-
         var text =
-            trimText(
+            clean(
                 pdfh(
                     nodes[i],
                     'Text'
-                ) ||
-                ''
+                )
             );
 
 
@@ -718,9 +647,9 @@ function detailDescription(html) {
 }
 
 
-function parseEpisodes(
+function episodes(
     html,
-    movieId
+    id
 ) {
     var nodes =
         pdfa(
@@ -728,9 +657,8 @@ function parseEpisodes(
             'a[href*="/play/"]'
         );
 
-
+    var result = [];
     var seen = {};
-    var out = [];
     var i;
 
 
@@ -739,17 +667,14 @@ function parseEpisodes(
         i < nodes.length;
         i++
     ) {
-
         var href =
-            nodeHref(
-                nodes[i]
-            );
-
+            pdfh(
+                nodes[i],
+                'a&&href'
+            ) || '';
 
         var info =
-            playInfoFromUrl(
-                href
-            );
+            playInfo(href);
 
 
         if (!info) {
@@ -758,8 +683,10 @@ function parseEpisodes(
 
 
         if (
-            String(info.movie) !==
-            String(movieId)
+            String(
+                info.movie
+            ) !==
+            String(id)
         ) {
             continue;
         }
@@ -775,13 +702,19 @@ function parseEpisodes(
 
 
         var label =
-            nodeText(
-                nodes[i]
+            clean(
+                pdfh(
+                    nodes[i],
+                    'a&&Text'
+                ) ||
+                pdfh(
+                    nodes[i],
+                    'Text'
+                )
             );
 
 
         if (!label) {
-
             var number =
                 String(
                     parseInt(
@@ -807,10 +740,10 @@ function parseEpisodes(
         }
 
 
-        out.push(
+        result.push(
             label +
             '$' +
-            absoluteUrl(
+            absolute(
                 info.path
             )
         );
@@ -822,115 +755,50 @@ function parseEpisodes(
     }
 
 
-    return out;
+    return result;
 }
 
 
-function categoryUrl(tid) {
-    tid =
-        String(
-            tid || 'update'
-        );
-
-
-    if (
-        tid === 'update'
-    ) {
-
-        return (
-            SITE +
-            '/movies/update/'
-        );
-    }
-
-
-    if (
-        tid === 'rank'
-    ) {
-
-        return (
-            SITE +
-            '/movies/rank/'
-        );
-    }
-
-
-    if (
-        /^[1-6]$/.test(
-            tid
-        )
-    ) {
-
-        return (
-            SITE +
-            '/movies/' +
-            tid +
-            '/'
-        );
-    }
-
-
-    return (
-        SITE +
-        '/movies/update/'
-    );
-}
-
-
-function containsKeyword(
-    item,
+function keywordMatch(
+    list,
     keyword
 ) {
-    return (
+    var result = [];
+    var key =
         String(
-            item.vod_name ||
-            ''
-        )
-            .toLowerCase()
-            .indexOf(
-                String(
-                    keyword || ''
-                ).toLowerCase()
-            ) !== -1
-    );
-}
+            keyword || ''
+        ).toLowerCase();
 
-
-function filterKeyword(
-    items,
-    keyword
-) {
-    var out = [];
     var i;
 
 
     for (
         i = 0;
-        i < items.length;
+        i < list.length;
         i++
     ) {
-
         if (
-            containsKeyword(
-                items[i],
-                keyword
+            String(
+                list[i].vod_name ||
+                ''
             )
+                .toLowerCase()
+                .indexOf(key) !== -1
         ) {
-
-            out.push(
-                items[i]
+            result.push(
+                list[i]
             );
         }
     }
 
 
-    return out;
+    return result;
 }
 
 
-function appendUnique(
-    target,
-    items,
+function uniqueAppend(
+    destination,
+    source,
     seen
 ) {
     var i;
@@ -938,13 +806,12 @@ function appendUnique(
 
     for (
         i = 0;
-        i < items.length;
+        i < source.length;
         i++
     ) {
-
         var id =
             String(
-                items[i].vod_id ||
+                source[i].vod_id ||
                 ''
             );
 
@@ -957,70 +824,16 @@ function appendUnique(
         }
 
 
-        seen[id] =
-            true;
+        seen[id] = true;
 
-
-        target.push(
-            items[i]
+        destination.push(
+            source[i]
         );
     }
 }
 
 
-function searchFallback(keyword) {
-    var categories = [
-        'update',
-        'rank',
-        '1',
-        '2',
-        '3',
-        '4',
-        '5',
-        '6'
-    ];
-
-
-    var all = [];
-    var seen = {};
-    var i;
-
-
-    for (
-        i = 0;
-        i < categories.length;
-        i++
-    ) {
-
-        try {
-
-            appendUnique(
-                all,
-
-                parseMovieList(
-                    getText(
-                        categoryUrl(
-                            categories[i]
-                        )
-                    )
-                ),
-
-                seen
-            );
-
-        } catch (error) {
-        }
-    }
-
-
-    return filterKeyword(
-        all,
-        keyword
-    );
-}
-
-
-function trySiteSearch(keyword) {
+function searchSite(keyword) {
     var encoded =
         encodeURIComponent(
             String(
@@ -1052,18 +865,15 @@ function trySiteSearch(keyword) {
         i < urls.length;
         i++
     ) {
-
         try {
-
             var list =
-                filterKeyword(
-
-                    parseMovieList(
-                        getText(
+                keywordMatch(
+                    parseList(
+                        http(
                             urls[i]
-                        )
+                        ),
+                        false
                     ),
-
                     keyword
                 );
 
@@ -1071,15 +881,65 @@ function trySiteSearch(keyword) {
             if (
                 list.length
             ) {
-                return list;
+                return enrichPosters(
+                    list
+                );
             }
-
-        } catch (error) {
+        } catch (e) {
         }
     }
 
 
     return [];
+}
+
+
+function searchFallback(keyword) {
+    var categories = [
+        'update',
+        'rank',
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6'
+    ];
+
+    var all = [];
+    var seen = {};
+    var i;
+
+
+    for (
+        i = 0;
+        i < categories.length;
+        i++
+    ) {
+        try {
+            uniqueAppend(
+                all,
+                parseList(
+                    http(
+                        categoryUrl(
+                            categories[i]
+                        )
+                    ),
+                    false
+                ),
+                seen
+            );
+        } catch (e) {
+        }
+    }
+
+
+    return enrichPosters(
+        keywordMatch(
+            all,
+            keyword
+        )
+    );
 }
 
 
@@ -1090,44 +950,35 @@ function apiInit(ext) {
 
 function apiHome(filter) {
     return {
-
         'class': [
-
             {
                 type_id: 'update',
                 type_name: '最新更新'
             },
-
             {
                 type_id: 'rank',
                 type_name: '熱門排行'
             },
-
             {
                 type_id: '1',
                 type_name: '穿越古代'
             },
-
             {
                 type_id: '2',
                 type_name: '都市情愛'
             },
-
             {
                 type_id: '3',
                 type_name: '復仇爽劇'
             },
-
             {
                 type_id: '4',
                 type_name: '玄幻武俠'
             },
-
             {
                 type_id: '5',
                 type_name: '奇幻懸疑'
             },
-
             {
                 type_id: '6',
                 type_name: '其他短劇'
@@ -1139,18 +990,18 @@ function apiHome(filter) {
 
 function apiHomeVod() {
     var list =
-        parseMovieList(
-            getText(
+        parseList(
+            http(
                 SITE +
                 '/movies/update/'
-            )
+            ),
+            true
         );
 
 
     if (
         list.length > 30
     ) {
-
         list =
             list.slice(
                 0,
@@ -1186,14 +1037,9 @@ function apiCategory(
     }
 
 
-    /*
-     * Pagination URL has not been verified yet.
-     * Do not fake additional pages.
-     */
     if (
         page !== 1
     ) {
-
         return {
             list: [],
             page: page,
@@ -1205,12 +1051,13 @@ function apiCategory(
 
 
     var list =
-        parseMovieList(
-            getText(
+        parseList(
+            http(
                 categoryUrl(
                     tid
                 )
-            )
+            ),
+            true
         );
 
 
@@ -1250,28 +1097,20 @@ function apiDetail(id) {
             value
         )
     ) {
-
         return {
             list: []
         };
     }
 
 
-    var page =
-        SITE +
-        '/movies/' +
-        value +
-        '/';
-
-
     var html =
-        getText(
-            page
+        detailHtml(
+            value
         );
 
 
     var episodeList =
-        parseEpisodes(
+        episodes(
             html,
             value
         );
@@ -1280,7 +1119,6 @@ function apiDetail(id) {
     if (
         !episodeList.length
     ) {
-
         return {
             list: []
         };
@@ -1288,21 +1126,18 @@ function apiDetail(id) {
 
 
     return {
-
         list: [
-
             {
                 vod_id:
                     value,
 
                 vod_name:
-                    detailName(
+                    detailTitle(
                         html
                     ),
 
                 vod_pic:
-                    detailPicture(
-                        html,
+                    posterForMovie(
                         value
                     ),
 
@@ -1311,7 +1146,7 @@ function apiDetail(id) {
                     '集',
 
                 vod_content:
-                    detailDescription(
+                    description(
                         html
                     ),
 
@@ -1333,20 +1168,15 @@ function apiPlay(
     id,
     vipFlags
 ) {
-    var url =
-        absoluteUrl(
-            id
-        );
-
-
     return {
-
         parse: 1,
 
-        url: url,
+        url:
+            absolute(
+                id
+            ),
 
         header: {
-
             'User-Agent':
                 UA,
 
@@ -1363,15 +1193,12 @@ function apiSearch(
     pg
 ) {
     var keyword =
-        trimText(
+        clean(
             key
         );
 
 
-    if (
-        !keyword
-    ) {
-
+    if (!keyword) {
         return {
             list: []
         };
@@ -1379,7 +1206,7 @@ function apiSearch(
 
 
     var list =
-        trySiteSearch(
+        searchSite(
             keyword
         );
 
@@ -1387,7 +1214,6 @@ function apiSearch(
     if (
         !list.length
     ) {
-
         list =
             searchFallback(
                 keyword
@@ -1403,9 +1229,7 @@ function apiSearch(
 
 globalThis.__jsEvalReturn =
     function () {
-
         return {
-
             init:
                 apiInit,
 

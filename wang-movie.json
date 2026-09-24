@@ -51,10 +51,7 @@
       "key": "8movie",
       "name": "8Movie 短劇",
       "type": 3,
-      "api": "./json/8movie.js",
-      "ext": {
-        "version": "20260924-poster-v3"
-        }
+      "api": "./json/8movie.js"
     },
     {
       "key": "YIys",

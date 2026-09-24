@@ -2,28 +2,30 @@
  * WebHTV CatVod JS Spider - KKYS
  * Target: https://www.kkys20.com
  *
+ * Remote JS Spider for WebHTV ios-poc.
+ *
  * Features:
- * - proper title extraction
- * - rdul.js image host discovery
- * - data-original poster support
- * - CatVod filters
- * - multi-line playback
- * - episode lists per line
- * - KKYS search token
- * - direct play URL extraction
- * - dujia AES-ECB playback decryption
+ * - correct title parsing
+ * - correct KKYS poster host handling
+ * - category filters
+ * - pagination
+ * - dynamic search token
+ * - true multi-line playback
+ * - line / episode index pairing
+ * - excludes special 4K line
+ * - direct playSource URL extraction
+ * - dujia / PPPP AES-ECB decryption
+ * - MediaSniffer fallback
  */
 
 var SITE = 'https://www.kkys20.com';
+
+var IMG_HOST = 'https://vres.esadj.com';
 
 var UA =
     'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) ' +
     'AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 ' +
     'Mobile/15E148 Safari/604.1';
-
-var HOME_HTML = '';
-var SEARCH_TOKEN = '';
-var IMG_HOST = '';
 
 var AES_KEY =
     'Isu7fOAvI6!&IKpAbVdhf&^F';
@@ -60,16 +62,22 @@ function requestHeaders(referer) {
 
 
 function http(url, referer) {
-    var result = req(
-        url,
-        {
-            method: 'GET',
-            headers: requestHeaders(
-                referer
-            ),
-            timeout: 20000
-        }
-    ) || {};
+    var result =
+        req(
+            url,
+            {
+                method: 'GET',
+
+                headers:
+                    requestHeaders(
+                        referer
+                    ),
+
+                timeout:
+                    20000
+            }
+        ) || {};
+
 
     return (
         result.content ||
@@ -82,8 +90,11 @@ function http(url, referer) {
 function originOf(url) {
     var match =
         /^(https?:\/\/[^/]+)/i.exec(
-            String(url || '')
+            String(
+                url || ''
+            )
         );
+
 
     return match
         ? match[1]
@@ -93,10 +104,13 @@ function originOf(url) {
 
 function absolute(value, base) {
     var url =
-        clean(value);
+        clean(
+            value
+        );
+
 
     var root =
-        base || SITE;
+        base || SITE + '/';
 
 
     if (!url) {
@@ -133,7 +147,7 @@ function absolute(value, base) {
     }
 
 
-    var dir =
+    var directory =
         String(root)
             .replace(
                 /[^/]*$/,
@@ -142,218 +156,21 @@ function absolute(value, base) {
 
 
     return (
-        dir +
+        directory +
         url
     );
 }
 
 
 /* =========================================================
- * Bootstrap:
- * - search t token
- * - rdul.js image host
- * ========================================================= */
-
-function discoverSearchToken(html) {
-    var token =
-        pdfh(
-            html,
-            'input[name=t]&&value'
-        );
-
-
-    if (!token) {
-        var match =
-            /<input[^>]+name=["']t["'][^>]+value=["']([^"']+)["']/i.exec(
-                String(html || '')
-            );
-
-
-        if (!match) {
-            match =
-                /<input[^>]+value=["']([^"']+)["'][^>]+name=["']t["']/i.exec(
-                    String(html || '')
-                );
-        }
-
-
-        if (match) {
-            token =
-                match[1];
-        }
-    }
-
-
-    return clean(
-        token
-    );
-}
-
-
-function normalizeImageHost(value) {
-    var host =
-        clean(value);
-
-
-    if (!host) {
-        return '';
-    }
-
-
-    host =
-        host.replace(
-            /\/+$/,
-            ''
-        );
-
-
-    if (
-        host.indexOf('//') === 0
-    ) {
-        host =
-            'https:' +
-            host;
-    }
-
-
-    if (
-        !/^https?:\/\//i.test(
-            host
-        )
-    ) {
-        host =
-            'https://' +
-            host.replace(
-                /^\/+/,
-                ''
-            );
-    }
-
-
-    return host;
-}
-
-
-function discoverImageHost(html) {
-    var source =
-        String(html || '');
-
-    var scriptMatch =
-        /<script[^>]+src=["']([^"']*rdul\.js[^"']*)["']/i.exec(
-            source
-        );
-
-
-    if (!scriptMatch) {
-        return '';
-    }
-
-
-    var scriptURL =
-        absolute(
-            scriptMatch[1],
-            SITE + '/'
-        );
-
-
-    if (!scriptURL) {
-        return '';
-    }
-
-
-    var js = '';
-
-    try {
-        js =
-            http(
-                scriptURL,
-                SITE + '/'
-            );
-    } catch (error) {
-        return '';
-    }
-
-
-    /*
-     * Current KKYS rdul.js exposes its image host
-     * as a quoted string.
-     */
-    var patterns = [
-        /['"](https?:\/\/[^'"]+)['"]/i,
-        /['"](\/\/[^'"]+)['"]/i,
-        /['"]([^'"]+\.[a-z]{2,}[^'"]*)['"]/i
-    ];
-
-
-    var i;
-
-
-    for (
-        i = 0;
-        i < patterns.length;
-        i++
-    ) {
-        var match =
-            patterns[i].exec(
-                js
-            );
-
-
-        if (
-            match &&
-            match[1]
-        ) {
-            return normalizeImageHost(
-                match[1]
-            );
-        }
-    }
-
-
-    return '';
-}
-
-
-function bootstrap(force) {
-    if (
-        HOME_HTML &&
-        !force
-    ) {
-        return;
-    }
-
-
-    try {
-        HOME_HTML =
-            http(
-                SITE + '/'
-            );
-    } catch (error) {
-        HOME_HTML =
-            '';
-    }
-
-
-    SEARCH_TOKEN =
-        discoverSearchToken(
-            HOME_HTML
-        );
-
-
-    IMG_HOST =
-        discoverImageHost(
-            HOME_HTML
-        );
-}
-
-
-/* =========================================================
- * Image handling
+ * Image
  * ========================================================= */
 
 function rewriteImage(value) {
     var raw =
-        clean(value);
+        clean(
+            value
+        );
 
 
     if (!raw) {
@@ -368,80 +185,95 @@ function rewriteImage(value) {
         );
 
 
+    if (
+        /logo_placeholder|placeholder_vertical/i.test(
+            raw
+        )
+    ) {
+        return '';
+    }
+
+
     /*
-     * data-original may still contain the KKYS page host,
-     * while the real image CDN comes from rdul.js.
+     * Already points at one of KKYS' image CDNs.
      */
-    if (IMG_HOST) {
+    if (
+        /^https?:\/\//i.test(
+            raw
+        )
+    ) {
+        var sourceHost =
+            originOf(
+                raw
+            );
+
 
         if (
-            /^https?:\/\/[^/]+/i.test(
-                raw
+            /vres\./i.test(
+                sourceHost
+            ) ||
+            /:\d+$/i.test(
+                sourceHost
             )
         ) {
-            var host =
-                originOf(
-                    raw
-                );
-
-
-            if (
-                /kkys|kekys/i.test(
-                    host
-                ) ||
-                host ===
-                    originOf(SITE)
-            ) {
-                return raw.replace(
-                    /^https?:\/\/[^/]+/i,
-                    IMG_HOST
-                );
-            }
-
-
             return raw;
         }
 
 
+        /*
+         * The site can publish its own host in
+         * data-original even though the actual
+         * image files live on vres.
+         */
         if (
-            raw.indexOf('//') === 0
-        ) {
-            return (
-                'https:' +
-                raw
-            );
-        }
-
-
-        if (
-            raw.charAt(0) === '/'
-        ) {
-            return (
-                IMG_HOST +
-                raw
-            );
-        }
-
-
-        return (
-            IMG_HOST +
-            '/' +
-            raw.replace(
-                /^\/+/,
-                ''
+            sourceHost ===
+            originOf(
+                SITE
             )
+        ) {
+            return raw.replace(
+                /^https?:\/\/[^/]+/i,
+                IMG_HOST
+            );
+        }
+
+
+        return raw;
+    }
+
+
+    if (
+        raw.indexOf('//') === 0
+    ) {
+        return (
+            'https:' +
+            raw
         );
     }
 
 
-    return absolute(
-        raw,
-        SITE + '/'
+    if (
+        raw.charAt(0) === '/'
+    ) {
+        return (
+            IMG_HOST +
+            raw
+        );
+    }
+
+
+    return (
+        IMG_HOST +
+        '/' +
+        raw.replace(
+            /^\/+/,
+            ''
+        )
     );
 }
 
 
-function imageFromNode(node) {
+function imageFromModule(node) {
     var values = [
         pdfh(
             node,
@@ -478,19 +310,14 @@ function imageFromNode(node) {
         i < values.length;
         i++
     ) {
-        var result =
+        var url =
             rewriteImage(
                 values[i]
             );
 
 
-        if (
-            result &&
-            !/logo_placeholder|placeholder_vertical/i.test(
-                result
-            )
-        ) {
-            return result;
+        if (url) {
+            return url;
         }
     }
 
@@ -500,7 +327,7 @@ function imageFromNode(node) {
 
 
 /* =========================================================
- * Filter definitions
+ * Filters
  * ========================================================= */
 
 function option(name, value) {
@@ -522,6 +349,7 @@ function filterRow(
             ''
         )
     ];
+
 
     var i;
 
@@ -549,9 +377,9 @@ function filterRow(
 
 
 function sortRow(
-    withScore
+    allowScore
 ) {
-    var values = [
+    var result = [
         option(
             '綜合',
             '1'
@@ -569,8 +397,10 @@ function sortRow(
     ];
 
 
-    if (withScore) {
-        values.push(
+    if (
+        allowScore
+    ) {
+        result.push(
             option(
                 '評分',
                 '4'
@@ -580,14 +410,55 @@ function sortRow(
 
 
     return {
-        key: 'by',
+        key: 'sort',
         name: '排序',
-        value: values
+        value: result
     };
 }
 
 
-var LANG_FILTER =
+var YEARS =
+    filterRow(
+        'year',
+        '年代',
+        [
+            ['2026', '2026'],
+            ['2025', '2025'],
+            ['2024', '2024'],
+            ['2023', '2023'],
+            ['2022', '2022'],
+            ['2021', '2021'],
+            ['2020', '2020'],
+
+            [
+                '10年代',
+                '2010_2019'
+            ],
+
+            [
+                '00年代',
+                '2000_2009'
+            ],
+
+            [
+                '90年代',
+                '1990_1999'
+            ],
+
+            [
+                '80年代',
+                '1980_1989'
+            ],
+
+            [
+                '更早',
+                '0_1979'
+            ]
+        ]
+    );
+
+
+var LANGUAGES =
     filterRow(
         'lang',
         '語言',
@@ -603,26 +474,7 @@ var LANG_FILTER =
     );
 
 
-var YEAR_FILTER =
-    filterRow(
-        'year',
-        '年代',
-        [
-            ['2026', '2026'],
-            ['2025', '2025'],
-            ['2024', '2024'],
-            ['2023', '2023'],
-            ['2022', '2022'],
-            ['2021', '2021'],
-            ['2020', '2020'],
-            ['2019', '2019'],
-            ['2018', '2018'],
-            ['2017', '2017']
-        ]
-    );
-
-
-var AREA_FILTER =
+var MOVIE_AREAS =
     filterRow(
         'area',
         '地區',
@@ -630,15 +482,92 @@ var AREA_FILTER =
             ['大陸', '中国大陆'],
             ['香港', '中国香港'],
             ['台灣', '中国台湾'],
-            ['韓國', '韩国'],
             ['美國', '美国'],
             ['日本', '日本'],
+            ['韓國', '韩国'],
             ['英國', '英国'],
             ['法國', '法国'],
             ['德國', '德国'],
+            ['印度', '印度'],
+            ['泰國', '泰国'],
+            ['丹麥', '丹麦'],
+            ['瑞典', '瑞典'],
+            ['巴西', '巴西'],
+            ['加拿大', '加拿大'],
+            ['俄羅斯', '俄罗斯'],
+            ['義大利', '意大利'],
+            ['比利時', '比利时'],
+            ['愛爾蘭', '爱尔兰'],
+            ['西班牙', '西班牙'],
+            ['澳大利亞', '澳大利亚'],
+            ['其他', '其他']
+        ]
+    );
+
+
+var SERIES_AREAS =
+    filterRow(
+        'area',
+        '地區',
+        [
+            ['大陸', '中国大陆'],
+            ['香港', '中国香港'],
+            ['韓國', '韩国'],
+            ['美國', '美国'],
+            ['日本', '日本'],
+            ['法國', '法国'],
+            ['英國', '英国'],
+            ['德國', '德国'],
+            ['台灣', '中国台湾'],
             ['泰國', '泰国'],
             ['印度', '印度'],
+            ['其他', '其他']
+        ]
+    );
+
+
+var ANIME_AREAS =
+    filterRow(
+        'area',
+        '地區',
+        [
+            ['日本', '日本'],
+            ['大陸', '中国大陆'],
+            ['台灣', '中国台湾'],
+            ['美國', '美国'],
+            ['香港', '中国香港'],
+            ['韓國', '韩国'],
+            ['英國', '英国'],
+            ['法國', '法国'],
+            ['德國', '德国'],
+            ['印度', '印度'],
+            ['泰國', '泰国'],
+            ['丹麥', '丹麦'],
+            ['瑞典', '瑞典'],
+            ['巴西', '巴西'],
             ['加拿大', '加拿大'],
+            ['俄羅斯', '俄罗斯'],
+            ['義大利', '意大利'],
+            ['比利時', '比利时'],
+            ['愛爾蘭', '爱尔兰'],
+            ['西班牙', '西班牙'],
+            ['澳大利亞', '澳大利亚'],
+            ['其他', '其他']
+        ]
+    );
+
+
+var VARIETY_AREAS =
+    filterRow(
+        'area',
+        '地區',
+        [
+            ['大陸', '中国大陆'],
+            ['香港', '中国香港'],
+            ['台灣', '中国台湾'],
+            ['美國', '美国'],
+            ['日本', '日本'],
+            ['韓國', '韩国'],
             ['其他', '其他']
         ]
     );
@@ -648,7 +577,7 @@ var FILTERS = {
 
     '1': [
         filterRow(
-            'class',
+            'type',
             '類型',
             [
                 ['劇情', '剧情'],
@@ -668,20 +597,24 @@ var FILTERS = {
                 ['家庭', '家庭'],
                 ['傳記', '传记'],
                 ['武俠', '武侠'],
-                ['動畫', '动画']
+                ['歌舞', '歌舞'],
+                ['短片', '短片'],
+                ['動畫', '动画'],
+                ['兒童', '儿童'],
+                ['職場', '职场']
             ]
         ),
 
-        AREA_FILTER,
-        LANG_FILTER,
-        YEAR_FILTER,
+        MOVIE_AREAS,
+        LANGUAGES,
+        YEARS,
         sortRow(true)
     ],
 
 
     '2': [
         filterRow(
-            'class',
+            'type',
             '類型',
             [
                 ['劇情', '剧情'],
@@ -700,21 +633,24 @@ var FILTERS = {
                 ['戰爭', '战争'],
                 ['韓劇', '韩剧'],
                 ['武俠', '武侠'],
+                ['言情', '言情'],
+                ['恐怖', '恐怖'],
+                ['冒險', '冒险'],
                 ['都市', '都市'],
                 ['職場', '职场']
             ]
         ),
 
-        AREA_FILTER,
-        LANG_FILTER,
-        YEAR_FILTER,
+        SERIES_AREAS,
+        LANGUAGES,
+        YEARS,
         sortRow(true)
     ],
 
 
     '3': [
         filterRow(
-            'class',
+            'type',
             '類型',
             [
                 ['動態漫畫', '动态漫画'],
@@ -725,54 +661,69 @@ var FILTERS = {
                 ['動作', '动作'],
                 ['奇幻', '奇幻'],
                 ['科幻', '科幻'],
+                ['兒童', '儿童'],
                 ['搞笑', '搞笑'],
                 ['愛情', '爱情'],
                 ['家庭', '家庭'],
+                ['短片', '短片'],
                 ['熱血', '热血'],
+                ['益智', '益智'],
                 ['懸疑', '悬疑'],
+                ['經典', '经典'],
                 ['校園', '校园'],
+                ['Anime', 'Anime'],
                 ['運動', '运动'],
+                ['親子', '亲子'],
+                ['青春', '青春'],
                 ['戀愛', '恋爱'],
-                ['武俠', '武侠']
+                ['武俠', '武侠'],
+                ['驚悚', '惊悚']
             ]
         ),
 
-        AREA_FILTER,
-        LANG_FILTER,
-        YEAR_FILTER,
+        ANIME_AREAS,
+        LANGUAGES,
+        YEARS,
         sortRow(true)
     ],
 
 
     '4': [
         filterRow(
-            'class',
+            'type',
             '類型',
             [
                 ['紀錄', '纪录'],
                 ['真人秀', '真人秀'],
+                ['記錄', '记录'],
                 ['脫口秀', '脱口秀'],
                 ['劇情', '剧情'],
                 ['歷史', '历史'],
                 ['喜劇', '喜剧'],
                 ['傳記', '传记'],
                 ['相聲', '相声'],
+                ['節目', '节目'],
                 ['歌舞', '歌舞'],
+                ['冒險', '冒险'],
                 ['運動', '运动'],
+                ['Season', 'Season'],
+                ['犯罪', '犯罪'],
+                ['短片', '短片'],
+                ['搞笑', '搞笑'],
                 ['晚會', '晚会']
             ]
         ),
 
-        AREA_FILTER,
-        LANG_FILTER,
-        YEAR_FILTER,
+        VARIETY_AREAS,
+        LANGUAGES,
+        YEARS,
         sortRow(true)
     ],
 
 
     '6': [
         filterRow(
-            'class',
+            'type',
             '類型',
             [
                 ['王爺太子', '王爷太子'],
@@ -795,6 +746,7 @@ var FILTERS = {
                 ['武俠', '武侠'],
                 ['愛情', '爱情'],
                 ['動作', '动作'],
+                ['戰爭', '战争'],
                 ['冒險', '冒险'],
                 ['其他', '其它']
             ]
@@ -812,7 +764,9 @@ var FILTERS = {
 function detailId(value) {
     var match =
         /\/detail\/(\d+)\.html(?:[?#].*)?$/i.exec(
-            String(value || '')
+            String(
+                value || ''
+            )
         );
 
 
@@ -824,8 +778,8 @@ function detailId(value) {
 
 function moduleTitle(node) {
     /*
-     * Real KKYS rule:
-     * .v-item-title:eq(1)&&Text
+     * Current KKYS structure:
+     * .v-item-title:eq(1)
      */
     var title =
         clean(
@@ -859,22 +813,22 @@ function moduleTitle(node) {
         pdfh(
             node,
             'img&&alt'
-        ) ||
-        pdfh(
-            node,
-            'a&&title'
         )
     );
 }
 
 
 function moduleRemark(node) {
-    return clean(
-        pdfh(
-            node,
-            'span:eq(-1)&&Text'
-        )
-    );
+    var remark =
+        clean(
+            pdfh(
+                node,
+                'span:eq(-1)&&Text'
+            )
+        );
+
+
+    return remark;
 }
 
 
@@ -899,8 +853,13 @@ function parseModuleList(html) {
         var href =
             pdfh(
                 nodes[i],
+                'a.v-item&&href'
+            ) ||
+            pdfh(
+                nodes[i],
                 'a&&href'
-            ) || '';
+            ) ||
+            '';
 
 
         var id =
@@ -936,7 +895,7 @@ function parseModuleList(html) {
                 title,
 
             vod_pic:
-                imageFromNode(
+                imageFromModule(
                     nodes[i]
                 ),
 
@@ -947,104 +906,8 @@ function parseModuleList(html) {
         });
 
 
-        seen[id] = true;
-    }
-
-
-    return result;
-}
-
-
-function parseSearchList(html) {
-    var nodes =
-        pdfa(
-            html,
-            '.search-result-item'
-        );
-
-
-    if (!nodes.length) {
-        return parseModuleList(
-            html
-        );
-    }
-
-
-    var result = [];
-    var seen = {};
-    var i;
-
-
-    for (
-        i = 0;
-        i < nodes.length;
-        i++
-    ) {
-        var href =
-            pdfh(
-                nodes[i],
-                'a&&href'
-            ) || '';
-
-
-        var id =
-            detailId(
-                href
-            );
-
-
-        if (
-            !id ||
-            seen[id]
-        ) {
-            continue;
-        }
-
-
-        var title =
-            clean(
-                pdfh(
-                    nodes[i],
-                    'img&&alt'
-                )
-            );
-
-
-        if (!title) {
-            continue;
-        }
-
-
-        result.push({
-            vod_id:
-                id,
-
-            vod_name:
-                title,
-
-            vod_pic:
-                rewriteImage(
-                    pdfh(
-                        nodes[i],
-                        'img&&data-original'
-                    ) ||
-                    pdfh(
-                        nodes[i],
-                        'img&&data-src'
-                    )
-                ),
-
-            vod_remarks:
-                clean(
-                    pdfh(
-                        nodes[i],
-                        '.search-result-item-header&&Text'
-                    )
-                )
-        });
-
-
-        seen[id] = true;
+        seen[id] =
+            true;
     }
 
 
@@ -1053,7 +916,7 @@ function parseSearchList(html) {
 
 
 /* =========================================================
- * Category URL
+ * Category
  * ========================================================= */
 
 function buildShowURL(
@@ -1065,8 +928,8 @@ function buildShowURL(
         extend || {};
 
 
-    var cls =
-        extend['class'] ||
+    var type =
+        extend.type ||
         '';
 
 
@@ -1085,11 +948,8 @@ function buildShowURL(
         '';
 
 
-    /*
-     * KKYS normal/default list uses 3 = 最熱.
-     */
-    var by =
-        extend.by ||
+    var sort =
+        extend.sort ||
         '3';
 
 
@@ -1105,13 +965,15 @@ function buildShowURL(
         '/show/' +
 
         encodeURIComponent(
-            String(tid)
+            String(
+                tid
+            )
         ) +
 
         '-' +
 
         encodeURIComponent(
-            cls
+            type
         ) +
 
         '-' +
@@ -1135,7 +997,7 @@ function buildShowURL(
         '-' +
 
         encodeURIComponent(
-            by
+            sort
         ) +
 
         '-' +
@@ -1148,6 +1010,17 @@ function buildShowURL(
 
 
 function hasNextPage(html) {
+    if (
+        String(
+            html || ''
+        ).indexOf(
+            'page-item-next'
+        ) !== -1
+    ) {
+        return true;
+    }
+
+
     var links =
         pdfa(
             html,
@@ -1186,13 +1059,13 @@ function hasNextPage(html) {
 
 
 /* =========================================================
- * Detail parsing
+ * Detail
  * ========================================================= */
 
 function detailTitle(html) {
     /*
-     * Real KKYS detail title:
-     * .detail-title strong:eq(1)
+     * KKYS injects hidden watermark strong elements.
+     * The visible title is normally the second strong.
      */
     var title =
         clean(
@@ -1256,7 +1129,7 @@ function detailTitle(html) {
 
 
 function detailPicture(html) {
-    return rewriteImage(
+    var pic =
         pdfh(
             html,
             '.detail-pic img&&data-original'
@@ -1268,7 +1141,11 @@ function detailPicture(html) {
         pdfh(
             html,
             '.detail-pic img&&src'
-        )
+        );
+
+
+    return rewriteImage(
+        pic
     );
 }
 
@@ -1284,11 +1161,21 @@ function detailDescription(html) {
 
 
 function detailRemarks(html) {
+    var value =
+        clean(
+            pdfh(
+                html,
+                '.detail-info-row-main:eq(-2)&&Text'
+            )
+        );
+
+
+    if (value) {
+        return value;
+    }
+
+
     return clean(
-        pdfh(
-            html,
-            '.detail-info-row-main:eq(-2)&&Text'
-        ) ||
         pdfh(
             html,
             '.detail-tags&&Text'
@@ -1298,40 +1185,30 @@ function detailRemarks(html) {
 
 
 /* =========================================================
- * Multi-line / episode parsing
+ * Lines / episodes
  * ========================================================= */
 
-function shouldSkipLine(name) {
-    var value =
-        clean(name);
-
-
-    return (
-        value === '4K(高峰不卡)' ||
-        value === '4K（高峰不卡）'
-    );
-}
-
-
-function lineName(node, index) {
+function trueLineName(node, index) {
+    /*
+     * IMPORTANT:
+     *
+     * Do not read the last span.
+     *
+     * On the site:
+     *
+     * 超清2
+     * 秒播/4K
+     *
+     * "超清2" is source-item-label.
+     * "秒播/4K" is only the subtitle.
+     */
     var name =
         clean(
             pdfh(
                 node,
-                'span:eq(-1)&&Text'
+                '.source-item-label&&Text'
             )
         );
-
-
-    if (!name) {
-        name =
-            clean(
-                pdfh(
-                    node,
-                    'Text'
-                )
-            );
-    }
 
 
     if (!name) {
@@ -1345,33 +1222,110 @@ function lineName(node, index) {
 }
 
 
+function skipLine(name) {
+    /*
+     * Current KKYS implementations exclude
+     * the dedicated 4K source.
+     *
+     * This DOES NOT remove 超清2, because its
+     * true label is 超清2 even though its subtitle
+     * says 秒播/4K.
+     */
+    return /4k/i.test(
+        clean(
+            name
+        )
+    );
+}
+
+
+function uniqueLineName(
+    name,
+    used
+) {
+    var base =
+        clean(
+            name
+        ) || '線路';
+
+
+    if (
+        !used[base]
+    ) {
+        used[base] = 1;
+
+        return base;
+    }
+
+
+    used[base]++;
+
+
+    return (
+        base +
+        ' ' +
+        used[base]
+    );
+}
+
+
 function parsePlayLists(html) {
     /*
-     * Real structure:
+     * Website structure:
      *
-     * tabs  = .source-item
-     * lists = .episode-list
+     * div.source-list-box-main
+     *   a.source-item
+     *     span.source-item-label
+     *
+     * div.episode-list-box-main
+     *   div.episode-list
+     *
+     * The two arrays correspond by index.
      */
-    var tabs =
+
+    var sources =
         pdfa(
             html,
-            '.source-item'
+            '.source-list-box-main a.source-item'
         );
 
 
     var lists =
         pdfa(
             html,
-            '.episode-list'
+            '.episode-list-box-main .episode-list'
         );
+
+
+    /*
+     * Fallback for minor markup changes.
+     */
+    if (!sources.length) {
+        sources =
+            pdfa(
+                html,
+                'a.source-item'
+            );
+    }
+
+
+    if (!lists.length) {
+        lists =
+            pdfa(
+                html,
+                '.episode-list'
+            );
+    }
 
 
     var froms = [];
     var urls = [];
 
+    var usedNames = {};
+
     var count =
-        Math.max(
-            tabs.length,
+        Math.min(
+            sources.length,
             lists.length
         );
 
@@ -1384,20 +1338,21 @@ function parsePlayLists(html) {
         i < count;
         i++
     ) {
+        /*
+         * Pair FIRST, filter SECOND.
+         *
+         * Otherwise skipping a source would shift
+         * every later episode list by one line.
+         */
         var name =
-            tabs[i]
-                ? lineName(
-                    tabs[i],
-                    i
-                )
-                : (
-                    '線路' +
-                    (i + 1)
-                );
+            trueLineName(
+                sources[i],
+                i
+            );
 
 
         if (
-            shouldSkipLine(
+            skipLine(
                 name
             )
         ) {
@@ -1405,20 +1360,16 @@ function parsePlayLists(html) {
         }
 
 
-        if (!lists[i]) {
-            continue;
-        }
-
-
         var anchors =
             pdfa(
                 lists[i],
-                'a'
+                'a[href*="/play/"]'
             );
 
 
         var episodes = [];
         var seen = {};
+
         var j;
 
 
@@ -1432,15 +1383,10 @@ function parsePlayLists(html) {
                     anchors[j],
                     'a&&href'
                 ) ||
-                anchors[j].attrs.href ||
                 '';
 
 
-            if (
-                href.indexOf(
-                    '/play/'
-                ) === -1
-            ) {
+            if (!href) {
                 continue;
             }
 
@@ -1484,13 +1430,23 @@ function parsePlayLists(html) {
             );
 
 
-            seen[href] = true;
+            seen[href] =
+                true;
         }
 
 
-        if (!episodes.length) {
+        if (
+            !episodes.length
+        ) {
             continue;
         }
+
+
+        name =
+            uniqueLineName(
+                name,
+                usedNames
+            );
 
 
         froms.push(
@@ -1503,88 +1459,6 @@ function parsePlayLists(html) {
                 '#'
             )
         );
-    }
-
-
-    /*
-     * Last-resort fallback.
-     *
-     * This should normally never run now.
-     */
-    if (!urls.length) {
-        var all =
-            pdfa(
-                html,
-                'a[href*="/play/"]'
-            );
-
-
-        var fallback = [];
-        var fallbackSeen = {};
-
-
-        for (
-            i = 0;
-            i < all.length;
-            i++
-        ) {
-            var link =
-                absolute(
-                    pdfh(
-                        all[i],
-                        'a&&href'
-                    ),
-                    SITE + '/'
-                );
-
-
-            if (
-                !link ||
-                fallbackSeen[link]
-            ) {
-                continue;
-            }
-
-
-            var text =
-                clean(
-                    pdfh(
-                        all[i],
-                        'Text'
-                    )
-                );
-
-
-            if (!text) {
-                text =
-                    '播放' +
-                    (fallback.length + 1);
-            }
-
-
-            fallback.push(
-                text +
-                '$' +
-                link
-            );
-
-
-            fallbackSeen[link] =
-                true;
-        }
-
-
-        if (fallback.length) {
-            froms.push(
-                'KKYS'
-            );
-
-            urls.push(
-                fallback.join(
-                    '#'
-                )
-            );
-        }
     }
 
 
@@ -1603,120 +1477,228 @@ function parsePlayLists(html) {
 
 
 /* =========================================================
- * Search
+ * Search token
  * ========================================================= */
 
-function currentSearchToken() {
-    if (!SEARCH_TOKEN) {
-        bootstrap(
-            true
+function searchToken(html) {
+    var token =
+        pdfh(
+            html,
+            'input[name=t]&&value'
+        );
+
+
+    if (token) {
+        return clean(
+            token
         );
     }
 
 
-    return SEARCH_TOKEN;
-}
+    var source =
+        String(
+            html || ''
+        );
 
 
-function searchURL(
-    keyword,
-    page,
-    token
-) {
-    return (
-        SITE +
-        '/search?k=' +
+    var match =
+        /<input[^>]*name=["']t["'][^>]*value=["']([^"']+)["']/i.exec(
+            source
+        );
 
-        encodeURIComponent(
-            keyword
-        ) +
 
-        '&page=' +
+    if (!match) {
+        match =
+            /<input[^>]*value=["']([^"']+)["'][^>]*name=["']t["']/i.exec(
+                source
+            );
+    }
 
-        encodeURIComponent(
-            String(page)
-        ) +
 
-        '&t=' +
-
-        encodeURIComponent(
-            token || ''
+    return match
+        ? clean(
+            match[1]
         )
-    );
+        : '';
 }
 
 
-function fetchSearch(
+function searchRequest(
     keyword,
     page
 ) {
-    var token =
-        currentSearchToken();
-
-
-    if (!token) {
-        return '';
-    }
-
-
-    var url =
-        searchURL(
-            keyword,
-            page,
-            token
-        );
-
-
-    var html =
-        http(
-            url,
-            SITE + '/'
+    var encoded =
+        encodeURIComponent(
+            keyword
         );
 
 
     /*
-     * KKYS may publish a refreshed token on the
-     * returned search page.
+     * First request obtains a fresh token.
      *
-     * Only retry when the first response produced
-     * no search cards.
+     * This mirrors current working KKYS spiders.
      */
-    var items =
+    var seedURL =
+        SITE +
+        '/search?k=' +
+        encoded;
+
+
+    var seedHTML =
+        http(
+            seedURL,
+            SITE + '/'
+        );
+
+
+    var token =
+        searchToken(
+            seedHTML
+        );
+
+
+    if (!token) {
+        return seedHTML;
+    }
+
+
+    var url =
+        SITE +
+        '/search?k=' +
+        encoded +
+        '&t=' +
+        encodeURIComponent(
+            token
+        );
+
+
+    if (
+        parseInt(
+            page || '1',
+            10
+        ) > 1
+    ) {
+        url +=
+            '&page=' +
+            parseInt(
+                page,
+                10
+            );
+    }
+
+
+    return http(
+        url,
+        seedURL
+    );
+}
+
+
+function parseSearchList(html) {
+    var nodes =
         pdfa(
             html,
             '.search-result-item'
         );
 
 
-    if (!items.length) {
-        var refreshed =
-            discoverSearchToken(
-                html
+    var result = [];
+    var seen = {};
+
+    var i;
+
+
+    for (
+        i = 0;
+        i < nodes.length;
+        i++
+    ) {
+        var href =
+            pdfh(
+                nodes[i],
+                'a&&href'
+            ) ||
+            '';
+
+
+        var id =
+            detailId(
+                href
             );
 
 
         if (
-            refreshed &&
-            refreshed !== token
+            !id ||
+            seen[id]
         ) {
-            SEARCH_TOKEN =
-                refreshed;
+            continue;
+        }
 
 
-            html =
-                http(
-                    searchURL(
-                        keyword,
-                        page,
-                        refreshed
-                    ),
-                    url
+        var name =
+            clean(
+                pdfh(
+                    nodes[i],
+                    'img&&alt'
+                )
+            );
+
+
+        if (!name) {
+            name =
+                clean(
+                    pdfh(
+                        nodes[i],
+                        '.title&&Text'
+                    )
                 );
         }
+
+
+        if (!name) {
+            continue;
+        }
+
+
+        var pic =
+            rewriteImage(
+                pdfh(
+                    nodes[i],
+                    'img&&data-original'
+                ) ||
+                pdfh(
+                    nodes[i],
+                    'img&&data-src'
+                )
+            );
+
+
+        result.push({
+            vod_id:
+                id,
+
+            vod_name:
+                name,
+
+            vod_pic:
+                pic,
+
+            vod_remarks:
+                clean(
+                    pdfh(
+                        nodes[i],
+                        '.search-result-item-header&&Text'
+                    )
+                )
+        });
+
+
+        seen[id] =
+            true;
     }
 
 
-    return html;
+    return result;
 }
 
 
@@ -1725,34 +1707,39 @@ function fetchSearch(
  * ========================================================= */
 
 function unescapeMediaURL(value) {
-    var url =
-        clean(value);
-
-
-    url =
-        url
-            .replace(
-                /\\\//g,
-                '/'
-            )
-            .replace(
-                /\\u0026/gi,
-                '&'
-            )
-            .replace(
-                /&amp;/gi,
-                '&'
-            );
-
-
-    return url;
+    return clean(
+        value
+    )
+        .replace(
+            /\\\//g,
+            '/'
+        )
+        .replace(
+            /\\u0026/gi,
+            '&'
+        )
+        .replace(
+            /&amp;/gi,
+            '&'
+        );
 }
 
 
-function encryptedDujiaURL(html) {
+function encryptedPlayerURL(html) {
+    /*
+     * Matches:
+     *
+     * PPPP = '...'
+     * DPPPP = '...'
+     * TMDPPPP = '...'
+     *
+     * The suffix PPPP is what matters.
+     */
     var match =
         /PPPP\s*=\s*['"]([^'"]+)['"]/i.exec(
-            String(html || '')
+            String(
+                html || ''
+            )
         );
 
 
@@ -1765,15 +1752,20 @@ function encryptedDujiaURL(html) {
 
 
     try {
-        return unescapeMediaURL(
+        var decrypted =
             host.aesDecrypt(
                 match[1],
                 AES_KEY,
                 '',
                 'ECB',
                 'base64'
-            )
+            );
+
+
+        return unescapeMediaURL(
+            decrypted
         );
+
     } catch (error) {
         return '';
     }
@@ -1782,15 +1774,35 @@ function encryptedDujiaURL(html) {
 
 function normalPlayerURL(html) {
     var source =
-        String(html || '');
+        String(
+            html || ''
+        );
 
 
+    /*
+     * Most KKYS lines expose:
+     *
+     * const playSource = {
+     *     src: "https://...m3u8"
+     * }
+     */
     var patterns = [
-        /src\s*:\s*"([^"]+)"/i,
-        /src\s*:\s*'([^']+)'/i,
-        /"url"\s*:\s*"([^"]+\.(?:m3u8|mp4)[^"]*)"/i,
-        /'(https?:\/\/[^']+\.(?:m3u8|mp4)[^']*)'/i,
-        /"(https?:\/\/[^"]+\.(?:m3u8|mp4)[^"]*)"/i
+
+        /playSource\s*=\s*\{[\s\S]*?src\s*:\s*"([^"]+)"/i,
+
+        /playSource\s*=\s*\{[\s\S]*?src\s*:\s*'([^']+)'/i,
+
+        /src\s*:\s*"([^"]+\.(?:m3u8|mp4|flv|mkv|webm)[^"]*)"/i,
+
+        /src\s*:\s*'([^']+\.(?:m3u8|mp4|flv|mkv|webm)[^']*)'/i,
+
+        /"(https?:\/\/[^"]+\.m3u8[^"]*)"/i,
+
+        /'(https?:\/\/[^']+\.m3u8[^']*)'/i,
+
+        /"(https?:\/\/[^"]+\.(?:mp4|flv|mkv|webm)[^"]*)"/i,
+
+        /'(https?:\/\/[^']+\.(?:mp4|flv|mkv|webm)[^']*)'/i
     ];
 
 
@@ -1831,81 +1843,108 @@ function resolvePlayURL(playPage) {
         );
 
 
-    var url = '';
+    if (!html) {
+        return '';
+    }
+
+
+    var media = '';
 
 
     /*
-     * The original KKYS rule uses the presence of
-     * "dujia" to select the encrypted PPPP branch.
+     * Some KKYS exclusive lines use PPPP +
+     * AES-ECB.
      */
     if (
         /dujia/i.test(
             html
+        ) ||
+        /PPPP\s*=/i.test(
+            html
         )
     ) {
-        url =
-            encryptedDujiaURL(
+        media =
+            encryptedPlayerURL(
                 html
             );
     }
 
 
-    if (!url) {
-        url =
+    /*
+     * Normal playSource.src path.
+     */
+    if (!media) {
+        media =
             normalPlayerURL(
                 html
             );
     }
 
 
-    return url;
+    if (!media) {
+        return '';
+    }
+
+
+    return absolute(
+        media,
+        SITE + '/'
+    );
 }
 
 
 /* =========================================================
- * CatVod API
+ * CatVod methods
  * ========================================================= */
 
 function apiInit(ext) {
-    bootstrap(
-        false
-    );
-
     return '';
 }
 
 
 function apiHome(filter) {
-    bootstrap(
-        false
-    );
-
-
     return {
+
         'class': [
+
             {
-                type_id: '1',
-                type_name: '電影'
+                type_id:
+                    '1',
+
+                type_name:
+                    '電影'
             },
 
             {
-                type_id: '2',
-                type_name: '連續劇'
+                type_id:
+                    '2',
+
+                type_name:
+                    '連續劇'
             },
 
             {
-                type_id: '3',
-                type_name: '動漫'
+                type_id:
+                    '3',
+
+                type_name:
+                    '動漫'
             },
 
             {
-                type_id: '4',
-                type_name: '綜藝紀錄'
+                type_id:
+                    '4',
+
+                type_name:
+                    '綜藝紀錄'
             },
 
             {
-                type_id: '6',
-                type_name: '短劇'
+                type_id:
+                    '6',
+
+                type_name:
+                    '短劇'
             }
         ],
 
@@ -1916,13 +1955,7 @@ function apiHome(filter) {
 
 
 function apiHomeVod() {
-    bootstrap(
-        false
-    );
-
-
     var html =
-        HOME_HTML ||
         http(
             SITE + '/'
         );
@@ -1946,7 +1979,8 @@ function apiHomeVod() {
 
 
     return {
-        list: list
+        list:
+            list
     };
 }
 
@@ -1957,11 +1991,6 @@ function apiCategory(
     filter,
     extend
 ) {
-    bootstrap(
-        false
-    );
-
-
     var page =
         parseInt(
             pg || '1',
@@ -1971,7 +2000,9 @@ function apiCategory(
 
     var url =
         buildShowURL(
-            String(tid),
+            String(
+                tid
+            ),
             page,
             extend || {}
         );
@@ -1990,6 +2021,12 @@ function apiCategory(
         );
 
 
+    var next =
+        hasNextPage(
+            html
+        );
+
+
     return {
         list:
             list,
@@ -1998,31 +2035,21 @@ function apiCategory(
             page,
 
         pagecount:
-            hasNextPage(
-                html
-            )
-                ? 9999
+            next
+                ? page + 1
                 : page,
 
         limit:
-            list.length || 18,
+            list.length ||
+            18,
 
         total:
-            hasNextPage(
-                html
-            )
-                ? 999999
-                : list.length
+            list.length
     };
 }
 
 
 function apiDetail(id) {
-    bootstrap(
-        false
-    );
-
-
     var value =
         String(
             id || ''
@@ -2066,10 +2093,11 @@ function apiDetail(id) {
         );
 
 
-    var title =
-        detailTitle(
-            html
-        );
+    if (!html) {
+        return {
+            list: []
+        };
+    }
 
 
     var plays =
@@ -2092,7 +2120,9 @@ function apiDetail(id) {
                     value,
 
                 vod_name:
-                    title,
+                    detailTitle(
+                        html
+                    ),
 
                 vod_pic:
                     detailPicture(
@@ -2132,8 +2162,7 @@ function apiPlay(
         );
 
 
-    var media =
-        '';
+    var media = '';
 
 
     try {
@@ -2142,18 +2171,18 @@ function apiPlay(
                 playPage
             );
     } catch (error) {
-        media =
-            '';
+        media = '';
     }
 
 
     /*
-     * Preferred path:
-     * return the actual media URL.
+     * Normal case:
+     * we already extracted the real stream.
      */
     if (media) {
         return {
-            parse: 0,
+            parse:
+                0,
 
             url:
                 media,
@@ -2162,21 +2191,26 @@ function apiPlay(
                 'User-Agent':
                     UA,
 
+                /*
+                 * Important:
+                 * KKYS streams / TS segments behave better
+                 * with the site root as Referer.
+                 */
                 'Referer':
-                    playPage
+                    SITE + '/'
             }
         };
     }
 
 
     /*
-     * Fallback only.
-     *
-     * If KKYS changes its player structure,
-     * let WebHTV MediaSniffer have one chance.
+     * Fallback:
+     * only when the play page changed and the
+     * JS parser could not extract its stream.
      */
     return {
-        parse: 1,
+        parse:
+            1,
 
         url:
             playPage,
@@ -2197,11 +2231,6 @@ function apiSearch(
     quick,
     pg
 ) {
-    bootstrap(
-        false
-    );
-
-
     var keyword =
         clean(
             key
@@ -2227,7 +2256,7 @@ function apiSearch(
 
     try {
         html =
-            fetchSearch(
+            searchRequest(
                 keyword,
                 page
             );
@@ -2245,6 +2274,14 @@ function apiSearch(
             : [];
 
 
+    var next =
+        html
+            ? hasNextPage(
+                html
+            )
+            : false;
+
+
     return {
         list:
             list,
@@ -2253,29 +2290,22 @@ function apiSearch(
             page,
 
         pagecount:
-            html &&
-            hasNextPage(
-                html
-            )
-                ? 9999
+            next
+                ? page + 1
                 : page,
 
         limit:
-            list.length || 20,
+            list.length ||
+            20,
 
         total:
-            html &&
-            hasNextPage(
-                html
-            )
-                ? 999999
-                : list.length
+            list.length
     };
 }
 
 
 /* =========================================================
- * JS Spider entry
+ * WebHTV CatVod JS Spider entry
  * ========================================================= */
 
 globalThis.__jsEvalReturn =

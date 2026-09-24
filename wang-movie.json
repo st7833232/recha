@@ -64,17 +64,20 @@
       "changeable": 1
     },
     {
-
   "key": "kkys20",
-
   "name": "可可影視",
-
   "type": 3,
-
   "api": "https://gitlab.com/st7833232/recha/-/raw/main/json/kkys.js",
-
-  "homePage": "data:text/html;base64,PCFkb2N0eXBlIGh0bWw+PGh0bWw+PGhlYWQ+PG1ldGEgY2hhcnNldD0idXRmLTgiPjxtZXRhIG5hbWU9InZpZXdwb3J0IiBjb250ZW50PSJ3aWR0aD1kZXZpY2Utd2lkdGgsaW5pdGlhbC1zY2FsZT0xIj48c3R5bGU+aHRtbCxib2R5e21hcmdpbjowO3dpZHRoOjEwMCU7aGVpZ2h0OjEwMCU7YmFja2dyb3VuZDojMDAwO2NvbG9yOiNmZmY7Zm9udC1mYW1pbHk6c2Fucy1zZXJpZn1ib2R5e2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpjZW50ZXI7anVzdGlmeS1jb250ZW50OmNlbnRlcn0ubXNne29wYWNpdHk6LjcyO2ZvbnQtc2l6ZToxNnB4fTwvc3R5bGU+PC9oZWFkPjxib2R5PjxkaXYgY2xhc3M9Im1zZyI+5Y+v5Y+v5b2x6KaW6LyJ5YWl5Lit4oCmPC9kaXY+PHNjcmlwdD4oZnVuY3Rpb24oKXtmdW5jdGlvbiBvcGVuVm9kKGlkKXt0cnl7Zm9uZ21pQnJpZGdlLmludm9rZShpZCwiYXBwLm9wZW5Wb2QiLCJ7fSIpfWNhdGNoKGUpe319c2V0VGltZW91dChmdW5jdGlvbigpe29wZW5Wb2QoImtreXNfYm9vdF8xIil9LDgwMCk7c2V0VGltZW91dChmdW5jdGlvbigpe29wZW5Wb2QoImtreXNfYm9vdF8yIil9LDI1MDApfSkoKTs8L3NjcmlwdD48L2JvZHk+PC9odG1sPg=="
-
+  "homePage": "https://www.kkys20.com/",
+  "extensions": [
+    {
+      "id": "kkys20_boot_retry",
+      "name": "可可影視啟動修復",
+      "version": "1.0.0",
+      "runAt": "document-start",
+      "code": "(function(){if(window.__kkys20BootRetry)return;window.__kkys20BootRetry=true;function openVod(){try{if(window.fm&&typeof window.fm.openVod==='function'){window.fm.openVod();return;}if(window.fongmi&&window.fongmi.app&&typeof window.fongmi.app.openVod==='function'){window.fongmi.app.openVod();}}catch(e){}}setTimeout(openVod,800);setTimeout(openVod,2800);})();"
+    }
+  ]
 },
     {
       "key" : "皮皮虾",

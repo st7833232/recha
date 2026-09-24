@@ -4,11 +4,11 @@
  * iOS + Android shared source.
  * IMPORTANT: no ES-module import/export syntax.
  *
- * Startup strategy:
- * - Android home() performs no HTTP request and returns a local startup item.
- * - Android homeVod() performs no HTTP request.
- * - iOS keeps its normal homepage list behavior.
- * - Real Android network loading begins only after the user selects a category.
+ * Android network strategy:
+ * - HTTP uses non-blocking Promise requests.
+ * - Empty/failed responses retry up to 3 times.
+ * - Retry backoff: 250ms, then 700ms.
+ * - iOS keeps synchronous requests with a small bounded retry.
  */
 
 var SITE = 'https://www.8movie.com';
@@ -109,6 +109,112 @@ function requestPage(
     );
 }
 
+
+var RETRY_ATTEMPTS = 3;
+var RETRY_DELAY_1 = 250;
+var RETRY_DELAY_2 = 700;
+var RETRY_TIMEOUT = 4000;
+
+function responseBody(result) {
+    if (!result) return '';
+    return result.content || result.body || '';
+}
+
+function requestPageSyncRetry(url, referer, timeout, attempts) {
+    var maxAttempts = attempts || RETRY_ATTEMPTS;
+    var body = '';
+
+    for (var i = 0; i < maxAttempts; i++) {
+        try {
+            body = requestPage(url, referer, timeout);
+        } catch (error) {
+            body = '';
+        }
+
+        if (body) return body;
+    }
+
+    return '';
+}
+
+function requestPageAsyncRetry(url, referer, timeout, attempts) {
+    var maxAttempts = attempts || RETRY_ATTEMPTS;
+    var requestTimeout = timeout || RETRY_TIMEOUT;
+
+    if (!isAndroidRuntime() || typeof http !== 'function') {
+        return Promise.resolve(
+            requestPageSyncRetry(
+                url,
+                referer,
+                requestTimeout,
+                maxAttempts
+            )
+        );
+    }
+
+    return new Promise(function(resolve) {
+        function run(attempt) {
+            var promise;
+
+            try {
+                promise = http(
+                    url,
+                    {
+                        method: 'GET',
+                        headers: requestHeaders(referer),
+                        timeout: requestTimeout
+                    }
+                );
+            } catch (error) {
+                promise = Promise.resolve(null);
+            }
+
+            Promise.resolve(promise)
+                .then(function(result) {
+                    var body = responseBody(result);
+
+                    if (body || attempt >= maxAttempts) {
+                        resolve(body || '');
+                        return;
+                    }
+
+                    var delay =
+                        attempt === 1
+                            ? RETRY_DELAY_1
+                            : RETRY_DELAY_2;
+
+                    setTimeout(
+                        function() {
+                            run(attempt + 1);
+                        },
+                        delay
+                    );
+                })
+                .catch(function() {
+                    if (attempt >= maxAttempts) {
+                        resolve('');
+                        return;
+                    }
+
+                    var delay =
+                        attempt === 1
+                            ? RETRY_DELAY_1
+                            : RETRY_DELAY_2;
+
+                    setTimeout(
+                        function() {
+                            run(attempt + 1);
+                        },
+                        delay
+                    );
+                });
+        }
+
+        run(1);
+    });
+}
+
+
 function originOf(url) {
     var match =
         /^(https?:\/\/[^/]+)/i.exec(
@@ -159,26 +265,6 @@ function isAndroidRuntime() {
         typeof _http === 'function'
     );
 }
-
-function androidStartupList() {
-    /*
-     * Android's native home flow auto-opens the first category
-     * when the home result has no list. A tiny local-only item
-     * prevents that first category request from firing during
-     * application startup.
-     *
-     * No HTTP request is performed here.
-     */
-    return [
-        {
-            vod_id: '__webhtv_start__',
-            vod_name: '請選擇上方分類',
-            vod_pic: '',
-            vod_remarks: '啟動完成'
-        }
-    ];
-}
-
 
 /* =========================================================
  * URL
@@ -763,92 +849,95 @@ function apiInit(ext) {
 }
 
 function apiHome(filter) {
-    var result = {
+    return json({
         'class': [
-            {
-                type_id: 'update',
-                type_name: '最新更新'
-            },
-            {
-                type_id: 'rank',
-                type_name: '熱門排行'
-            },
-            {
-                type_id: '1',
-                type_name: '穿越古代'
-            },
-            {
-                type_id: '2',
-                type_name: '都市情愛'
-            },
-            {
-                type_id: '3',
-                type_name: '復仇爽劇'
-            },
-            {
-                type_id: '4',
-                type_name: '玄幻武俠'
-            },
-            {
-                type_id: '5',
-                type_name: '奇幻懸疑'
-            },
-            {
-                type_id: '6',
-                type_name: '其他短劇'
-            }
+            { type_id: 'update', type_name: '最新更新' },
+            { type_id: 'rank', type_name: '熱門排行' },
+            { type_id: '1', type_name: '穿越古代' },
+            { type_id: '2', type_name: '都市情愛' },
+            { type_id: '3', type_name: '復仇爽劇' },
+            { type_id: '4', type_name: '玄幻武俠' },
+            { type_id: '5', type_name: '奇幻懸疑' },
+            { type_id: '6', type_name: '其他短劇' }
         ]
-    };
-
-    /*
-     * Same Android startup guard as KKYS.
-     * No HTTP request is made.
-     */
-    if (isAndroidRuntime()) {
-        result.list = androidStartupList();
-    }
-
-    return json(result);
+    });
 }
 
 function apiHomeVod() {
-    /*
-     * Android:
-     *   no startup HTTP request.
-     *
-     * iOS:
-     *   keep the normal "latest" homepage list.
-     */
+    var url =
+        SITE +
+        '/movies/update/';
+
     if (isAndroidRuntime()) {
-        return json({
-            list: []
+        return requestPageAsyncRetry(
+            url,
+            SITE + '/',
+            RETRY_TIMEOUT,
+            RETRY_ATTEMPTS
+        ).then(function(html) {
+            var list =
+                html
+                    ? parseMovieList(
+                        html
+                    )
+                    : [];
+
+            if (list.length > 30) {
+                list =
+                    list.slice(
+                        0,
+                        30
+                    );
+            }
+
+            return json({
+                list: list
+            });
         });
     }
 
-    var html = '';
-
-    try {
-        html =
-            requestPage(
-                SITE + '/movies/update/',
-                SITE + '/',
-                PAGE_TIMEOUT
-            );
-    } catch (error) {
-        html = '';
-    }
+    var html =
+        requestPageSyncRetry(
+            url,
+            SITE + '/',
+            PAGE_TIMEOUT,
+            2
+        );
 
     var list =
         html
-            ? parseMovieList(html)
+            ? parseMovieList(
+                html
+            )
             : [];
 
     if (list.length > 30) {
-        list = list.slice(0, 30);
+        list =
+            list.slice(
+                0,
+                30
+            );
     }
 
     return json({
         list: list
+    });
+}
+
+function buildCategoryResult(html, page) {
+    var list =
+        html
+            ? parseMovieList(
+                html
+            )
+            : [];
+
+    return json({
+        list: list,
+        page: page,
+        pagecount: 1,
+        limit: list.length || 30,
+        total: list.length
     });
 }
 
@@ -864,9 +953,6 @@ function apiCategory(
             10
         ) || 1;
 
-    /*
-     * Pagination for this site has not been verified.
-     */
     if (page !== 1) {
         return json({
             list: [],
@@ -877,29 +963,66 @@ function apiCategory(
         });
     }
 
-    var html =
-        requestPage(
-            categoryURL(
-                tid
-            ),
-            SITE + '/',
-            PAGE_TIMEOUT
+    var url =
+        categoryURL(
+            tid
         );
 
-    var list =
-        parseMovieList(
-            html
+    if (isAndroidRuntime()) {
+        return requestPageAsyncRetry(
+            url,
+            SITE + '/',
+            RETRY_TIMEOUT,
+            RETRY_ATTEMPTS
+        ).then(function(html) {
+            return buildCategoryResult(
+                html,
+                page
+            );
+        });
+    }
+
+    return buildCategoryResult(
+        requestPageSyncRetry(
+            url,
+            SITE + '/',
+            PAGE_TIMEOUT,
+            2
+        ),
+        page
+    );
+}
+
+function buildDetailResult(value, html) {
+    if (!html) {
+        return json({ list: [] });
+    }
+
+    var episodes =
+        parseEpisodes(
+            html,
+            value
         );
+
+    if (!episodes.length) {
+        return json({ list: [] });
+    }
 
     return json({
-        list: list,
-        page: 1,
-        pagecount: 1,
-        limit:
-            list.length ||
-            30,
-        total:
-            list.length
+        list: [
+            {
+                vod_id: value,
+                vod_name: detailTitle(html),
+                vod_pic: '',
+                vod_remarks:
+                    episodes.length +
+                    '集',
+                vod_content: detailDescription(html),
+                vod_play_from: '8Movie',
+                vod_play_url:
+                    episodes.join('#')
+            }
+        ]
     });
 }
 
@@ -919,9 +1042,7 @@ function apiDetail(id) {
     }
 
     if (!/^\d+$/.test(value)) {
-        return json({
-            list: []
-        });
+        return json({ list: [] });
     }
 
     var page =
@@ -930,54 +1051,29 @@ function apiDetail(id) {
         value +
         '/';
 
-    var html =
-        requestPage(
+    if (isAndroidRuntime()) {
+        return requestPageAsyncRetry(
             page,
             SITE + '/',
-            PAGE_TIMEOUT
-        );
-
-    if (!html) {
-        return json({
-            list: []
+            RETRY_TIMEOUT,
+            RETRY_ATTEMPTS
+        ).then(function(html) {
+            return buildDetailResult(
+                value,
+                html
+            );
         });
     }
 
-    var episodes =
-        parseEpisodes(
-            html,
-            value
-        );
-
-    if (!episodes.length) {
-        return json({
-            list: []
-        });
-    }
-
-    return json({
-        list: [
-            {
-                vod_id: value,
-                vod_name:
-                    detailTitle(
-                        html
-                    ),
-                vod_pic: '',
-                vod_remarks:
-                    episodes.length +
-                    '集',
-                vod_content:
-                    detailDescription(
-                        html
-                    ),
-                vod_play_from:
-                    '8Movie',
-                vod_play_url:
-                    episodes.join('#')
-            }
-        ]
-    });
+    return buildDetailResult(
+        value,
+        requestPageSyncRetry(
+            page,
+            SITE + '/',
+            PAGE_TIMEOUT,
+            2
+        )
+    );
 }
 
 function apiPlay(
@@ -1001,6 +1097,55 @@ function apiPlay(
     });
 }
 
+function trySearchAsync(
+    keyword,
+    index
+) {
+    var encoded =
+        encodeURIComponent(
+            String(
+                keyword || ''
+            )
+        );
+
+    var urls = [
+        SITE + '/?s=' + encoded,
+        SITE + '/search/?q=' + encoded,
+        SITE + '/movies/search/?q=' + encoded
+    ];
+
+    var current =
+        index || 0;
+
+    if (current >= urls.length) {
+        return Promise.resolve([]);
+    }
+
+    return requestPageAsyncRetry(
+        urls[current],
+        SITE + '/',
+        RETRY_TIMEOUT,
+        RETRY_ATTEMPTS
+    ).then(function(html) {
+        var list =
+            matchKeyword(
+                parseMovieList(
+                    html
+                ),
+                keyword
+            );
+
+        if (list.length) {
+            return list;
+        }
+
+        return trySearchAsync(
+            keyword,
+            current + 1
+        );
+    });
+}
+
 function apiSearch(
     key,
     quick,
@@ -1012,8 +1157,24 @@ function apiSearch(
         );
 
     if (!keyword) {
-        return json({
-            list: []
+        return json({ list: [] });
+    }
+
+    if (isAndroidRuntime()) {
+        return trySearchAsync(
+            keyword,
+            0
+        ).then(function(list) {
+            return json({
+                list: list,
+                page: 1,
+                pagecount: 1,
+                limit:
+                    list.length ||
+                    20,
+                total:
+                    list.length
+            });
         });
     }
 
@@ -1050,7 +1211,6 @@ function apiSearch(
             list.length
     });
 }
-
 
 /* =========================================================
  * SHARED SPIDER

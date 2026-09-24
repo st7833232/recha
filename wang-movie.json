@@ -64,6 +64,12 @@
       "changeable": 1
     },
     {
+      "key": "kkys20",
+      "name": "可可影視",
+      "type": 3,
+      "api": "./json/kkys.js"
+    },
+    {
       "key" : "皮皮虾",
       "name": "🏆｜銅牌｜高清",
       "type": 3,

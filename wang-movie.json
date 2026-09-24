@@ -72,10 +72,10 @@
   "extensions": [
     {
       "id": "kkys20_boot_retry",
-      "name": "可可影視啟動修復",
-      "version": "1.0.0",
+      "name": "可可影視無感啟動修復",
+      "version": "1.1.0",
       "runAt": "document-start",
-      "code": "(function(){if(window.__kkys20BootRetry)return;window.__kkys20BootRetry=true;function openVod(){try{if(window.fm&&typeof window.fm.openVod==='function'){window.fm.openVod();return;}if(window.fongmi&&window.fongmi.app&&typeof window.fongmi.app.openVod==='function'){window.fongmi.app.openVod();}}catch(e){}}setTimeout(openVod,800);setTimeout(openVod,2800);})();"
+      "code": "(function(){if(window.__kkys20BootRetry)return;window.__kkys20BootRetry=true;try{window.stop();var d=document.documentElement;if(d){d.style.cssText='background:transparent!important;visibility:hidden!important;opacity:0!important;';}}catch(e){}function openVod(){try{if(window.fm&&typeof window.fm.openVod==='function'){window.fm.openVod();return true;}if(window.fongmi&&window.fongmi.app&&typeof window.fongmi.app.openVod==='function'){window.fongmi.app.openVod();return true;}}catch(e){}return false;}openVod();setTimeout(openVod,120);setTimeout(openVod,400);setTimeout(openVod,1000);})();"
     }
   ]
 },

@@ -155,13 +155,6 @@ function playInfoFromUrl(value) {
  * 8Movie genuine poster paths currently use:
  *
  * /p/{movieId}-xxxx.jpg
- *
- * Example:
- * /p/15610-kytq.jpg
- *
- * Extracting it directly from the raw HTML is safer
- * than grabbing the first <img>, because the page
- * contains site promotional/default images as well.
  */
 function posterFromHtmlById(
     html,
@@ -341,10 +334,6 @@ function parseMovieList(html) {
         }
 
 
-        /*
-         * /movies/1/ ... /movies/6/
-         * are category URLs, not movies.
-         */
         if (
             isCategoryMovieId(id)
         ) {
@@ -440,11 +429,6 @@ function parseMovieList(html) {
         }
 
 
-        /*
-         * Priority 1:
-         * find /p/{id}-*.jpg directly
-         * from the page HTML.
-         */
         if (
             !map[id].vod_pic
         ) {
@@ -457,12 +441,6 @@ function parseMovieList(html) {
         }
 
 
-        /*
-         * Priority 2:
-         * try the current movie node,
-         * but only accept a poster URL
-         * containing this movie ID.
-         */
         if (
             !map[id].vod_pic
         ) {
@@ -604,9 +582,6 @@ function detailPicture(
     html,
     movieId
 ) {
-    /*
-     * Prefer the exact movie ID image.
-     */
     var poster =
         posterFromHtmlById(
             html,
@@ -1364,10 +1339,6 @@ function apiPlay(
         );
 
 
-    /*
-     * Playback already works through WebHTV MediaSniffer.
-     * Keep this path unchanged.
-     */
     return {
 
         parse: 1,

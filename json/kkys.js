@@ -5,9 +5,10 @@
  * IMPORTANT: no ES-module import/export syntax.
  *
  * Startup strategy:
- * - home() returns classes/filters immediately.
- * - homeVod() returns immediately and performs NO network request.
- * - Android/iOS load the selected category afterwards.
+ * - Android home() performs no HTTP request and returns a local startup item.
+ * - Android homeVod() performs no HTTP request.
+ * - iOS keeps its normal homepage list behavior.
+ * - Real Android network loading begins only after the user selects a category.
  *
  * This avoids Android SiteApi.homeContent() waiting for a homepage HTTP
  * request before it can publish the home result.
@@ -128,6 +129,41 @@ function absolute(value, base) {
     }
 
     return String(root).replace(/[^/]*$/, '') + url;
+}
+
+
+
+function isAndroidRuntime() {
+    /*
+     * Android QuickJS exposes the native _http() bridge before
+     * this source is evaluated. iOS WebHTV does not expose _http.
+     *
+     * This lets one shared JS avoid Android startup network I/O
+     * without changing the iOS behavior.
+     */
+    return (
+        typeof globalThis._http === 'function' ||
+        typeof _http === 'function'
+    );
+}
+
+function androidStartupList() {
+    /*
+     * Android's native home flow auto-opens the first category
+     * when the home result has no list. A tiny local-only item
+     * prevents that first category request from firing during
+     * application startup.
+     *
+     * No HTTP request is performed here.
+     */
+    return [
+        {
+            vod_id: '__webhtv_start__',
+            vod_name: '請選擇上方分類',
+            vod_pic: '',
+            vod_remarks: '啟動完成'
+        }
+    ];
 }
 
 
@@ -1189,7 +1225,7 @@ function apiInit(ext) {
 }
 
 function apiHome(filter) {
-    return json({
+    var result = {
         'class': [
             {
                 type_id: '1',
@@ -1213,25 +1249,63 @@ function apiHome(filter) {
             }
         ],
         filters: FILTERS
-    });
+    };
+
+    /*
+     * Android workaround:
+     *
+     * Result.list must be non-empty at application startup.
+     * Otherwise Android immediately opens the first category,
+     * which is exactly the startup request that causes the
+     * observed "KKYS first -> later sites stop loading" state.
+     *
+     * This item is local only and performs no network request.
+     */
+    if (isAndroidRuntime()) {
+        result.list = androidStartupList();
+    }
+
+    return json(result);
 }
 
 function apiHomeVod() {
     /*
-     * Deliberately NO network request here.
+     * Android:
+     *   absolutely no startup HTTP request.
      *
-     * Android SiteApi.homeContent() calls:
-     *
-     *   home()
-     *   homeVod()
-     *
-     * synchronously before publishing the result.
-     *
-     * Keeping homeVod instant lets the UI render classes first.
-     * The first category then loads through category().
+     * iOS:
+     *   preserve the normal homepage list behavior.
      */
+    if (isAndroidRuntime()) {
+        return json({
+            list: []
+        });
+    }
+
+    var html = '';
+
+    try {
+        html =
+            requestPage(
+                SITE + '/',
+                SITE + '/',
+                PAGE_TIMEOUT
+            );
+    } catch (error) {
+        html = '';
+    }
+
+    var list =
+        html
+            ? parseModuleList(html)
+            : [];
+
+    if (list.length > 60) {
+        list = list.slice(0, 60);
+    }
+
     return json({
-        list: []
+        list: list
     });
 }
 

@@ -1,79 +1,39 @@
 /*
- * WebHTV Shared CatVod JS Spider
- * KKYS20
+ * WebHTV Shared CatVod JS Spider - KKYS20
  *
- * ONE source file for:
- * - WebHTV iOS
- * - WebHTV Android
+ * iOS + Android shared source.
+ * IMPORTANT: no ES-module import/export syntax.
  *
- * No ES-module export syntax.
+ * Startup strategy:
+ * - home() returns classes/filters immediately.
+ * - homeVod() returns immediately and performs NO network request.
+ * - Android/iOS load the selected category afterwards.
  *
- * Performance:
- * - Home timeout: 6s
- * - Normal page timeout: 10s
- * - Home cache: 30s
- * - Stale home cache fallback
- *
- * iOS:
- *   globalThis.__jsEvalReturn
- *
- * Android:
- *   globalThis['__JS_' + 'SPIDER__']
- *
- * Site:
- * https://www.kkys20.com
+ * This avoids Android SiteApi.homeContent() waiting for a homepage HTTP
+ * request before it can publish the home result.
  */
 
-var SITE =
-    'https://www.kkys20.com';
-
-var IMG_HOST =
-    'https://vres.esadj.com';
+var SITE = 'https://www.kkys20.com';
+var IMG_HOST = 'https://vres.esadj.com';
 
 var UA =
     'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) ' +
     'AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 ' +
     'Mobile/15E148 Safari/604.1';
 
-
-/* =========================================================
- * TIMEOUT / CACHE
- * ========================================================= */
-
-var HOME_TIMEOUT =
-    6000;
-
-var PAGE_TIMEOUT =
-    10000;
-
-var PLAY_TIMEOUT =
-    10000;
-
-var SEARCH_TIMEOUT =
-    10000;
-
-var HOME_CACHE_TTL =
-    30000;
-
-var HOME_CACHE_HTML =
-    '';
-
-var HOME_CACHE_LIST =
-    null;
-
-var HOME_CACHE_TIME =
-    0;
+var PAGE_TIMEOUT = 7000;
+var PLAY_TIMEOUT = 8000;
+var SEARCH_TIMEOUT = 7000;
 
 
 /* =========================================================
- * JSON RESULT
+ * BASIC
  * ========================================================= */
 
 function json(value) {
     try {
         return JSON.stringify(
-            value === undefined ||
-            value === null
+            value === undefined || value === null
                 ? {}
                 : value
         );
@@ -82,15 +42,9 @@ function json(value) {
     }
 }
 
-
-/* =========================================================
- * BASIC
- * ========================================================= */
-
 function clean(value) {
     return String(
-        value === undefined ||
-        value === null
+        value === undefined || value === null
             ? ''
             : value
     )
@@ -103,181 +57,77 @@ function clean(value) {
         .replace(/^\s+|\s+$/g, '');
 }
 
-
-function nowMs() {
-    return new Date().getTime();
-}
-
-
 function ensureRequestBridge() {
-    /*
-     * Android QuickJS provides http().
-     * iOS WebHTV already provides req().
-     */
     if (
         typeof globalThis.req !== 'function' &&
         typeof http === 'function'
     ) {
-        globalThis.req =
-            http;
+        globalThis.req = http;
     }
 }
 
-
 function requestHeaders(referer) {
     return {
-        'User-Agent':
-            UA,
-
-        'Referer':
-            referer ||
-            SITE + '/',
-
-        'Accept-Language':
-            'zh-TW,zh;q=0.9,en;q=0.8',
-
-        'Accept':
-            '*/*'
+        'User-Agent': UA,
+        'Referer': referer || SITE + '/',
+        'Accept-Language': 'zh-TW,zh;q=0.9,en;q=0.8',
+        'Accept': '*/*'
     };
 }
 
-
-function requestPage(
-    url,
-    referer,
-    timeout
-) {
+function requestPage(url, referer, timeout) {
     ensureRequestBridge();
-
 
     var request =
         typeof req === 'function'
             ? req
             : globalThis.req;
 
-
-    if (
-        typeof request !== 'function'
-    ) {
+    if (typeof request !== 'function') {
         return '';
     }
-
 
     var result =
         request(
             url,
             {
-                method:
-                    'GET',
-
-                headers:
-                    requestHeaders(
-                        referer
-                    ),
-
-                timeout:
-                    timeout ||
-                    PAGE_TIMEOUT
+                method: 'GET',
+                headers: requestHeaders(referer),
+                timeout: timeout || PAGE_TIMEOUT
             }
         ) || {};
 
-
-    /*
-     * Android:
-     *     content
-     *
-     * iOS:
-     *     content / body
-     */
-    return (
-        result.content ||
-        result.body ||
-        ''
-    );
+    return result.content || result.body || '';
 }
-
 
 function originOf(url) {
     var match =
         /^(https?:\/\/[^/]+)/i.exec(
-            String(
-                url ||
-                ''
-            )
+            String(url || '')
         );
 
-
-    return match
-        ? match[1]
-        : '';
+    return match ? match[1] : '';
 }
 
+function absolute(value, base) {
+    var url = clean(value);
+    var root = base || SITE + '/';
 
-function absolute(
-    value,
-    base
-) {
-    var url =
-        clean(
-            value
-        );
+    if (!url) return '';
 
-
-    var root =
-        base ||
-        SITE + '/';
-
-
-    if (!url) {
-        return '';
-    }
-
-
-    if (
-        /^https?:\/\//i.test(
-            url
-        )
-    ) {
+    if (/^https?:\/\//i.test(url)) {
         return url;
     }
 
-
-    if (
-        url.indexOf('//') === 0
-    ) {
-        return (
-            'https:' +
-            url
-        );
+    if (url.indexOf('//') === 0) {
+        return 'https:' + url;
     }
 
-
-    if (
-        url.charAt(0) === '/'
-    ) {
-        return (
-            originOf(
-                root
-            ) +
-            url
-        );
+    if (url.charAt(0) === '/') {
+        return originOf(root) + url;
     }
 
-
-    var directory =
-        String(
-            root
-        )
-            .replace(
-                /[^/]*$/,
-                ''
-            );
-
-
-    return (
-        directory +
-        url
-    );
+    return String(root).replace(/[^/]*$/, '') + url;
 }
 
 
@@ -286,196 +136,87 @@ function absolute(
  * ========================================================= */
 
 function rewriteImage(value) {
-    var raw =
-        clean(
-            value
-        );
+    var raw = clean(value);
 
+    if (!raw) return '';
 
-    if (!raw) {
-        return '';
-    }
-
-
-    raw =
-        raw.replace(
-            /\\\//g,
-            '/'
-        );
-
+    raw = raw.replace(/\\\//g, '/');
 
     if (
-        /logo_placeholder|placeholder_vertical/i.test(
-            raw
-        )
+        /logo_placeholder|placeholder_vertical/i.test(raw)
     ) {
         return '';
     }
 
-
-    if (
-        /^https?:\/\//i.test(
-            raw
-        )
-    ) {
-        var imageOrigin =
-            originOf(
-                raw
-            );
-
+    if (/^https?:\/\//i.test(raw)) {
+        var imageOrigin = originOf(raw);
 
         if (
-            /vres\./i.test(
-                imageOrigin
-            ) ||
-            /:\d+$/i.test(
-                imageOrigin
-            )
+            /vres\./i.test(imageOrigin) ||
+            /:\d+$/i.test(imageOrigin)
         ) {
             return raw;
         }
 
-
-        if (
-            imageOrigin ===
-            originOf(
-                SITE
-            )
-        ) {
+        if (imageOrigin === originOf(SITE)) {
             return raw.replace(
                 /^https?:\/\/[^/]+/i,
                 IMG_HOST
             );
         }
 
-
         return raw;
     }
 
-
-    if (
-        raw.indexOf('//') === 0
-    ) {
-        return (
-            'https:' +
-            raw
-        );
+    if (raw.indexOf('//') === 0) {
+        return 'https:' + raw;
     }
 
-
-    if (
-        raw.charAt(0) === '/'
-    ) {
-        return (
-            IMG_HOST +
-            raw
-        );
+    if (raw.charAt(0) === '/') {
+        return IMG_HOST + raw;
     }
 
-
-    return (
-        IMG_HOST +
-        '/' +
-        raw.replace(
-            /^\/+/,
-            ''
-        )
-    );
+    return IMG_HOST + '/' + raw.replace(/^\/+/, '');
 }
-
 
 function imageFromModule(node) {
     var candidates = [
-        pdfh(
-            node,
-            'img:eq(-1)&&data-original'
-        ),
-
-        pdfh(
-            node,
-            'img:eq(-1)&&data-src'
-        ),
-
-        pdfh(
-            node,
-            'img&&data-original'
-        ),
-
-        pdfh(
-            node,
-            'img&&data-src'
-        ),
-
-        pdfh(
-            node,
-            'img&&src'
-        )
+        pdfh(node, 'img:eq(-1)&&data-original'),
+        pdfh(node, 'img:eq(-1)&&data-src'),
+        pdfh(node, 'img&&data-original'),
+        pdfh(node, 'img&&data-src'),
+        pdfh(node, 'img&&src')
     ];
 
-
-    var i;
-
-
-    for (
-        i = 0;
-        i < candidates.length;
-        i++
-    ) {
-        var image =
-            rewriteImage(
-                candidates[i]
-            );
-
+    for (var i = 0; i < candidates.length; i++) {
+        var image = rewriteImage(candidates[i]);
 
         if (image) {
             return image;
         }
     }
 
-
     return '';
 }
 
 
 /* =========================================================
- * FILTER HELPERS
+ * FILTERS
  * ========================================================= */
 
-function option(
-    name,
-    value
-) {
+function option(name, value) {
     return {
-        n:
-            name,
-
-        v:
-            value
+        n: name,
+        v: value
     };
 }
 
-
-function filterRow(
-    key,
-    name,
-    values
-) {
+function filterRow(key, name, values) {
     var result = [
-        option(
-            '全部',
-            ''
-        )
+        option('全部', '')
     ];
 
-
-    var i;
-
-
-    for (
-        i = 0;
-        i < values.length;
-        i++
-    ) {
+    for (var i = 0; i < values.length; i++) {
         result.push(
             option(
                 values[i][0],
@@ -484,69 +225,32 @@ function filterRow(
         );
     }
 
-
     return {
-        key:
-            key,
-
-        name:
-            name,
-
-        value:
-            result
+        key: key,
+        name: name,
+        value: result
     };
 }
 
-
-function sortRow(
-    withScore
-) {
-    var result = [
-        option(
-            '綜合',
-            '1'
-        ),
-
-        option(
-            '最新',
-            '2'
-        ),
-
-        option(
-            '最熱',
-            '3'
-        )
+function sortRow(withScore) {
+    var values = [
+        option('綜合', '1'),
+        option('最新', '2'),
+        option('最熱', '3')
     ];
 
-
-    if (
-        withScore
-    ) {
-        result.push(
-            option(
-                '評分',
-                '4'
-            )
+    if (withScore) {
+        values.push(
+            option('評分', '4')
         );
     }
 
-
     return {
-        key:
-            'sort',
-
-        name:
-            '排序',
-
-        value:
-            result
+        key: 'sort',
+        name: '排序',
+        value: values
     };
 }
-
-
-/* =========================================================
- * FILTER DATA
- * ========================================================= */
 
 var YEAR_FILTER =
     filterRow(
@@ -560,34 +264,13 @@ var YEAR_FILTER =
             ['2022', '2022'],
             ['2021', '2021'],
             ['2020', '2020'],
-
-            [
-                '10年代',
-                '2010_2019'
-            ],
-
-            [
-                '00年代',
-                '2000_2009'
-            ],
-
-            [
-                '90年代',
-                '1990_1999'
-            ],
-
-            [
-                '80年代',
-                '1980_1989'
-            ],
-
-            [
-                '更早',
-                '0_1979'
-            ]
+            ['10年代', '2010_2019'],
+            ['00年代', '2000_2009'],
+            ['90年代', '1990_1999'],
+            ['80年代', '1980_1989'],
+            ['更早', '0_1979']
         ]
     );
-
 
 var LANG_FILTER =
     filterRow(
@@ -603,7 +286,6 @@ var LANG_FILTER =
             ['其他', '其他']
         ]
     );
-
 
 var MOVIE_AREA =
     filterRow(
@@ -630,7 +312,6 @@ var MOVIE_AREA =
         ]
     );
 
-
 var SERIES_AREA =
     filterRow(
         'area',
@@ -650,7 +331,6 @@ var SERIES_AREA =
             ['其他', '其他']
         ]
     );
-
 
 var ANIME_AREA =
     filterRow(
@@ -677,7 +357,6 @@ var ANIME_AREA =
         ]
     );
 
-
 var VARIETY_AREA =
     filterRow(
         'area',
@@ -693,9 +372,7 @@ var VARIETY_AREA =
         ]
     );
 
-
 var FILTERS = {
-
     '1': [
         filterRow(
             'type',
@@ -721,13 +398,11 @@ var FILTERS = {
                 ['動畫', '动画']
             ]
         ),
-
         MOVIE_AREA,
         LANG_FILTER,
         YEAR_FILTER,
         sortRow(true)
     ],
-
 
     '2': [
         filterRow(
@@ -754,13 +429,11 @@ var FILTERS = {
                 ['職場', '职场']
             ]
         ),
-
         SERIES_AREA,
         LANG_FILTER,
         YEAR_FILTER,
         sortRow(true)
     ],
-
 
     '3': [
         filterRow(
@@ -786,13 +459,11 @@ var FILTERS = {
                 ['武俠', '武侠']
             ]
         ),
-
         ANIME_AREA,
         LANG_FILTER,
         YEAR_FILTER,
         sortRow(true)
     ],
-
 
     '4': [
         filterRow(
@@ -812,13 +483,11 @@ var FILTERS = {
                 ['晚會', '晚会']
             ]
         ),
-
         VARIETY_AREA,
         LANG_FILTER,
         YEAR_FILTER,
         sortRow(true)
     ],
-
 
     '6': [
         filterRow(
@@ -849,7 +518,6 @@ var FILTERS = {
                 ['其他', '其它']
             ]
         ),
-
         sortRow(false)
     ]
 };
@@ -862,80 +530,28 @@ var FILTERS = {
 function detailId(value) {
     var match =
         /\/detail\/(\d+)\.html(?:[?#].*)?$/i.exec(
-            String(
-                value ||
-                ''
-            )
+            String(value || '')
         );
 
-
-    return match
-        ? match[1]
-        : '';
+    return match ? match[1] : '';
 }
-
 
 function moduleTitle(node) {
-    var title =
-        clean(
-            pdfh(
-                node,
-                '.v-item-title:eq(1)&&Text'
-            )
-        );
-
-
-    if (title) {
-        return title;
-    }
-
-
-    title =
-        clean(
-            pdfh(
-                node,
-                '.v-item-title&&Text'
-            )
-        );
-
-
-    if (title) {
-        return title;
-    }
-
-
     return clean(
-        pdfh(
-            node,
-            'img&&alt'
-        )
+        pdfh(node, '.v-item-title:eq(1)&&Text') ||
+        pdfh(node, '.v-item-title&&Text') ||
+        pdfh(node, 'img&&alt') ||
+        ''
     );
 }
-
 
 function moduleRemark(node) {
-    var value =
-        clean(
-            pdfh(
-                node,
-                '.v-item-bottom&&Text'
-            )
-        );
-
-
-    if (value) {
-        return value;
-    }
-
-
     return clean(
-        pdfh(
-            node,
-            'span:eq(-1)&&Text'
-        )
+        pdfh(node, '.v-item-bottom&&Text') ||
+        pdfh(node, 'span:eq(-1)&&Text') ||
+        ''
     );
 }
-
 
 function parseModuleList(html) {
     var nodes =
@@ -944,229 +560,38 @@ function parseModuleList(html) {
             '.module-item'
         );
 
+    var result = [];
+    var seen = {};
 
-    var result =
-        [];
-
-    var seen =
-        {};
-
-
-    var i;
-
-
-    for (
-        i = 0;
-        i < nodes.length;
-        i++
-    ) {
+    for (var i = 0; i < nodes.length; i++) {
         var href =
-            pdfh(
-                nodes[i],
-                'a.v-item&&href'
-            ) ||
-
-            pdfh(
-                nodes[i],
-                'a&&href'
-            ) ||
-
+            pdfh(nodes[i], 'a.v-item&&href') ||
+            pdfh(nodes[i], 'a&&href') ||
             '';
 
+        var id = detailId(href);
 
-        var id =
-            detailId(
-                href
-            );
-
-
-        if (
-            !id ||
-            seen[id]
-        ) {
+        if (!id || seen[id]) {
             continue;
         }
 
-
-        var title =
-            moduleTitle(
-                nodes[i]
-            );
-
+        var title = moduleTitle(nodes[i]);
 
         if (!title) {
             continue;
         }
 
-
         result.push({
-            vod_id:
-                id,
-
-            vod_name:
-                title,
-
-            vod_pic:
-                imageFromModule(
-                    nodes[i]
-                ),
-
-            vod_remarks:
-                moduleRemark(
-                    nodes[i]
-                )
+            vod_id: id,
+            vod_name: title,
+            vod_pic: imageFromModule(nodes[i]),
+            vod_remarks: moduleRemark(nodes[i])
         });
 
-
-        seen[id] =
-            true;
+        seen[id] = true;
     }
-
 
     return result;
-}
-
-
-/* =========================================================
- * HOME CACHE
- * ========================================================= */
-
-function homeCacheFresh() {
-    if (
-        !HOME_CACHE_TIME
-    ) {
-        return false;
-    }
-
-
-    return (
-        nowMs() -
-        HOME_CACHE_TIME
-    ) < HOME_CACHE_TTL;
-}
-
-
-function getHomeHTML() {
-    if (
-        HOME_CACHE_HTML &&
-        homeCacheFresh()
-    ) {
-        return HOME_CACHE_HTML;
-    }
-
-
-    var oldHTML =
-        HOME_CACHE_HTML;
-
-
-    var html =
-        '';
-
-
-    try {
-        html =
-            requestPage(
-                SITE + '/',
-                SITE + '/',
-                HOME_TIMEOUT
-            );
-
-    } catch (error) {
-        html =
-            '';
-    }
-
-
-    if (html) {
-        HOME_CACHE_HTML =
-            html;
-
-        HOME_CACHE_TIME =
-            nowMs();
-
-        return html;
-    }
-
-
-    /*
-     * Temporary network failure:
-     * retain the previous successful page.
-     */
-    return oldHTML;
-}
-
-
-function getHomeList() {
-    if (
-        HOME_CACHE_LIST &&
-        homeCacheFresh()
-    ) {
-        return HOME_CACHE_LIST.slice(
-            0
-        );
-    }
-
-
-    var oldList =
-        HOME_CACHE_LIST;
-
-
-    var html =
-        getHomeHTML();
-
-
-    if (!html) {
-        return oldList
-            ? oldList.slice(
-                0
-            )
-            : [];
-    }
-
-
-    var list =
-        parseModuleList(
-            html
-        );
-
-
-    if (
-        list.length > 60
-    ) {
-        list =
-            list.slice(
-                0,
-                60
-            );
-    }
-
-
-    if (
-        list.length
-    ) {
-        HOME_CACHE_LIST =
-            list.slice(
-                0
-            );
-
-
-        if (
-            !HOME_CACHE_TIME
-        ) {
-            HOME_CACHE_TIME =
-                nowMs();
-        }
-
-
-        return list;
-    }
-
-
-    return oldList
-        ? oldList.slice(
-            0
-        )
-        : [];
 }
 
 
@@ -1174,105 +599,43 @@ function getHomeList() {
  * CATEGORY
  * ========================================================= */
 
-function buildShowURL(
-    tid,
-    page,
-    extend
-) {
-    extend =
-        extend ||
-        {};
+function buildShowURL(tid, page, extend) {
+    extend = extend || {};
 
-
-    var type =
-        extend.type ||
-        '';
-
-
-    var area =
-        extend.area ||
-        '';
-
-
-    var lang =
-        extend.lang ||
-        '';
-
-
-    var year =
-        extend.year ||
-        '';
-
-
-    var sort =
-        extend.sort ||
-        '3';
-
+    var type = extend.type || '';
+    var area = extend.area || '';
+    var lang = extend.lang || '';
+    var year = extend.year || '';
+    var sort = extend.sort || '3';
 
     var pg =
         parseInt(
-            page ||
-            '1',
+            page || '1',
             10
         ) || 1;
-
 
     return (
         SITE +
         '/show/' +
-
-        encodeURIComponent(
-            String(
-                tid
-            )
-        ) +
-
+        encodeURIComponent(String(tid)) +
         '-' +
-
-        encodeURIComponent(
-            type
-        ) +
-
+        encodeURIComponent(type) +
         '-' +
-
-        encodeURIComponent(
-            area
-        ) +
-
+        encodeURIComponent(area) +
         '-' +
-
-        encodeURIComponent(
-            lang
-        ) +
-
+        encodeURIComponent(lang) +
         '-' +
-
-        encodeURIComponent(
-            year
-        ) +
-
+        encodeURIComponent(year) +
         '-' +
-
-        encodeURIComponent(
-            sort
-        ) +
-
+        encodeURIComponent(sort) +
         '-' +
-
         pg +
-
         '.html'
     );
 }
 
-
 function hasNextPage(html) {
-    var source =
-        String(
-            html ||
-            ''
-        );
-
+    var source = String(html || '');
 
     if (
         source.indexOf(
@@ -1282,22 +645,9 @@ function hasNextPage(html) {
         return true;
     }
 
+    var links = pdfa(html, 'a');
 
-    var links =
-        pdfa(
-            html,
-            'a'
-        );
-
-
-    var i;
-
-
-    for (
-        i = 0;
-        i < links.length;
-        i++
-    ) {
+    for (var i = 0; i < links.length; i++) {
         var text =
             clean(
                 pdfh(
@@ -1306,7 +656,6 @@ function hasNextPage(html) {
                 )
             );
 
-
         if (
             text === '下一页' ||
             text === '下一頁'
@@ -1314,7 +663,6 @@ function hasNextPage(html) {
             return true;
         }
     }
-
 
     return false;
 }
@@ -1330,85 +678,43 @@ function detailTitle(html) {
             pdfh(
                 html,
                 '.detail-title strong:eq(1)&&Text'
-            )
-        );
-
-
-    if (title) {
-        return title;
-    }
-
-
-    title =
-        clean(
+            ) ||
             pdfh(
                 html,
                 '.detail-title strong&&Text'
-            )
-        );
-
-
-    if (title) {
-        return title;
-    }
-
-
-    title =
-        clean(
+            ) ||
             pdfh(
                 html,
                 'title&&Text'
-            )
+            ) ||
+            ''
         );
-
 
     return title
-        .replace(
-            /\s*[-–_]\s*可可影视.*$/i,
-            ''
-        )
-        .replace(
-            /\s*[-–_]\s*可可影視.*$/i,
-            ''
-        )
-        .replace(
-            /高清免费在线观看.*$/i,
-            ''
-        )
-        .replace(
-            /高清免费在線觀看.*$/i,
-            ''
-        )
-        .replace(
-            /^\s+|\s+$/g,
-            ''
-        );
+        .replace(/\s*[-–_]\s*可可影视.*$/i, '')
+        .replace(/\s*[-–_]\s*可可影視.*$/i, '')
+        .replace(/高清免费在线观看.*$/i, '')
+        .replace(/高清免费在線觀看.*$/i, '')
+        .replace(/^\s+|\s+$/g, '');
 }
 
-
 function detailPicture(html) {
-    var picture =
+    return rewriteImage(
         pdfh(
             html,
             '.detail-pic img&&data-original'
         ) ||
-
         pdfh(
             html,
             '.detail-pic img&&data-src'
         ) ||
-
         pdfh(
             html,
             '.detail-pic img&&src'
-        );
-
-
-    return rewriteImage(
-        picture
+        ) ||
+        ''
     );
 }
-
 
 function detailDescription(html) {
     return clean(
@@ -1419,27 +725,17 @@ function detailDescription(html) {
     );
 }
 
-
 function detailRemarks(html) {
-    var value =
-        clean(
-            pdfh(
-                html,
-                '.detail-info-row-main:eq(-2)&&Text'
-            )
-        );
-
-
-    if (value) {
-        return value;
-    }
-
-
     return clean(
         pdfh(
             html,
+            '.detail-info-row-main:eq(-2)&&Text'
+        ) ||
+        pdfh(
+            html,
             '.detail-tags&&Text'
-        )
+        ) ||
+        ''
     );
 }
 
@@ -1448,95 +744,43 @@ function detailRemarks(html) {
  * PLAYBACK LINES
  * ========================================================= */
 
-function sourceName(
-    node,
-    index
-) {
-    /*
-     * Actual KKYS source title:
-     *
-     * 超清2
-     * FF线路
-     * 蓝光1
-     *
-     * Do not use:
-     *
-     * 秒播/4K
-     */
+function sourceName(node, index) {
     var name =
         clean(
             pdfh(
                 node,
                 '.source-item-label&&Text'
-            )
+            ) ||
+            pdfh(
+                node,
+                'span.source-item-label&&Text'
+            ) ||
+            ''
         );
 
-
-    if (!name) {
-        name =
-            clean(
-                pdfh(
-                    node,
-                    'span.source-item-label&&Text'
-                )
-            );
-    }
-
-
-    if (!name) {
-        name =
-            '線路' +
-            (index + 1);
-    }
-
-
-    return name;
+    return name || ('線路' + (index + 1));
 }
 
-
 function skipSource(name) {
-    /*
-     * Remove only the dedicated 4K source.
-     */
     return /4k/i.test(
-        clean(
-            name
-        )
+        clean(name)
     );
 }
 
-
-function uniqueName(
-    value,
-    used
-) {
+function uniqueName(value, used) {
     var name =
-        clean(
-            value
-        ) ||
+        clean(value) ||
         '線路';
 
-
-    if (
-        !used[name]
-    ) {
-        used[name] =
-            1;
-
+    if (!used[name]) {
+        used[name] = 1;
         return name;
     }
 
-
     used[name]++;
 
-
-    return (
-        name +
-        ' ' +
-        used[name]
-    );
+    return name + ' ' + used[name];
 }
-
 
 function parsePlayLists(html) {
     var sources =
@@ -1545,17 +789,13 @@ function parsePlayLists(html) {
             '.source-list-box-main a.source-item'
         );
 
-
     var lists =
         pdfa(
             html,
             '.episode-list-box-main .episode-list'
         );
 
-
-    if (
-        !sources.length
-    ) {
+    if (!sources.length) {
         sources =
             pdfa(
                 html,
@@ -1563,10 +803,7 @@ function parsePlayLists(html) {
             );
     }
 
-
-    if (
-        !lists.length
-    ) {
+    if (!lists.length) {
         lists =
             pdfa(
                 html,
@@ -1574,16 +811,9 @@ function parsePlayLists(html) {
             );
     }
 
-
-    var froms =
-        [];
-
-    var urls =
-        [];
-
-    var used =
-        {};
-
+    var froms = [];
+    var urls = [];
+    var used = {};
 
     var count =
         Math.min(
@@ -1591,18 +821,9 @@ function parsePlayLists(html) {
             lists.length
         );
 
-
-    var i;
-
-
-    for (
-        i = 0;
-        i < count;
-        i++
-    ) {
+    for (var i = 0; i < count; i++) {
         /*
-         * Pair source and episode list FIRST.
-         * Filter 4K afterwards.
+         * Pair by index before filtering.
          */
         var name =
             sourceName(
@@ -1610,15 +831,9 @@ function parsePlayLists(html) {
                 i
             );
 
-
-        if (
-            skipSource(
-                name
-            )
-        ) {
+        if (skipSource(name)) {
             continue;
         }
-
 
         var anchors =
             pdfa(
@@ -1626,22 +841,10 @@ function parsePlayLists(html) {
                 'a[href*="/play/"]'
             );
 
+        var episodes = [];
+        var seen = {};
 
-        var episodes =
-            [];
-
-        var seen =
-            {};
-
-
-        var j;
-
-
-        for (
-            j = 0;
-            j < anchors.length;
-            j++
-        ) {
+        for (var j = 0; j < anchors.length; j++) {
             var href =
                 pdfh(
                     anchors[j],
@@ -1649,11 +852,9 @@ function parsePlayLists(html) {
                 ) ||
                 '';
 
-
             if (!href) {
                 continue;
             }
-
 
             href =
                 absolute(
@@ -1661,14 +862,12 @@ function parsePlayLists(html) {
                     SITE + '/'
                 );
 
-
             if (
                 !href ||
                 seen[href]
             ) {
                 continue;
             }
-
 
             var label =
                 clean(
@@ -1678,7 +877,6 @@ function parsePlayLists(html) {
                     )
                 );
 
-
             if (!label) {
                 label =
                     '第' +
@@ -1686,25 +884,18 @@ function parsePlayLists(html) {
                     '集';
             }
 
-
             episodes.push(
                 label +
                 '$' +
                 href
             );
 
-
-            seen[href] =
-                true;
+            seen[href] = true;
         }
 
-
-        if (
-            !episodes.length
-        ) {
+        if (!episodes.length) {
             continue;
         }
-
 
         froms.push(
             uniqueName(
@@ -1713,25 +904,14 @@ function parsePlayLists(html) {
             )
         );
 
-
         urls.push(
-            episodes.join(
-                '#'
-            )
+            episodes.join('#')
         );
     }
 
-
     return {
-        from:
-            froms.join(
-                '$$$'
-            ),
-
-        url:
-            urls.join(
-                '$$$'
-            )
+        from: froms.join('$$$'),
+        url: urls.join('$$$')
     };
 }
 
@@ -1747,26 +927,19 @@ function searchToken(html) {
             'input[name=t]&&value'
         );
 
-
     if (token) {
-        return clean(
-            token
-        );
+        return clean(token);
     }
-
 
     var source =
         String(
-            html ||
-            ''
+            html || ''
         );
-
 
     var match =
         /name=["']t["'][^>]*value=["']([^"']+)["']/i.exec(
             source
         );
-
 
     if (!match) {
         match =
@@ -1775,33 +948,21 @@ function searchToken(html) {
             );
     }
 
-
-    return (
-        match &&
-        match[1]
-    )
-        ? clean(
-            match[1]
-        )
+    return match && match[1]
+        ? clean(match[1])
         : '';
 }
 
-
-function searchRequest(
-    keyword,
-    page
-) {
+function searchRequest(keyword, page) {
     var encoded =
         encodeURIComponent(
             keyword
         );
 
-
     var seedURL =
         SITE +
         '/search?k=' +
         encoded;
-
 
     var seedHTML =
         requestPage(
@@ -1810,44 +971,33 @@ function searchRequest(
             SEARCH_TIMEOUT
         );
 
-
     var token =
         searchToken(
             seedHTML
         );
 
-
     if (!token) {
         return seedHTML;
     }
-
 
     var url =
         SITE +
         '/search?k=' +
         encoded +
         '&t=' +
-        encodeURIComponent(
-            token
-        );
-
+        encodeURIComponent(token);
 
     var pg =
         parseInt(
-            page ||
-            '1',
+            page || '1',
             10
         ) || 1;
 
-
-    if (
-        pg > 1
-    ) {
+    if (pg > 1) {
         url +=
             '&page=' +
             pg;
     }
-
 
     return requestPage(
         url,
@@ -1856,7 +1006,6 @@ function searchRequest(
     );
 }
 
-
 function parseSearchList(html) {
     var nodes =
         pdfa(
@@ -1864,22 +1013,10 @@ function parseSearchList(html) {
             '.search-result-item'
         );
 
+    var result = [];
+    var seen = {};
 
-    var result =
-        [];
-
-    var seen =
-        {};
-
-
-    var i;
-
-
-    for (
-        i = 0;
-        i < nodes.length;
-        i++
-    ) {
+    for (var i = 0; i < nodes.length; i++) {
         var href =
             pdfh(
                 nodes[i],
@@ -1887,12 +1024,8 @@ function parseSearchList(html) {
             ) ||
             '';
 
-
         var id =
-            detailId(
-                href
-            );
-
+            detailId(href);
 
         if (
             !id ||
@@ -1901,65 +1034,43 @@ function parseSearchList(html) {
             continue;
         }
 
-
         var name =
             clean(
                 pdfh(
                     nodes[i],
                     '.title&&Text'
-                )
+                ) ||
+                pdfh(
+                    nodes[i],
+                    'img&&alt'
+                ) ||
+                ''
             );
-
-
-        if (!name) {
-            name =
-                clean(
-                    pdfh(
-                        nodes[i],
-                        'img&&alt'
-                    )
-                );
-        }
-
 
         if (!name) {
             continue;
         }
 
-
-        var picture =
-            rewriteImage(
-                pdfh(
-                    nodes[i],
-                    'img&&data-original'
-                ) ||
-
-                pdfh(
-                    nodes[i],
-                    'img&&data-src'
-                )
-            );
-
-
         result.push({
-            vod_id:
-                id,
-
-            vod_name:
-                name,
-
+            vod_id: id,
+            vod_name: name,
             vod_pic:
-                picture,
-
-            vod_remarks:
-                ''
+                rewriteImage(
+                    pdfh(
+                        nodes[i],
+                        'img&&data-original'
+                    ) ||
+                    pdfh(
+                        nodes[i],
+                        'img&&data-src'
+                    ) ||
+                    ''
+                ),
+            vod_remarks: ''
         });
 
-
-        seen[id] =
-            true;
+        seen[id] = true;
     }
-
 
     return result;
 }
@@ -1970,47 +1081,23 @@ function parseSearchList(html) {
  * ========================================================= */
 
 function decodeMediaURL(value) {
-    return clean(
-        value
-    )
-        .replace(
-            /\\\//g,
-            '/'
-        )
-        .replace(
-            /\\u0026/gi,
-            '&'
-        )
-        .replace(
-            /&amp;/gi,
-            '&'
-        );
+    return clean(value)
+        .replace(/\\\//g, '/')
+        .replace(/\\u0026/gi, '&')
+        .replace(/&amp;/gi, '&');
 }
-
 
 function extractPlayerURL(html) {
     var source =
         String(
-            html ||
-            ''
+            html || ''
         );
-
-
-    /*
-     * Current proven-working KKYS path.
-     *
-     * Do NOT add:
-     * - CDN pre-probes
-     * - AES guessing
-     * - PPPP path
-     */
 
     var match =
         /playSource\s*=\s*\{[^}]*?src\s*:\s*"([^"]+)"/i.exec(
             source
         );
 
-
     if (
         match &&
         match[1]
@@ -2019,14 +1106,12 @@ function extractPlayerURL(html) {
             match[1]
         );
     }
-
 
     match =
         /playSource\s*=\s*\{[^}]*?src\s*:\s*'([^']+)'/i.exec(
             source
         );
 
-
     if (
         match &&
         match[1]
@@ -2036,16 +1121,11 @@ function extractPlayerURL(html) {
         );
     }
 
-
-    /*
-     * HLS fallback.
-     */
     match =
         /(https?:\/\/[^\s"'<>]+\.m3u8[^\s"'<>]*)/i.exec(
             source
         );
 
-
     if (
         match &&
         match[1]
@@ -2055,16 +1135,11 @@ function extractPlayerURL(html) {
         );
     }
 
-
-    /*
-     * Direct media fallback.
-     */
     match =
         /(https?:\/\/[^\s"'<>]+\.(?:mp4|flv|mkv|webm)[^\s"'<>]*)/i.exec(
             source
         );
 
-
     if (
         match &&
         match[1]
@@ -2074,10 +1149,8 @@ function extractPlayerURL(html) {
         );
     }
 
-
     return '';
 }
-
 
 function resolvePlayPage(playPage) {
     var html =
@@ -2087,22 +1160,18 @@ function resolvePlayPage(playPage) {
             PLAY_TIMEOUT
         );
 
-
     if (!html) {
         return '';
     }
-
 
     var media =
         extractPlayerURL(
             html
         );
 
-
     if (!media) {
         return '';
     }
-
 
     return absolute(
         media,
@@ -2112,105 +1181,59 @@ function resolvePlayPage(playPage) {
 
 
 /* =========================================================
- * CATVOD METHODS
+ * CATVOD API
  * ========================================================= */
 
 function apiInit(ext) {
     return '';
 }
 
-
-/* =========================================================
- * HOME
- * ========================================================= */
-
 function apiHome(filter) {
-    var result = {
+    return json({
         'class': [
             {
-                type_id:
-                    '1',
-
-                type_name:
-                    '電影'
+                type_id: '1',
+                type_name: '電影'
             },
-
             {
-                type_id:
-                    '2',
-
-                type_name:
-                    '連續劇'
+                type_id: '2',
+                type_name: '連續劇'
             },
-
             {
-                type_id:
-                    '3',
-
-                type_name:
-                    '動漫'
+                type_id: '3',
+                type_name: '動漫'
             },
-
             {
-                type_id:
-                    '4',
-
-                type_name:
-                    '綜藝紀錄'
+                type_id: '4',
+                type_name: '綜藝紀錄'
             },
-
             {
-                type_id:
-                    '6',
-
-                type_name:
-                    '短劇'
+                type_id: '6',
+                type_name: '短劇'
             }
         ],
-
-        filters:
-            FILTERS
-    };
-
-
-    /*
-     * If we already have a fresh homepage list,
-     * also include it immediately.
-     *
-     * This makes return visits effectively instant.
-     */
-    if (
-        HOME_CACHE_LIST &&
-        homeCacheFresh()
-    ) {
-        result.list =
-            HOME_CACHE_LIST.slice(
-                0
-            );
-    }
-
-
-    return json(
-        result
-    );
-}
-
-
-/* =========================================================
- * HOME VIDEO
- * ========================================================= */
-
-function apiHomeVod() {
-    return json({
-        list:
-            getHomeList()
+        filters: FILTERS
     });
 }
 
-
-/* =========================================================
- * CATEGORY
- * ========================================================= */
+function apiHomeVod() {
+    /*
+     * Deliberately NO network request here.
+     *
+     * Android SiteApi.homeContent() calls:
+     *
+     *   home()
+     *   homeVod()
+     *
+     * synchronously before publishing the result.
+     *
+     * Keeping homeVod instant lets the UI render classes first.
+     * The first category then loads through category().
+     */
+    return json({
+        list: []
+    });
+}
 
 function apiCategory(
     tid,
@@ -2220,24 +1243,16 @@ function apiCategory(
 ) {
     var page =
         parseInt(
-            pg ||
-            '1',
+            pg || '1',
             10
         ) || 1;
 
-
     var url =
         buildShowURL(
-            String(
-                tid
-            ),
-
+            String(tid),
             page,
-
-            extend ||
-            {}
+            extend || {}
         );
-
 
     var html =
         requestPage(
@@ -2246,83 +1261,57 @@ function apiCategory(
             PAGE_TIMEOUT
         );
 
-
     var list =
         parseModuleList(
             html
         );
-
 
     var next =
         hasNextPage(
             html
         );
 
-
     return json({
-        list:
-            list,
-
-        page:
-            page,
-
+        list: list,
+        page: page,
         pagecount:
             next
                 ? page + 1
                 : page,
-
         limit:
             list.length ||
             18,
-
         total:
             list.length
     });
 }
 
-
-/* =========================================================
- * DETAIL
- * ========================================================= */
-
 function apiDetail(id) {
     var value =
         String(
-            id ||
-            ''
+            id || ''
         );
-
 
     var match =
         /\/detail\/(\d+)\.html/i.exec(
             value
         );
 
-
     if (match) {
-        value =
-            match[1];
+        value = match[1];
     }
 
-
-    if (
-        !/^\d+$/.test(
-            value
-        )
-    ) {
+    if (!/^\d+$/.test(value)) {
         return json({
-            list:
-                []
+            list: []
         });
     }
-
 
     var page =
         SITE +
         '/detail/' +
         value +
         '.html';
-
 
     var html =
         requestPage(
@@ -2331,71 +1320,51 @@ function apiDetail(id) {
             PAGE_TIMEOUT
         );
 
-
     if (!html) {
         return json({
-            list:
-                []
+            list: []
         });
     }
-
 
     var playLists =
         parsePlayLists(
             html
         );
 
-
-    if (
-        !playLists.url
-    ) {
+    if (!playLists.url) {
         return json({
-            list:
-                []
+            list: []
         });
     }
-
 
     return json({
         list: [
             {
-                vod_id:
-                    value,
-
+                vod_id: value,
                 vod_name:
                     detailTitle(
                         html
                     ),
-
                 vod_pic:
                     detailPicture(
                         html
                     ),
-
                 vod_remarks:
                     detailRemarks(
                         html
                     ),
-
                 vod_content:
                     detailDescription(
                         html
                     ),
-
                 vod_play_from:
                     playLists.from,
-
                 vod_play_url:
                     playLists.url
             }
         ]
     });
 }
-
-
-/* =========================================================
- * PLAY
- * ========================================================= */
 
 function apiPlay(
     flag,
@@ -2408,72 +1377,37 @@ function apiPlay(
             SITE + '/'
         );
 
-
-    var media =
-        '';
-
+    var media = '';
 
     try {
         media =
             resolvePlayPage(
                 playPage
             );
-
     } catch (error) {
-        media =
-            '';
+        media = '';
     }
 
-
-    /*
-     * Direct media URL.
-     *
-     * This is the path already confirmed
-     * working on iOS.
-     */
     if (media) {
         return json({
-            parse:
-                0,
-
-            url:
-                media,
-
+            parse: 0,
+            url: media,
             header: {
-                'User-Agent':
-                    UA,
-
-                'Referer':
-                    SITE + '/'
+                'User-Agent': UA,
+                'Referer': SITE + '/'
             }
         });
     }
 
-
-    /*
-     * Final sniff fallback.
-     */
     return json({
-        parse:
-            1,
-
-        url:
-            playPage,
-
+        parse: 1,
+        url: playPage,
         header: {
-            'User-Agent':
-                UA,
-
-            'Referer':
-                SITE + '/'
+            'User-Agent': UA,
+            'Referer': SITE + '/'
         }
     });
 }
-
-
-/* =========================================================
- * SEARCH API
- * ========================================================= */
 
 function apiSearch(
     key,
@@ -2485,26 +1419,19 @@ function apiSearch(
             key
         );
 
-
     if (!keyword) {
         return json({
-            list:
-                []
+            list: []
         });
     }
 
-
     var page =
         parseInt(
-            pg ||
-            '1',
+            pg || '1',
             10
         ) || 1;
 
-
-    var html =
-        '';
-
+    var html = '';
 
     try {
         html =
@@ -2512,12 +1439,9 @@ function apiSearch(
                 keyword,
                 page
             );
-
     } catch (error) {
-        html =
-            '';
+        html = '';
     }
-
 
     var list =
         html
@@ -2526,7 +1450,6 @@ function apiSearch(
             )
             : [];
 
-
     var next =
         html
             ? hasNextPage(
@@ -2534,23 +1457,16 @@ function apiSearch(
             )
             : false;
 
-
     return json({
-        list:
-            list,
-
-        page:
-            page,
-
+        list: list,
+        page: page,
         pagecount:
             next
                 ? page + 1
                 : page,
-
         limit:
             list.length ||
             20,
-
         total:
             list.length
     });
@@ -2558,60 +1474,33 @@ function apiSearch(
 
 
 /* =========================================================
- * ONE SHARED SPIDER FACTORY
+ * SHARED SPIDER
  * ========================================================= */
 
 function createSpider() {
     return {
-        init:
-            apiInit,
-
-        home:
-            apiHome,
-
-        homeVod:
-            apiHomeVod,
-
-        category:
-            apiCategory,
-
-        detail:
-            apiDetail,
-
-        play:
-            apiPlay,
-
-        search:
-            apiSearch
+        init: apiInit,
+        home: apiHome,
+        homeVod: apiHomeVod,
+        category: apiCategory,
+        detail: apiDetail,
+        play: apiPlay,
+        search: apiSearch
     };
 }
 
 
-/* =========================================================
- * iOS ENTRY
- *
- * No "export".
- * ========================================================= */
-
+/* iOS */
 globalThis.__jsEvalReturn =
     createSpider;
 
 
-/* =========================================================
- * ANDROID ENTRY
- *
- * Do not write the literal Android global token
- * in one continuous string because the Android
- * loader performs source-level replacement.
- * ========================================================= */
-
+/* Android */
 ensureRequestBridge();
-
 
 var androidSpiderKey =
     '__JS_' +
     'SPIDER__';
-
 
 if (
     !globalThis[

@@ -2,22 +2,24 @@
  * WebHTV CatVod JS Spider - KKYS20
  * https://www.kkys20.com
  *
- * WebHTV ios-poc remote JS spider.
+ * WebHTV remote JS Spider
  *
- * Features:
- * - correct movie / series titles
- * - correct posters
- * - filters
+ * Current design:
+ * - correct title parsing
+ * - correct poster parsing
+ * - category filters
  * - pagination
  * - dynamic search token
- * - correct source line names
- * - source / episode index pairing
- * - dedicated 4K line excluded
- * - playSource.src extraction
- * - PPPP / dujia AES-ECB support
- * - real media availability probe
- * - automatic same-episode source fallback
- * - MediaSniffer as final fallback
+ * - correct playback source names
+ * - source/episode lists matched by index
+ * - dedicated 4K source excluded
+ * - direct playSource.src extraction
+ * - m3u8/mp4 fallback extraction
+ * - WebHTV MediaSniffer only as final fallback
+ *
+ * IMPORTANT:
+ * Do NOT probe every CDN before playback.
+ * Do NOT use PPPP/AES unless the current site proves it is required.
  */
 
 var SITE = 'https://www.kkys20.com';
@@ -29,30 +31,9 @@ var UA =
     'AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 ' +
     'Mobile/15E148 Safari/604.1';
 
-var AES_KEY =
-    'Isu7fOAvI6!&IKpAbVdhf&^F';
-
-/*
- * Filled while detail() parses all playback lines.
- *
- * key:
- *     selected /play/... page
- *
- * value:
- *     same episode from other source lines
- */
-var PLAY_ALTERNATIVES = {};
-
-/*
- * Do not let one broken title try 15+ dead CDNs forever.
- *
- * Selected line + up to 7 alternatives.
- */
-var MAX_PLAY_ATTEMPTS = 8;
-
 
 /* =========================================================
- * Basic helpers
+ * BASIC
  * ========================================================= */
 
 function clean(value) {
@@ -75,44 +56,30 @@ function clean(value) {
 function requestHeaders(referer) {
     return {
         'User-Agent': UA,
-        'Referer':
-            referer ||
-            SITE + '/',
-
-        'Accept-Language':
-            'zh-TW,zh;q=0.9,en;q=0.8',
-
-        'Accept':
-            '*/*'
+        'Referer': referer || SITE + '/',
+        'Accept-Language': 'zh-TW,zh;q=0.9,en;q=0.8',
+        'Accept': '*/*'
     };
 }
 
 
-function http(
-    url,
-    referer
-) {
+function http(url, referer) {
     var result =
         req(
             url,
             {
-                method:
-                    'GET',
-
-                headers:
-                    requestHeaders(
-                        referer
-                    ),
-
-                timeout:
-                    20000
+                method: 'GET',
+                headers: requestHeaders(
+                    referer
+                ),
+                timeout: 15000
             }
         ) || {};
 
 
     return (
-        result.content ||
         result.body ||
+        result.content ||
         ''
     );
 }
@@ -133,10 +100,7 @@ function originOf(url) {
 }
 
 
-function absolute(
-    value,
-    base
-) {
+function absolute(value, base) {
     var url =
         clean(
             value
@@ -198,7 +162,7 @@ function absolute(
 
 
 /* =========================================================
- * Image
+ * IMAGE
  * ========================================================= */
 
 function rewriteImage(value) {
@@ -230,7 +194,7 @@ function rewriteImage(value) {
 
 
     /*
-     * Already an absolute image URL.
+     * Already absolute.
      */
     if (
         /^https?:\/\//i.test(
@@ -244,7 +208,7 @@ function rewriteImage(value) {
 
 
         /*
-         * Actual KKYS image CDNs.
+         * KKYS actual image CDN.
          */
         if (
             /vres\./i.test(
@@ -259,8 +223,8 @@ function rewriteImage(value) {
 
 
         /*
-         * If KKYS writes its own page host into
-         * data-original, replace the host only.
+         * Some pages return the page host
+         * with the real image path.
          */
         if (
             imageOrigin ===
@@ -364,13 +328,10 @@ function imageFromModule(node) {
 
 
 /* =========================================================
- * Filters
+ * FILTER BUILDERS
  * ========================================================= */
 
-function option(
-    name,
-    value
-) {
+function option(name, value) {
     return {
         n: name,
         v: value
@@ -409,14 +370,9 @@ function filterRow(
 
 
     return {
-        key:
-            key,
-
-        name:
-            name,
-
-        value:
-            result
+        key: key,
+        name: name,
+        value: result
     };
 }
 
@@ -453,17 +409,16 @@ function sortRow(
 
 
     return {
-        key:
-            'sort',
-
-        name:
-            '排序',
-
-        value:
-            result
+        key: 'sort',
+        name: '排序',
+        value: result
     };
 }
 
+
+/* =========================================================
+ * FILTER DATA
+ * ========================================================= */
 
 var YEAR_FILTER =
     filterRow(
@@ -477,31 +432,11 @@ var YEAR_FILTER =
             ['2022', '2022'],
             ['2021', '2021'],
             ['2020', '2020'],
-
-            [
-                '10年代',
-                '2010_2019'
-            ],
-
-            [
-                '00年代',
-                '2000_2009'
-            ],
-
-            [
-                '90年代',
-                '1990_1999'
-            ],
-
-            [
-                '80年代',
-                '1980_1989'
-            ],
-
-            [
-                '更早',
-                '0_1979'
-            ]
+            ['10年代', '2010_2019'],
+            ['00年代', '2000_2009'],
+            ['90年代', '1990_1999'],
+            ['80年代', '1980_1989'],
+            ['更早', '0_1979']
         ]
     );
 
@@ -522,7 +457,7 @@ var LANG_FILTER =
     );
 
 
-var MOVIE_AREA_FILTER =
+var MOVIE_AREA =
     filterRow(
         'area',
         '地區',
@@ -553,7 +488,7 @@ var MOVIE_AREA_FILTER =
     );
 
 
-var SERIES_AREA_FILTER =
+var SERIES_AREA =
     filterRow(
         'area',
         '地區',
@@ -574,7 +509,7 @@ var SERIES_AREA_FILTER =
     );
 
 
-var ANIME_AREA_FILTER =
+var ANIME_AREA =
     filterRow(
         'area',
         '地區',
@@ -605,7 +540,7 @@ var ANIME_AREA_FILTER =
     );
 
 
-var VARIETY_AREA_FILTER =
+var VARIETY_AREA =
     filterRow(
         'area',
         '地區',
@@ -653,7 +588,7 @@ var FILTERS = {
             ]
         ),
 
-        MOVIE_AREA_FILTER,
+        MOVIE_AREA,
         LANG_FILTER,
         YEAR_FILTER,
         sortRow(true)
@@ -689,7 +624,7 @@ var FILTERS = {
             ]
         ),
 
-        SERIES_AREA_FILTER,
+        SERIES_AREA,
         LANG_FILTER,
         YEAR_FILTER,
         sortRow(true)
@@ -729,7 +664,7 @@ var FILTERS = {
             ]
         ),
 
-        ANIME_AREA_FILTER,
+        ANIME_AREA,
         LANG_FILTER,
         YEAR_FILTER,
         sortRow(true)
@@ -762,7 +697,7 @@ var FILTERS = {
             ]
         ),
 
-        VARIETY_AREA_FILTER,
+        VARIETY_AREA,
         LANG_FILTER,
         YEAR_FILTER,
         sortRow(true)
@@ -806,7 +741,7 @@ var FILTERS = {
 
 
 /* =========================================================
- * List parsing
+ * LIST
  * ========================================================= */
 
 function detailId(value) {
@@ -826,9 +761,7 @@ function detailId(value) {
 
 function moduleTitle(node) {
     /*
-     * KKYS puts a hidden/watermark title before
-     * the visible one. Current visible title is
-     * normally the second .v-item-title.
+     * KKYS contains hidden duplicate/watermark title.
      */
     var title =
         clean(
@@ -868,6 +801,20 @@ function moduleTitle(node) {
 
 
 function moduleRemark(node) {
+    var value =
+        clean(
+            pdfh(
+                node,
+                '.v-item-bottom&&Text'
+            )
+        );
+
+
+    if (value) {
+        return value;
+    }
+
+
     return clean(
         pdfh(
             node,
@@ -878,7 +825,7 @@ function moduleRemark(node) {
 
 
 function parseModuleList(html) {
-    var modules =
+    var nodes =
         pdfa(
             html,
             '.module-item'
@@ -893,17 +840,17 @@ function parseModuleList(html) {
 
     for (
         i = 0;
-        i < modules.length;
+        i < nodes.length;
         i++
     ) {
         var href =
             pdfh(
-                modules[i],
+                nodes[i],
                 'a.v-item&&href'
             ) ||
 
             pdfh(
-                modules[i],
+                nodes[i],
                 'a&&href'
             ) ||
 
@@ -924,13 +871,13 @@ function parseModuleList(html) {
         }
 
 
-        var name =
+        var title =
             moduleTitle(
-                modules[i]
+                nodes[i]
             );
 
 
-        if (!name) {
+        if (!title) {
             continue;
         }
 
@@ -940,16 +887,16 @@ function parseModuleList(html) {
                 id,
 
             vod_name:
-                name,
+                title,
 
             vod_pic:
                 imageFromModule(
-                    modules[i]
+                    nodes[i]
                 ),
 
             vod_remarks:
                 moduleRemark(
-                    modules[i]
+                    nodes[i]
                 )
         });
 
@@ -964,7 +911,7 @@ function parseModuleList(html) {
 
 
 /* =========================================================
- * Category
+ * CATEGORY
  * ========================================================= */
 
 function buildShowURL(
@@ -1111,16 +1058,10 @@ function hasNextPage(html) {
 
 
 /* =========================================================
- * Detail
+ * DETAIL
  * ========================================================= */
 
 function detailTitle(html) {
-    /*
-     * KKYS detail title contains hidden watermark
-     * strong elements.
-     *
-     * The visible title is normally strong:eq(1).
-     */
     var title =
         clean(
             pdfh(
@@ -1217,7 +1158,7 @@ function detailDescription(html) {
 
 
 function detailRemarks(html) {
-    var remark =
+    var value =
         clean(
             pdfh(
                 html,
@@ -1226,8 +1167,8 @@ function detailRemarks(html) {
         );
 
 
-    if (remark) {
-        return remark;
+    if (value) {
+        return value;
     }
 
 
@@ -1241,20 +1182,22 @@ function detailRemarks(html) {
 
 
 /* =========================================================
- * Playback line parsing
+ * PLAYBACK LINES
  * ========================================================= */
 
-function trueLineName(
-    node,
-    index
-) {
+function sourceName(node, index) {
     /*
-     * Correct:
+     * TRUE source name:
      *
-     * 超清2       <- source-item-label
-     * 秒播/4K     <- subtitle
+     * 超清2
+     * FF線路
+     * 藍光1
+     * HN線路
      *
-     * Do not use span:eq(-1).
+     * Not subtitle:
+     *
+     * 秒播/4K
+     * 播放快/高清
      */
     var name =
         clean(
@@ -1263,6 +1206,17 @@ function trueLineName(
                 '.source-item-label&&Text'
             )
         );
+
+
+    if (!name) {
+        name =
+            clean(
+                pdfh(
+                    node,
+                    'span.source-item-label&&Text'
+                )
+            );
+    }
 
 
     if (!name) {
@@ -1276,13 +1230,12 @@ function trueLineName(
 }
 
 
-function skipLine(name) {
+function skipSource(name) {
     /*
-     * Dedicated KKYS 4K source is excluded.
+     * Exclude ONLY the dedicated line named "4K".
      *
-     * "超清2" is kept even though its subtitle
-     * says 秒播/4K, because the true line label
-     * is 超清2.
+     * 超清2 stays because its actual name does
+     * not contain 4K.
      */
     return /4k/i.test(
         clean(
@@ -1292,140 +1245,49 @@ function skipLine(name) {
 }
 
 
-function uniqueLineName(
-    name,
+function uniqueName(
+    value,
     used
 ) {
-    var base =
+    var name =
         clean(
-            name
+            value
         ) ||
         '線路';
 
 
     if (
-        !used[base]
+        !used[name]
     ) {
-        used[base] =
+        used[name] =
             1;
 
-        return base;
+        return name;
     }
 
 
-    used[base]++;
+    used[name]++;
 
 
     return (
-        base +
+        name +
         ' ' +
-        used[base]
+        used[name]
     );
-}
-
-
-function registerAlternatives(lines) {
-    PLAY_ALTERNATIVES = {};
-
-
-    var lineIndex;
-    var episodeIndex;
-
-
-    for (
-        lineIndex = 0;
-        lineIndex < lines.length;
-        lineIndex++
-    ) {
-        var line =
-            lines[lineIndex];
-
-
-        for (
-            episodeIndex = 0;
-            episodeIndex < line.episodes.length;
-            episodeIndex++
-        ) {
-            var current =
-                line.episodes[
-                    episodeIndex
-                ];
-
-
-            var alternatives = [];
-
-            var other;
-
-
-            for (
-                other = 0;
-                other < lines.length;
-                other++
-            ) {
-                if (
-                    other ===
-                    lineIndex
-                ) {
-                    continue;
-                }
-
-
-                var otherLine =
-                    lines[other];
-
-
-                if (
-                    episodeIndex >=
-                    otherLine.episodes.length
-                ) {
-                    continue;
-                }
-
-
-                var candidate =
-                    otherLine.episodes[
-                        episodeIndex
-                    ];
-
-
-                if (
-                    !candidate ||
-                    !candidate.url ||
-                    candidate.url ===
-                        current.url
-                ) {
-                    continue;
-                }
-
-
-                alternatives.push(
-                    candidate.url
-                );
-            }
-
-
-            PLAY_ALTERNATIVES[
-                current.url
-            ] =
-                alternatives;
-        }
-    }
 }
 
 
 function parsePlayLists(html) {
     /*
-     * Actual KKYS structure:
+     * Exact current KKYS pairing:
      *
-     * .source-list-box-main
-     *     a.source-item
-     *         span.source-item-label
+     * source-list-box-main
+     *   a.source-item
      *
-     * .episode-list-box-main
-     *     div.episode-list
+     * episode-list-box-main
+     *   div.episode-list
      *
-     * Source and episode-list arrays correspond
-     * by index.
+     * Same index = same source.
      */
 
     var sources =
@@ -1435,19 +1297,14 @@ function parsePlayLists(html) {
         );
 
 
-    var episodeLists =
+    var lists =
         pdfa(
             html,
             '.episode-list-box-main .episode-list'
         );
 
 
-    /*
-     * Fallback selectors.
-     */
-    if (
-        !sources.length
-    ) {
+    if (!sources.length) {
         sources =
             pdfa(
                 html,
@@ -1456,10 +1313,8 @@ function parsePlayLists(html) {
     }
 
 
-    if (
-        !episodeLists.length
-    ) {
-        episodeLists =
+    if (!lists.length) {
+        lists =
             pdfa(
                 html,
                 '.episode-list'
@@ -1467,12 +1322,15 @@ function parsePlayLists(html) {
     }
 
 
-    var lines = [];
+    var froms = [];
+    var urls = [];
+
+    var usedNames = {};
 
     var count =
         Math.min(
             sources.length,
-            episodeLists.length
+            lists.length
         );
 
 
@@ -1485,22 +1343,17 @@ function parsePlayLists(html) {
         i++
     ) {
         /*
-         * Pair by original index FIRST.
-         *
-         * Only then filter 4K.
-         *
-         * Otherwise removing the second source
-         * shifts every later playlist.
+         * Pair before filtering.
          */
         var name =
-            trueLineName(
+            sourceName(
                 sources[i],
                 i
             );
 
 
         if (
-            skipLine(
+            skipSource(
                 name
             )
         ) {
@@ -1510,7 +1363,7 @@ function parsePlayLists(html) {
 
         var anchors =
             pdfa(
-                episodeLists[i],
+                lists[i],
                 'a[href*="/play/"]'
             );
 
@@ -1571,13 +1424,11 @@ function parsePlayLists(html) {
             }
 
 
-            episodes.push({
-                name:
-                    label,
-
-                url:
-                    href
-            });
+            episodes.push(
+                label +
+                '$' +
+                href
+            );
 
 
             seen[href] =
@@ -1592,67 +1443,16 @@ function parsePlayLists(html) {
         }
 
 
-        lines.push({
-            name:
-                name,
-
-            episodes:
-                episodes
-        });
-    }
-
-
-    /*
-     * Save same-episode fallback relationships.
-     */
-    registerAlternatives(
-        lines
-    );
-
-
-    var froms = [];
-    var urls = [];
-
-    var usedNames = {};
-
-
-    for (
-        i = 0;
-        i < lines.length;
-        i++
-    ) {
-        var finalName =
-            uniqueLineName(
-                lines[i].name,
-                usedNames
-            );
-
-
-        var episodeStrings = [];
-
-        var k;
-
-
-        for (
-            k = 0;
-            k < lines[i].episodes.length;
-            k++
-        ) {
-            episodeStrings.push(
-                lines[i].episodes[k].name +
-                '$' +
-                lines[i].episodes[k].url
-            );
-        }
-
-
         froms.push(
-            finalName
+            uniqueName(
+                name,
+                usedNames
+            )
         );
 
 
         urls.push(
-            episodeStrings.join(
+            episodes.join(
                 '#'
             )
         );
@@ -1674,7 +1474,7 @@ function parsePlayLists(html) {
 
 
 /* =========================================================
- * Search
+ * SEARCH
  * ========================================================= */
 
 function searchToken(html) {
@@ -1699,14 +1499,14 @@ function searchToken(html) {
 
 
     var match =
-        /<input[^>]*name=["']t["'][^>]*value=["']([^"']+)["']/i.exec(
+        /name=["']t["'][^>]*value=["']([^"']+)["']/i.exec(
             source
         );
 
 
     if (!match) {
         match =
-            /<input[^>]*value=["']([^"']+)["'][^>]*name=["']t["']/i.exec(
+            /value=["']([^"']+)["'][^>]*name=["']t["']/i.exec(
                 source
             );
     }
@@ -1734,8 +1534,10 @@ function searchRequest(
 
 
     /*
-     * First request obtains KKYS' current
-     * short-lived t token.
+     * KKYS requires t.
+     *
+     * First call without t returns a page containing
+     * the current token.
      */
     var seedURL =
         SITE +
@@ -1756,6 +1558,10 @@ function searchRequest(
         );
 
 
+    /*
+     * If site did not require token this time,
+     * the first response may already contain results.
+     */
     if (!token) {
         return seedHTML;
     }
@@ -1839,7 +1645,7 @@ function parseSearchList(html) {
             clean(
                 pdfh(
                     nodes[i],
-                    'img&&alt'
+                    '.title&&Text'
                 )
             );
 
@@ -1849,7 +1655,7 @@ function parseSearchList(html) {
                 clean(
                     pdfh(
                         nodes[i],
-                        '.title&&Text'
+                        'img&&alt'
                     )
                 );
         }
@@ -1885,12 +1691,7 @@ function parseSearchList(html) {
                 picture,
 
             vod_remarks:
-                clean(
-                    pdfh(
-                        nodes[i],
-                        '.search-result-item-header&&Text'
-                    )
-                )
+                ''
         });
 
 
@@ -1904,74 +1705,37 @@ function parseSearchList(html) {
 
 
 /* =========================================================
- * Media extraction
+ * PLAYER
  * ========================================================= */
 
-function unescapeMediaURL(value) {
-    return clean(
-        value
-    )
-        .replace(
-            /\\\//g,
-            '/'
-        )
-        .replace(
-            /\\u0026/gi,
-            '&'
-        )
-        .replace(
-            /&amp;/gi,
-            '&'
+function decodeMediaURL(value) {
+    var url =
+        clean(
+            value
         );
-}
 
 
-function encryptedPlayerURL(html) {
-    /*
-     * Supports:
-     *
-     * PPPP = '...'
-     * DPPPP = '...'
-     * TMDPPPP = '...'
-     */
-    var match =
-        /PPPP\s*=\s*['"]([^'"]+)['"]/i.exec(
-            String(
-                html || ''
+    url =
+        url
+            .replace(
+                /\\\//g,
+                '/'
             )
-        );
-
-
-    if (
-        !match ||
-        !match[1]
-    ) {
-        return '';
-    }
-
-
-    try {
-        var decrypted =
-            host.aesDecrypt(
-                match[1],
-                AES_KEY,
-                '',
-                'ECB',
-                'base64'
+            .replace(
+                /\\u0026/gi,
+                '&'
+            )
+            .replace(
+                /&amp;/gi,
+                '&'
             );
 
 
-        return unescapeMediaURL(
-            decrypted
-        );
-
-    } catch (error) {
-        return '';
-    }
+    return url;
 }
 
 
-function normalPlayerURL(html) {
+function extractPlayerURL(html) {
     var source =
         String(
             html || ''
@@ -1979,54 +1743,84 @@ function normalPlayerURL(html) {
 
 
     /*
-     * Main current format:
+     * CURRENT KKYS FORMAT:
      *
-     * const playSource = {
-     *     src: "..."
+     * playSource = {
+     *     src: "https://..."
      * }
+     *
+     * Keep this first.
      */
-    var patterns = [
-
-        /playSource\s*=\s*\{[\s\S]*?src\s*:\s*"([^"]+)"/i,
-
-        /playSource\s*=\s*\{[\s\S]*?src\s*:\s*'([^']+)'/i,
-
-        /src\s*:\s*"([^"]+\.(?:m3u8|mp4|flv|mkv|webm)[^"]*)"/i,
-
-        /src\s*:\s*'([^']+\.(?:m3u8|mp4|flv|mkv|webm)[^']*)'/i,
-
-        /"(https?:\/\/[^"]+\.m3u8[^"]*)"/i,
-
-        /'(https?:\/\/[^']+\.m3u8[^']*)'/i,
-
-        /"(https?:\/\/[^"]+\.(?:mp4|flv|mkv|webm)[^"]*)"/i,
-
-        /'(https?:\/\/[^']+\.(?:mp4|flv|mkv|webm)[^']*)'/i
-    ];
+    var match =
+        /playSource\s*=\s*\{[^}]*?src\s*:\s*"([^"]+)"/i.exec(
+            source
+        );
 
 
-    var i;
-
-
-    for (
-        i = 0;
-        i < patterns.length;
-        i++
+    if (
+        match &&
+        match[1]
     ) {
-        var match =
-            patterns[i].exec(
-                source
-            );
-
-
-        if (
-            match &&
+        return decodeMediaURL(
             match[1]
-        ) {
-            return unescapeMediaURL(
-                match[1]
-            );
-        }
+        );
+    }
+
+
+    /*
+     * Single-quote variant.
+     */
+    match =
+        /playSource\s*=\s*\{[^}]*?src\s*:\s*'([^']+)'/i.exec(
+            source
+        );
+
+
+    if (
+        match &&
+        match[1]
+    ) {
+        return decodeMediaURL(
+            match[1]
+        );
+    }
+
+
+    /*
+     * Direct HLS fallback.
+     */
+    match =
+        /(https?:\/\/[^\s"'<>]+\.m3u8[^\s"'<>]*)/i.exec(
+            source
+        );
+
+
+    if (
+        match &&
+        match[1]
+    ) {
+        return decodeMediaURL(
+            match[1]
+        );
+    }
+
+
+    /*
+     * Other direct media fallback.
+     */
+    match =
+        /(https?:\/\/[^\s"'<>]+\.(?:mp4|flv|mkv|webm)[^\s"'<>]*)/i.exec(
+            source
+        );
+
+
+    if (
+        match &&
+        match[1]
+    ) {
+        return decodeMediaURL(
+            match[1]
+        );
     }
 
 
@@ -2034,7 +1828,7 @@ function normalPlayerURL(html) {
 }
 
 
-function resolvePlayURL(playPage) {
+function resolvePlayPage(playPage) {
     var html =
         http(
             playPage,
@@ -2047,36 +1841,10 @@ function resolvePlayURL(playPage) {
     }
 
 
-    var media = '';
-
-
-    /*
-     * Exclusive / encrypted player.
-     */
-    if (
-        /dujia/i.test(
+    var media =
+        extractPlayerURL(
             html
-        ) ||
-        /PPPP\s*=/i.test(
-            html
-        )
-    ) {
-        media =
-            encryptedPlayerURL(
-                html
-            );
-    }
-
-
-    /*
-     * Normal player.
-     */
-    if (!media) {
-        media =
-            normalPlayerURL(
-                html
-            );
-    }
+        );
 
 
     if (!media) {
@@ -2092,519 +1860,7 @@ function resolvePlayURL(playPage) {
 
 
 /* =========================================================
- * Actual media availability probe
- * ========================================================= */
-
-function headerValue(
-    headers,
-    key
-) {
-    if (!headers) {
-        return '';
-    }
-
-
-    var lower =
-        String(
-            key || ''
-        ).toLowerCase();
-
-
-    var name;
-
-
-    for (
-        name in headers
-    ) {
-        if (
-            Object.prototype.hasOwnProperty.call(
-                headers,
-                name
-            ) &&
-            String(name)
-                .toLowerCase() ===
-                lower
-        ) {
-            return String(
-                headers[name] ||
-                ''
-            );
-        }
-    }
-
-
-    return '';
-}
-
-
-function isHTMLBody(body) {
-    var text =
-        String(
-            body || ''
-        )
-            .replace(
-                /^\s+/,
-                ''
-            )
-            .toLowerCase();
-
-
-    return (
-        text.indexOf(
-            '<!doctype'
-        ) === 0 ||
-
-        text.indexOf(
-            '<html'
-        ) === 0 ||
-
-        text.indexOf(
-            '<head'
-        ) === 0 ||
-
-        text.indexOf(
-            '<body'
-        ) === 0
-    );
-}
-
-
-function probeHLS(url) {
-    var response =
-        req(
-            url,
-            {
-                method:
-                    'GET',
-
-                headers: {
-                    'User-Agent':
-                        UA,
-
-                    'Referer':
-                        SITE + '/',
-
-                    'Accept':
-                        '*/*'
-                },
-
-                timeout:
-                    5000
-            }
-        ) || {};
-
-
-    var status =
-        parseInt(
-            response.status || 0,
-            10
-        ) || 0;
-
-
-    if (
-        status !== 200 &&
-        status !== 206
-    ) {
-        return {
-            ok:
-                false,
-
-            url:
-                url
-        };
-    }
-
-
-    var body =
-        String(
-            response.body ||
-            response.content ||
-            ''
-        );
-
-
-    if (
-        isHTMLBody(
-            body
-        )
-    ) {
-        return {
-            ok:
-                false,
-
-            url:
-                url
-        };
-    }
-
-
-    /*
-     * A valid HLS playlist should contain #EXTM3U.
-     */
-    if (
-        body.indexOf(
-            '#EXTM3U'
-        ) !== -1
-    ) {
-        return {
-            ok:
-                true,
-
-            url:
-                response.url ||
-                url
-        };
-    }
-
-
-    var contentType =
-        headerValue(
-            response.headers,
-            'content-type'
-        ).toLowerCase();
-
-
-    if (
-        contentType.indexOf(
-            'mpegurl'
-        ) !== -1
-    ) {
-        return {
-            ok:
-                true,
-
-            url:
-                response.url ||
-                url
-        };
-    }
-
-
-    /*
-     * "OK" is a known bad anti-hotlink response,
-     * not a valid playlist.
-     */
-    if (
-        clean(body)
-            .toUpperCase() ===
-            'OK'
-    ) {
-        return {
-            ok:
-                false,
-
-            url:
-                url
-        };
-    }
-
-
-    return {
-        ok:
-            false,
-
-        url:
-            url
-    };
-}
-
-
-function probeFileMedia(url) {
-    /*
-     * Use HEAD for MP4/FLV/etc.
-     *
-     * Do not perform a normal GET here because
-     * a CDN that ignores Range could make the
-     * Spider download the entire movie.
-     */
-    var response =
-        req(
-            url,
-            {
-                method:
-                    'HEAD',
-
-                headers: {
-                    'User-Agent':
-                        UA,
-
-                    'Referer':
-                        SITE + '/',
-
-                    'Accept':
-                        '*/*'
-                },
-
-                timeout:
-                    5000
-            }
-        ) || {};
-
-
-    var status =
-        parseInt(
-            response.status || 0,
-            10
-        ) || 0;
-
-
-    /*
-     * status 0:
-     * DNS / host / transport failed.
-     */
-    if (
-        status === 0
-    ) {
-        return {
-            ok:
-                false,
-
-            url:
-                url
-        };
-    }
-
-
-    if (
-        status >= 200 &&
-        status < 400
-    ) {
-        return {
-            ok:
-                true,
-
-            url:
-                response.url ||
-                url
-        };
-    }
-
-
-    /*
-     * HEAD not allowed does not prove GET fails.
-     * The hostname did resolve and answer.
-     *
-     * Let AVPlayer try it.
-     */
-    if (
-        status === 405
-    ) {
-        return {
-            ok:
-                true,
-
-            url:
-                url
-        };
-    }
-
-
-    return {
-        ok:
-            false,
-
-        url:
-            url
-    };
-}
-
-
-function probeMedia(url) {
-    var value =
-        clean(
-            url
-        );
-
-
-    if (!value) {
-        return {
-            ok:
-                false,
-
-            url:
-                ''
-        };
-    }
-
-
-    if (
-        /\.m3u8(?:[?#]|$)/i.test(
-            value
-        )
-    ) {
-        return probeHLS(
-            value
-        );
-    }
-
-
-    return probeFileMedia(
-        value
-    );
-}
-
-
-/* =========================================================
- * Automatic same-episode source fallback
- * ========================================================= */
-
-function playbackCandidates(selected) {
-    var first =
-        clean(
-            selected
-        );
-
-
-    var result = [];
-    var seen = {};
-
-
-    function add(value) {
-        var url =
-            clean(
-                value
-            );
-
-
-        if (
-            !url ||
-            seen[url]
-        ) {
-            return;
-        }
-
-
-        seen[url] =
-            true;
-
-
-        result.push(
-            url
-        );
-    }
-
-
-    add(
-        first
-    );
-
-
-    var alternatives =
-        PLAY_ALTERNATIVES[
-            first
-        ] ||
-        [];
-
-
-    var i;
-
-
-    for (
-        i = 0;
-        i < alternatives.length;
-        i++
-    ) {
-        add(
-            alternatives[i]
-        );
-    }
-
-
-    if (
-        result.length >
-        MAX_PLAY_ATTEMPTS
-    ) {
-        result =
-            result.slice(
-                0,
-                MAX_PLAY_ATTEMPTS
-            );
-    }
-
-
-    return result;
-}
-
-
-function findPlayableSource(selectedPage) {
-    var pages =
-        playbackCandidates(
-            selectedPage
-        );
-
-
-    var i;
-
-
-    for (
-        i = 0;
-        i < pages.length;
-        i++
-    ) {
-        var page =
-            pages[i];
-
-
-        var media = '';
-
-
-        try {
-            media =
-                resolvePlayURL(
-                    page
-                );
-        } catch (error) {
-            media =
-                '';
-        }
-
-
-        if (!media) {
-            continue;
-        }
-
-
-        var probe;
-
-
-        try {
-            probe =
-                probeMedia(
-                    media
-                );
-        } catch (error2) {
-            probe = {
-                ok:
-                    false,
-
-                url:
-                    media
-            };
-        }
-
-
-        if (
-            probe &&
-            probe.ok
-        ) {
-            return {
-                playPage:
-                    page,
-
-                media:
-                    probe.url ||
-                    media
-            };
-        }
-    }
-
-
-    return null;
-}
-
-
-/* =========================================================
- * CatVod methods
+ * CATVOD API
  * ========================================================= */
 
 function apiInit(ext) {
@@ -2617,43 +1873,28 @@ function apiHome(filter) {
         'class': [
 
             {
-                type_id:
-                    '1',
-
-                type_name:
-                    '電影'
+                type_id: '1',
+                type_name: '電影'
             },
 
             {
-                type_id:
-                    '2',
-
-                type_name:
-                    '連續劇'
+                type_id: '2',
+                type_name: '連續劇'
             },
 
             {
-                type_id:
-                    '3',
-
-                type_name:
-                    '動漫'
+                type_id: '3',
+                type_name: '動漫'
             },
 
             {
-                type_id:
-                    '4',
-
-                type_name:
-                    '綜藝紀錄'
+                type_id: '4',
+                type_name: '綜藝紀錄'
             },
 
             {
-                type_id:
-                    '6',
-
-                type_name:
-                    '短劇'
+                type_id: '6',
+                type_name: '短劇'
             }
         ],
 
@@ -2788,7 +2029,7 @@ function apiDetail(id) {
     }
 
 
-    var url =
+    var page =
         SITE +
         '/detail/' +
         value +
@@ -2797,7 +2038,7 @@ function apiDetail(id) {
 
     var html =
         http(
-            url,
+            page,
             SITE + '/'
         );
 
@@ -2809,13 +2050,13 @@ function apiDetail(id) {
     }
 
 
-    var plays =
+    var playLists =
         parsePlayLists(
             html
         );
 
 
-    if (!plays.url) {
+    if (!playLists.url) {
         return {
             list: []
         };
@@ -2849,10 +2090,10 @@ function apiDetail(id) {
                     ),
 
                 vod_play_from:
-                    plays.from,
+                    playLists.from,
 
                 vod_play_url:
-                    plays.url
+                    playLists.url
             }
         ]
     };
@@ -2864,53 +2105,52 @@ function apiPlay(
     id,
     vipFlags
 ) {
-    var selectedPage =
+    var playPage =
         absolute(
             id,
             SITE + '/'
         );
 
 
+    var media = '';
+
+
     /*
-     * Selected source first.
+     * NO CDN pre-probe here.
      *
-     * If its actual media host is dead / DNS fails /
-     * returns 403 / returns invalid HLS:
-     *
-     * automatically try the same episode from the
-     * other KKYS source lines.
+     * It caused the previous version to keep every
+     * episode button disabled while it sequentially
+     * tested multiple lines.
      */
-    var target = null;
-
-
     try {
-        target =
-            findPlayableSource(
-                selectedPage
+        media =
+            resolvePlayPage(
+                playPage
             );
     } catch (error) {
-        target =
-            null;
+        media =
+            '';
     }
 
 
-    if (
-        target &&
-        target.media
-    ) {
+    /*
+     * Direct stream obtained from playSource.src.
+     */
+    if (media) {
         return {
             parse:
                 0,
 
             url:
-                target.media,
+                media,
 
             header: {
                 'User-Agent':
                     UA,
 
                 /*
-                 * Important for KKYS media / TS.
+                 * Current maintained KKYS spiders use
+                 * the site root for stream requests.
                  */
                 'Referer':
                     SITE + '/'
@@ -2920,21 +2160,18 @@ function apiPlay(
 
 
     /*
-     * Last chance.
+     * Do NOT return an empty URL.
      *
-     * If none of the directly extracted streams
-     * passed probe, give the selected play page to
-     * WebHTV MediaSniffer.
-     *
-     * This prevents an obviously dead hostname from
-     * being handed directly to AVPlayer.
+     * If playSource extraction failed because KKYS
+     * changed the page player, WebHTV gets one chance
+     * to sniff the actual play page.
      */
     return {
         parse:
             1,
 
         url:
-            selectedPage,
+            playPage,
 
         header: {
             'User-Agent':
@@ -3026,7 +2263,7 @@ function apiSearch(
 
 
 /* =========================================================
- * WebHTV CatVod JS Spider entry
+ * WEBHTV ENTRY
  * ========================================================= */
 
 globalThis.__jsEvalReturn =

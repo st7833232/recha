@@ -5,9 +5,10 @@
  * IMPORTANT: no ES-module import/export syntax.
  *
  * Startup strategy:
- * - home() returns classes immediately.
- * - homeVod() returns immediately and performs NO network request.
- * - The selected category loads afterwards.
+ * - Android home() performs no HTTP request and returns a local startup item.
+ * - Android homeVod() performs no HTTP request.
+ * - iOS keeps its normal homepage list behavior.
+ * - Real Android network loading begins only after the user selects a category.
  */
 
 var SITE = 'https://www.8movie.com';
@@ -141,6 +142,41 @@ function absolute(
     }
 
     return String(root).replace(/[^/]*$/, '') + url;
+}
+
+
+
+function isAndroidRuntime() {
+    /*
+     * Android QuickJS exposes the native _http() bridge before
+     * this source is evaluated. iOS WebHTV does not expose _http.
+     *
+     * This lets one shared JS avoid Android startup network I/O
+     * without changing the iOS behavior.
+     */
+    return (
+        typeof globalThis._http === 'function' ||
+        typeof _http === 'function'
+    );
+}
+
+function androidStartupList() {
+    /*
+     * Android's native home flow auto-opens the first category
+     * when the home result has no list. A tiny local-only item
+     * prevents that first category request from firing during
+     * application startup.
+     *
+     * No HTTP request is performed here.
+     */
+    return [
+        {
+            vod_id: '__webhtv_start__',
+            vod_name: '請選擇上方分類',
+            vod_pic: '',
+            vod_remarks: '啟動完成'
+        }
+    ];
 }
 
 
@@ -727,7 +763,7 @@ function apiInit(ext) {
 }
 
 function apiHome(filter) {
-    return json({
+    var result = {
         'class': [
             {
                 type_id: 'update',
@@ -762,18 +798,57 @@ function apiHome(filter) {
                 type_name: '其他短劇'
             }
         ]
-    });
+    };
+
+    /*
+     * Same Android startup guard as KKYS.
+     * No HTTP request is made.
+     */
+    if (isAndroidRuntime()) {
+        result.list = androidStartupList();
+    }
+
+    return json(result);
 }
 
 function apiHomeVod() {
     /*
-     * Deliberately NO network request.
+     * Android:
+     *   no startup HTTP request.
      *
-     * Android waits for home() + homeVod() before publishing
-     * the home result. The first category is loaded afterwards.
+     * iOS:
+     *   keep the normal "latest" homepage list.
      */
+    if (isAndroidRuntime()) {
+        return json({
+            list: []
+        });
+    }
+
+    var html = '';
+
+    try {
+        html =
+            requestPage(
+                SITE + '/movies/update/',
+                SITE + '/',
+                PAGE_TIMEOUT
+            );
+    } catch (error) {
+        html = '';
+    }
+
+    var list =
+        html
+            ? parseMovieList(html)
+            : [];
+
+    if (list.length > 30) {
+        list = list.slice(0, 30);
+    }
+
     return json({
-        list: []
+        list: list
     });
 }
 

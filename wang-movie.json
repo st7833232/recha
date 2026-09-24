@@ -67,7 +67,7 @@
       "key": "kkys20",
       "name": "可可影視",
       "type": 3,
-      "api": "./json/kkys.js"
+      "api": "https://gitlab.com/st7833232/recha/-/raw/main/json/kkys.js"
     },
     {
       "key" : "皮皮虾",

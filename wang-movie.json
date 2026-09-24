@@ -51,7 +51,7 @@
       "key": "8movie",
       "name": "8Movie 短劇",
       "type": 3,
-      "api": "./json/8movie.js"
+      "api": "/https://gitlab.com/st7833232/recha/-/raw/main/json/8movie.js"
     },
     {
       "key": "YIys",

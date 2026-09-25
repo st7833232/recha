@@ -17,6 +17,7 @@ from base.spider import Spider as BaseSpider
 
 
 SITE = "https://www.kkys20.com"
+IMG_HOST = "https://vres.esadj.com"
 UA = (
     "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) "
     "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 "
@@ -135,6 +136,45 @@ def _absolute(value, base=SITE + "/"):
     if value.startswith("//"):
         return "https:" + value
     return urljoin(base, value)
+
+
+def _origin_of(value):
+    match = re.match(r"^(https?://[^/]+)", str(value or ""), re.I)
+    return match.group(1) if match else ""
+
+
+def _rewrite_image(value):
+    raw = _clean(value)
+    if not raw:
+        return ""
+
+    raw = raw.replace("\\/", "/")
+
+    # Do not return KKYS lazy-loading placeholders as posters.
+    if re.search(r"logo_placeholder|placeholder_vertical", raw, re.I):
+        return ""
+
+    if re.match(r"^https?://", raw, re.I):
+        image_origin = _origin_of(raw)
+
+        # Already on the image CDN (or an explicit host:port image endpoint).
+        if re.search(r"vres\.", image_origin, re.I) or re.search(r":\d+$", image_origin):
+            return raw
+
+        # KKYS sometimes emits its image path on the website origin even though
+        # the asset is actually served from the dedicated image host.
+        if image_origin == _origin_of(SITE):
+            return re.sub(r"^https?://[^/]+", IMG_HOST, raw, flags=re.I)
+
+        return raw
+
+    if raw.startswith("//"):
+        return "https:" + raw
+
+    if raw.startswith("/"):
+        return IMG_HOST + raw
+
+    return IMG_HOST + "/" + raw.lstrip("/")
 
 
 def _media_decode(value):
@@ -265,6 +305,8 @@ class Spider(BaseSpider):
         self.headers = {
             "User-Agent": UA,
             "Referer": SITE + "/",
+            "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
+            "Accept": "*/*",
         }
 
     def getName(self):
@@ -303,16 +345,43 @@ class Spider(BaseSpider):
     # ------------------------------------------------------------------
 
     def _poster(self, node, base_url):
-        image = _first(_find_all(node, tag="img"))
-        if not image:
+        images = _find_all(node, tag="img")
+        if not images:
             return ""
-        value = (
-            image.attr("data-original")
-            or image.attr("data-src")
-            or image.attr("data-lazy-src")
-            or image.attr("src")
-        )
-        return _absolute(value, base_url)
+
+        candidates = []
+
+        # The working JS spider deliberately checks img:eq(-1) first because
+        # KKYS cards may contain an earlier placeholder/decorative image.
+        last = images[-1]
+        candidates.extend([
+            last.attr("data-original"),
+            last.attr("data-src"),
+        ])
+
+        first = images[0]
+        candidates.extend([
+            first.attr("data-original"),
+            first.attr("data-src"),
+            first.attr("src"),
+        ])
+
+        # Extra robustness for template changes without changing the proven
+        # priority above.
+        for image in reversed(images):
+            candidates.extend([
+                image.attr("data-original"),
+                image.attr("data-src"),
+                image.attr("data-lazy-src"),
+                image.attr("src"),
+            ])
+
+        for value in candidates:
+            image_url = _rewrite_image(value)
+            if image_url:
+                return image_url
+
+        return ""
 
     def _detail_anchor(self, node):
         for anchor in _find_all(node, tag="a", attr_name="href"):
@@ -424,6 +493,131 @@ class Spider(BaseSpider):
         ])
         return filters
 
+    def _search_token(self, source):
+        root = _parse_dom(source)
+        for node in _find_all(root, tag="input"):
+            if node.attr("name") == "t":
+                value = _clean(node.attr("value"))
+                if value:
+                    return value
+
+        # Conservative fallback in case the input is emitted in a form the
+        # lightweight parser does not preserve exactly.
+        match = re.search(
+            r'<input[^>]*\bname=["\']t["\'][^>]*\bvalue=["\']([^"\']+)["\']',
+            source or "",
+            re.I | re.S,
+        )
+        if match:
+            return _clean(match.group(1))
+
+        match = re.search(
+            r'<input[^>]*\bvalue=["\']([^"\']+)["\'][^>]*\bname=["\']t["\']',
+            source or "",
+            re.I | re.S,
+        )
+        return _clean(match.group(1)) if match else ""
+
+    def _parse_search_list(self, source, base_url):
+        root = _parse_dom(source)
+        nodes = _find_all(root, cls="search-result-item")
+
+        result = []
+        seen = set()
+
+        for node in nodes:
+            href = ""
+            anchor = None
+            for candidate in _find_all(node, tag="a", attr_name="href"):
+                if "/detail/" in candidate.attr("href"):
+                    anchor = candidate
+                    href = candidate.attr("href")
+                    break
+
+            if not href:
+                continue
+
+            detail_url = _absolute(href, base_url)
+            match = re.search(r"/detail/(\d+)\.html(?:[?#].*)?$", detail_url, re.I)
+            detail_id = match.group(1) if match else ""
+            if not detail_id or detail_id in seen:
+                continue
+
+            title = ""
+            title_node = _first(_find_all(node, cls="title"))
+            if title_node:
+                title = title_node.text()
+
+            images = _find_all(node, tag="img")
+            image_alt = ""
+            if images:
+                image_alt = _clean(images[0].attr("alt"))
+
+            title = _clean(title or image_alt)
+            if not title:
+                continue
+
+            picture = ""
+            if images:
+                candidates = [
+                    images[-1].attr("data-original"),
+                    images[-1].attr("data-src"),
+                    images[0].attr("data-original"),
+                    images[0].attr("data-src"),
+                ]
+                for value in candidates:
+                    picture = _rewrite_image(value)
+                    if picture:
+                        break
+
+            result.append({
+                # Keep an absolute detail URL here so this Python spider stays
+                # compatible with its existing detailContent() contract.
+                "vod_id": detail_url,
+                "vod_name": title,
+                "vod_pic": picture,
+                "vod_remarks": "",
+            })
+            seen.add(detail_id)
+
+        return result
+
+    def _has_next_page(self, source):
+        if "page-item-next" in str(source or ""):
+            return True
+
+        root = _parse_dom(source)
+        for anchor in _find_all(root, tag="a"):
+            text = _clean(anchor.text())
+            if text in ("下一页", "下一頁"):
+                return True
+        return False
+
+    def _search_request(self, keyword, page):
+        encoded = quote(keyword, safe="")
+        seed_url = self.site + "/search?k=" + encoded
+
+        # Match the known-good JS flow: the token comes from the first search
+        # request, not from the homepage.
+        seed_source = self._get(seed_url, self.site + "/", timeout=7)
+        token = self._search_token(seed_source)
+
+        if not token:
+            return seed_source, seed_url
+
+        url = (
+            self.site
+            + "/search?k="
+            + encoded
+            + "&t="
+            + quote(token, safe="")
+        )
+
+        if page > 1:
+            url += "&page=" + str(page)
+
+        return self._get(url, seed_url, timeout=7), url
+
     # ------------------------------------------------------------------
     # CatVod API
     # ------------------------------------------------------------------
@@ -445,9 +639,10 @@ class Spider(BaseSpider):
         return result
 
     def homeVideoContent(self):
-        source = self._get(self.site + "/", self.site + "/")
-        items = self._parse_list(source, self.site + "/")
-        return {"list": items[:30]}
+        # Keep startup instant. The Android flow asks homeContent() and
+        # homeVideoContent() before publishing the result; category loading
+        # will fetch the real list afterwards.
+        return {"list": []}
 
     def categoryContent(self, tid, pg, filter, extend):
         page = 1
@@ -650,30 +845,37 @@ class Spider(BaseSpider):
         }
 
     def searchContent(self, key, quick, pg="1"):
+        keyword = _clean(key)
+        if not keyword:
+            return {
+                "list": [],
+                "page": 1,
+                "pagecount": 1,
+                "limit": 20,
+                "total": 0,
+            }
+
         try:
-            if int(pg) > 1:
-                return {"list": []}
+            page = max(1, int(pg or "1"))
         except Exception:
-            pass
+            page = 1
 
-        home = self._get(self.site + "/", self.site + "/")
-        root = _parse_dom(home)
+        try:
+            source, request_url = self._search_request(keyword, page)
+        except Exception as error:
+            self.log("KKYS search failed: %s" % error)
+            source, request_url = "", self.site + "/search"
 
-        token = ""
-        for node in _find_all(root, tag="input"):
-            if node.attr("name") == "t":
-                token = _clean(node.attr("value"))
-                if token:
-                    break
+        items = self._parse_search_list(source, request_url) if source else []
+        has_next = self._has_next_page(source) if source else False
 
-        params = "k=" + quote(str(key), safe="")
-        if token:
-            params += "&t=" + quote(token, safe="")
-        url = self.site + "/search?" + params
-
-        source = self._get(url, self.site + "/")
-        items = self._parse_list(source, url)
-        return {"list": items}
+        return {
+            "list": items,
+            "page": page,
+            "pagecount": page + 1 if has_next else page,
+            "limit": len(items) or 20,
+            "total": len(items),
+        }
 
     def isVideoFormat(self, url):
         value = (url or "").lower().split("?", 1)[0]

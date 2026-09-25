@@ -543,6 +543,84 @@ class Spider(BaseSpider):
         )
         return _clean(match.group(1)) if match else ""
 
+    def _image_from_raw_fragment(self, fragment):
+        if not fragment:
+            return ""
+
+        img_tags = list(re.finditer(r"<img\b[^>]*>", fragment, re.I | re.S))
+        if not img_tags:
+            return ""
+
+        # Match the proven JS priority as closely as possible:
+        # last image lazy attrs first, then first image lazy attrs/src.
+        ordered = []
+        if img_tags:
+            ordered.append(img_tags[-1].group(0))
+            if len(img_tags) > 1:
+                ordered.append(img_tags[0].group(0))
+
+        for match in reversed(img_tags):
+            tag = match.group(0)
+            if tag not in ordered:
+                ordered.append(tag)
+
+        for tag in ordered:
+            for attr in ("data-original", "data-src", "data-lazy-src", "src"):
+                found = re.search(
+                    r'\b' + re.escape(attr) + r'\s*=\s*["\']([^"\']+)["\']',
+                    tag,
+                    re.I | re.S,
+                )
+                if not found:
+                    continue
+                picture = _rewrite_image(found.group(1))
+                if picture:
+                    return picture
+
+        return ""
+
+    def _search_picture_from_raw_html(self, source, detail_id):
+        if not source or not detail_id:
+            return ""
+
+        pattern = re.compile(
+            r"/detail/" + re.escape(str(detail_id)) + r"\.html(?:[?#][^\"'<>\s]*)?",
+            re.I,
+        )
+        hit = pattern.search(source)
+        if not hit:
+            return ""
+
+        # Search around the matching detail link. This avoids relying on the
+        # lightweight HTMLParser to perfectly reconstruct malformed site HTML.
+        left = max(0, hit.start() - 2600)
+        right = min(len(source), hit.end() + 4200)
+        fragment = source[left:right]
+
+        # Prefer the nearest <img> tag to this detail link.
+        relative_hit = hit.start() - left
+        candidates = []
+        for img in re.finditer(r"<img\b[^>]*>", fragment, re.I | re.S):
+            distance = min(abs(img.start() - relative_hit), abs(img.end() - relative_hit))
+            candidates.append((distance, img.group(0)))
+
+        candidates.sort(key=lambda item: item[0])
+
+        for _, tag in candidates:
+            for attr in ("data-original", "data-src", "data-lazy-src", "src"):
+                found = re.search(
+                    r'\b' + re.escape(attr) + r'\s*=\s*["\']([^"\']+)["\']',
+                    tag,
+                    re.I | re.S,
+                )
+                if not found:
+                    continue
+                picture = _rewrite_image(found.group(1))
+                if picture:
+                    return picture
+
+        return self._image_from_raw_fragment(fragment)
+
     def _parse_search_list(self, source, base_url):
         root = _parse_dom(source)
         nodes = _find_all(root, cls="search-result-item")
@@ -582,14 +660,22 @@ class Spider(BaseSpider):
                 candidates = [
                     images[-1].attr("data-original"),
                     images[-1].attr("data-src"),
+                    images[-1].attr("data-lazy-src"),
                     images[0].attr("data-original"),
                     images[0].attr("data-src"),
+                    images[0].attr("data-lazy-src"),
                     images[0].attr("src"),
                 ]
                 for value in candidates:
                     picture = _rewrite_image(value)
                     if picture:
                         break
+
+            # KKYS search HTML is less structurally consistent than category
+            # pages. If HTMLParser loses the <img> from the card tree, recover
+            # it directly from the raw HTML around /detail/{id}.html.
+            if not picture:
+                picture = self._search_picture_from_raw_html(source, detail_id)
 
             result.append({
                 "vod_id": detail_url,
@@ -601,6 +687,15 @@ class Spider(BaseSpider):
 
         if not result:
             result = self._parse_list(source, base_url)
+
+        for item in result:
+            if item.get("vod_pic"):
+                continue
+            value = str(item.get("vod_id", ""))
+            match = re.search(r"/detail/(\d+)\.html(?:[?#].*)?$", value, re.I)
+            detail_id = match.group(1) if match else ""
+            if detail_id:
+                item["vod_pic"] = self._search_picture_from_raw_html(source, detail_id)
 
         return result
 

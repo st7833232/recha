@@ -13,14 +13,19 @@ import re
 from html.parser import HTMLParser
 from urllib.parse import quote, urljoin
 
+try:
+    import requests as _requests
+except Exception:
+    _requests = None
+
 from base.spider import Spider as BaseSpider
 
 
 SITE = "https://www.kkys20.com"
 IMG_HOST = "https://vres.esadj.com"
 UA = (
-    "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) "
-    "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 "
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) "
+    "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 "
     "Mobile/15E148 Safari/604.1"
 )
 
@@ -308,6 +313,9 @@ class Spider(BaseSpider):
             "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
             "Accept": "*/*",
         }
+        self.session = _requests.Session() if _requests is not None else None
+        if self.session is not None:
+            self.session.headers.update(self.headers)
 
     def getName(self):
         return "可可影視"
@@ -321,24 +329,41 @@ class Spider(BaseSpider):
     # HTTP
     # ------------------------------------------------------------------
 
-    def _get(self, url, referer=None, timeout=10):
+    def _get_response(self, url, referer=None, timeout=10):
         target = _absolute(url, self.site + "/")
         headers = dict(self.headers)
         headers["Referer"] = referer or (self.site + "/")
+
         try:
-            response = self.fetch(
-                target,
-                headers=headers,
-                timeout=timeout,
-                verify=True,
-                allow_redirects=True,
-            )
+            if self.session is not None:
+                response = self.session.get(
+                    target,
+                    headers=headers,
+                    timeout=timeout,
+                    verify=True,
+                    allow_redirects=True,
+                )
+            else:
+                response = self.fetch(
+                    target,
+                    headers=headers,
+                    timeout=timeout,
+                    verify=True,
+                    allow_redirects=True,
+                )
+
             if hasattr(response, "encoding"):
                 response.encoding = "utf-8"
-            return getattr(response, "text", "") or ""
+            return response
         except Exception as error:
             self.log("KKYS request failed: %s | %s" % (target, error))
+            return None
+
+    def _get(self, url, referer=None, timeout=10):
+        response = self._get_response(url, referer, timeout)
+        if response is None:
             return ""
+        return getattr(response, "text", "") or ""
 
     # ------------------------------------------------------------------
     # Shared parsing
@@ -527,10 +552,8 @@ class Spider(BaseSpider):
 
         for node in nodes:
             href = ""
-            anchor = None
             for candidate in _find_all(node, tag="a", attr_name="href"):
                 if "/detail/" in candidate.attr("href"):
-                    anchor = candidate
                     href = candidate.attr("href")
                     break
 
@@ -549,10 +572,7 @@ class Spider(BaseSpider):
                 title = title_node.text()
 
             images = _find_all(node, tag="img")
-            image_alt = ""
-            if images:
-                image_alt = _clean(images[0].attr("alt"))
-
+            image_alt = _clean(images[0].attr("alt")) if images else ""
             title = _clean(title or image_alt)
             if not title:
                 continue
@@ -564,6 +584,7 @@ class Spider(BaseSpider):
                     images[-1].attr("data-src"),
                     images[0].attr("data-original"),
                     images[0].attr("data-src"),
+                    images[0].attr("src"),
                 ]
                 for value in candidates:
                     picture = _rewrite_image(value)
@@ -571,14 +592,15 @@ class Spider(BaseSpider):
                         break
 
             result.append({
-                # Keep an absolute detail URL here so this Python spider stays
-                # compatible with its existing detailContent() contract.
                 "vod_id": detail_url,
                 "vod_name": title,
                 "vod_pic": picture,
                 "vod_remarks": "",
             })
             seen.add(detail_id)
+
+        if not result:
+            result = self._parse_list(source, base_url)
 
         return result
 
@@ -597,13 +619,15 @@ class Spider(BaseSpider):
         encoded = quote(keyword, safe="")
         seed_url = self.site + "/search?k=" + encoded
 
-        # Match the known-good JS flow: the token comes from the first search
-        # request, not from the homepage.
-        seed_source = self._get(seed_url, self.site + "/", timeout=7)
+        seed_response = self._get_response(seed_url, self.site + "/", timeout=7)
+        seed_source = ""
+        if seed_response is not None:
+            seed_source = getattr(seed_response, "text", "") or ""
+
         token = self._search_token(seed_source)
 
         if not token:
-            return seed_source, seed_url
+            return seed_source, seed_url, seed_source
 
         url = (
             self.site
@@ -616,7 +640,12 @@ class Spider(BaseSpider):
         if page > 1:
             url += "&page=" + str(page)
 
-        return self._get(url, seed_url, timeout=7), url
+        result_response = self._get_response(url, seed_url, timeout=7)
+        result_source = ""
+        if result_response is not None:
+            result_source = getattr(result_response, "text", "") or ""
+
+        return result_source, url, seed_source
 
     # ------------------------------------------------------------------
     # CatVod API
@@ -861,13 +890,20 @@ class Spider(BaseSpider):
             page = 1
 
         try:
-            source, request_url = self._search_request(keyword, page)
+            source, request_url, seed_source = self._search_request(keyword, page)
         except Exception as error:
             self.log("KKYS search failed: %s" % error)
-            source, request_url = "", self.site + "/search"
+            source, request_url, seed_source = "", self.site + "/search", ""
 
         items = self._parse_search_list(source, request_url) if source else []
-        has_next = self._has_next_page(source) if source else False
+
+        if not items and seed_source:
+            items = self._parse_search_list(
+                seed_source,
+                self.site + "/search?k=" + quote(keyword, safe=""),
+            )
+
+        has_next = self._has_next_page(source or seed_source)
 
         return {
             "list": items,
@@ -888,4 +924,8 @@ class Spider(BaseSpider):
         return ""
 
     def destroy(self):
-        pass
+        try:
+            if self.session is not None:
+                self.session.close()
+        except Exception:
+            pass

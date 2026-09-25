@@ -48,21 +48,21 @@
       "ext": "https://y2s52n7.com,https://m.hkybqufgh.com,https://m.sizhengxt.com,https://m.9zhoukj.com,https://m.sizhengxt.com,https://m.jiabaide.cn"
     },
     {
-  "key": "8movie",
-  "name": "8Movie",
-  "type": 3,
-  "api": "https://gitlab.com/st7833232/recha/-/raw/main/json/8movie.js",
-  "homePage": "https://www.8movie.com/",
-  "extensions": [
-    {
-      "id": "8movie_boot_retry",
-      "name": "8Movie無感啟動修復",
-      "version": "1.1.0",
-      "runAt": "document-start",
-      "code": "(function(){if(window.__8movieBootRetry)return;window.__8movieBootRetry=true;try{window.stop();var d=document.documentElement;if(d){d.style.cssText='background:transparent!important;visibility:hidden!important;opacity:0!important;';}}catch(e){}function openVod(){try{if(window.fm&&typeof window.fm.openVod==='function'){window.fm.openVod();return true;}if(window.fongmi&&window.fongmi.app&&typeof window.fongmi.app.openVod==='function'){window.fongmi.app.openVod();return true;}}catch(e){}return false;}openVod();setTimeout(openVod,120);setTimeout(openVod,400);setTimeout(openVod,1000);})();"
-    }
-  ]
-},
+      "key": "8movie",
+      "name": "8Movie",
+      "type": 3,
+      "api": "https://gitlab.com/st7833232/recha/-/raw/main/json/8movie.js",
+      "homePage": "https://www.8movie.com/",
+      "extensions": [
+        {
+          "id": "8movie_boot_retry",
+          "name": "8Movie無感啟動修復",
+          "version": "1.2.0",
+          "runAt": "document-start",
+          "code": "(function(){if(window.__8movieBootOnce)return;window.__8movieBootOnce=true;var fired=false;try{var d=document.documentElement;if(d){d.style.cssText='background:transparent!important;visibility:hidden!important;opacity:0!important;';}window.stop();}catch(e){}function boot(){if(fired)return true;try{if(window.fm&&typeof window.fm.openVod==='function'){fired=true;window.fm.openVod();return true;}if(window.fongmi&&window.fongmi.app&&typeof window.fongmi.app.openVod==='function'){fired=true;window.fongmi.app.openVod();return true;}}catch(e){}return false;}window.addEventListener('fmsdk',function(){setTimeout(boot,80);},{once:true});setTimeout(boot,180);setTimeout(boot,500);setTimeout(boot,900);})();"
+        }
+      ]
+    },
     {
       "key": "YIys",
       "name": "🏆｜銀牌｜高清",
@@ -74,21 +74,11 @@
       "changeable": 1
     },
     {
-  "key": "kkys20",
-  "name": "可可影視",
-  "type": 3,
-  "api": "https://gitlab.com/st7833232/recha/-/raw/main/json/kkys.js",
-  "homePage": "https://www.kkys20.com/",
-  "extensions": [
-    {
-      "id": "kkys20_boot_retry",
-      "name": "可可影視無感啟動修復",
-      "version": "1.1.0",
-      "runAt": "document-start",
-      "code": "(function(){if(window.__kkys20BootRetry)return;window.__kkys20BootRetry=true;try{window.stop();var d=document.documentElement;if(d){d.style.cssText='background:transparent!important;visibility:hidden!important;opacity:0!important;';}}catch(e){}function openVod(){try{if(window.fm&&typeof window.fm.openVod==='function'){window.fm.openVod();return true;}if(window.fongmi&&window.fongmi.app&&typeof window.fongmi.app.openVod==='function'){window.fongmi.app.openVod();return true;}}catch(e){}return false;}openVod();setTimeout(openVod,120);setTimeout(openVod,400);setTimeout(openVod,1000);})();"
-    }
-  ]
-},
+      "key": "kkys20",
+      "name": "可可影視",
+      "type": 3,
+      "api": "https://gitlab.com/st7833232/recha/-/raw/main/py/kkys.py"
+    },
     {
       "key" : "皮皮虾",
       "name": "🏆｜銅牌｜高清",

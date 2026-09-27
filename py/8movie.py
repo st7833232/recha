@@ -11,7 +11,7 @@ import html as html_lib
 import re
 import time
 from html.parser import HTMLParser
-from urllib.parse import quote, urlencode, urljoin
+from urllib.parse import quote, urlencode, urljoin, urlsplit, urlunsplit
 
 try:
     import requests as _requests
@@ -169,6 +169,7 @@ class Spider(BaseSpider):
         self.session = _requests.Session() if _requests is not None else None
         if self.session is not None:
             self.session.headers.update(self.headers)
+        self._title_index = {}
 
     def getName(self):
         return "8Movie"
@@ -320,16 +321,17 @@ class Spider(BaseSpider):
                 "vod_pic": self._picture_for_movie_anchor(anchor, base_url),
             })
 
-        # The site has previously used a single promotional image on multiple
-        # cards. Treat duplicates as unknown, not as genuine film-specific art.
-        counts = {}
+        # The site's listing currently serves a generic 8Movie promotional
+        # graphic as the image for unrelated titles. A URL being present is
+        # not evidence that it is a title-specific cover. The original working
+        # JS source intentionally returned empty vod_pic for all list items.
+        # Do not fabricate covers from that graphic; a real per-title image
+        # requires verified site-specific image data.
         for item in result:
-            url = item.get("vod_pic", "")
-            if url:
-                counts[url] = counts.get(url, 0) + 1
-        for item in result:
-            if item.get("vod_pic") and counts[item["vod_pic"]] > 1:
-                item["vod_pic"] = ""
+            item["vod_pic"] = ""
+            if len(self._title_index) >= 1000 and item["vod_id"] not in self._title_index:
+                self._title_index.pop(next(iter(self._title_index)))
+            self._title_index[item["vod_id"]] = dict(item)
         return result
 
     def _category_url(self, tid):
@@ -557,50 +559,52 @@ class Spider(BaseSpider):
             page = max(1, int(pg))
         except (TypeError, ValueError):
             page = 1
-        # No verified website search pagination route; never show an invented
-        # second page or rerun the first page as page 2.
         if page > 1:
             return self._search_result([], keyword, page)
 
-        encoded = quote(keyword, safe="")
-        candidates = [
-            self.site + "/?s=" + encoded,
-            self.site + "/search/?q=" + encoded,
-            self.site + "/movies/search/?q=" + encoded,
-        ]
+        # Fast, deterministic search of titles actually loaded in this session.
+        found = self._search_result(list(self._title_index.values()), keyword)
+        if found["list"]:
+            return found
 
-        # Search on this site may be JS-driven; inspect actual GET forms as an
-        # extra strategy, but never infer a made-up private API endpoint.
-        homepage = self._get(self.site + "/", self.site + "/", timeout=2.5)
-        for url in self._search_urls_from_forms(homepage, keyword):
-            if url not in candidates:
-                candidates.insert(0, url)
-
-        # Hard deadline keeps all-site quick search responsive on Android.
+        # A source-native search API has not been verified. First scan the
+        # actual category pages, rather than spend the entire time budget on
+        # speculative /search endpoints. This is limited to visible titles,
+        # not a claim of full-index search.
         deadline = time.monotonic() + 16.0
-        attempted = set()
-        for url in candidates:
-            if url in attempted or time.monotonic() > deadline - 1.5:
-                continue
-            attempted.add(url)
-            source = self._get(url, self.site + "/", timeout=2.5)
-            found = self._search_result(self._parse_movie_list(source, url), keyword)
-            if found["list"]:
-                return found
-
-        # A limited, clearly bounded fallback: check visible first pages.
-        # This is NOT the website's full-index search and may miss older films.
         for tid in ("update", "rank", "1", "2", "3", "4", "5", "6"):
             if time.monotonic() > deadline - 1.5:
                 break
             url = self._category_url(tid)
-            source = self._get(url, self.site + "/", timeout=2.0)
+            source = self._get(url, self.site + "/", timeout=2.5)
+            if not source:
+                continue
             found = self._search_result(self._parse_movie_list(source, url), keyword)
             if found["list"]:
                 return found
 
-        self.log("8Movie search: no matching titles in reachable GET pages; "
-                 "the site's complete search endpoint remains unverified")
+        # Best-effort GET form detection; do not assume these routes implement
+        # the website's complete search index.
+        if time.monotonic() < deadline - 2.5:
+            homepage = self._get(self.site + "/", self.site + "/", timeout=2.0)
+            urls = self._search_urls_from_forms(homepage, keyword)
+            encoded = quote(keyword, safe="")
+            urls.extend([
+                self.site + "/?s=" + encoded,
+                self.site + "/search/?q=" + encoded,
+                self.site + "/movies/search/?q=" + encoded,
+            ])
+            seen_urls = set()
+            for url in urls:
+                if url in seen_urls or time.monotonic() > deadline - 1.5:
+                    break
+                seen_urls.add(url)
+                source = self._get(url, self.site + "/", timeout=2.0)
+                found = self._search_result(self._parse_movie_list(source, url), keyword)
+                if found["list"]:
+                    return found
+
+        self.log("8Movie: keyword not found in visible pages; full search API unverified")
         return self._search_result([], keyword)
 
     def isVideoFormat(self, url):

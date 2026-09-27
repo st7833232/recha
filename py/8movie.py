@@ -56,6 +56,21 @@ def _play_info(value):
     return (match.group(1), match.group(2)) if match else ("", "")
 
 
+# Search input is converted to Simplified by WebHTV iOS/Android before
+# searchContent() is called. 8Movie's catalogue uses Traditional titles.
+# Normalize BOTH sides so 風/风, 馴/驯, 龍/龙, etc. match without changing
+# what the user sees or what is sent to the remote website.
+# Common-character subset from WebHTV's TraditionalSimplified.swift table.
+_TRAD = "風後龍獸劇國愛萬與為麗們會個這還過來讓開關學宮鳳夢將軍舊無變聲車書東雲麼樂問誰華傳傷兒話頭灣說飛歸總億歲醫師從寵戀盡熱劍俠闖驚險懸獵謀殺賽語簡漢強線級媽戰爺閨棄復惡繼負馴蠻"
+_SIMP = "风后龙兽剧国爱万与为丽们会个这还过来让开关学宫凤梦将军旧无变声车书东云么乐问谁华传伤儿话头湾说飞归总亿岁医师从宠恋尽热剑侠闯惊险悬猎谋杀赛语简汉强线级妈战爷闺弃复恶继负驯蛮"
+assert len(_TRAD) == len(_SIMP)
+_SEARCH_TRANS = str.maketrans(_TRAD, _SIMP)
+
+
+def _search_key(value):
+    return _clean(value).casefold().translate(_SEARCH_TRANS)
+
+
 def _normalize_title(value):
     value = _clean(value)
     value = re.sub(r"^\s*\d+\s*集\s*", "", value)
@@ -540,9 +555,9 @@ class Spider(BaseSpider):
     def _search_result(self, items, keyword, page=1):
         # Do not report an unrelated homepage as "search results" merely
         # because an endpoint ignores the query string.
-        needle = _clean(keyword).casefold()
+        needle = _search_key(keyword)
         matches = [item for item in items
-                   if needle in _clean(item.get("vod_name", "")).casefold()]
+                   if needle in _search_key(item.get("vod_name", ""))]
         return {
             "list": matches,
             "page": page,

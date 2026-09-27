@@ -11,7 +11,12 @@ import html as html_lib
 import re
 import time
 from html.parser import HTMLParser
-from urllib.parse import quote, urljoin
+from urllib.parse import quote, urlencode, urljoin
+
+try:
+    import requests as _requests
+except ImportError:
+    _requests = None
 
 from base.spider import Spider as BaseSpider
 
@@ -160,6 +165,10 @@ class Spider(BaseSpider):
             "User-Agent": UA,
             "Referer": SITE + "/",
         }
+        # Creates no network traffic. Keeps cookies across homepage/search requests.
+        self.session = _requests.Session() if _requests is not None else None
+        if self.session is not None:
+            self.session.headers.update(self.headers)
 
     def getName(self):
         return "8Movie"
@@ -174,13 +183,20 @@ class Spider(BaseSpider):
         headers = dict(self.headers)
         headers["Referer"] = referer or (self.site + "/")
         try:
-            response = self.fetch(
-                target,
-                headers=headers,
-                timeout=timeout,
-                verify=True,
-                allow_redirects=True,
-            )
+            if self.session is not None:
+                response = self.session.get(
+                    target, headers=headers, timeout=timeout,
+                    verify=True, allow_redirects=True,
+                )
+            else:
+                response = self.fetch(
+                    target, headers=headers, timeout=timeout,
+                    verify=True, allow_redirects=True,
+                )
+            status = getattr(response, "status_code", 200)
+            if status >= 400:
+                self.log("8Movie HTTP %s for %s" % (status, target))
+                return ""
             if hasattr(response, "encoding"):
                 response.encoding = "utf-8"
             return getattr(response, "text", "") or ""
@@ -208,6 +224,77 @@ class Spider(BaseSpider):
 
         return ""
 
+    @staticmethod
+    def _cover_url(value, base_url):
+        raw = _clean(value)
+        if not raw:
+            return ""
+        # srcset: take its first URL, not its display-width suffix.
+        if ", " in raw or re.search(r"\s+\d+(?:w|x)(?:,|$)", raw):
+            raw = raw.split(",", 1)[0].strip().split()[0]
+        raw = raw.replace("\\/", "/")
+        if raw.startswith(("data:", "blob:", "javascript:")):
+            return ""
+        if re.search(r"(?:placeholder|loading|no[_-]?image|blank|logo|default|avatar)", raw, re.I):
+            return ""
+        if re.search(r"\.(?:svg|gif)(?:[?#]|$)", raw, re.I):
+            return ""
+        return _absolute(raw, base_url)
+
+    def _picture_from_node(self, node, base_url):
+        if node is None:
+            return ""
+        # Prefer actual lazy-image attrs; a src is often a 1px lazy placeholder.
+        images = [node] if node.tag in ("img", "source") else []
+        images.extend(_find_all(node, tag="img"))
+        images.extend(_find_all(node, tag="source"))
+        for image in images:
+            for key in ("data-original", "data-src", "data-lazy-src",
+                        "data-echo", "data-image", "data-cover", "srcset",
+                        "data-srcset", "src", "poster"):
+                value = image.attr(key)
+                url = self._cover_url(value, base_url)
+                if url:
+                    return url
+
+        # Some templates set per-card background-image rather than img.src.
+        for item in [node] + list(_walk(node)):
+            for key in ("data-bg", "data-background", "style"):
+                value = item.attr(key)
+                if not value:
+                    continue
+                if key == "style":
+                    match = re.search(r"background(?:-image)?\s*:[^;]*?url\(\s*['\"]?([^'\")]+)", value, re.I)
+                    value = match.group(1) if match else ""
+                url = self._cover_url(value, base_url)
+                if url:
+                    return url
+        return ""
+
+    def _picture_for_movie_anchor(self, anchor, base_url):
+        picture = self._picture_from_node(anchor, base_url)
+        if picture:
+            return picture
+        # The image may be a sibling, e.g. an image anchor followed by a title
+        # anchor within one <li> or <div class="movie-item">.
+        parent = anchor.parent
+        for _ in range(2):
+            if parent is None or parent.tag not in ("li", "article", "div", "a"):
+                break
+            movie_ids = {
+                _movie_id(_absolute(a.attr("href"), base_url))
+                for a in _find_all(parent, tag="a", attr_name="href")
+                if _movie_id(_absolute(a.attr("href"), base_url))
+            }
+            if len(movie_ids) > 1:
+                break  # never borrow another movie's image
+            if movie_ids:
+                picture = self._picture_from_node(parent, base_url)
+                if picture:
+                    return picture
+            parent = parent.parent
+        return ""
+
     def _parse_movie_list(self, source, base_url):
         root = _parse_dom(source)
         result = []
@@ -217,12 +304,9 @@ class Spider(BaseSpider):
             href = anchor.attr("href")
             if "/movies/" not in href:
                 continue
-
             absolute = _absolute(href, base_url)
             mid = _movie_id(absolute)
-            if not mid or mid in {"1", "2", "3", "4", "5", "6"}:
-                continue
-            if mid in seen:
+            if not mid or mid in {"1", "2", "3", "4", "5", "6"} or mid in seen:
                 continue
 
             title = self._anchor_title(anchor)
@@ -233,10 +317,19 @@ class Spider(BaseSpider):
             result.append({
                 "vod_id": mid,
                 "vod_name": title,
-                # 8Movie 列表頁目前常出現共用宣傳圖，因此刻意不放 poster。
-                "vod_pic": "",
+                "vod_pic": self._picture_for_movie_anchor(anchor, base_url),
             })
 
+        # The site has previously used a single promotional image on multiple
+        # cards. Treat duplicates as unknown, not as genuine film-specific art.
+        counts = {}
+        for item in result:
+            url = item.get("vod_pic", "")
+            if url:
+                counts[url] = counts.get(url, 0) + 1
+        for item in result:
+            if item.get("vod_pic") and counts[item["vod_pic"]] > 1:
+                item["vod_pic"] = ""
         return result
 
     def _category_url(self, tid):
@@ -377,10 +470,24 @@ class Spider(BaseSpider):
 
             episodes.append("%s$%s" % (name, play_url))
 
+        poster = ""
+        for meta in _find_all(root, tag="meta"):
+            if meta.attr("property") in ("og:image", "twitter:image") or meta.attr("name") == "twitter:image":
+                poster = self._cover_url(meta.attr("content"), url)
+                if poster:
+                    break
+        if not poster:
+            for cls in ("detail-pic", "movie-poster", "poster", "cover"):
+                panel = _first(_find_all(root, cls=cls))
+                if panel:
+                    poster = self._picture_from_node(panel, url)
+                if poster:
+                    break
+
         vod = {
             "vod_id": mid,
             "vod_name": title or ("8Movie " + mid),
-            "vod_pic": "",
+            "vod_pic": poster,
             "vod_content": content,
             "vod_play_from": "8Movie",
             "vod_play_url": "#".join(episodes),
@@ -398,47 +505,103 @@ class Spider(BaseSpider):
             },
         }
 
-    def searchContent(self, key, quick, pg="1"):
-        try:
-            if int(pg) > 1:
-                return {"list": []}
-        except Exception:
-            pass
+    def _search_urls_from_forms(self, homepage, keyword):
+        """Discover a GET-based search form, if the site exposes one in HTML."""
+        root = _parse_dom(homepage)
+        urls = []
+        for form in _find_all(root, tag="form"):
+            if form.attr("method", "get").lower() != "get":
+                continue
+            fields = _find_all(form, tag="input")
+            candidates = [x for x in fields if
+                          x.attr("placeholder") and "檢索" in x.attr("placeholder") or
+                          x.attr("placeholder") and "搜索" in x.attr("placeholder") or
+                          x.attr("placeholder") and "搜尋" in x.attr("placeholder") or
+                          x.attr("type") == "search"]
+            if not candidates:
+                candidates = [x for x in fields if x.attr("name") in
+                              ("s", "q", "keyword", "keywords", "key", "wd")]
+            if not candidates:
+                continue
+            input_name = candidates[0].attr("name")
+            if not input_name:
+                continue
+            action = _absolute(form.attr("action") or "/", self.site + "/")
+            if not action.startswith(self.site + "/") and action != self.site:
+                continue
+            hidden = {x.attr("name"): x.attr("value") for x in fields
+                      if x.attr("type").lower() == "hidden" and x.attr("name")}
+            hidden[input_name] = keyword
+            urls.append(action + ("&" if "?" in action else "?") + urlencode(hidden))
+        return urls
 
-        keyword = quote(str(key), safe="")
+    def _search_result(self, items, keyword, page=1):
+        # Do not report an unrelated homepage as "search results" merely
+        # because an endpoint ignores the query string.
+        needle = _clean(keyword).casefold()
+        matches = [item for item in items
+                   if needle in _clean(item.get("vod_name", "")).casefold()]
+        return {
+            "list": matches,
+            "page": page,
+            "pagecount": page,
+            "limit": len(matches) or 20,
+            "total": len(matches),
+        }
+
+    def searchContent(self, key, quick, pg="1"):
+        keyword = _clean(key)
+        if not keyword:
+            return self._search_result([], "")
+        try:
+            page = max(1, int(pg))
+        except (TypeError, ValueError):
+            page = 1
+        # No verified website search pagination route; never show an invented
+        # second page or rerun the first page as page 2.
+        if page > 1:
+            return self._search_result([], keyword, page)
+
+        encoded = quote(keyword, safe="")
         candidates = [
-            self.site + "/?s=" + keyword,
-            self.site + "/search/?q=" + keyword,
-            self.site + "/movies/search/?q=" + keyword,
+            self.site + "/?s=" + encoded,
+            self.site + "/search/?q=" + encoded,
+            self.site + "/movies/search/?q=" + encoded,
         ]
 
-        merged = []
-        seen = set()
+        # Search on this site may be JS-driven; inspect actual GET forms as an
+        # extra strategy, but never infer a made-up private API endpoint.
+        homepage = self._get(self.site + "/", self.site + "/", timeout=2.5)
+        for url in self._search_urls_from_forms(homepage, keyword):
+            if url not in candidates:
+                candidates.insert(0, url)
 
+        # Hard deadline keeps all-site quick search responsive on Android.
+        deadline = time.monotonic() + 16.0
+        attempted = set()
         for url in candidates:
-            source = self._get(url, self.site + "/")
-            for item in self._parse_movie_list(source, url):
-                if item["vod_id"] in seen:
-                    continue
-                seen.add(item["vod_id"])
-                merged.append(item)
-            if merged:
-                return {"list": merged}
+            if url in attempted or time.monotonic() > deadline - 1.5:
+                continue
+            attempted.add(url)
+            source = self._get(url, self.site + "/", timeout=2.5)
+            found = self._search_result(self._parse_movie_list(source, url), keyword)
+            if found["list"]:
+                return found
 
-        # 搜尋頁失效時，用首頁分類做小範圍 fallback。
-        lowered = _clean(key).lower()
+        # A limited, clearly bounded fallback: check visible first pages.
+        # This is NOT the website's full-index search and may miss older films.
         for tid in ("update", "rank", "1", "2", "3", "4", "5", "6"):
+            if time.monotonic() > deadline - 1.5:
+                break
             url = self._category_url(tid)
-            source = self._get(url, self.site + "/")
-            for item in self._parse_movie_list(source, url):
-                if lowered and lowered not in item["vod_name"].lower():
-                    continue
-                if item["vod_id"] in seen:
-                    continue
-                seen.add(item["vod_id"])
-                merged.append(item)
+            source = self._get(url, self.site + "/", timeout=2.0)
+            found = self._search_result(self._parse_movie_list(source, url), keyword)
+            if found["list"]:
+                return found
 
-        return {"list": merged}
+        self.log("8Movie search: no matching titles in reachable GET pages; "
+                 "the site's complete search endpoint remains unverified")
+        return self._search_result([], keyword)
 
     def isVideoFormat(self, url):
         value = (url or "").lower().split("?", 1)[0]
@@ -451,4 +614,8 @@ class Spider(BaseSpider):
         return ""
 
     def destroy(self):
-        pass
+        if self.session is not None:
+            try:
+                self.session.close()
+            except Exception:
+                pass

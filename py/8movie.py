@@ -9,6 +9,7 @@
 
 import html as html_lib
 import re
+import time
 from html.parser import HTMLParser
 from urllib.parse import quote, urljoin
 
@@ -263,9 +264,11 @@ class Spider(BaseSpider):
         }
 
     def homeVideoContent(self):
-        url = self._category_url("update")
-        source = self._get(url, self.site + "/")
-        return {"list": self._parse_movie_list(source, url)[:30]}
+        # Android waits for homeContent() AND homeVideoContent() before the
+        # home result is published. Do not block its cold-start UI on HTTP.
+        # Both Android variants load the first category after an empty home
+        # video list; this mirrors the previously working JS startup flow.
+        return {"list": []}
 
     def categoryContent(self, tid, pg, filter, extend):
         page = 1
@@ -285,12 +288,28 @@ class Spider(BaseSpider):
             }
 
         url = self._category_url(tid)
-        source = self._get(url, self.site + "/")
-        items = self._parse_movie_list(source, url)
+        items = []
+
+        # A cold-start category request can race network readiness. Retry only
+        # an empty/failed result, never an already parsed list. Bounded waits
+        # keep the request inside Android's 30-second VOD task timeout even
+        # when remote Python-script initialisation also needs time.
+        for attempt, timeout in enumerate((4, 6)):
+            source = self._get(url, self.site + "/", timeout=timeout)
+            if source:
+                items = self._parse_movie_list(source, url)
+                if items:
+                    break
+            if attempt == 0:
+                time.sleep(0.4)
+
+        if not items:
+            self.log("8Movie category returned no parsed items: tid=%s" % tid)
+
         return {
             "page": 1,
             "pagecount": 1,
-            "limit": len(items),
+            "limit": len(items) or 30,
             "total": len(items),
             "list": items,
         }

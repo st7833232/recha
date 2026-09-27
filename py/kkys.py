@@ -874,8 +874,12 @@ class Spider(BaseSpider):
             source_name = (label_node.text() if label_node else source_item.text()) or ("线路%d" % (index + 1))
             source_name = _clean(source_name)
 
-            # The dedicated "4K" source is intentionally excluded; "超清2" remains.
-            if re.search(r"4k", source_name, re.I):
+            # Hide 4K and the "超清2" playback source. Filter the source and
+            # its episode box together so later sources keep their own episodes.
+            normalized_name = re.sub(r"\s+", "", source_name)
+            if re.search(r"4k", normalized_name, re.I) or re.fullmatch(
+                r"超清[2２](?:線路|线路)?", normalized_name
+            ):
                 continue
 
             episodes = []
@@ -892,8 +896,9 @@ class Spider(BaseSpider):
                 play_from.append(source_name)
                 play_urls.append("#".join(episodes))
 
-        # Fallback for a template change: keep the source usable even if the paired wrappers change.
-        if not play_urls:
+        # Only use the generic fallback if source/episode wrappers were absent.
+        # Otherwise it could silently reintroduce a deliberately hidden line.
+        if not play_urls and pair_count == 0:
             episodes = []
             for anchor in _find_all(root, tag="a", attr_name="href"):
                 href = anchor.attr("href")

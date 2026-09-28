@@ -199,8 +199,8 @@ def _filter_values(values):
 COMMON_AREA = _filter_values([
     ("全部", ""),
     ("大陆", "中国大陆"),
-    ("香港", "香港"),
-    ("台湾", "台湾"),
+    ("香港", "中国香港"),
+    ("台湾", "中国台湾"),
     ("美国", "美国"),
     ("日本", "日本"),
     ("韩国", "韩国"),
@@ -778,6 +778,13 @@ class Spider(BaseSpider):
         extend = extend or {}
         kind = _clean(extend.get("type", ""))
         area = _clean(extend.get("area", ""))
+        # Match the site's actual category values, including values persisted
+        # by earlier Python configs. UI label and request value are distinct.
+        area = {
+            "台湾": "中国台湾",
+            "台灣": "中国台湾",
+            "香港": "中国香港",
+        }.get(area, area)
         lang = _clean(extend.get("lang", ""))
         year = _clean(extend.get("year", ""))
         sort = _clean(extend.get("sort", "")) or "3"

@@ -875,6 +875,12 @@ class Spider(BaseSpider):
 
         vod_director = detail_rows.get("导演", "") or detail_rows.get("導演", "")
         vod_actor = detail_rows.get("演员", "") or detail_rows.get("演員", "")
+
+        # KKYS may include repeated slash separators before/inside cast text.
+        # Remove only runs of 3+ separators so normal name separators remain intact.
+        vod_director = re.sub(r"(?:\s*[/／|｜]\s*){3,}", " ", vod_director).strip(" /／|｜")
+        vod_actor = re.sub(r"(?:\s*[/／|｜]\s*){3,}", " ", vod_actor).strip(" /／|｜")
+
         vod_area = detail_rows.get("地区", "") or detail_rows.get("地區", "")
         vod_type = detail_rows.get("类型", "") or detail_rows.get("類型", "")
         vod_lang = detail_rows.get("语言", "") or detail_rows.get("語言", "")

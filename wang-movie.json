@@ -188,25 +188,6 @@
       "changeable": 1
     },
     {
-      "key": "csp_AppQi_爱影",
-      "name": "🏆｜愛影｜5倍◎無廣",
-      "type": 3,
-      "api": "csp_AppQi",
-      "jar": "./jar/愛影.jar",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 1,
-      "ext": {
-        "url": "http://222.211.75.252:16118",
-        "dataKey": "0UKM8jkasM8tdzgW",
-        "dataIv": "0UKM8jkasM8tdzgW",
-        "init": "initV122",
-        "search": "mineInfo",
-        "ua": "okhttp/3.10.0"
-      }
-    },
-    {
       "name": "🎯荐片",
       "key": "薦片",
       "type": 3,
@@ -366,15 +347,6 @@
       "changeable": 1
     },
     {
-      "key": "bubutv",
-      "name": "🏆｜步步｜4K",
-      "type": 3,
-      "api": "./json/4k.js",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1
-    },
-    {
       "key": "橘汁",
       "name": "🏆｜橘子｜？",
       "type": 3,
@@ -491,14 +463,6 @@
       "jar": "./jar/pro.jar"
     },
     {
-      "key": "韩圈",
-      "name": "🏆｜韓圈｜高畫 + 有點慢",
-      "type": 3,
-      "api": "csp_Hxq",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
-      "ext": "http://www.小不点.com/api/2026/fishhxq.php"
-    },
-    {
       "key": "剧圈99",
       "name": "🏆｜劇圈｜高畫 + 開頭被剪掉",
       "type": 3,
@@ -512,20 +476,6 @@
         "package": "com.qingtangxiaozhuan.xyz",
         "buildNumber": "2002",
         "buildSignature": "054FA8DDA4319C6B6A9B954CA5777541C993F00B1B0BD4394F7EDE48184C4594"
-      }
-    },
-    {
-      "key": "不戳",
-      "name": "🏆｜不錯｜高畫 + 普通",
-      "type": 3,
-      "api": "csp_AppGet",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
-      "searchable": 1,
-      "changeable": 1,
-      "ext": {
-        "url": "https://appcmszbc.zbc4k.app",
-        "dataKey": "pYrEkiWRYhBLTUTC",
-        "dataIv": "pYrEkiWRYhBLTUTC"
       }
     },
     {
@@ -1536,80 +1486,6 @@
       "changeable": 1
     },
     {
-      "key": "vod_极速",
-      "name": "🧲｜極速｜高清(浮水印廣告)",
-      "type": 1,
-      "api": "https://jszyapi.com/api.php/provide/vod/at/json",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "categories": [
-        "内地劇",
-        "欧美劇",
-        "日劇",
-        "韩劇",
-        "台湾劇",
-        "香港劇",
-        "马泰劇",
-        "悬疑片",
-        "喜劇片",
-        "动作片",
-        "爱情片",
-        "科幻片",
-        "恐怖片",
-        "劇情片",
-        "战争片",
-        "犯罪片",
-        "记录片",
-        "动画片",
-        "日本动漫",
-        "欧美动漫",
-        "中国动漫",
-        "大陆综艺",
-        "日韩综艺",
-        "港台综艺",
-        "欧美综艺",
-        "体育赛事"
-      ]
-    },
-    {
-      "key": "vod_豪华",
-      "name": "🧲｜豪華｜高清(浮水印廣告)",
-      "type": 1,
-      "api": "https://hhzyapi.com/api.php/provide/vod/?ac=list",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "categories": [
-        "动作片",
-        "喜劇片",
-        "爱情片",
-        "科幻片",
-        "恐怖片",
-        "劇情片",
-        "战争片",
-        "悬疑片",
-        "犯罪片",
-        "奇幻片",
-        "记录片",
-        "动画片",
-        "内地劇",
-        "香港劇",
-        "台湾劇",
-        "日劇",
-        "韩劇",
-        "欧美劇",
-        "马泰劇",
-        "大陆综艺",
-        "港台综艺",
-        "日韩综艺",
-        "欧美综艺",
-        "中国动漫",
-        "日本动漫",
-        "欧美动漫"
-      ]
-    },
-    {
       "key": "vod_飘零",
       "name": "🧲｜飘零｜高清(浮水印廣告)",
       "type": 1,
@@ -1640,14 +1516,6 @@
         "动漫电影",
         "邵氏大片"
       ]
-    },
-    {
-      "key": "vod_虎牙",
-      "name": "🧲｜虎牙｜高清(浮水印廣告)",
-      "type": 1,
-      "api": "https://www.huyaapi.com/api.php/provide/vod/at/",
-      "searchable": 1,
-      "changeable": 1
     },
     {
       "key": "vod_魔都",
@@ -1761,89 +1629,6 @@
       ]
     },
     {
-      "key": "vod_索尼",
-      "name": "🧲｜索尼｜高清(浮水印廣告)",
-      "type": 1,
-      "api": "https://suoniapi.com/api.php/provide/vod/?ac=list",
-      "searchable": 1,
-      "changeable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "categories": [
-        "动作片",
-        "喜劇片",
-        "爱情片",
-        "科幻片",
-        "恐怖片",
-        "劇情片",
-        "战争片",
-        "悬疑片",
-        "犯罪片",
-        "冒险片",
-        "动画片",
-        "惊悚片",
-        "奇幻片",
-        "国产劇",
-        "欧美劇",
-        "韩劇",
-        "日劇",
-        "港劇",
-        "台劇",
-        "泰劇",
-        "大陆综艺",
-        "日韩综艺",
-        "港台综艺",
-        "欧美综艺",
-        "国产动漫",
-        "日韩动漫",
-        "欧美动漫",
-        "动画片",
-        "港台动漫",
-        "海外动漫"
-      ]
-    },
-    {
-      "key": "vod_無盡",
-      "name": "🧲｜無盡｜高清(浮水印廣告)",
-      "type": 1,
-      "api": "https://api.wujinapi.me/api.php/provide/vod/?ac=list",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "categories": [
-        "动作片",
-        "动画片",
-        "喜劇片",
-        "爱情片",
-        "科幻片",
-        "恐怖片",
-        "劇情片",
-        "战争片",
-        "悬疑片",
-        "犯罪片",
-        "奇幻片",
-        "邵氏电影",
-        "纪录片",
-        "短劇",
-        "国产劇",
-        "香港劇",
-        "台湾劇",
-        "日本劇",
-        "韩国劇",
-        "美国劇",
-        "泰劇",
-        "海外劇",
-        "大陆综艺",
-        "港台综艺",
-        "日韩综艺",
-        "欧美综艺",
-        "国产动漫",
-        "日韩动漫",
-        "欧美动漫",
-        "影视解说"
-      ]
-    },
-    {
       "key": "vod_优酷",
       "name": "🧲｜優酷｜高清(浮水印廣告)",
       "type": 1,
@@ -1876,24 +1661,6 @@
       ]
     },
     {
-      "key": "vod_順播",
-      "name": "🧲｜順播｜高清(浮水印廣告)",
-      "type": 1,
-      "api": "https://subocaiji.com/api.php/provide/vod/",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1
-    },
-    {
-      "key": "vod_红牛",
-      "name": "🧲｜红牛｜高清(浮水印廣告)",
-      "type": 1,
-      "api": "https://www.hongniuzy2.com/api.php/provide/vod/",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1
-    },
-    {
       "key": "drpyS_枫林影视",
       "name": "🧲｜楓林｜高清(浮水印廣告)",
       "type": 4,
@@ -1901,32 +1668,6 @@
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 1
-    },
-    {
-      "key": "vod_光速",
-      "name": "🧲｜光速｜高清◎慢播(浮水印廣告)",
-      "type": 1,
-      "api": "https://api.guangsuapi.com/api.php/provide/vod/from/gsm3u8/?ac=list",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "categories": [
-        "动作片",
-        "爱情片",
-        "科幻片",
-        "战争片",
-        "劇情片",
-        "恐怖片",
-        "喜劇片",
-        "大陆劇",
-        "港澳劇",
-        "台湾劇",
-        "欧美劇",
-        "动漫电影",
-        "韩劇",
-        "日劇",
-        "泰劇"
-      ]
     },
     {
       "key": "如意",
@@ -2302,24 +2043,158 @@
       "类型": "听书",
       "lang": "ds",
       "ext": ""
+    },
+    {
+      "key": "Ikanbot",
+      "name": "🥇｜愛看機器人｜",
+      "type": 3,
+      "api": "csp_Ikanbot",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "changeable": 1,
+      "ext": "https://www1.aikanbot.com"
+    },
+    {
+      "key": "独播影视",
+      "name": "🏆｜獨播影視｜",
+      "type": 3,
+      "api": "csp_Duboku",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "changeable": 1
+    },
+    {
+      "key": "xbpq_开心影院",
+      "name": "🥇｜開心影院｜",
+      "type": 3,
+      "api": "csp_XBPQ",
+      "jar": "./jar/xyqxbpq.jar;md5;fd3cefc7302f3a39a442682f802b11e5",
+      "searchable": 0,
+      "quickSearch": 0,
+      "filterable": 1,
+      "ext": {
+        "请求头": "User-Agent$MOBILE_UA",
+        "编码": "UTF-8",
+        "主页url": "https://www.kxyy1.cc/",
+        "分类url": "https://www.kxyy1.cc/vodshow/{cateId}--------{catePg}---.html",
+        "分类": "电影$1#电视剧$2#综艺$3#动漫$4",
+        "数组": "card card-sm card-link&&</p>",
+        "标题": "card-title text-truncate\">&&<",
+        "图片": "<img src=\"&&\"",
+        "链接": "href=\"&&\"",
+        "副标题": "text-red-fg\">&&<",
+        "线路数组": "class=\"nav-link border-bottom-0&&</a>",
+        "线路标题": "</svg>&&",
+        "播放数组": "class=\"btn-group\">&&</div>"
+      }
+    },
+    {
+      "key": "xbpq_奈飞工厂",
+      "name": "🥇｜奈飛工廠｜",
+      "type": 3,
+      "api": "csp_XBPQ",
+      "jar": "./jar/xyqxbpq.jar;md5;fd3cefc7302f3a39a442682f802b11e5",
+      "searchable": 0,
+      "quickSearch": 0,
+      "filterable": 1,
+      "ext": {
+        "请求头": "User-Agent$MOBILE_UA",
+        "编码": "UTF-8",
+        "主页url": "https://www.netflixgc.com/",
+        "分类url": "https://www.netflixgc.com/vodtype/{cateId}.html",
+        "分类": "电影$1#剧集$2#漫剧$3#综艺$23#纪录片$24",
+        "数组": "public-list-exp&&</a>",
+        "标题": "title=\"&&\"",
+        "图片": "data-src=\"&&\"",
+        "链接": "href=\"&&\"",
+        "片名": "slide-info-title hide\">&&<",
+        "简介": "class=\"text cor3\">&&<",
+        "线路数组": "class=\"swiper-slide\">&&</a>",
+        "线路标题": "</i>&&",
+        "播放数组": "anthology-list-play size\">&&</ul>",
+        "线路二次截取": "anthology-tab nav-swiper&&</div></div>"
+      }
+    },
+    {
+      "key": "xbpq_饭搭子",
+      "name": "🥇｜飯搭子｜",
+      "type": 3,
+      "api": "csp_XBPQ",
+      "jar": "./jar/xyqxbpq.jar;md5;fd3cefc7302f3a39a442682f802b11e5",
+      "searchable": 0,
+      "quickSearch": 0,
+      "filterable": 1,
+      "ext": {
+        "请求头": "User-Agent$MOBILE_UA",
+        "编码": "UTF-8",
+        "主页url": "https://fdzys.com/",
+        "分类url": "https://fdzys.com/{cateId}",
+        "分类": "电影$movie#电视剧$tv#综艺$zongyi#动漫$dongman#短剧$duanju",
+        "数组": "myui-vodbox-content&&card-info",
+        "标题": "alt=\"&&\"",
+        "图片": "data-src=\"&&\"",
+        "链接": "href=\"&&\"",
+        "线路数组": "swiper-slide-text\">&&<span",
+        "线路标题": "&&",
+        "播放数组": "lists-box fade in&&  </div>",
+        "线路二次截取": "class=\"player-box\">&&</ul>",
+        "播放二次截取": "id=\"playlist1\"&&mzady-route-probe.js",
+        "跳转播放链接": "player_aaaa=*\"url\":\"&&\"[包含:dytt-network.com]",
+        "二次跳转播放链接": "https://vip.dytt-network.com+url = \"&&\""
+      }
+    },
+    {
+      "key": "xbpq_追影",
+      "name": "🥇｜追影｜",
+      "type": 3,
+      "api": "csp_XBPQ",
+      "jar": "./jar/xyqxbpq.jar;md5;fd3cefc7302f3a39a442682f802b11e5",
+      "searchable": 0,
+      "quickSearch": 0,
+      "filterable": 1,
+      "ext": {
+        "请求头": "User-Agent$MOBILE_UA",
+        "编码": "UTF-8",
+        "主页url": "https://zhuiying3.cc/",
+        "分类url": "https://zhuiying3.cc/vodshow/{cateId}--------{catePg}---.html",
+        "分类": "电影$dianying#电视剧$dianshiju#综艺$zongyi#动漫$dongman#短剧$duanju",
+        "数组": "<a href=\"/video/&&card-title",
+        "标题": "alt=\"&&\"",
+        "图片": "src=\"&&\"",
+        "链接": "&&\"",
+        "链接前缀": "/video/",
+        "副标题": "card-status\">&&<",
+        "线路数组": "class=\"tab-name\">&&</span>",
+        "线路标题": "&&",
+        "播放数组": "class=\"ep-square-list\"&&</div>"
+      }
+    },
+    {
+      "key": "xbpq_片库",
+      "name": "🥇｜片庫｜",
+      "type": 3,
+      "api": "csp_XBPQ",
+      "jar": "./jar/xyqxbpq.jar;md5;fd3cefc7302f3a39a442682f802b11e5",
+      "searchable": 0,
+      "quickSearch": 0,
+      "filterable": 1,
+      "ext": {
+        "请求头": "User-Agent$MOBILE_UA",
+        "编码": "UTF-8",
+        "主页url": "https://4k01.pianku.online/",
+        "分类url": "https://4k01.pianku.online/vodtype/{cateId}-{catePg}.html",
+        "分类": "电影$20#剧集$37#动漫$43#综艺$45",
+        "片名": "detail-title\">&&<",
+        "简介": "剧情简介</h3><p>&&</p>",
+        "线路数组": "source-tab-item&&</span>",
+        "线路标题": "\">&&",
+        "播放数组": "url-grid-play&&</div>"
+      }
     }
   ],
   "lives": [
-    {
-      "name": "日本斯玛特",
-      "url": "http://dbm.de5.net/smt.php",
-      "playerType": 2,
-      "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
-      "logo": "https://gcore.jsdelivr.net/gh/taksssss/tv/icon/{name}.png",
-      "ua": "dream"
-    },
-    {
-      "name": "美国斯玛特",
-      "url": "http://dbmlasvgas.sylu.cc:2086/trams.m3u?token=NqAERVyoLmQn0tNu9lona-PV7_EltgWnrAr6Rkaf8Ro=",
-      "playerType": 2,
-      "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
-      "logo": "https://gcore.jsdelivr.net/gh/taksssss/tv/icon/{name}.png"
-    },
     {
       "name": "tv123",
       "type": 0,
@@ -2383,12 +2258,6 @@
       "url": "https://t.freetv.fun/m3u/playlist_all.txt"
     },
     {
-      "name": "🐬4GTV(梯子任何节点)1080p",
-      "type": 0,
-      "ua": "okhttp",
-      "url": "https://ha.msbot.dpdns.org/4gtv_api.php"
-    },
-    {
       "name": "FreeTV.fun",
       "type": 0,
       "ua": "okhttp",
@@ -2419,23 +2288,6 @@
       "epg": "https://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Hong_Kong",
       "logo": "https://epg.112114.xyz/logo/{name}.png",
       "pass": true
-    },
-    {
-      "name": "🔞秘密基地",
-      "type": 0,
-      "ua": "okhttp",
-      "url": "https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/xxx视频资源.txt"
-    },
-    {
-      "name": "🔞午夜剧场",
-      "type": 0,
-      "playerType": 2,
-      "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-      "logo": "https://epg.112114.xyz/logo/{name}.png",
-      "url": "https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/午夜剧场.txt",
-      "header": {
-        "X-Api-key": "8692bd33270440d4d2941b814b81a25a1eb84a7205532971714c4299c57449e0..0..1738210005..5cf2c4ad-043b-4234-83a2-e84ae917"
-      }
     },
     {
       "name": "台灣景點直播(freeman)",

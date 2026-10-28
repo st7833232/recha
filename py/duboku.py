@@ -134,6 +134,13 @@ class Spider(BaseSpider):
     def getName(self):
         return "獨播影視"
 
+    def init(self, extend=""):
+        # FongMi 官方 Python 模組的 base 把 init 設為抽象方法，不定義就無法建立（W-206）
+        pass
+
+    def destroy(self):
+        pass
+
     def _api(self, path, query=""):
         try:
             response = requests.get(API + path + _sign() + query, headers=HEADERS, timeout=15)

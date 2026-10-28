@@ -264,3 +264,6 @@ class Spider(BaseSpider):
     # Direct play with the desktop user agent, and only that header.
     def playerContent(self, flag, id, vipFlags):
         return {"parse": 0, "url": _text(id), "header": {"User-Agent": UA}}
+
+    def destroy(self):
+        pass

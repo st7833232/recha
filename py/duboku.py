@@ -160,7 +160,7 @@ class Spider(BaseSpider):
                 items += _vods(section.get("VodList"))
         return {"list": items}
 
-    # /vodshow/{cateId}-{area}-{by}-{class}-{lang}----{pg}---{year}, each part URL-encoded.
+    # /vodshow/{cateId}-{area}-{by}-{class}-{lang}-{letter}---{pg}---{year}, each part URL-encoded.
     def categoryContent(self, tid, pg, filter, extend):
         ext = extend if isinstance(extend, dict) else {}
         page = _page_number(pg)
@@ -169,11 +169,16 @@ class Spider(BaseSpider):
             return _enc(ext.get(key, fallback))
 
         path = ("/vodshow/" + part("cateId", tid) + "-" + part("area") + "-" + part("by") + "-" + part("class")
-                + "-" + part("lang") + "----" + str(page) + "---" + part("year"))
+                + "-" + part("lang") + "-" + part("letter") + "---" + str(page) + "---" + part("year"))
         data = self._api(path)
-        # Upstream's paging, unbounded: 48 a page.
-        return {"list": _vods(data.get("VodList") if isinstance(data, dict) else None), "page": page,
-                "pagecount": 44739243, "limit": 48, "total": 2147483647}
+        raw = data.get("VodList") if isinstance(data, dict) else None
+        # 48 a page; a short page is the last one, so the app stops asking for empty pages. Counted before
+        # _vods() drops unusable items, or one dropped item would end paging. A failed request is not the end:
+        # FongMi steps back and lets the next scroll retry.
+        count = len(raw) if isinstance(raw, list) else 0
+        last = isinstance(raw, list) and count < 48
+        return {"list": _vods(raw), "page": page, "pagecount": page if last else page + 1, "limit": 48,
+                "total": (page - 1) * 48 + count + (0 if last else 1)}
 
     def detailContent(self, ids):
         vid = _text(ids[0] if ids else "")

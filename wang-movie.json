@@ -384,6 +384,26 @@
       "changeable": 1
     },
     {
+      "key": "洛雪TV",
+      "name": "🥇｜洛雪TV｜",
+      "type": 3,
+      "api": "./py/lxyy.py",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 0,
+      "changeable": 1
+    },
+    {
+      "key": "搜TV啦",
+      "name": "🥇｜搜TV啦｜",
+      "type": 3,
+      "api": "./py/sotvla.py",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 0,
+      "changeable": 1
+    },
+    {
       "key": "皮皮虾",
       "name": "🏆｜銅牌｜高清",
       "type": 3,

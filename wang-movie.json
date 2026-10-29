@@ -274,7 +274,8 @@
         "搜索数组": "class=\"search-item\">&&search-item-type",
         "搜索标题": "search-item-title text-decoration-none\">&&<",
         "搜索图片": "src=\"&&\"",
-        "搜索链接": "href=\"&&\""
+        "搜索链接": "href=\"&&\"",
+        "跳转播放链接": "\"url\":\"&&\""
       }
     },
     {
@@ -342,35 +343,6 @@
         "主页url": "https://www.77dpw.vip/",
         "分类url": "https://www.77dpw.vip/vodtype/{cateId}-{catePg}.html",
         "分类": "电影$1#剧集$3#动漫$2#短剧$4"
-      }
-    },
-    {
-      "key": "xbpq_电影人生",
-      "name": "🥇｜電影人生｜",
-      "type": 3,
-      "api": "csp_XBPQ",
-      "jar": "./jar/xyqxbpq.jar;md5;fd3cefc7302f3a39a442682f802b11e5",
-      "searchable": 0,
-      "quickSearch": 0,
-      "filterable": 1,
-      "ext": {
-        "请求头": "User-Agent$MOBILE_UA",
-        "编码": "UTF-8",
-        "主页url": "https://global.dyrsxm.cc/",
-        "分类url": "https://global.dyrsxm.cc/{cateId}.html?page={catePg}[firstPage=https://global.dyrsxm.cc/{cateId}.html];;u0",
-        "分类": "电影$dianying#电视剧$dianshiju#综艺$zongyi#动漫$dongman#短剧$duanju",
-        "数组": "<div class=\"group relative flex flex-col h-full\">&&</a>",
-        "标题": "title=\"&&\"",
-        "图片": "data-src=\"&&\"",
-        "链接": "href=\"&&\"",
-        "线路数组": "<div class=\"seqlist&&function isep(",
-        "线路标题": "data-origin=\"&&\"",
-        "播放数组": "<div class=\"seqlist&&function isep(",
-        "播放列表": "<a&&</a>",
-        "播放标题": "data-title=\"&&\"+<button*>&&</button>",
-        "播放链接": "href=\"&&\"[替换:&amp;>>&]",
-        "跳转播放链接": "rel=\"preload\" href=\"&&\"[替换:&amp;>>&]",
-        "嗅探词": ".m3u8#.mp4#/api/m3u8?"
       }
     },
     {

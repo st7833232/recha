@@ -3,8 +3,11 @@ import re
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, quote
+# FongMi 官方 Python 模組：Spider 要繼承 base.spider（init 是抽象方法），重新整理設定時會呼叫 destroy
+from base.spider import Spider as BaseSpider
 
-class Spider:
+
+class Spider(BaseSpider):
     
     def __init__(self):
         self.name = "永乐视频"
@@ -28,7 +31,7 @@ class Spider:
         return self.name
     
     def getDependence(self):
-        return ["json", "re", "requests", "bs4"]
+        return []  # FongMi 會把這裡列的名字當成同目錄 .py 下載；標準庫／已安裝模組不能列
     
     def init(self, extend):
         return True
@@ -295,3 +298,6 @@ class Spider:
             
     def localProxy(self, params):
         return None
+
+    def destroy(self):
+        pass

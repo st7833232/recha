@@ -2338,7 +2338,7 @@
       "key": "咖啡",
       "name": "⚽｜咖啡｜體育",
       "type": 3,
-      "api": "http://itv666.cc/星河传媒/py/kafei2.py",
+      "api": "./py/kafei2.py",
       "searchable": 1,
       "changeable": 1,
       "quickSearch": 1,

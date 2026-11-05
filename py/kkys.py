@@ -1289,6 +1289,9 @@ class Spider(BaseSpider):
         # CDN 可能轉址：段網址要以實際送出清單的位址為基底。
         base = str(getattr(response, "url", "") or url)
         if "#EXT-X-STREAM-INF" in text:
+            # 音軌／字幕另有清單（#EXT-X-MEDIA 帶 URI）時，只刪影片會讓它們差廣告的秒數：整份播原位址。
+            if re.search(r"^#EXT-X-MEDIA:.*\bURI=", text, re.M):
+                return None
             # 只包白名單網域的 variant；轉址到別的網域就直連（代理會拒絕那個網域）。
             text = _ad_absolute_uris(text, base, lambda u: self._ad_proxy_url(u) if _ad_host_allowed(u) else u)
         else:
@@ -1459,12 +1462,20 @@ def _ad_self_check(fixture_dir=None):
     assert down.localProxy({"type": "adm3u8", "url": "https://evil.example/a.m3u8"})[0] == 404, "foreign host"
     foreign = _Probe({master_url: "#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=1\nhttps://other-cdn.example/v.m3u8\n"})
     assert foreign._ad_answer(master_url).splitlines()[-1] == "https://other-cdn.example/v.m3u8", "foreign variant stays direct"
+    split = _Probe({master_url: '#EXTM3U\n#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="a",NAME="zh",URI="audio/zh.m3u8"\n'
+                                '#EXT-X-STREAM-INF:BANDWIDTH=1,AUDIO="a"\n3000k/hls/mixed.m3u8\n',
+                    variant_url: _ad_synthetic({5: ad_a})})
+    assert split._ad_play_url(master_url) == master_url, "separate audio plays the original"
+    assert split.localProxy({"type": "adm3u8", "url": master_url})[0] == 302, "separate audio 302"
+    muxed = _Probe(dict(probe.answers))
+    muxed.answers[master_url] = '#EXTM3U\n#EXT-X-MEDIA:TYPE=CLOSED-CAPTIONS,GROUP-ID="c",NAME="cc",INSTREAM-ID="CC1"\n' + probe.answers[master_url][8:]
+    assert muxed._ad_play_url(master_url).startswith("http://127.0.0.1:9978/proxy"), "in-band captions still proxied"
     slow = _Probe(dict(probe.answers))
     slow._AD_PREFETCH_TIMEOUT, slow.delay = 0.3, 1.0  # 每個 IP 都等滿逾時的情形
     started = time.time()
     assert slow._ad_play_url(master_url) == master_url, "slow CDN plays the original"
     assert time.time() - started < 0.6, "prefetch is bounded by its timeout in total"
-    checked = 25
+    checked = 28
     if fixture_dir:
         import os
         for name, expected in sorted(_AD_FIXTURES.items()):

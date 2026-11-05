@@ -65,6 +65,13 @@
       "changeable": 1
     },
     {
+      "key": "红果短剧",
+      "name": "红果 • 短剧",
+      "type": 3,
+      "api": "./py/红果短剧.py",
+      "genre": "shortdrama"
+    },
+    {
       "key": "Ikanbot",
       "name": "🥇｜愛看機器人｜",
       "type": 3,

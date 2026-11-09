@@ -567,13 +567,6 @@
       "api": "./py/农民影视.py"
     },
     {
-      "key": "三秋影视",
-      "name": "🥇｜三秋｜普畫◎秒播",
-      "type": 3,
-      "api": "csp_App3Q",
-      "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a"
-    },
-    {
       "key": "奴娜",
       "name": "🥇｜奴娜丨高清◎秒播(d線)",
       "type": 3,
@@ -723,23 +716,6 @@
       "quickSearch": 1,
       "filterable": 1,
       "genre": "shortdrama"
-    },
-    {
-      "key": "果果短剧",
-      "name": "📺｜紅果短剧｜瀟灑",
-      "type": 3,
-      "api": "csp_XBPQ",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
-      "searchable": 1,
-      "changeable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "请求头": "User-Agent$MOBILE_UA",
-        "编码": "UTF-8",
-        "分类": "重生$1#穿越$2#爽剧$3#言情$4#都市$5#古装$6#悬疑$7#剧情$8",
-        "分类url": "https://www.mochadj.com/i/{cateId}-{catePg}.html"
-      }
     },
     {
       "key": "djjh",
@@ -1308,16 +1284,6 @@
       "ext": "./drpy_js/去看吧.js"
     },
     {
-      "key": "drpy_js_爱弹幕",
-      "name": "🎡｜爱动漫",
-      "type": 3,
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "api": "./drpy_libs/drpy2.min.js",
-      "ext": "./drpy_js/爱弹幕.js"
-    },
-    {
       "key": "hipy_js_七色番[漫]",
       "name": "🎡｜七色番动漫",
       "type": 3,
@@ -1326,16 +1292,6 @@
       "filterable": 1,
       "api": "./drpy_libs/drpy2.min.js",
       "ext": "./drpy_js/七色番[漫].js"
-    },
-    {
-      "key": "hipy_js_爱弹幕[漫]",
-      "name": "🎡｜爱动漫",
-      "type": 3,
-      "api": "./drpy_libs/drpy2.min.js",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": "./drpy_js/爱弹幕[漫].js"
     },
     {
       "key": "咖啡",

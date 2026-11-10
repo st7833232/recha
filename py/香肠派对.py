@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 import json
+import base64
 import urllib.parse
 from urllib.parse import urljoin, quote
 import sys
@@ -301,15 +302,20 @@ class Spider(Spider):
         html = rsp.text
         
         # 方法1：从 player_aaaa 提取
-        match = re.search(r'var player_aaaa\s*=\s*({.*?});', html, re.DOTALL)
+        # player_aaaa 已是 JSON，後面可能沒有分號（直接接 </script>）
+        match = re.search(r'var player_aaaa\s*=\s*(\{.*?\})\s*;?\s*</script>', html, re.DOTALL)
         if match:
             try:
-                js_str = match.group(1)
-                js_str = re.sub(r'(\w+):', r'"\1":', js_str)
-                player_data = json.loads(js_str)
-                if player_data.get('url'):
-                    return {"parse": 0, "playUrl": player_data['url']}
-            except:
+                player_data = json.loads(match.group(1))
+                url = player_data.get('url', '')
+                # 苹果CMS：encrypt 1 = escape，2 = base64 後 escape
+                if str(player_data.get('encrypt')) == '1':
+                    url = urllib.parse.unquote(url)
+                elif str(player_data.get('encrypt')) == '2':
+                    url = urllib.parse.unquote(base64.b64decode(url).decode('utf-8'))
+                if url.startswith('http'):
+                    return {"parse": 0, "url": url, "header": self.header()}
+            except Exception:
                 pass
         
         # 方法2：从 iframe 提取（关键修复）

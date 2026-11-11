@@ -727,7 +727,7 @@
       "key": "星芽短剧",
       "name": "📺｜星芽短劇",
       "type": 3,
-      "api": "https://git.yylx.win/raw.githubusercontent.com/PizazzGY/NewTVBox/main/movie/py/XYDJ.py",
+      "api": "./py/星芽短剧.py",
       "jar": "./jar/river-fman.jar;md5;ca48f92eac069c85a17e4ccf381d5f0a",
       "searchable": 1,
       "changeable": 1,

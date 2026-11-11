@@ -429,6 +429,12 @@
 			"api": "./py/8X8X.py"
 		},
 		{
+			"key": "Jable_py",
+			"name": "🔞Jable.py",
+			"type": 3,
+			"api": "./py/Jable.py"
+		},
+		{
 			"key": "Xvideos",
 			"name": "🔞Xvideos.py",
 			"type": 3,

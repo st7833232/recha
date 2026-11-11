@@ -112,17 +112,6 @@
       "changeable" : 0
     },
     {
-      "key"        : "小红书",
-      "name"       : "⏭｜小淫书(嗷嗚)｜PYTHON",
-      "type"       : 3,
-      "searchable" : 1,
-      "changeable" : 1,
-      "quickSearch": 1,
-      "api"        : "./py/py_小红薯.py",
-      "playerType" : 2,
-      "filterable" : 1
-    },
-    {
       "key"        : "py_MissAv",
       "name"       : "⏭｜MissAv(沐辰)｜PYTHON",
       "type"       : 3,
@@ -338,18 +327,6 @@
       "jar"       : "./jar/xc0126.jar",
       "filterable": 1
     },
-    {
-      "key"       : "Jable",
-      "name"      : "🔞Jable(海外)",
-      "type"      : 3,
-      "api"       : "csp_Jable",
-      "spider"    : "./jar/pg-0923.jar",
-      "changeable": 1,
-      "ext"       : "127.0.0.1:10072$$$null$$$1",
-      "style"     : {"type": "rect", "ratio": 1.77},
-      "timeout"   : 60,
-      "jar"       : "./jar/pg-0923.jar"
-    },
 		{
 			"key": "Pornhub",
 			"name": "🔞Pornhub.py",
@@ -450,12 +427,6 @@
 			"name": "🔞8X8X.py",
 			"type": 3,
 			"api": "./py/8X8X.py"
-		},
-		{
-			"key": "Jable",
-			"name": "🔞Jable.py",
-			"type": 3,
-			"api": "./py/Jable.py"
 		},
 		{
 			"key": "Xvideos",
@@ -1062,15 +1033,6 @@
       "filterable": 1
     },
     {
-      "key"       : "csp_XYQHiker_300分类",
-      "name"      : "🔞300分类",
-      "type"      : 3,
-      "api"       : "csp_XYQHiker",
-      "jar"       : "./jar/Aoki.jar",
-      "filterable": 1,
-      "ext"       : "./json/300分类.json"
-    },
-    {
       "key"        : "csp_XYQHiker_avbebe",
       "name"       : "🔞AVbebe(點選點播才有東西)",
       "type"       : 3,
@@ -1511,39 +1473,6 @@
       "quickSearch": 1,
       "filterable" : 1,
       "changeable" : 1
-    },
-    {
-      "key"        : "csp_XYQHiker_jiedm",
-      "name"       : "🔞jiedmAV(XYQHiker)",
-      "type"       : 3,
-      "api"        : "csp_XYQHiker",
-      "searchable" : 1,
-      "quickSearch": 0,
-      "filterable" : 0,
-      "ext"        : "./json/jiedm.json",
-      "style"      : {"type": "rect", "ratio": 1.6}
-    },
-    {
-      "key"        : "csp_XYQHiker_动漫PRO",
-      "name"       : "🔞动漫PRO(XYQHiker)",
-      "type"       : 3,
-      "api"        : "csp_XYQHiker",
-      "searchable" : 1,
-      "quickSearch": 0,
-      "filterable" : 0,
-      "ext"        : "./json/动漫pro.json",
-      "style"      : {"type": "rect", "ratio": 1.6}
-    },
-    {
-      "key"        : "csp_XYQHiker_avbebe",
-      "name"       : "🔞AVbebe(XYQHiker)",
-      "type"       : 3,
-      "api"        : "csp_XYQHiker",
-      "searchable" : 1,
-      "quickSearch": 0,
-      "filterable" : 0,
-      "ext"        : "./json/avbebe.json",
-      "style"      : {"type": "rect", "ratio": 1.33}
     }
   ],
   "lives": [ 

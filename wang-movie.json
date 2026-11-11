@@ -735,18 +735,6 @@
       "filterable": 1
     },
     {
-      "key": "星芽短剧",
-      "name": "📺｜星芽短剧｜瀟灑",
-      "type": 3,
-      "api": "./py/星芽短剧.py",
-      "jar": "./jar/xiaosa-0807.jar;md5;4d26327105a38656ed960e7422a85251",
-      "searchable": 1,
-      "changeable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "genre": "shortdrama"
-    },
-    {
       "key": "好看短剧",
       "name": "📺｜好看短剧｜瀟灑",
       "type": 3,

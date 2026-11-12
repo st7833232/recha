@@ -1,9 +1,799 @@
 # -*- coding: utf-8 -*-
+# === 發布與修改說明 ===
+# SPDX-License-Identifier: GPL-3.0-only
+# 紅果短劇 Python 修改版，修改日期：2026-11-12。
+# 本修改版依 GNU General Public License version 3 發布。
+# 完整授權與來源聲明隨本檔附於下方；不另加禁止商用或 24 小時刪除限制。
+# 獨立取得此單檔即可取得可修改的原始碼、GPL 副本與必要來源資訊。
+# 本修改版發布授權：GPL-3.0-only
+#
+# 2026-11-12 依使用者指令，先還原 W-297 前的 Python 基準，
+# 再只採用 zfdang/hongguo-open-player PR #92 的播放適配：
+# https://github.com/zfdang/hongguo-open-player/pull/92
+# 固定版本：3f687c5b07e04eb194141f8eeb78ded86d646024
+# 來源檔案：src/server/native/argus.js、src/server/native/app-source.js、
+# src/server/native/playback-device.js；檔頭均標示 GPL-3.0-only。
+# 該版本根 LICENSE 為 AGPL-3.0，原文另存 LICENSE.open-player.txt，
+# 與檔頭聲明分開記錄，不將二者混稱。本適配未搬入其伺服器程式。
+#
+# 修改範圍：精確分集選擇、重用既有 Argus 551／Ladon 運算、
+# 74332 匿名裝置註冊與 gzip POST、player/v1 主備模型與 shortplay 備援、
+# 終止型拒絕處理，以及既有離線 JavaScript 對照測試資料。
+# 先前另加的官網自動線路／公開網頁取源已移除；Medusa 回到原基準，
+# 不保留早期 video_tab／新增 Medusa 適配或其額外重構。
+# 不宣稱乾淨室開發。保留既有 Python 介面及舊簽章運算核心，
+# 模型請求改採已註冊的匿名播放流程。
+# 本次未複製帳號、下載、轉碼或新增媒體解密實作。
+#
+# 基底來源查核參考 qist/tvbox；發布者於 2026-11-12 確認持有 qist 許可，
+# 本次依該權利依據發布修改版，不將此紀錄冒充原作者另行簽發的授權文件。
+# 本修改版整體依 GPL-3.0-only 提供，允許商業使用、修改與再散布；
+# 原作者及其他上游版本仍保有其原有授權。
+# 完整 GPL version 3 原文見 COPYING；上游來源鏈見 UPSTREAM-NOTICE.txt。
+# 該來源鏈及目錄名稱保留歷史 attribution，不代表本輪另外採用 jackotom 適配。
+# 歷史取流、解碼與片尾證據，以及本輪還原／等價驗證的限制，
+# 見 docs/W-297-hongguo-jackotom-sign.md。舊 auto 裝置紀錄未記下實際取源路徑，
+# 不作新版固定畫質的 App UI 證據。
+# 2026-11-12 已另在當前 PY 完成固定 1080 iOS App 線上播放、App 下載與
+# 本機檔案離線播放；新版 Android UI 未驗，不將 iOS 單集結果擴大為全平台通過。
+#
+# 發布與驗證範圍（2026-11-12）：
+# 本次由發布者明確豁免 Android 測試；iOS 的固定畫質線上播放、App 內下載
+# 及重新啟動後的本機離線播放已通過單集驗證，不宣稱 Android 或全部情境通過。
+# 本次發布只增加註解與文件，可執行內容與該已測候選一致。
+#
+# 無擔保與責任限制：
+# 本程式依現狀提供，在適用法律允許的範圍內不提供明示或默示擔保，
+# 包括適售性、特定用途適用性及第三方服務持續可用性；詳見 GPL 第 15、16 條。
+# 本聲明不排除依法不得預先免除的責任，亦不排除依法應負的故意或重大過失責任。
+# 程式授權不授予第三方影音、商標、帳號或平台服務的使用權。
+# 倉庫中非商用、24 小時刪除等不相容額外限制，不適用此 PY 的 GPL 覆蓋內容。
+#
+# === 上游保存的歷史來源聲明（原文） ===
+# App playback source and signature attribution
+#
+# The necessary signature, Spade URL and content-key routines in app-source.js
+# are adapted from N3urda/hongguoTV server/vendor/hongguo.cjs, commit
+#  eea73e6a45569a2cbbb9440f7cd5290c459b0b70.
+# https://github.com/N3urda/hongguoTV
+#
+# That file is an unmodified copy (renamed) of spider/js/红果果[短].js from
+# woshishiq1/drpys, commit 22261adfa31435e3b3ef5a730b8a2a75bcaf1715.
+# https://github.com/woshishiq1/drpys
+# Upstream license: GPL-3.0; complete text: LICENSE.drpys.txt.
+#
+# Modifications made 2026-10-07: limited playback adapter, local ephemeral
+# visitor identifiers, removal of fixed visitor fingerprints, strict response
+# and destination validation, supported-codec selection and no secret logging.
+# SM3 is implemented locally for Electron runtimes without native SM3 support.
+# The optional 3.4 App search request reuses the same signature routines for a
+# GET query (hash branch 0 only); it keeps the local ephemeral device identity and
+# is disabled by default. The existing application remains GPL-3.0.
+#
+# Anonymous playback registration and inline-model compatibility added 2026-10-27
+# reference tsukiyo-zero/hongguoTV, commit
+# 388931852ddc614db8b00775a3dc54c5ede6307f (GPL-3.0-only):
+# https://github.com/tsukiyo-zero/hongguoTV
+# DeviceRegister.kt attributes its registration protocol to charlie901208/HGTV,
+# feat/phone-login (GPL-3.0-only). playback-device.js adapts its ttEncrypt and
+# registration fields using Node crypto/zlib, with no cookies, account login,
+# persistent identity or retained device_token. The same in-memory identity is
+# shared by all playback requests in one process. Search/catalogue signatures
+# remain unchanged. app-source.js also accepts the current inline video_list
+# without requesting the legacy fallback endpoint.
+#
+# Playback empty-response recovery added 2026-11-10 references the video_tab
+# query parameters and nested model response documented in
+# tsukiyo-zero/hongguoTV ContentRepository.tabVideoModel, commit
+# 49532eb2110dcbf66814ca250d43f222e7193895 (GPL-3.0-only), at the same upstream URL.
+# app-source.js reuses its existing signing routines for a bodyless GET after
+# an empty legacy POST, preserves exact episode matching and accepts both array
+# and object rendition lists. No account cookies, tokens or persistent identity
+# are added. Validation and scope are recorded in docs/issue-130-video-tab.md.
+#
+# W-297 最終來源補充（2026-11-11）：
+# 上述為 jackotom 上游的歷史 attribution，video_tab 不是本候選的最終路徑。
+# 本候選另參考 zfdang/hongguo-open-player PR #92，固定版本
+# 3f687c5b07e04eb194141f8eeb78ded86d646024：
+# https://github.com/zfdang/hongguo-open-player/pull/92
+# src/server/native 下的 argus.js、app-source.js、playback-device.js
+# 檔頭為 GPL-3.0-only；
+# argus.js 另標示來自 fqapp／N3urda/hongguoTV 的演算法來源。
+# 根 LICENSE 為 GNU Affero General Public License version 3，
+# 完整原文見 LICENSE.open-player.txt，GPL 原文見 COPYING。
+# 本次重用既有 Python 運算並適配請求與匿名註冊，未搬入伺服器程式、
+# 固定裝置身份或持久化憑證；具體改動與驗證見任務文件。
+#
+# === GNU GPL version 3 完整原文 ===
+#                     GNU GENERAL PUBLIC LICENSE
+#                       Version 3, 29 June 2007
+#
+#
+#
+#
+#
+#
+#  Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+#  Everyone is permitted to copy and distribute verbatim copies
+#  of this license document, but changing it is not allowed.
+#
+#
+#                             Preamble
+#
+#   The GNU General Public License is a free, copyleft license for
+# software and other kinds of works.
+#
+#   The licenses for most software and other practical works are designed
+# to take away your freedom to share and change the works.  By contrast,
+# the GNU General Public License is intended to guarantee your freedom to
+# share and change all versions of a program--to make sure it remains free
+# software for all its users.  We, the Free Software Foundation, use the
+# GNU General Public License for most of our software; it applies also to
+# any other work released this way by its authors.  You can apply it to
+# your programs, too.
+#
+#   When we speak of free software, we are referring to freedom, not
+# price.  Our General Public Licenses are designed to make sure that you
+# have the freedom to distribute copies of free software (and charge for
+# them if you wish), that you receive source code or can get it if you
+# want it, that you can change the software or use pieces of it in new
+# free programs, and that you know you can do these things.
+#
+#   To protect your rights, we need to prevent others from denying you
+# these rights or asking you to surrender the rights.  Therefore, you have
+# certain responsibilities if you distribute copies of the software, or if
+# you modify it: responsibilities to respect the freedom of others.
+#
+#   For example, if you distribute copies of such a program, whether
+# gratis or for a fee, you must pass on to the recipients the same
+# freedoms that you received.  You must make sure that they, too, receive
+# or can get the source code.  And you must show them these terms so they
+# know their rights.
+#
+#   Developers that use the GNU GPL protect your rights with two steps:
+# (1) assert copyright on the software, and (2) offer you this License
+# giving you legal permission to copy, distribute and/or modify it.
+#
+#   For the developers' and authors' protection, the GPL clearly explains
+# that there is no warranty for this free software.  For both users' and
+# authors' sake, the GPL requires that modified versions be marked as
+# changed, so that their problems will not be attributed erroneously to
+# authors of previous versions.
+#
+#   Some devices are designed to deny users access to install or run
+# modified versions of the software inside them, although the manufacturer
+# can do so.  This is fundamentally incompatible with the aim of
+# protecting users' freedom to change the software.  The systematic
+# pattern of such abuse occurs in the area of products for individuals to
+# use, which is precisely where it is most unacceptable.  Therefore, we
+# have designed this version of the GPL to prohibit the practice for those
+# products.  If such problems arise substantially in other domains, we
+# stand ready to extend this provision to those domains in future versions
+# of the GPL, as needed to protect the freedom of users.
+#
+#   Finally, every program is threatened constantly by software patents.
+# States should not allow patents to restrict development and use of
+# software on general-purpose computers, but in those that do, we wish to
+# avoid the special danger that patents applied to a free program could
+# make it effectively proprietary.  To prevent this, the GPL assures that
+# patents cannot be used to render the program non-free.
+#
+#   The precise terms and conditions for copying, distribution and
+# modification follow.
+#
+#                        TERMS AND CONDITIONS
+#
+#   0. Definitions.
+#
+#   "This License" refers to version 3 of the GNU General Public License.
+#
+#   "Copyright" also means copyright-like laws that apply to other kinds of
+# works, such as semiconductor masks.
+#
+#   "The Program" refers to any copyrightable work licensed under this
+# License.  Each licensee is addressed as "you".  "Licensees" and
+# "recipients" may be individuals or organizations.
+#
+#   To "modify" a work means to copy from or adapt all or part of the work
+# in a fashion requiring copyright permission, other than the making of an
+# exact copy.  The resulting work is called a "modified version" of the
+# earlier work or a work "based on" the earlier work.
+#
+#   A "covered work" means either the unmodified Program or a work based
+# on the Program.
+#
+#   To "propagate" a work means to do anything with it that, without
+# permission, would make you directly or secondarily liable for
+# infringement under applicable copyright law, except executing it on a
+# computer or modifying a private copy.  Propagation includes copying,
+# distribution (with or without modification), making available to the
+# public, and in some countries other activities as well.
+#
+#   To "convey" a work means any kind of propagation that enables other
+# parties to make or receive copies.  Mere interaction with a user through
+# a computer network, with no transfer of a copy, is not conveying.
+#
+#   An interactive user interface displays "Appropriate Legal Notices"
+# to the extent that it includes a convenient and prominently visible
+# feature that (1) displays an appropriate copyright notice, and (2)
+# tells the user that there is no warranty for the work (except to the
+# extent that warranties are provided), that licensees may convey the
+# work under this License, and how to view a copy of this License.  If
+# the interface presents a list of user commands or options, such as a
+# menu, a prominent item in the list meets this criterion.
+#
+#   1. Source Code.
+#
+#   The "source code" for a work means the preferred form of the work
+# for making modifications to it.  "Object code" means any non-source
+# form of a work.
+#
+#   A "Standard Interface" means an interface that either is an official
+# standard defined by a recognized standards body, or, in the case of
+# interfaces specified for a particular programming language, one that
+# is widely used among developers working in that language.
+#
+#   The "System Libraries" of an executable work include anything, other
+# than the work as a whole, that (a) is included in the normal form of
+# packaging a Major Component, but which is not part of that Major
+# Component, and (b) serves only to enable use of the work with that
+# Major Component, or to implement a Standard Interface for which an
+# implementation is available to the public in source code form.  A
+# "Major Component", in this context, means a major essential component
+# (kernel, window system, and so on) of the specific operating system
+# (if any) on which the executable work runs, or a compiler used to
+# produce the work, or an object code interpreter used to run it.
+#
+#   The "Corresponding Source" for a work in object code form means all
+# the source code needed to generate, install, and (for an executable
+# work) run the object code and to modify the work, including scripts to
+# control those activities.  However, it does not include the work's
+# System Libraries, or general-purpose tools or generally available free
+# programs which are used unmodified in performing those activities but
+# which are not part of the work.  For example, Corresponding Source
+# includes interface definition files associated with source files for
+# the work, and the source code for shared libraries and dynamically
+# linked subprograms that the work is specifically designed to require,
+# such as by intimate data communication or control flow between those
+# subprograms and other parts of the work.
+#
+#   The Corresponding Source need not include anything that users
+# can regenerate automatically from other parts of the Corresponding
+# Source.
+#
+#   The Corresponding Source for a work in source code form is that
+# same work.
+#
+#   2. Basic Permissions.
+#
+#   All rights granted under this License are granted for the term of
+# copyright on the Program, and are irrevocable provided the stated
+# conditions are met.  This License explicitly affirms your unlimited
+# permission to run the unmodified Program.  The output from running a
+# covered work is covered by this License only if the output, given its
+# content, constitutes a covered work.  This License acknowledges your
+# rights of fair use or other equivalent, as provided by copyright law.
+#
+#   You may make, run and propagate covered works that you do not
+# convey, without conditions so long as your license otherwise remains
+# in force.  You may convey covered works to others for the sole purpose
+# of having them make modifications exclusively for you, or provide you
+# with facilities for running those works, provided that you comply with
+# the terms of this License in conveying all material for which you do
+# not control copyright.  Those thus making or running the covered works
+# for you must do so exclusively on your behalf, under your direction
+# and control, on terms that prohibit them from making any copies of
+# your copyrighted material outside their relationship with you.
+#
+#   Conveying under any other circumstances is permitted solely under
+# the conditions stated below.  Sublicensing is not allowed; section 10
+# makes it unnecessary.
+#
+#   3. Protecting Users' Legal Rights From Anti-Circumvention Law.
+#
+#   No covered work shall be deemed part of an effective technological
+# measure under any applicable law fulfilling obligations under article
+# 11 of the WIPO copyright treaty adopted on 20 December 1996, or
+# similar laws prohibiting or restricting circumvention of such
+# measures.
+#
+#   When you convey a covered work, you waive any legal power to forbid
+# circumvention of technological measures to the extent such circumvention
+# is effected by exercising rights under this License with respect to
+# the covered work, and you disclaim any intention to limit operation or
+# modification of the work as a means of enforcing, against the work's
+# users, your or third parties' legal rights to forbid circumvention of
+# technological measures.
+#
+#   4. Conveying Verbatim Copies.
+#
+#   You may convey verbatim copies of the Program's source code as you
+# receive it, in any medium, provided that you conspicuously and
+# appropriately publish on each copy an appropriate copyright notice;
+# keep intact all notices stating that this License and any
+# non-permissive terms added in accord with section 7 apply to the code;
+# keep intact all notices of the absence of any warranty; and give all
+# recipients a copy of this License along with the Program.
+#
+#   You may charge any price or no price for each copy that you convey,
+# and you may offer support or warranty protection for a fee.
+#
+#   5. Conveying Modified Source Versions.
+#
+#   You may convey a work based on the Program, or the modifications to
+# produce it from the Program, in the form of source code under the
+# terms of section 4, provided that you also meet all of these conditions:
+#
+#     a) The work must carry prominent notices stating that you modified
+#     it, and giving a relevant date.
+#
+#     b) The work must carry prominent notices stating that it is
+#     released under this License and any conditions added under section
+#     7.  This requirement modifies the requirement in section 4 to
+#     "keep intact all notices".
+#
+#     c) You must license the entire work, as a whole, under this
+#     License to anyone who comes into possession of a copy.  This
+#     License will therefore apply, along with any applicable section 7
+#     additional terms, to the whole of the work, and all its parts,
+#     regardless of how they are packaged.  This License gives no
+#     permission to license the work in any other way, but it does not
+#     invalidate such permission if you have separately received it.
+#
+#     d) If the work has interactive user interfaces, each must display
+#     Appropriate Legal Notices; however, if the Program has interactive
+#     interfaces that do not display Appropriate Legal Notices, your
+#     work need not make them do so.
+#
+#   A compilation of a covered work with other separate and independent
+# works, which are not by their nature extensions of the covered work,
+# and which are not combined with it such as to form a larger program,
+# in or on a volume of a storage or distribution medium, is called an
+# "aggregate" if the compilation and its resulting copyright are not
+# used to limit the access or legal rights of the compilation's users
+# beyond what the individual works permit.  Inclusion of a covered work
+# in an aggregate does not cause this License to apply to the other
+# parts of the aggregate.
+#
+#   6. Conveying Non-Source Forms.
+#
+#   You may convey a covered work in object code form under the terms
+# of sections 4 and 5, provided that you also convey the
+# machine-readable Corresponding Source under the terms of this License,
+# in one of these ways:
+#
+#     a) Convey the object code in, or embodied in, a physical product
+#     (including a physical distribution medium), accompanied by the
+#     Corresponding Source fixed on a durable physical medium
+#     customarily used for software interchange.
+#
+#     b) Convey the object code in, or embodied in, a physical product
+#     (including a physical distribution medium), accompanied by a
+#     written offer, valid for at least three years and valid for as
+#     long as you offer spare parts or customer support for that product
+#     model, to give anyone who possesses the object code either (1) a
+#     copy of the Corresponding Source for all the software in the
+#     product that is covered by this License, on a durable physical
+#     medium customarily used for software interchange, for a price no
+#     more than your reasonable cost of physically performing this
+#     conveying of source, or (2) access to copy the
+#     Corresponding Source from a network server at no charge.
+#
+#     c) Convey individual copies of the object code with a copy of the
+#     written offer to provide the Corresponding Source.  This
+#     alternative is allowed only occasionally and noncommercially, and
+#     only if you received the object code with such an offer, in accord
+#     with subsection 6b.
+#
+#     d) Convey the object code by offering access from a designated
+#     place (gratis or for a charge), and offer equivalent access to the
+#     Corresponding Source in the same way through the same place at no
+#     further charge.  You need not require recipients to copy the
+#     Corresponding Source along with the object code.  If the place to
+#     copy the object code is a network server, the Corresponding Source
+#     may be on a different server (operated by you or a third party)
+#     that supports equivalent copying facilities, provided you maintain
+#     clear directions next to the object code saying where to find the
+#     Corresponding Source.  Regardless of what server hosts the
+#     Corresponding Source, you remain obligated to ensure that it is
+#     available for as long as needed to satisfy these requirements.
+#
+#     e) Convey the object code using peer-to-peer transmission, provided
+#     you inform other peers where the object code and Corresponding
+#     Source of the work are being offered to the general public at no
+#     charge under subsection 6d.
+#
+#   A separable portion of the object code, whose source code is excluded
+# from the Corresponding Source as a System Library, need not be
+# included in conveying the object code work.
+#
+#   A "User Product" is either (1) a "consumer product", which means any
+# tangible personal property which is normally used for personal, family,
+# or household purposes, or (2) anything designed or sold for incorporation
+# into a dwelling.  In determining whether a product is a consumer product,
+# doubtful cases shall be resolved in favor of coverage.  For a particular
+# product received by a particular user, "normally used" refers to a
+# typical or common use of that class of product, regardless of the status
+# of the particular user or of the way in which the particular user
+# actually uses, or expects or is expected to use, the product.  A product
+# is a consumer product regardless of whether the product has substantial
+# commercial, industrial or non-consumer uses, unless such uses represent
+# the only significant mode of use of the product.
+#
+#   "Installation Information" for a User Product means any methods,
+# procedures, authorization keys, or other information required to install
+# and execute modified versions of a covered work in that User Product from
+# a modified version of its Corresponding Source.  The information must
+# suffice to ensure that the continued functioning of the modified object
+# code is in no case prevented or interfered with solely because
+# modification has been made.
+#
+#   If you convey an object code work under this section in, or with, or
+# specifically for use in, a User Product, and the conveying occurs as
+# part of a transaction in which the right of possession and use of the
+# User Product is transferred to the recipient in perpetuity or for a
+# fixed term (regardless of how the transaction is characterized), the
+# Corresponding Source conveyed under this section must be accompanied
+# by the Installation Information.  But this requirement does not apply
+# if neither you nor any third party retains the ability to install
+# modified object code on the User Product (for example, the work has
+# been installed in ROM).
+#
+#   The requirement to provide Installation Information does not include a
+# requirement to continue to provide support service, warranty, or updates
+# for a work that has been modified or installed by the recipient, or for
+# the User Product in which it has been modified or installed.  Access to a
+# network may be denied when the modification itself materially and
+# adversely affects the operation of the network or violates the rules and
+# protocols for communication across the network.
+#
+#   Corresponding Source conveyed, and Installation Information provided,
+# in accord with this section must be in a format that is publicly
+# documented (and with an implementation available to the public in
+# source code form), and must require no special password or key for
+# unpacking, reading or copying.
+#
+#   7. Additional Terms.
+#
+#   "Additional permissions" are terms that supplement the terms of this
+# License by making exceptions from one or more of its conditions.
+# Additional permissions that are applicable to the entire Program shall
+# be treated as though they were included in this License, to the extent
+# that they are valid under applicable law.  If additional permissions
+# apply only to part of the Program, that part may be used separately
+# under those permissions, but the entire Program remains governed by
+# this License without regard to the additional permissions.
+#
+#   When you convey a copy of a covered work, you may at your option
+# remove any additional permissions from that copy, or from any part of
+# it.  (Additional permissions may be written to require their own
+# removal in certain cases when you modify the work.)  You may place
+# additional permissions on material, added by you to a covered work,
+# for which you have or can give appropriate copyright permission.
+#
+#   Notwithstanding any other provision of this License, for material you
+# add to a covered work, you may (if authorized by the copyright holders of
+# that material) supplement the terms of this License with terms:
+#
+#     a) Disclaiming warranty or limiting liability differently from the
+#     terms of sections 15 and 16 of this License; or
+#
+#     b) Requiring preservation of specified reasonable legal notices or
+#     author attributions in that material or in the Appropriate Legal
+#     Notices displayed by works containing it; or
+#
+#     c) Prohibiting misrepresentation of the origin of that material, or
+#     requiring that modified versions of such material be marked in
+#     reasonable ways as different from the original version; or
+#
+#     d) Limiting the use for publicity purposes of names of licensors or
+#     authors of the material; or
+#
+#     e) Declining to grant rights under trademark law for use of some
+#     trade names, trademarks, or service marks; or
+#
+#     f) Requiring indemnification of licensors and authors of that
+#     material by anyone who conveys the material (or modified versions of
+#     it) with contractual assumptions of liability to the recipient, for
+#     any liability that these contractual assumptions directly impose on
+#     those licensors and authors.
+#
+#   All other non-permissive additional terms are considered "further
+# restrictions" within the meaning of section 10.  If the Program as you
+# received it, or any part of it, contains a notice stating that it is
+# governed by this License along with a term that is a further
+# restriction, you may remove that term.  If a license document contains
+# a further restriction but permits relicensing or conveying under this
+# License, you may add to a covered work material governed by the terms
+# of that license document, provided that the further restriction does
+# not survive such relicensing or conveying.
+#
+#   If you add terms to a covered work in accord with this section, you
+# must place, in the relevant source files, a statement of the
+# additional terms that apply to those files, or a notice indicating
+# where to find the applicable terms.
+#
+#   Additional terms, permissive or non-permissive, may be stated in the
+# form of a separately written license, or stated as exceptions;
+# the above requirements apply either way.
+#
+#   8. Termination.
+#
+#   You may not propagate or modify a covered work except as expressly
+# provided under this License.  Any attempt otherwise to propagate or
+# modify it is void, and will automatically terminate your rights under
+# this License (including any patent licenses granted under the third
+# paragraph of section 11).
+#
+#   However, if you cease all violation of this License, then your
+# license from a particular copyright holder is reinstated (a)
+# provisionally, unless and until the copyright holder explicitly and
+# finally terminates your license, and (b) permanently, if the copyright
+# holder fails to notify you of the violation by some reasonable means
+# prior to 60 days after the cessation.
+#
+#   Moreover, your license from a particular copyright holder is
+# reinstated permanently if the copyright holder notifies you of the
+# violation by some reasonable means, this is the first time you have
+# received notice of violation of this License (for any work) from that
+# copyright holder, and you cure the violation prior to 30 days after
+# your receipt of the notice.
+#
+#   Termination of your rights under this section does not terminate the
+# licenses of parties who have received copies or rights from you under
+# this License.  If your rights have been terminated and not permanently
+# reinstated, you do not qualify to receive new licenses for the same
+# material under section 10.
+#
+#   9. Acceptance Not Required for Having Copies.
+#
+#   You are not required to accept this License in order to receive or
+# run a copy of the Program.  Ancillary propagation of a covered work
+# occurring solely as a consequence of using peer-to-peer transmission
+# to receive a copy likewise does not require acceptance.  However,
+# nothing other than this License grants you permission to propagate or
+# modify any covered work.  These actions infringe copyright if you do
+# not accept this License.  Therefore, by modifying or propagating a
+# covered work, you indicate your acceptance of this License to do so.
+#
+#   10. Automatic Licensing of Downstream Recipients.
+#
+#   Each time you convey a covered work, the recipient automatically
+# receives a license from the original licensors, to run, modify and
+# propagate that work, subject to this License.  You are not responsible
+# for enforcing compliance by third parties with this License.
+#
+#   An "entity transaction" is a transaction transferring control of an
+# organization, or substantially all assets of one, or subdividing an
+# organization, or merging organizations.  If propagation of a covered
+# work results from an entity transaction, each party to that
+# transaction who receives a copy of the work also receives whatever
+# licenses to the work the party's predecessor in interest had or could
+# give under the previous paragraph, plus a right to possession of the
+# Corresponding Source of the work from the predecessor in interest, if
+# the predecessor has it or can get it with reasonable efforts.
+#
+#   You may not impose any further restrictions on the exercise of the
+# rights granted or affirmed under this License.  For example, you may
+# not impose a license fee, royalty, or other charge for exercise of
+# rights granted under this License, and you may not initiate litigation
+# (including a cross-claim or counterclaim in a lawsuit) alleging that
+# any patent claim is infringed by making, using, selling, offering for
+# sale, or importing the Program or any portion of it.
+#
+#   11. Patents.
+#
+#   A "contributor" is a copyright holder who authorizes use under this
+# License of the Program or a work on which the Program is based.  The
+# work thus licensed is called the contributor's "contributor version".
+#
+#   A contributor's "essential patent claims" are all patent claims
+# owned or controlled by the contributor, whether already acquired or
+# hereafter acquired, that would be infringed by some manner, permitted
+# by this License, of making, using, or selling its contributor version,
+# but do not include claims that would be infringed only as a
+# consequence of further modification of the contributor version.  For
+# purposes of this definition, "control" includes the right to grant
+# patent sublicenses in a manner consistent with the requirements of
+# this License.
+#
+#   Each contributor grants you a non-exclusive, worldwide, royalty-free
+# patent license under the contributor's essential patent claims, to
+# make, use, sell, offer for sale, import and otherwise run, modify and
+# propagate the contents of its contributor version.
+#
+#   In the following three paragraphs, a "patent license" is any express
+# agreement or commitment, however denominated, not to enforce a patent
+# (such as an express permission to practice a patent or covenant not to
+# sue for patent infringement).  To "grant" such a patent license to a
+# party means to make such an agreement or commitment not to enforce a
+# patent against the party.
+#
+#   If you convey a covered work, knowingly relying on a patent license,
+# and the Corresponding Source of the work is not available for anyone
+# to copy, free of charge and under the terms of this License, through a
+# publicly available network server or other readily accessible means,
+# then you must either (1) cause the Corresponding Source to be so
+# available, or (2) arrange to deprive yourself of the benefit of the
+# patent license for this particular work, or (3) arrange, in a manner
+# consistent with the requirements of this License, to extend the patent
+# license to downstream recipients.  "Knowingly relying" means you have
+# actual knowledge that, but for the patent license, your conveying the
+# covered work in a country, or your recipient's use of the covered work
+# in a country, would infringe one or more identifiable patents in that
+# country that you have reason to believe are valid.
+#
+#   If, pursuant to or in connection with a single transaction or
+# arrangement, you convey, or propagate by procuring conveyance of, a
+# covered work, and grant a patent license to some of the parties
+# receiving the covered work authorizing them to use, propagate, modify
+# or convey a specific copy of the covered work, then the patent license
+# you grant is automatically extended to all recipients of the covered
+# work and works based on it.
+#
+#   A patent license is "discriminatory" if it does not include within
+# the scope of its coverage, prohibits the exercise of, or is
+# conditioned on the non-exercise of one or more of the rights that are
+# specifically granted under this License.  You may not convey a covered
+# work if you are a party to an arrangement with a third party that is
+# in the business of distributing software, under which you make payment
+# to the third party based on the extent of your activity of conveying
+# the work, and under which the third party grants, to any of the
+# parties who would receive the covered work from you, a discriminatory
+# patent license (a) in connection with copies of the covered work
+# conveyed by you (or copies made from those copies), or (b) primarily
+# for and in connection with specific products or compilations that
+# contain the covered work, unless you entered into that arrangement,
+# or that patent license was granted, prior to 28 March 2007.
+#
+#   Nothing in this License shall be construed as excluding or limiting
+# any implied license or other defenses to infringement that may
+# otherwise be available to you under applicable patent law.
+#
+#   12. No Surrender of Others' Freedom.
+#
+#   If conditions are imposed on you (whether by court order, agreement or
+# otherwise) that contradict the conditions of this License, they do not
+# excuse you from the conditions of this License.  If you cannot convey a
+# covered work so as to satisfy simultaneously your obligations under this
+# License and any other pertinent obligations, then as a consequence you may
+# not convey it at all.  For example, if you agree to terms that obligate you
+# to collect a royalty for further conveying from those to whom you convey
+# the Program, the only way you could satisfy both those terms and this
+# License would be to refrain entirely from conveying the Program.
+#
+#   13. Use with the GNU Affero General Public License.
+#
+#   Notwithstanding any other provision of this License, you have
+# permission to link or combine any covered work with a work licensed
+# under version 3 of the GNU Affero General Public License into a single
+# combined work, and to convey the resulting work.  The terms of this
+# License will continue to apply to the part which is the covered work,
+# but the special requirements of the GNU Affero General Public License,
+# section 13, concerning interaction through a network will apply to the
+# combination as such.
+#
+#   14. Revised Versions of this License.
+#
+#   The Free Software Foundation may publish revised and/or new versions of
+# the GNU General Public License from time to time.  Such new versions will
+# be similar in spirit to the present version, but may differ in detail to
+# address new problems or concerns.
+#
+#   Each version is given a distinguishing version number.  If the
+# Program specifies that a certain numbered version of the GNU General
+# Public License "or any later version" applies to it, you have the
+# option of following the terms and conditions either of that numbered
+# version or of any later version published by the Free Software
+# Foundation.  If the Program does not specify a version number of the
+# GNU General Public License, you may choose any version ever published
+# by the Free Software Foundation.
+#
+#   If the Program specifies that a proxy can decide which future
+# versions of the GNU General Public License can be used, that proxy's
+# public statement of acceptance of a version permanently authorizes you
+# to choose that version for the Program.
+#
+#   Later license versions may give you additional or different
+# permissions.  However, no additional obligations are imposed on any
+# author or copyright holder as a result of your choosing to follow a
+# later version.
+#
+#   15. Disclaimer of Warranty.
+#
+#   THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
+# APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
+# HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY
+# OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM
+# IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF
+# ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+#
+#   16. Limitation of Liability.
+#
+#   IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+# WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS
+# THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY
+# GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE
+# USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF
+# DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD
+# PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),
+# EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGES.
+#
+#   17. Interpretation of Sections 15 and 16.
+#
+#   If the disclaimer of warranty and limitation of liability provided
+# above cannot be given local legal effect according to their terms,
+# reviewing courts shall apply local law that most closely approximates
+# an absolute waiver of all civil liability in connection with the
+# Program, unless a warranty or assumption of liability accompanies a
+# copy of the Program in return for a fee.
+#
+#                      END OF TERMS AND CONDITIONS
+#
+#
+#             How to Apply These Terms to Your New Programs
+#
+#   If you develop a new program, and you want it to be of the greatest
+# possible use to the public, the best way to achieve this is to make it
+# free software which everyone can redistribute and change under these terms.
+#
+#   To do so, attach the following notices to the program.  It is safest
+# to attach them to the start of each source file to most effectively
+# state the exclusion of warranty; and each file should have at least
+# the "copyright" line and a pointer to where the full notice is found.
+#
+#     <one line to give the program's name and a brief idea of what it does.>
+#     Copyright (C) <year>  <name of author>
+#
+#     This program is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     (at your option) any later version.
+#
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+# Also add information on how to contact you by electronic and paper mail.
+#
+#   If the program does terminal interaction, make it output a short
+# notice like this when it starts in an interactive mode:
+#
+#     <program>  Copyright (C) <year>  <name of author>
+#     This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+#     This is free software, and you are welcome to redistribute it
+#     under certain conditions; type `show c' for details.
+#
+# The hypothetical commands `show w' and `show c' should show the appropriate
+# parts of the General Public License.  Of course, your program's commands
+# might be different; for a GUI interface, you would use an "about box".
+#
+#   You should also get your employer (if you work as a programmer) or school,
+# if any, to sign a "copyright disclaimer" for the program, if necessary.
+# For more information on this, and how to apply and follow the GNU GPL, see
+# <https://www.gnu.org/licenses/>.
+#
+#   The GNU General Public License does not permit incorporating your program
+# into proprietary programs.  If your program is a subroutine library, you
+# may consider it more useful to permit linking proprietary applications with
+# the library.  If this is what you want to do, use the GNU Lesser General
+# Public License instead of this License.  But first, please read
+# <https://www.gnu.org/licenses/why-not-lgpl.html>.
+#
+# === 授權與來源附本結束，可執行原始碼如下 ===
 from __future__ import annotations
 import base64
 import binascii
 import bisect
 import hashlib
+import gzip
 import json
 import os
 import lzma
@@ -14,6 +804,7 @@ import tempfile
 import concurrent.futures
 import threading
 import time
+import uuid
 from collections.abc import Mapping
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from html.parser import HTMLParser
@@ -604,6 +1395,10 @@ _RANGE_FETCH_BACKOFF_SECONDS = 0.8
 
 class HongguoPluginError(RuntimeError):
     pass
+
+class _PlaybackModelError(HongguoPluginError):
+    pass
+
 
 def _text(value: Any) -> str:
     return str(value or "").strip()
@@ -1210,6 +2005,8 @@ def _fresh_device_pair() -> tuple[str, str]:
 
 
 def _is_empty_model_error(err: BaseException) -> bool:
+    if isinstance(err, _PlaybackModelError):
+        return False
     text = str(err)
     return (
         "video_model 数据为空" in text
@@ -1243,6 +2040,61 @@ def _register_device_pair() -> tuple[str, str] | None:
     except Exception:
         pass
     return None
+
+
+def _register_playback_device() -> dict[str, str]:
+    # 沿用既有匿名封包，註冊版本與 open-player PR #92 一致，不保存憑證。
+    now = int(time.time() * 1000)
+    cdid = str(uuid.uuid4())
+    header = {
+        "display_name": "红果免费短剧", "update_version_code": 74332, "manifest_version_code": 74332,
+        "app_version_minor": "7.4.3.32", "aid": 8662, "channel": "update_64", "package": "com.phoenix.read",
+        "app_version": "7.4.3.32", "version_code": 74332, "sdk_version": "3.7.0-rc.34-fanqie-xiaoshuo",
+        "sdk_target_version": 29, "git_hash": "3a88f4e", "os": "Android", "os_version": "16", "os_api": 36,
+        "device_model": "25053RT47C", "device_brand": "Redmi", "device_manufacturer": "Redmi",
+        "cpu_abi": "arm64-v8a", "release_build": "b5e187f", "density_dpi": 520, "display_density": "mdpi",
+        "resolution": "1280x2772", "language": "zh", "timezone": 8, "access": "wifi", "not_request_sender": 0,
+        "carrier": "CHINA MOBILE", "mcc_mnc": "46000", "rom": "eng.root.20231116.160340",
+        "rom_version": "W528JS release-keys", "cdid": cdid,
+        "sig_hash": "56a962410c494bbaf0b58dba20cae56f", "openudid": os.urandom(8).hex(),
+        "clientudid": str(uuid.uuid4()), "ipv6_list": [], "region": "CN", "tz_name": "Asia/Shanghai",
+        "tz_offset": 28800, "sim_region": "cn", "sim_serial_number": [], "oaid_may_support": False,
+        "req_id": str(uuid.uuid4()), "device_platform": "android",
+        "custom": {"account_region_src": "fallback", "account_region": "cn", "host_bit": 64, "dragon_device_type": "phone"},
+        "pre_installed_channel": "", "apk_first_install_time": now, "is_system_app": 0, "sdk_flavor": "china", "guest_mode": 0,
+    }
+    compressed = gzip.compress(json.dumps({"magic_tag": "ss_app_log", "header": header, "_gen_time": now}, ensure_ascii=False, separators=(",", ":")).encode(), compresslevel=6, mtime=0)
+    random_bytes = os.urandom(32)
+    salt = bytes.fromhex("4dd4c2e6b83162090e52b3c7a6733ba41cb2462b829ab58a196b39db57177524f49baf7f08e8d68d26a72e37c1a95a2f1f05a51892aef2949732b62a38aadd58")
+    derived = hashlib.sha512(hashlib.sha512(random_bytes).digest() + salt).digest()
+    plaintext = hashlib.sha512(compressed).digest() + compressed
+    body = bytes.fromhex("746305100000") + random_bytes + _dm_aes_cbc_encrypt(derived[:16], derived[16:32], _dm_pkcs7(plaintext))
+    response = requests.post(
+        "https://log5-applog-lf.fqnovel.com/service/2/device_register/?tt_data=a&cronet_version=8d40f833_2026-03-03&ttnet_version=4.2.243.31-douyin&use_store_region_cookie=1",
+        data=body, timeout=8, allow_redirects=False,
+        headers={
+            "User-Agent": APP_UA.replace("/71332 ", "/74332 ", 1),
+            "Accept": "application/json", "Content-Type": "application/octet-stream;tt-data=a",
+            "log-encode-type": "gzip", "x-ss-dp": "8662", "x-ss-req-ticket": str(now),
+            "x-vc-bdturing-sdk-version": "4.0.3.cn", "lc": "101", "sdk-version": "2",
+            "passport-sdk-version": "5051452", "x-neptune": "-8|50:51:59:30:40:47:49:39",
+            "x-ss-stub": hashlib.md5(body).hexdigest().upper(),
+        },
+    )
+    try:
+        data = _json_response(response)
+    except HongguoPluginError as error:
+        raise _PlaybackModelError("匿名播放註冊回應格式無效") from error
+    if response.status_code != 200 or not isinstance(data, Mapping) or str(data.get("code", data.get("Code", 0))) != "0":
+        raise _PlaybackModelError("來源拒絕匿名播放註冊")
+    pair = {"cdid": cdid}
+    for target, source in (("device_id", "device_id"), ("install_id", "install_id")):
+        value = data.get(source + "_str") or data.get(source)
+        text = str(value)
+        if not re.fullmatch(r"[0-9]{1,30}", text) or int(text) == 0:
+            raise _PlaybackModelError("匿名播放註冊回傳無效識別")
+        pair[target] = text
+    return pair
 
 
 def _rotate_stream_device() -> dict[str, str]:
@@ -1355,6 +2207,8 @@ def _stream_session(video_id: str, config: Mapping[str, Any], quality: str = "10
                         break
                 raise HongguoPluginError(reason)
             except Exception as err:
+                if isinstance(err, _PlaybackModelError) or isinstance(err, requests.HTTPError) and getattr(err.response, "status_code", None) in (403, 429):
+                    raise
                 last_err = err
                 try:
                     time.sleep(0.4 * (_attempt + 1))
@@ -3642,103 +4496,97 @@ def _device_config(config: Mapping[str, Any]) -> dict[str, str]:
         "ua": APP_UA,
     }
 
+def _playback_request(video_id: str, pair: Mapping[str, str], shortplay: bool = False, api_url: str = "") -> tuple[str, dict[str, str], bytes]:
+    devices = _device_config(pair)
+    if shortplay:
+        params = {
+            "iid": devices["install_id"], "device_id": devices["device_id"], "aid": "1967",
+            "app_name": "novelapp", "version_code": "72132", "version_name": "7.2.1.32",
+            "device_platform": "android", "device_brand": "Xiaomi", "os_version": "13", "cdid": pair["cdid"],
+        }
+        payload = {"video_id": str(video_id), "content_type": 1004, "biz_param": {
+            "detail_page_version": 0, "device_level": 3, "disable_digg_stat": False, "disable_video_relate_book": False,
+            "from_video_id": "", "need_all_video_definition": True, "need_mp4_align": False, "source": 4,
+            "use_os_player": False, "use_server_dns": False, "video_platform": 3,
+        }}
+        body = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode()
+        headers = {"User-Agent": "com.dragon.read", "Content-Type": "application/json; charset=utf-8"}
+        api_url = "https://api3-normal-sinfonlinea.fqnovel.com/novel/player/video_model/v1/"
+    else:
+        params = {
+            "ac": "wifi", "channel": "update_64", "aid": "8662", "app_name": "novelread",
+            "version_code": "74332", "version_name": "7.4.3.32", "device_platform": "android", "os": "android",
+            "ssmix": "a", "device_type": "25053RT47C", "device_brand": "Redmi", "language": "zh", "os_api": "36",
+            "os_version": "16", "manifest_version_code": "74332", "resolution": "1280*2772", "dpi": "520",
+            "update_version_code": "74332", "host_abi": "arm64-v8a", "dragon_device_type": "phone", "pv_player": "74332",
+            "compliance_status": "0", "need_personal_recommend": "1", "player_so_load": "1", "is_android_pad_screen": "0",
+            "device_id": devices["device_id"], "iid": devices["install_id"], "cdid": pair["cdid"], "_rticket": str(int(time.time() * 1000)),
+        }
+        payload = {"dr_scene": "player", "biz_param": {
+            "detail_page_version": 0, "device_level": 3, "disable_digg_stat": False, "need_all_video_definition": True,
+            "need_mp4_align": False, "use_os_player": False, "use_server_dns": False, "video_platform": 1024,
+        }, "mixed_video_id_map": {"1004": [str(video_id)]}}
+        body = gzip.compress(json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode(), compresslevel=6, mtime=0)
+        headers = {
+            "User-Agent": APP_UA.replace("/71332 ", "/74332 ", 1), "Accept": "application/json; charset=utf-8,application/x-protobuf",
+            "Content-Type": "application/json; charset=UTF-8", "Content-Encoding": "gzip", "sdk-version": "2",
+            "passport-sdk-version": "5051452", "x-xs-from-web": "0", "x-ss-dp": "8662",
+        }
+        api_url = api_url or "https://reading.snssdk.com/novel/player/multi_video_model/player/v1"
+    query = _url_encode(params)
+    headers.update(_playback_sign_headers(query, body, int(time.time())))
+    cookie = pair.get("cookie") or ("store-region=cn-bj; store-region-src=did; install_id=" + devices["install_id"] if not shortplay else "")
+    if cookie:
+        headers["Cookie"] = cookie
+    return api_url + "?" + query, headers, body
+
+
 def _video_model(video_id: str, config: Mapping[str, Any]) -> dict[str, Any]:
-    devices = _device_config(config)
-    params = {
-        "iid": devices["install_id"],
-        "device_id": devices["device_id"],
-        "ac": "wifi",
-        "channel": "update_64",
-        "aid": "8662",
-        "app_name": "novelread",
-        "version_code": "71332",
-        "version_name": "7.1.3.32",
-        "device_platform": "android",
-        "os": "android",
-        "ssmix": "a",
-        "device_type": "25053RT47C",
-        "device_brand": "Redmi",
-        "language": "zh",
-        "os_api": "36",
-        "os_version": "16",
-        "manifest_version_code": "71332",
-        "resolution": "1280*2772",
-        "dpi": "520",
-        "update_version_code": "71332",
-        "host_abi": "arm64-v8a",
-        "dragon_device_type": "phone",
-        "pv_player": "71332",
-        "compliance_status": "0",
-        "need_personal_recommend": "1",
-        "player_so_load": "1",
-        "is_android_pad_screen": "0",
-    }
-    payload = {
-        "biz_param": {
-            "detail_page_version": 0,
-            "device_level": 3,
-            "disable_digg_stat": False,
-            "need_all_video_definition": True,
-            "need_mp4_align": False,
-            "use_os_player": False,
-            "use_server_dns": False,
-            "video_platform": 1024,
-        },
-        "mixed_video_id_map": {"1004": [video_id]},
-    }
-    request_headers = {
-        "User-Agent": APP_UA,
-        "Accept": "application/json; charset=utf-8,application/x-protobuf",
-        "Content-Type": "application/json; charset=UTF-8",
-        "x-xs-from-web": "0",
-        "x-ss-req-ticket": str(int(time.time() * 1000)),
-        "x-tt-request-tag": "t=0;n=0",
-        "sdk-version": "2",
-        "passport-sdk-version": "50561",
-        "x-vc-bdturing-sdk-version": "3.7.2.cn",
-    }
-    if devices.get("cookie"):
-        request_headers["Cookie"] = devices["cookie"]
-    signed_headers, signed_url = _core_sixgod(
-        VIDEO_URL,
-        params,
-        devices,
-        payload,
-        request_headers,
+    if not re.fullmatch(r"[0-9]{1,30}", str(video_id)):
+        raise _PlaybackModelError("分集識別無效")
+    started = time.monotonic()
+    pair = _register_playback_device()
+    # 使用本次匿名註冊身份；不搬入上游固定裝置或持久化憑證。
+    routes = (
+        (False, "https://reading.snssdk.com/novel/player/multi_video_model/player/v1"),
+        (False, "https://api5-normal-sinfonlinea.fqnovel.com/novel/player/multi_video_model/player/v1"),
+        (True, ""),
     )
-    body = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
-    response = requests.post(
-        signed_url,
-        headers=signed_headers,
-        data=body,
-        timeout=30,
-    )
-    response_data = _json_response(response)
-    data = response_data.get("data") or {}
-    if not isinstance(data, Mapping):
-        raise HongguoPluginError("video_model 数据为空")
-    entry: Any = data.get(video_id)
-    if entry is None:
-        for value in data.values():
-            if isinstance(value, Mapping):
-                entry = value
-                break
-            if isinstance(value, list) and value and isinstance(value[0], Mapping):
-                entry = value[0]
-                break
-    if not isinstance(entry, Mapping):
-        entry = data
-    raw_model = entry.get("video_model") if isinstance(entry, Mapping) else None
-    if raw_model is None:
-        raw_model = data.get("video_model")
-    if isinstance(raw_model, str):
+    for shortplay, api_url in routes:
+        remaining = 12 - (time.monotonic() - started)
+        if remaining <= 0:
+            raise _PlaybackModelError("播放模型等待逾時")
+        url, headers, body = _playback_request(video_id, pair, shortplay, api_url)
+        response = requests.post(url, headers=headers, data=body, timeout=remaining, allow_redirects=False)
+        response.raise_for_status()
+        if response.status_code != 200:
+            raise _PlaybackModelError("來源未提供播放模型")
+        if not response.content:
+            continue
         try:
-            raw_model = json.loads(raw_model)
-        except ValueError as exc:
-            raise HongguoPluginError("video_model JSON 无效") from exc
-    if not isinstance(raw_model, Mapping):
-        raise HongguoPluginError("video_model 为空")
-    return dict(raw_model)
+            result = _json_response(response)
+        except HongguoPluginError as error:
+            raise _PlaybackModelError("播放模型回應格式無效") from error
+        if not isinstance(result, Mapping) or str(result.get("Code", result.get("code", 0))) != "0":
+            raise _PlaybackModelError("來源拒絕提供播放模型")
+        data = result.get("data")
+        if not isinstance(data, Mapping):
+            raise _PlaybackModelError("播放模型回應格式無效")
+        entry = data.get(str(video_id))
+        if shortplay and not isinstance(entry, Mapping) and "video_model" in data:
+            entry = data
+        if not isinstance(entry, Mapping):
+            raise _PlaybackModelError("播放模型未包含所選集數")
+        model = entry.get("video_model")
+        if isinstance(model, str):
+            try:
+                model = json.loads(model)
+            except ValueError as error:
+                raise _PlaybackModelError("播放模型 JSON 無效") from error
+        if not isinstance(model, Mapping):
+            raise _PlaybackModelError("播放模型格式無效")
+        return dict(model)
+    raise _PlaybackModelError("主備播放模型皆為空，尚未取得正片")
 
 def _video_list_from_model(model: Mapping[str, Any]) -> Any:
     for key in ("video_list", "dynamic_video_list"):
@@ -4468,17 +5316,17 @@ def _dm_query_param(query: str, name: str) -> str:
 
 
 def _dm_argus_sign(query: str, stub_hex: str, ts: int, aid: int, license_id: int,
-                   device_id: str, install_id: str = "", rand_field: int = 0) -> str:
-    if not rand_field:
+                   device_id: str, install_id: str = "", rand_field: int | None = None) -> str:
+    if rand_field is None:
         rand_field = random.randint(1, 2147483647)
     body_hash = _dm_sm3_prefix6(bytes.fromhex(stub_hex)) if stub_hex else _dm_sm3_prefix6(b"\0" * 16)
     query_hash = _dm_sm3_prefix6(query.encode("utf-8")) if query else _dm_sm3_prefix6(b"\0" * 16)
     bean = _DmPbuf()
-    bean.v(1, 1077940818).v(2, 2).v(3, rand_field)
+    bean.v(1, 1077940818).v(2, 2).v(3, rand_field & 0xFFFFFFFF)
     bean.s(4, aid).s(5, device_id).s(6, license_id)
     bean.s(7, _dm_query_param(query, "version_name"))
     bean.s(8, "v04.04.05-ov-android").v(9, 134744640).raw(10, b"\0" * 8).v(11, 0)
-    bean.v(12, ts * 2)
+    bean.v(12, (ts * 2) & 0xFFFFFFFF)
     bean.raw(13, body_hash).raw(14, query_hash)
     bean.pb(15, _DmPbuf().v(1, 1).v(2, 1).v(3, 1).v(7, 0xC792ECCC))
     bean.s(16, install_id).s(20, "none").v(21, 738)
@@ -4546,6 +5394,25 @@ def _dm_ladon_encrypt(ts: int, license_id: int, aid: int, rand4: bytes) -> str:
     keygen = rand4 + str(aid).encode("utf-8")
     enc = _dm_ladon_encrypt_raw(hashlib.md5(keygen).hexdigest(), data)
     return base64.b64encode(rand4 + enc).decode()
+
+
+def _playback_sign_headers(query: str, body: bytes, ts: int) -> dict[str, str]:
+    # 依 open-player PR #92 的請求契約，重用本檔既有 551／Ladon 運算。
+    params = parse_qs(query, keep_blank_values=True)
+    aid = int(params.get("aid", ["1967"])[0])
+    device_id = params.get("device_id", [""])[0]
+    iid = params.get("iid", [""])[0]
+    stub = hashlib.md5(body).hexdigest() if body else ""
+    rand4 = os.urandom(4)
+    rand_field = int.from_bytes(os.urandom(4), "little")
+    headers = {
+        "x-ss-req-ticket": str(ts * 1000), "x-khronos": str(ts),
+        "x-ladon": _dm_ladon_encrypt(ts, 1611921764, aid, rand4),
+        "x-argus": _dm_argus_sign(query, stub, ts, aid, 1611921764, device_id, iid, rand_field),
+    }
+    if stub:
+        headers["x-ss-stub"] = stub.upper()
+    return headers
 
 
 def _dm_sign_headers(query: str, body: bytes, device_id: str, install_id: str = "",

@@ -1,0 +1,17 @@
+{
+  "date": "2026-11-12",
+  "license": "GPL-3.0-only",
+  "entrypoint": "py/红果短剧.py",
+  "published_file_sha256": "b132ad66016d27993a46b6bdaa03f2da74785c03fb7f0332605386fd151e6bb0",
+  "tested_code_sha256": "605b78962ec42d1003ea6385605de6e76292462ad40902439037968640dacf2d",
+  "code_changes_since_test": "僅新增註解，可執行 AST 不變",
+  "upstream": "zfdang/hongguo-open-player@3f687c5b07e04eb194141f8eeb78ded86d646024",
+  "qist_permission_basis": "發布者於 2026-11-12 確認持有許可；未附未提供的許可原文",
+  "validation": {
+    "ios_online": "固定 1080 單集實播通過",
+    "ios_download": "完整 MP4 下載通過",
+    "ios_offline": "停止來源服務並重新啟動 App 後，本機檔案播放通過",
+    "android": "發布者明確豁免；未測試"
+  },
+  "rollback_base_commit": "132fde74490208e7c21d1257330b8bcd91bb321a"
+}

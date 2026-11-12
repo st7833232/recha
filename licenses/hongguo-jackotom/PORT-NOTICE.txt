@@ -1,0 +1,43 @@
+本修改版發布授權：GPL-3.0-only
+
+2026-11-12 依使用者指令，先還原 W-297 前的 Python 基準，
+再只採用 zfdang/hongguo-open-player PR #92 的播放適配：
+https://github.com/zfdang/hongguo-open-player/pull/92
+固定版本：3f687c5b07e04eb194141f8eeb78ded86d646024
+來源檔案：src/server/native/argus.js、src/server/native/app-source.js、
+src/server/native/playback-device.js；檔頭均標示 GPL-3.0-only。
+該版本根 LICENSE 為 AGPL-3.0，原文另存 LICENSE.open-player.txt，
+與檔頭聲明分開記錄，不將二者混稱。本適配未搬入其伺服器程式。
+
+修改範圍：精確分集選擇、重用既有 Argus 551／Ladon 運算、
+74332 匿名裝置註冊與 gzip POST、player/v1 主備模型與 shortplay 備援、
+終止型拒絕處理，以及既有離線 JavaScript 對照測試資料。
+先前另加的官網自動線路／公開網頁取源已移除；Medusa 回到原基準，
+不保留早期 video_tab／新增 Medusa 適配或其額外重構。
+不宣稱乾淨室開發。保留既有 Python 介面及舊簽章運算核心，
+模型請求改採已註冊的匿名播放流程。
+本次未複製帳號、下載、轉碼或新增媒體解密實作。
+
+基底來源查核參考 qist/tvbox；發布者於 2026-11-12 確認持有 qist 許可，
+本次依該權利依據發布修改版，不將此紀錄冒充原作者另行簽發的授權文件。
+本修改版整體依 GPL-3.0-only 提供，允許商業使用、修改與再散布；
+原作者及其他上游版本仍保有其原有授權。
+完整 GPL version 3 原文見 COPYING；上游來源鏈見 UPSTREAM-NOTICE.txt。
+該來源鏈及目錄名稱保留歷史 attribution，不代表本輪另外採用 jackotom 適配。
+歷史取流、解碼與片尾證據，以及本輪還原／等價驗證的限制，
+見 docs/W-297-hongguo-jackotom-sign.md。舊 auto 裝置紀錄未記下實際取源路徑，
+不作新版固定畫質的 App UI 證據。
+2026-11-12 已另在當前 PY 完成固定 1080 iOS App 線上播放、App 下載與
+本機檔案離線播放；新版 Android UI 未驗，不將 iOS 單集結果擴大為全平台通過。
+
+發布與驗證範圍（2026-11-12）：
+本次由發布者明確豁免 Android 測試；iOS 的固定畫質線上播放、App 內下載
+及重新啟動後的本機離線播放已通過單集驗證，不宣稱 Android 或全部情境通過。
+本次發布只增加註解與文件，可執行內容與該已測候選一致。
+
+無擔保與責任限制：
+本程式依現狀提供，在適用法律允許的範圍內不提供明示或默示擔保，
+包括適售性、特定用途適用性及第三方服務持續可用性；詳見 GPL 第 15、16 條。
+本聲明不排除依法不得預先免除的責任，亦不排除依法應負的故意或重大過失責任。
+程式授權不授予第三方影音、商標、帳號或平台服務的使用權。
+倉庫中非商用、24 小時刪除等不相容額外限制，不適用此 PY 的 GPL 覆蓋內容。

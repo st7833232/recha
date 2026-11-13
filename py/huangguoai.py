@@ -13,6 +13,7 @@ import threading
 import secrets
 import json
 import time
+from collections import Counter
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlencode, urljoin, urlparse, urlsplit, parse_qs
@@ -176,7 +177,7 @@ class Spider(BaseSpider):
         ('AI 換臉', 'ai-huanlian'),
         ('AI 魔改', 'ai-mogai'),
     )
-    VERSION = '2026-11-13-v5-filters'
+    VERSION = '2026-11-13-v6-tags'
     # The site's JSON category endpoint ignores sort/year/finished parameters.
     # Alternative filters operate over a disclosed, bounded recent-content window.
     FILTER_SCAN_PAGES = 12
@@ -221,6 +222,7 @@ class Spider(BaseSpider):
         self._img_cache = {}
         self._lock = threading.RLock()
         self._filter_cache = {}
+        self._tag_cache = {}
 
     def _ready(self):
         if not hasattr(self, 'session'):
@@ -531,11 +533,73 @@ class Spider(BaseSpider):
                 {'n': '黃果原創', 'v': 'yes'},
                 {'n': '非原創', 'v': 'no'}]},
         ]
+        # The public catalog exposes tags per video, but no server-side tag
+        # predicate. Discover real recent labels once per cache window, with a
+        # documented fallback when the catalog is temporarily unreachable.
+        tag_options = self._tag_filter_options()
         return {
             'class': [{'type_id': slug, 'type_name': name}
                       for name, slug in self.CATEGORIES],
-            'filters': {slug: common for _, slug in self.CATEGORIES},
+            'filters': {
+                slug: common + [{'key': 'tag', 'name': '題材標籤（近期）',
+                                  'value': [{'n': '全部', 'v': 'all'}] +
+                                           [{'n': tag, 'v': tag}
+                                            for tag in tag_options.get(slug, [])]}]
+                for _, slug in self.CATEGORIES
+            },
         }
+
+    @staticmethod
+    def _clean_tags(item):
+        raw = item.get('tags') if isinstance(item, dict) else None
+        if not isinstance(raw, (list, tuple)):
+            return []
+        found = []
+        for value in raw:
+            if not isinstance(value, str):
+                continue
+            tag = value.strip()
+            if not tag or len(tag) > 36 or any(ord(ch) < 32 for ch in tag):
+                continue
+            if tag not in found:
+                found.append(tag)
+        return found
+
+    def _tag_filter_options(self):
+        self._ready()
+        now = time.monotonic()
+        with self._lock:
+            saved = self._tag_cache.get('options')
+            if saved and now - saved['at'] < self.FILTER_CACHE_SECONDS:
+                return {k: list(v) for k, v in saved['values'].items()}
+
+        # One page per channel, not a 12-page crawl just to render filter UI.
+        # Labels are observed tags, not an invented or exhaustive tag taxonomy.
+        counts = {}
+        all_tags = Counter()
+        for _, slug in self.CATEGORIES:
+            if slug == 'all':
+                continue
+            data = self._get_json(self._catalog_path(slug, 1))
+            entries = data.get('items') if isinstance(data, dict) else None
+            count = Counter()
+            for item in (entries if isinstance(entries, list) else []):
+                count.update(self._clean_tags(item))
+            counts[slug] = count
+            all_tags.update(count)
+        counts['all'] = all_tags
+
+        # Fallback labels are verified examples from the public API schema,
+        # and keep the control usable even when discovery requests fail.
+        fallback = ['現代', '都市', '大男主', '熟女', '綠帽']
+        options = {}
+        for _, slug in self.CATEGORIES:
+            count = counts.get(slug, Counter())
+            observed = sorted(count, key=lambda tag: (-count[tag], tag))
+            options[slug] = observed[:30] if observed else list(fallback)
+        with self._lock:
+            self._tag_cache['options'] = {'at': time.monotonic(), 'values': options}
+        return options
 
     @staticmethod
     def _flag(value):
@@ -669,6 +733,7 @@ class Spider(BaseSpider):
         year = str(selected.get('year') or 'all').strip()
         finished = str(selected.get('finished') or 'all').strip().lower()
         original = str(selected.get('original') or 'all').strip().lower()
+        tag = str(selected.get('tag') or 'all').strip()
         if sort not in ('latest', 'hot', 'score'):
             sort = 'latest'
         if not (year == 'all' or (len(year) == 4 and year.isdigit())):
@@ -677,10 +742,12 @@ class Spider(BaseSpider):
             finished = 'all'
         if original not in ('all', 'yes', 'no'):
             original = 'all'
+        if not tag or len(tag) > 36 or any(ord(ch) < 32 for ch in tag):
+            tag = 'all'
 
         # Default listing uses upstream pagination: no unnecessary extra requests.
         if (sort == 'latest' and year == 'all' and
-                finished == 'all' and original == 'all'):
+                finished == 'all' and original == 'all' and tag == 'all'):
             return self._list(self._get_json(self._catalog_path(tid, page)))
 
         # The API ignores query-string sort/filter parameters. We really filter
@@ -699,6 +766,8 @@ class Spider(BaseSpider):
                 actual = self._flag(item.get('is_original'))
                 if actual is None or actual != (original == 'yes'):
                     continue
+            if tag != 'all' and tag not in self._clean_tags(item):
+                continue
             filtered.append(item)
 
         if sort == 'hot':

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""黃果短劇 / TVBox Python spider (2026-11 hotfix).
+"""黃果短劇 / TVBox + WebHTV compatible Python spider (2026-11).
 
 Public catalog and freely reachable HLS only. No account or DRM bypass.
 Fixes encrypted CDN thumbnails and offers a local HLS proxy for players whose
@@ -7,8 +7,13 @@ network/header handling cannot fetch upstream playlist, segments, and keys.
 """
 import re
 import sys
+import os
+import base64
 import threading
-from urllib.parse import urlencode, urljoin, urlparse
+import secrets
+import json
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import urlencode, urljoin, urlparse, urlsplit, parse_qs
 
 import requests
 from requests.adapters import HTTPAdapter
@@ -168,12 +173,36 @@ class Spider(BaseSpider):
         ('AI 換臉', 'ai-huanlian'),
         ('AI 魔改', 'ai-mogai'),
     )
+    VERSION = '2026-11-13-v4'
     _HLS_TAG_URI = re.compile(r'(URI\s*=\s*)(["\'])(.*?)(\2)', re.I)
 
     def getName(self):
-        return '黃果短劇（Python）'
+        return '黃果短劇（雙平台 v4）'
 
     def init(self, extend=''):
+        # `proxy_mode`: auto = Android native CatVod proxy, iOS independent loopback.
+        # Explicit `{"proxy_mode":"android"}` or `{"proxy_mode":"self"}` is supported
+        # for shells that misreport the platform. No other files need changing.
+        opts = {}
+        if isinstance(extend, dict):
+            opts = extend
+        elif isinstance(extend, str) and extend.strip().startswith('{'):
+            try:
+                opts = json.loads(extend)
+            except (ValueError, TypeError):
+                pass
+        mode = str(opts.get('proxy_mode', 'auto')).lower() if isinstance(opts, dict) else 'auto'
+        if mode not in ('auto', 'android', 'self'):
+            mode = 'auto'
+        if mode == 'auto':
+            mode = ('android' if (sys.platform.startswith('android') or
+                    hasattr(sys, 'getandroidapilevel') or
+                    (sys.platform.startswith('linux') and
+                     any(os.environ.get(k) for k in ('ANDROID_ROOT', 'ANDROID_ARGUMENT'))))
+                    else 'self')
+        self._proxy_mode = mode
+        self._last_error = ''
+        self._cdn_headers = {}
         self.headers = {'User-Agent': self.UA, 'Accept': 'application/json',
                         'Referer': self.SITE + '/'}
         self.session = requests.Session()
@@ -198,19 +227,158 @@ class Spider(BaseSpider):
     def manualVideoCheck(self):
         return False
 
+    def _local_server_url(self):
+        """Create a loopback HTTP server on the first poster request.
+
+        This avoids Android's `9978` getProxyUrl entirely for thumbnails and HLS.
+        WebHTV iOS only rewrites Android proxy URLs on playback, not in `vod_pic`.
+        Only allowed upstream CDN hosts can be fetched; the listener binds to loopback.
+        """
+        self._ready()
+        with self._lock:
+            if getattr(self, '_http_server', None):
+                return 'http://127.0.0.1:%d' % self._http_server.server_address[1]
+            if getattr(self, '_http_server_failed', False):
+                return ''
+            owner = self
+            token = secrets.token_urlsafe(24)
+
+            class Handler(BaseHTTPRequestHandler):
+                protocol_version = 'HTTP/1.1'
+
+                def log_message(self, format, *args):
+                    # Never log CDN signed URLs or the loopback access token.
+                    pass
+
+                def do_HEAD(self):
+                    self._serve(True)
+
+                def do_GET(self):
+                    self._serve(False)
+
+                def _serve(self, head_only):
+                    path = urlsplit(self.path)
+                    if path.path != '/hg':
+                        self.send_error(404)
+                        return
+                    p = parse_qs(path.query, keep_blank_values=True)
+                    if p.get('token', [''])[0] != token:
+                        self.send_error(403)
+                        return
+                    action = p.get('hg_action', [''])[0]
+                    upstream = p.get('hg_url', [''])[0]
+                    code, content_type, payload, extra = owner._proxy_fetch(
+                        action, upstream, range_header=self.headers.get('Range', ''))
+                    self.send_response(code)
+                    self.send_header('Content-Type', content_type)
+                    self.send_header('Cache-Control', 'no-store' if action != 'image' else 'private, max-age=300')
+                    self.send_header('Access-Control-Allow-Origin', '*')
+                    for key, val in extra.items():
+                        self.send_header(key, val)
+                    self.send_header('Content-Length', str(len(payload)))
+                    self.end_headers()
+                    if not head_only:
+                        try:
+                            self.wfile.write(payload)
+                        except (BrokenPipeError, ConnectionResetError):
+                            pass
+
+            try:
+                server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+                server.daemon_threads = True
+                thread = threading.Thread(target=server.serve_forever, name='hg-loopback', daemon=True)
+                thread.start()
+                self._http_server = server
+                self._server_token = token
+                return 'http://127.0.0.1:%d' % server.server_address[1]
+            except (OSError, RuntimeError):
+                self._http_server_failed = True
+                return ''
+
     def _proxy_base(self):
+        return self._local_server_url()
+
+    def _native_proxy_url(self, action, upstream):
         try:
-            result = str(self.getProxyUrl() or '').strip()
-            return result if result.startswith(('http://', 'https://')) else ''
+            native = str(self.getProxyUrl() or '').strip()
         except Exception:
+            native = ''
+        if not native.startswith(('http://127.0.0.1:', 'http://localhost:')):
             return ''
+        return native + ('&' if '?' in native else '?') + urlencode({
+            'hg_action': action, 'hg_url': upstream})
 
     def _proxy_url(self, action, upstream):
-        base = self._proxy_base()
-        if not base:
-            return ''
-        return base + ('&' if '?' in base else '?') + urlencode(
-            {'hg_action': action, 'hg_url': upstream})
+        # Avoid starting a Python HTTP listener in Android (Chaquopy): the
+        # Android shell already has a CatVod localProxy service and owns its
+        # lifecycle. On iOS, WebHTV's Android-compat service only serves playback
+        # URLs, so images must use an independent loopback server.
+        if getattr(self, '_proxy_mode', 'self') == 'android':
+            native = self._native_proxy_url(action, upstream)
+            if native:
+                return native
+        base = self._local_server_url()
+        if base:
+            return base + '/hg?' + urlencode({
+                'token': self._server_token, 'hg_action': action, 'hg_url': upstream})
+        return ''
+
+    def _proxy_fetch(self, action, url, range_header=''):
+        """Response as (status, mime, bytes, extra HTTP headers)."""
+        if action not in ('image', 'hls', 'asset'):
+            return 400, 'text/plain', b'unknown action', {}
+        if not self._valid_url(url, image=(action == 'image')):
+            return 403, 'text/plain', b'blocked URL', {}
+        if action == 'image':
+            with self._lock:
+                cached = self._img_cache.get(url)
+            if cached:
+                return 200, _image_kind(cached), cached, {}
+        request_url = url
+        headers = {'User-Agent': self.UA, 'Accept': '*/*', 'Referer': self.SITE + '/'}
+        if action != 'image':
+            headers.update(getattr(self, '_cdn_headers', {}))
+        if range_header and action == 'asset' and re.fullmatch(r'bytes=\d+-\d*', range_header):
+            headers['Range'] = range_header
+        try:
+            for _ in range(4):
+                resp = requests.get(url, headers=headers, allow_redirects=False, timeout=20)
+                if resp.status_code not in (301, 302, 303, 307, 308):
+                    break
+                target = urljoin(url, resp.headers.get('Location') or '')
+                if target == url or not self._valid_url(target, image=(action == 'image')):
+                    return 502, 'text/plain', b'invalid redirect', {}
+                url = target
+            else:
+                return 502, 'text/plain', b'too many redirects', {}
+            resp.raise_for_status()
+            body = resp.content
+            if action == 'image':
+                if len(body) > 6 * 1024 * 1024:
+                    return 413, 'text/plain', b'cover too large', {}
+                decoded = _decode_image(body)
+                if not decoded:
+                    return 502, 'text/plain', b'image decrypt failed', {}
+                with self._lock:
+                    if len(self._img_cache) >= 40:
+                        self._img_cache.pop(next(iter(self._img_cache)))
+                    self._img_cache[request_url] = decoded
+                return 200, _image_kind(decoded), decoded, {}
+            if action == 'hls':
+                if not body.lstrip().startswith(b'#EXTM3U'):
+                    return 502, 'text/plain', b'not a HLS playlist', {}
+                return (200, 'application/vnd.apple.mpegurl',
+                        self._rewrite_hls(body, url, self._proxy_url), {})
+            content_type = resp.headers.get('Content-Type', 'application/octet-stream').split(';')[0]
+            extra = {}
+            if resp.status_code == 206:
+                for field in ('Content-Range', 'Accept-Ranges'):
+                    if resp.headers.get(field):
+                        extra[field] = resp.headers[field]
+            return resp.status_code, content_type, body, extra
+        except (requests.RequestException, ValueError, TypeError):
+            # Avoid leaking signed tokens in URLs to UI logs.
+            return 502, 'text/plain', b'upstream request failed', {}
 
     @staticmethod
     def _valid_url(url, image=False):
@@ -224,40 +392,115 @@ class Spider(BaseSpider):
                 return False
             if image:
                 return host in ('pic.drleao.cn', 'new.drleao.cn',
-                                'new2.drleao.cn', 'image.drleao.cn')
+                                'new2.drleao.cn', 'image.drleao.cn',
+                                'pic.eanfog.cn', 'pic.zdmhyg.cn', 'pic.tuafjz.cn')
             return (host in ('yd-hls.hzjvlo.cn', 'yd-lphu-hls.hzjvlo.cn',
                              'tp3.drleao.cn') or host.endswith('.hzjvlo.cn')
                     or host.endswith('.drleao.cn'))
         except ValueError:
             return False
 
-    def _get_json(self, path):
+    def _api_call(self, method, path, data=None):
         self._ready()
         if not path.startswith('/api/') or '://' in path or path.startswith('//'):
             return {}
-        envelope = {'method': 'GET', 'path': path, 'body': '', 'content_type': ''}
+        method = method.upper()
+        if method not in ('GET', 'POST'):
+            return {}
+        payload = (json.dumps(data if data is not None else {}, ensure_ascii=False,
+                              separators=(',', ':')).encode('utf-8') if method == 'POST'
+                   else b'')
+        envelope = {'method': method, 'path': path,
+                    'body': base64.b64encode(payload).decode('ascii') if payload else '',
+                    'content_type': 'application/json' if method == 'POST' else ''}
+        errors = []
+        # Edge gateway is the documented API contract. Direct request is a
+        # compatibility fallback for deployments exposing the actual endpoint.
         for edge in (True, False):
             try:
+                headers = dict(self.headers)
+                if not edge and method == 'POST':
+                    headers.update({'Content-Type': 'application/json', 'Origin': self.SITE})
                 if edge:
-                    r = self.session.post(self.SITE + '/api/edge/request',
-                                          json=envelope, headers=self.headers, timeout=16)
+                    response = self.session.post(self.SITE + '/api/edge/request',
+                                                 json=envelope, headers=headers, timeout=16)
+                elif method == 'GET':
+                    response = self.session.get(self.SITE + path,
+                                                headers=headers, timeout=16)
                 else:
-                    r = self.session.get(self.SITE + path,
-                                         headers=self.headers, timeout=16)
-                r.raise_for_status()
-                body = r.json()
-                if not isinstance(body, dict):
+                    response = self.session.post(self.SITE + path, data=payload,
+                                                 headers=headers, timeout=16)
+                response.raise_for_status()
+                obj = response.json()
+                if not isinstance(obj, dict):
                     continue
-                if str(body.get('status')) == '1':
-                    return body.get('data') or {}
-                if str(body.get('status')) == '0':
-                    # Business error may be edge-specific; direct call can still work.
+                if str(obj.get('status', '1')) == '0':
+                    errors.append(str(obj.get('msg') or 'upstream API status 0'))
                     continue
-                if 'items' in body or 'episodes' in body or 'video_url' in body:
-                    return body
-            except (requests.RequestException, ValueError, TypeError):
-                continue
+                data_obj = obj.get('data', obj)
+                if isinstance(data_obj, dict) and data_obj:
+                    self._last_error = ''
+                    return data_obj
+                if isinstance(data_obj, list):
+                    self._last_error = ''
+                    return {'items': data_obj}
+            except (requests.RequestException, ValueError, TypeError) as exc:
+                errors.append(type(exc).__name__)
+        self._last_error = '/'.join(errors)[:120] or 'API returned no data'
         return {}
+
+    def _get_json(self, path):
+        return self._api_call('GET', path)
+
+    def _post_json(self, path, data=None):
+        return self._api_call('POST', path, data)
+
+    @staticmethod
+    def _public_media_url(url):
+        # Direct player URLs need not belong to our proxy allowlist. The
+        # upstream may rotate CDN domains without updating the script.
+        try:
+            p = urlparse(url)
+            host = (p.hostname or '').lower()
+            if p.scheme != 'https' or not host or p.username or p.password or p.port not in (None, 443):
+                return False
+            if host in ('localhost', 'localhost.localdomain') or host.endswith('.local'):
+                return False
+            import ipaddress
+            try:
+                return ipaddress.ip_address(host).is_global
+            except ValueError:
+                return '.' in host and not host.endswith('.')
+        except (TypeError, ValueError):
+            return False
+
+    @staticmethod
+    def _play_url_from(data):
+        if not isinstance(data, dict):
+            return '', {}
+        headers = {}
+        cdn = data.get('cdn')
+        if isinstance(cdn, dict):
+            name, value = cdn.get('authKey'), cdn.get('authValue')
+            if (isinstance(name, str) and isinstance(value, str) and
+                    re.fullmatch(r'[A-Za-z][A-Za-z0-9-]{0,63}', name) and
+                    name.lower() not in ('host', 'cookie', 'authorization',
+                                         'connection', 'transfer-encoding',
+                                         'content-length', 'referer', 'origin')):
+                headers[name] = value
+        candidates = [data.get('video_url'), data.get('url'), data.get('play_url')]
+        streams = data.get('streams')
+        if isinstance(streams, dict):
+            candidates.extend(streams.get(key) for key in ('main', 'avc', 'hevc', 'preview'))
+        if isinstance(data.get('videos'), list):
+            candidates.extend(x.get('url') if isinstance(x, dict) else x
+                              for x in data['videos'])
+        candidates.append(data.get('video_url_hevc'))
+        for candidate in candidates:
+            if isinstance(candidate, str) and candidate.startswith('https://'):
+                return candidate, headers
+        return '', headers
+
 
     def homeContent(self, filter=False):
         return {'class': [{'type_id': slug, 'type_name': name}
@@ -267,8 +510,9 @@ class Spider(BaseSpider):
         if not isinstance(value, str) or not self._valid_url(value, image=True):
             return value if isinstance(value, str) and value.startswith('https://') else ''
         # IMPORTANT: upstream URL yields AES ciphertext, not a displayable JPEG.
-        # Proxy even when Crypto isn't installed; _decode_image has pure Python fallback.
-        return self._proxy_url('image', value) or value
+        # Our own loopback server can answer before a video starts playing.
+        # Fail closed instead of showing encrypted bytes as a broken JPEG.
+        return self._proxy_url('image', value) or '' 
 
     def _video_item(self, item):
         n = int(item.get('episode_count') or 0)
@@ -329,7 +573,7 @@ class Spider(BaseSpider):
             eps = [1]
         one = '#'.join('第%d集$%s:%d' % (ep, vid, ep) for ep in sorted(set(eps)))
         # Direct and proxy are deliberately separate lines for renderer compatibility.
-        can_proxy = bool(self._proxy_base())
+        can_proxy = bool(self._proxy_url('hls', 'https://yd-hls.hzjvlo.cn/test.m3u8'))
         detail = self._video_item(item)
         detail.update({
             'vod_year': str(item.get('created_at') or '')[:4],
@@ -346,22 +590,34 @@ class Spider(BaseSpider):
         if not re.fullmatch(r'[0-9]+:[0-9]+', value):
             return {'parse': 0, 'jx': 0, 'url': ''}
         vid, ep = value.split(':', 1)
-        data = self._get_json('/api/videos/%s/play?%s' % (
-            vid, urlencode({'ep': ep, 'page_texts': 0})))
-        # Prefer AVC/H.264 default to HEVC which may not be supported on older TV boxes.
-        url = data.get('video_url') if isinstance(data, dict) else ''
-        if not url and isinstance(data, dict):
-            url = data.get('video_url_hevc')
-        if not isinstance(url, str) or not self._valid_url(url):
+        # The public player endpoint differs between site generations.
+        # Refetch per play; HLS auth_key expires, so no URL cache.
+        paths = (
+            ('POST', '/api/videos/%s/episodes/%s/playback' % (vid, ep)),
+            ('GET', '/api/videos/%s/play?%s' % (
+                vid, urlencode({'ep': ep, 'page_texts': 0}))),
+            ('POST', '/api/videos/%s/playback' % vid),
+        )
+        url = ''
+        extra = {}
+        for method, path in paths:
+            data = self._post_json(path, {}) if method == 'POST' else self._get_json(path)
+            url, extra = self._play_url_from(data)
+            if url and self._public_media_url(url):
+                break
+            url = ''
+        if not url:
             return {'parse': 0, 'jx': 0, 'url': ''}
+        self._cdn_headers = extra
         use_proxy = '代理' in str(flag or '')
-        if use_proxy:
-            proxied = self._proxy_url('hls' if '.m3u8' in url else 'asset', url)
+        if use_proxy and self._valid_url(url):
+            proxied = self._proxy_url('hls' if '.m3u8' in urlparse(url).path.lower() else 'asset', url)
             if proxied:
                 return {'parse': 0, 'jx': 0, 'url': proxied,
                         'header': {'User-Agent': self.UA}}
         return {'parse': 0, 'jx': 0, 'url': url,
-                'header': {'User-Agent': self.UA, 'Referer': self.SITE + '/'}}
+                'header': dict({'User-Agent': self.UA, 'Referer': self.SITE + '/'}, **extra)}
+
 
     @classmethod
     def _rewrite_hls(cls, data, origin, proxify):
@@ -397,66 +653,27 @@ class Spider(BaseSpider):
         return self.localProxy(params)
 
     def localProxy(self, params):
-        self._ready()
         params = params or {}
         action = str(params.get('hg_action') or '')
         url = str(params.get('hg_url') or '')
-        request_url = url
-        if action not in ('image', 'hls', 'asset'):
-            return [400, 'text/plain; charset=utf-8', b'unknown action']
-        if not self._valid_url(url, image=(action == 'image')):
-            return [400, 'text/plain; charset=utf-8', b'blocked URL']
-        if action == 'image':
-            with self._lock:
-                cached = self._img_cache.get(request_url)
-            if cached:
-                return [200, _image_kind(cached), cached]
-        try:
-            headers = {'User-Agent': self.UA,
-                       'Referer': self.SITE + '/',
-                       'Accept': '*/*'}
-            # Preserve signing parameters while following only trusted CDN redirects.
-            for _redirect in range(4):
-                r = self.session.get(url, headers=headers, timeout=25,
-                                     allow_redirects=False)
-                if r.status_code not in (301, 302, 303, 307, 308):
-                    break
-                next_url = urljoin(url, r.headers.get('Location') or '')
-                if next_url == url or not self._valid_url(next_url, image=(action == 'image')):
-                    return [502, 'text/plain', b'blocked CDN redirect']
-                url = next_url
-            else:
-                return [502, 'text/plain', b'too many CDN redirects']
-            r.raise_for_status()
-            binary = r.content
-            if action == 'image':
-                if len(binary) > 6 * 1024 * 1024:
-                    return [413, 'text/plain', b'cover too large']
-                picture = _decode_image(binary)
-                if not picture:
-                    return [502, 'text/plain', b'cover decrypt failed']
-                with self._lock:
-                    if len(self._img_cache) >= 25:
-                        self._img_cache.pop(next(iter(self._img_cache)))
-                    self._img_cache[request_url] = picture
-                return [200, _image_kind(picture), picture]
-            if action == 'hls':
-                # An upstream 403/HTML/JSON response must never be passed as m3u8.
-                if not binary.lstrip().startswith(b'#EXTM3U'):
-                    return [502, 'text/plain', b'upstream is not a playlist']
-                converted = self._rewrite_hls(binary, url, self._proxy_url)
-                return [200, 'application/vnd.apple.mpegurl', converted]
-            mimetype = r.headers.get('Content-Type', '').split(';')[0].strip().lower()
-            if not mimetype or mimetype in ('application/octet-stream', 'binary/octet-stream'):
-                mimetype = ('application/octet-stream' if '.key' in urlparse(url).path
-                            else 'video/mp2t')
-            return [200, mimetype, binary]
-        except (requests.RequestException, ValueError, TypeError) as err:
-            # Do not leak signed CDN auth tokens in logs or errors.
-            return [502, 'text/plain; charset=utf-8',
-                    ('upstream error: ' + type(err).__name__).encode('ascii')]
+        code, content_type, body, headers = self._proxy_fetch(action, url,
+            range_header=str(params.get('range') or ''))
+        return [code, content_type, body, headers]
+
+    def action(self, action):
+        if action == 'diagnostics':
+            return {'version': self.VERSION,
+                    'proxy_mode': getattr(self, '_proxy_mode', 'uninitialized'),
+                    'proxy_alive': bool(getattr(self, '_http_server', None)),
+                    'last_api_error': getattr(self, '_last_error', '')}
+        return {}
 
     def destroy(self):
+        server = getattr(self, '_http_server', None)
+        if server is not None:
+            server.shutdown()
+            server.server_close()
+            self._http_server = None
         if hasattr(self, 'session'):
             self.session.close()
         return 'ok'

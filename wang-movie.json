@@ -51,7 +51,7 @@
       "key": "8movie",
       "name": "8Movie",
       "type": 3,
-      "api": "https://gitlab.com/st7833232/recha/-/raw/main/py/8movie.py",
+      "api": "./py/8movie.py",
       "searchable": 1,
       "quickSearch": 1
     },
@@ -59,7 +59,7 @@
       "key": "kkys20",
       "name": "可可影視",
       "type": 3,
-      "api": "https://gitlab.com/st7833232/recha/-/raw/main/py/kkys.py",
+      "api": "./py/kkys.py",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 1
@@ -394,7 +394,7 @@
       "key": "薦片",
       "type": 3,
       "api": "csp_JPianAmns",
-      "jar": "https://gitlab.com/st7833232/recha/-/raw/main/jar/aowu.jar",
+      "jar": "./jar/aowu.jar",
       "searchable": 1,
       "filterable": 1,
       "quickSearch": 1,

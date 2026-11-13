@@ -12,6 +12,8 @@ import base64
 import threading
 import secrets
 import json
+import time
+from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlencode, urljoin, urlparse, urlsplit, parse_qs
 
@@ -168,12 +170,17 @@ class Spider(BaseSpider):
     UA = ('Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 '
           '(KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36')
     CATEGORIES = (
+        ('全部作品', 'all'),
         ('AI 成人短劇', 'ai-duanju'),
         ('AI 成人漫劇', 'ai-manju'),
         ('AI 換臉', 'ai-huanlian'),
         ('AI 魔改', 'ai-mogai'),
     )
-    VERSION = '2026-11-13-v4'
+    VERSION = '2026-11-13-v5-filters'
+    # The site's JSON category endpoint ignores sort/year/finished parameters.
+    # Alternative filters operate over a disclosed, bounded recent-content window.
+    FILTER_SCAN_PAGES = 12
+    FILTER_CACHE_SECONDS = 180
     _HLS_TAG_URI = re.compile(r'(URI\s*=\s*)(["\'])(.*?)(\2)', re.I)
 
     def getName(self):
@@ -213,6 +220,7 @@ class Spider(BaseSpider):
         self.session.mount('http://', HTTPAdapter(max_retries=retry))
         self._img_cache = {}
         self._lock = threading.RLock()
+        self._filter_cache = {}
 
     def _ready(self):
         if not hasattr(self, 'session'):
@@ -503,8 +511,105 @@ class Spider(BaseSpider):
 
 
     def homeContent(self, filter=False):
-        return {'class': [{'type_id': slug, 'type_name': name}
-                          for name, slug in self.CATEGORIES]}
+        """CatVod/TVBox filters, shared by Android and WebHTV iOS."""
+        year_now = datetime.now().year
+        common = [
+            {'key': 'sort', 'name': '排序', 'value': [
+                {'n': '最新', 'v': 'latest'},
+                {'n': '最熱（近期）', 'v': 'hot'},
+                {'n': '評分最高（近期）', 'v': 'score'}]},
+            {'key': 'year', 'name': '年份', 'value':
+                [{'n': '全部', 'v': 'all'}] +
+                [{'n': str(y), 'v': str(y)}
+                 for y in range(year_now, max(2020, year_now - 6), -1)]},
+            {'key': 'finished', 'name': '是否完結', 'value': [
+                {'n': '全部', 'v': 'all'},
+                {'n': '已完結', 'v': 'yes'},
+                {'n': '連載中', 'v': 'no'}]},
+            {'key': 'original', 'name': '是否原創', 'value': [
+                {'n': '全部', 'v': 'all'},
+                {'n': '黃果原創', 'v': 'yes'},
+                {'n': '非原創', 'v': 'no'}]},
+        ]
+        return {
+            'class': [{'type_id': slug, 'type_name': name}
+                      for name, slug in self.CATEGORIES],
+            'filters': {slug: common for _, slug in self.CATEGORIES},
+        }
+
+    @staticmethod
+    def _flag(value):
+        """Unknown values remain unknown: never treat a missing flag as False."""
+        if isinstance(value, bool):
+            return value
+        if value in (0, 1):
+            return bool(value)
+        if isinstance(value, str):
+            value = value.strip().lower()
+            if value in ('1', 'true', 'yes'):
+                return True
+            if value in ('0', 'false', 'no'):
+                return False
+        return None
+
+    @staticmethod
+    def _metric(item, name):
+        try:
+            return float(item.get(name) or 0)
+        except (TypeError, ValueError, OverflowError):
+            return 0.0
+
+    @staticmethod
+    def _catalog_path(tid, page):
+        params = urlencode({'page': page, 'size': 20})
+        if tid == 'all':
+            return '/api/videos?' + params
+        return '/api/videos/category/%s?%s' % (tid, params)
+
+    def _recent_catalog(self, tid):
+        """A stable, bounded sample; do not pretend it covers the whole site."""
+        self._ready()
+        now = time.monotonic()
+        with self._lock:
+            saved = self._filter_cache.get(tid)
+            if saved and now - saved['at'] < self.FILTER_CACHE_SECONDS:
+                return list(saved['items']), saved['scanned'], saved['complete']
+
+        all_items, ids = [], set()
+        complete = False
+        scanned = 0
+        for source_page in range(1, self.FILTER_SCAN_PAGES + 1):
+            data = self._get_json(self._catalog_path(tid, source_page))
+            entries = data.get('items') if isinstance(data, dict) else None
+            if not isinstance(entries, list):
+                break  # transient API failure; do not cache a false empty catalog
+            scanned += 1
+            for item in entries:
+                if not isinstance(item, dict) or item.get('id') is None:
+                    continue
+                video_id = str(item['id'])
+                if video_id not in ids:
+                    ids.add(video_id)
+                    all_items.append(item)
+            p = data.get('pagination') or {}
+            try:
+                page_count = int(p.get('pages') or 0)
+            except (ValueError, TypeError):
+                page_count = 0
+            if not entries or (page_count and source_page >= page_count) or len(entries) < 20:
+                complete = True
+                break
+
+        if scanned:
+            with self._lock:
+                self._filter_cache[tid] = {
+                    'at': time.monotonic(), 'items': all_items,
+                    'scanned': scanned, 'complete': complete,
+                }
+                # A bounded cache per source keeps memory use low on mobile.
+                if len(self._filter_cache) > len(self.CATEGORIES):
+                    self._filter_cache.pop(next(iter(self._filter_cache)))
+        return all_items, scanned, complete
 
     def _cover_url(self, value):
         if not isinstance(value, str) or not self._valid_url(value, image=True):
@@ -543,9 +648,86 @@ class Spider(BaseSpider):
     def categoryContent(self, tid, pg, filter=False, extend=None):
         if tid not in {slug for _, slug in self.CATEGORIES}:
             return self._list({})
-        pg = max(1, int(pg or 1))
-        return self._list(self._get_json('/api/videos/category/%s?%s' %
-                                         (tid, urlencode({'page': pg, 'size': 20}))))
+        try:
+            page = max(1, int(pg or 1))
+        except (ValueError, TypeError):
+            page = 1
+        if isinstance(extend, dict):
+            selected = dict(extend)
+        elif isinstance(extend, str):
+            try:
+                obj = json.loads(extend)
+                selected = obj if isinstance(obj, dict) else {}
+            except (ValueError, TypeError):
+                selected = {}
+        else:
+            selected = {}
+        if isinstance(filter, dict):
+            for key, value in filter.items():
+                selected.setdefault(key, value)
+        sort = str(selected.get('sort') or 'latest').strip().lower()
+        year = str(selected.get('year') or 'all').strip()
+        finished = str(selected.get('finished') or 'all').strip().lower()
+        original = str(selected.get('original') or 'all').strip().lower()
+        if sort not in ('latest', 'hot', 'score'):
+            sort = 'latest'
+        if not (year == 'all' or (len(year) == 4 and year.isdigit())):
+            year = 'all'
+        if finished not in ('all', 'yes', 'no'):
+            finished = 'all'
+        if original not in ('all', 'yes', 'no'):
+            original = 'all'
+
+        # Default listing uses upstream pagination: no unnecessary extra requests.
+        if (sort == 'latest' and year == 'all' and
+                finished == 'all' and original == 'all'):
+            return self._list(self._get_json(self._catalog_path(tid, page)))
+
+        # The API ignores query-string sort/filter parameters. We really filter
+        # metadata, across a cached window of recent source pages, instead of
+        # sending unsupported parameters that silently return unfiltered data.
+        items, scanned, complete = self._recent_catalog(tid)
+        filtered = []
+        for item in items:
+            if year != 'all' and str(item.get('created_at') or '')[:4] != year:
+                continue
+            if finished != 'all':
+                actual = self._flag(item.get('is_finished'))
+                if actual is None or actual != (finished == 'yes'):
+                    continue
+            if original != 'all':
+                actual = self._flag(item.get('is_original'))
+                if actual is None or actual != (original == 'yes'):
+                    continue
+            filtered.append(item)
+
+        if sort == 'hot':
+            filtered.sort(key=lambda item: (
+                self._metric(item, 'hot'),
+                str(item.get('created_at') or ''),
+                self._metric(item, 'score')), reverse=True)
+        elif sort == 'score':
+            filtered.sort(key=lambda item: (
+                self._metric(item, 'score'),
+                self._metric(item, 'hot'),
+                str(item.get('created_at') or '')), reverse=True)
+        else:
+            filtered.sort(key=lambda item: str(item.get('created_at') or ''),
+                          reverse=True)
+
+        size = 20
+        start = (page - 1) * size
+        result = {
+            'list': [self._video_item(item) for item in filtered[start:start + size]],
+            'page': page,
+            'pagecount': max(1, (len(filtered) + size - 1) // size),
+            'limit': size,
+            'total': len(filtered),
+            # Diagnostic fields: these counts cover the sampled window only.
+            'filter_scope': 'all' if complete else 'recent',
+            'filter_scanned_pages': scanned,
+        }
+        return result
 
     def searchContent(self, key, quick=False, pg='1'):
         if not str(key or '').strip():

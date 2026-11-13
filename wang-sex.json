@@ -39,7 +39,17 @@
             "changeable": 1,
             "quickSearch": 1,
             "filterable": 1
-        },       
+        },    
+           {
+  "key": "py_huangguoai",
+  "name": "🔞黃果短劇｜PYTHON",
+  "type": 3,
+  "api": "./py/huangguoai.py",
+  "searchable": 1,
+  "quickSearch": 1,
+  "filterable": 0,
+  "changeable": 0
+},
     {
       "key"        : "小红书",
       "name"       : "⏭｜Pornhub(嗷嗚)｜PYTHON",

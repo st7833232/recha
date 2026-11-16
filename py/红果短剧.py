@@ -2361,8 +2361,11 @@ class _StreamHandler(BaseHTTPRequestHandler):
                 },
                 params["quality"],
             )
-        except Exception:
-            self._fail(502, b"media session failed")
+        except Exception as error:
+            # Expose only a short local failure reason (no signed media URL or key)
+            # so the player log distinguishes registration/model/MP4 range failures.
+            detail = (str(error) or type(error).__name__)[:160]
+            self._fail(502, ("media session failed: " + detail).encode("utf-8"))
             return
         raw_range = self.headers.get("Range") or ""
         requested = _parse_range(raw_range, session.total)
@@ -4673,6 +4676,32 @@ def _model_from_response(result: Any, video_id: str) -> dict[str, Any]:
         raise _PlaybackModelError("播放模型格式無效")
     rows = _video_list_from_model(model)
     if not isinstance(rows, (Mapping, list)) or not rows:
+        # Some newer models provide only fallback_api, not inline video_list.
+        # The upstream Kotlin player follows this URL before declaring failure.
+        fallback = _fallback_api_value(model.get("fallback_api"))
+        if fallback:
+            parsed = urlparse(fallback)
+            host = (parsed.hostname or "").lower()
+            allowed = (
+                host in ("reading.snssdk.com", "novel.snssdk.com")
+                or host.endswith(".fqnovel.com")
+            )
+            if parsed.scheme != "https" or not allowed or parsed.username or parsed.password:
+                raise _PlaybackModelError("播放模型 fallback_api 主機不受信任")
+            response = requests.get(
+                fallback,
+                headers={"User-Agent": APP_UA, "Accept": "application/json"},
+                timeout=5, allow_redirects=False,
+            )
+            payload = _json_response(response)
+            if isinstance(payload, Mapping):
+                info = payload.get("video_info")
+                if isinstance(info, Mapping):
+                    candidate = info.get("data")
+                    if isinstance(candidate, Mapping):
+                        rows = _video_list_from_model(candidate)
+                        if isinstance(rows, (Mapping, list)) and rows:
+                            return dict(candidate)
         raise _PlaybackModelError("播放模型皆為空")
     return dict(model)
 

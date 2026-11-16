@@ -1468,6 +1468,7 @@ def _router_data(html: str) -> dict[str, Any]:
 def _media_url(item: Mapping[str, Any]) -> str:
     return _first(
         item.get("main_url"),
+        item.get("play_url"),
         item.get("backup_url"),
         item.get("backup_url_1"),
         item.get("play_addr"),
@@ -4834,6 +4835,7 @@ def _definition_of(item: Mapping[str, Any]) -> str:
         item.get("vheight"),
         item.get("height"),
         item.get("quality"),
+        item.get("quality_desc"),
         item.get("gear_name"),
         item.get("quality_name"),
         item.get("p"),
@@ -4841,6 +4843,7 @@ def _definition_of(item: Mapping[str, Any]) -> str:
         meta.get("vheight"),
         meta.get("height"),
         meta.get("quality"),
+        meta.get("quality_desc"),
     ):
         hint = _quality_hint(value)
         if hint:

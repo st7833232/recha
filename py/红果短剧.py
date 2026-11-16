@@ -1705,6 +1705,7 @@ _STREAM_MAX_SESSIONS = 4
 _STREAM_INFLIGHT_WAIT = 60
 _STREAM_STATE: dict[str, Any] = {"port": 0, "server": None, "sessions": {}, "inflight": {}}
 _STREAM_LOCK = threading.RLock()
+_PLAYBACK_REG_LOCK = threading.Lock()
 
 
 def _toplevel_boxes(buf: bytes) -> list[tuple[int, int, bytes]]:
@@ -1725,40 +1726,43 @@ def _toplevel_boxes(buf: bytes) -> list[tuple[int, int, bytes]]:
 
 
 def _range_get(url: str, start: int, end: int) -> tuple[bytes, int]:
+    """Fetch an exact MP4 byte span; never pass an ignored Range through as valid.
+
+    The local HTTP stream promises byte-accurate Content-Range to the player.
+    If the CDN replies 200 for a nonzero offset, treating the full object as
+    that offset corrupts the MP4 and prevents seeking / the next episode.
+    """
+    if start < 0 or end < start:
+        raise HongguoPluginError("媒体 Range 参数无效")
     headers = dict(MEDIA_HEADERS)
     headers["Range"] = "bytes=%d-%d" % (start, end)
-    expected = end - start + 1
+    headers["Accept-Encoding"] = "identity"
     last_error: Exception | None = None
     for attempt in range(_RANGE_FETCH_ATTEMPTS):
         if attempt:
             time.sleep(_RANGE_FETCH_BACKOFF_SECONDS * attempt)
         try:
             response = requests.get(url, headers=headers, timeout=60)
-        except requests.RequestException as error:
+            response.raise_for_status()
+            body = response.content
+            if response.status_code == 206:
+                content_range = response.headers.get("Content-Range") or ""
+                matched = re.fullmatch(r"bytes\s+(\d+)-(\d+)/(\d+)", content_range.strip())
+                if not matched:
+                    raise HongguoPluginError("媒体 CDN 缺少有效 Content-Range")
+                first, last, total = (int(x) for x in matched.groups())
+                if first != start or total <= first or last != min(end, total - 1):
+                    raise HongguoPluginError("媒体 CDN Range 偏移不匹配")
+                if len(body) != last - first + 1:
+                    raise HongguoPluginError("媒体分片长度不符")
+                return body, total
+            if response.status_code == 200 and start == 0:
+                if len(body) < end - start + 1:
+                    raise HongguoPluginError("媒体 CDN 忽略 Range 且返回不完整正文")
+                return body[:end + 1], len(body)
+            raise HongguoPluginError("媒体 CDN 不支持非零 Range（HTTP %d）" % response.status_code)
+        except (requests.RequestException, HongguoPluginError) as error:
             last_error = error
-            continue
-        if response.status_code not in (200, 206):
-            last_error = HongguoPluginError(
-                "媒体分片请求失败 %s" % response.status_code
-            )
-            continue
-        body = response.content
-        # 上游偶发返回短包；短于请求长度时重试，避免播放器收到截断数据。
-        if not body or (response.status_code == 206 and len(body) < expected):
-            last_error = HongguoPluginError(
-                "媒体分片长度不足 %d/%d" % (len(body), expected)
-            )
-            continue
-        total = 0
-        content_range = response.headers.get("Content-Range") or ""
-        if "/" in content_range:
-            tail = content_range.rsplit("/", 1)[1].strip()
-            if tail.isdigit():
-                total = int(tail)
-        if not total:
-            length = response.headers.get("Content-Length") or ""
-            total = int(length) if length.isdigit() else 0
-        return body, total
     raise last_error or HongguoPluginError("媒体分片请求失败")
 
 
@@ -4541,52 +4545,211 @@ def _playback_request(video_id: str, pair: Mapping[str, str], shortplay: bool = 
     return api_url + "?" + query, headers, body
 
 
+# N3urda/hongguoTV Kotlin ContentRepository.kt:
+# The signed GET video_tab route is newer than the legacy POST /novel/player
+# family. Keep both, and don't register a new anonymous device per episode.
+# GPL-3.0-only adaptation; no credentials or fixed upstream identity are copied.
+def _register_playback_device_compat() -> dict[str, str]:
+    """Fallback to the older, encrypted device-register contract (aid=1967)."""
+    now = int(time.time() * 1000)
+    cdid = str(uuid.uuid4())
+    openudid = os.urandom(8).hex()
+    header = {
+        "display_name": "番茄小说", "update_version_code": "65132",
+        "manifest_version_code": "65132", "aid": 1967,
+        "channel": "xiaomi_1967_64", "package": "com.dragon.read",
+        "app_version": "6.5.1.32", "version_code": "65132",
+        "sdk_target_version": 29, "os": "Android", "os_version": "10", "os_api": "29",
+        "device_model": "MI 12", "device_brand": "Xiaomi",
+        "device_manufacturer": "Google", "cpu_abi": "arm64-v8a",
+        "density_dpi": "560", "display_density": "mdpi",
+        "resolution": "1440x2392", "language": "zh", "timezone": 8,
+        "access": "wifi", "not_request_sender": 0, "region": "CN",
+        "tz_name": "Asia/Shanghai", "tz_offset": 28800,
+        "sim_region": "cn", "openudid": openudid,
+        "clientudid": str(uuid.uuid4()),
+    }
+    payload = json.dumps(
+        {"magic_tag": "ss_app_log", "header": header, "_gen_time": now},
+        ensure_ascii=False, separators=(",", ":"),
+    ).encode("utf-8")
+    compressed = gzip.compress(payload, compresslevel=6, mtime=0)
+    random_bytes = os.urandom(32)
+    salt = bytes.fromhex(
+        "4dd4c2e6b83162090e52b3c7a6733ba4"
+        "1cb2462b829ab58a196b39db57177524"
+        "f49baf7f08e8d68d26a72e37c1a95a2f"
+        "1f05a51892aef2949732b62a38aadd58"
+    )
+    derived = hashlib.sha512(hashlib.sha512(random_bytes).digest() + salt).digest()
+    plaintext = hashlib.sha512(compressed).digest() + compressed
+    body = bytes.fromhex("746305100000") + random_bytes + _dm_aes_cbc_encrypt(
+        derived[:16], derived[16:32], _dm_pkcs7(plaintext),
+    )
+    params = {
+        "tt_data": "a", "os_api": "29", "device_type": "MI 12",
+        "manifest_version_code": "65132", "version_name": "6.5.1.32",
+        "channel": "xiaomi_1967_64", "_rticket": str(now),
+        "device_platform": "android", "version_code": "65132",
+        "cdid": cdid, "os": "android", "openudid": openudid,
+        "package": "com.dragon.read", "aid": "1967", "app_name": "novel",
+    }
+    response = requests.post(
+        "https://log.snssdk.com/service/2/device_register/?" + urlencode(params),
+        data=body, timeout=8, allow_redirects=False,
+        headers={
+            "User-Agent": "com.dragon.read/65132 (Linux; U; Android 10; zh_CN; MI 12; Build/MMB29M)",
+            "Content-Type": "application/octet-stream;tt-data=a",
+            "Connection": "Keep-Alive",
+        },
+    )
+    result = _json_response(response)
+    if not isinstance(result, Mapping):
+        raise _PlaybackModelError("相容裝置註冊回應格式無效")
+    pair = {"cdid": cdid}
+    for key in ("device_id", "install_id"):
+        value = str(result.get(key + "_str") or result.get(key) or "")
+        if not re.fullmatch(r"[0-9]{1,30}", value) or int(value) == 0:
+            raise _PlaybackModelError("相容裝置註冊未提供有效識別")
+        pair[key] = value
+    return pair
+
+
+def _playback_device(force: bool = False) -> dict[str, str]:
+    """Share a registered identity across play requests; rotate only on known failure."""
+    with _PLAYBACK_REG_LOCK:
+        with _STREAM_LOCK:
+            saved = _STREAM_STATE.get("playback_device")
+            created = float(_STREAM_STATE.get("playback_device_at") or 0)
+        if not force and isinstance(saved, dict) and time.monotonic() - created < 1200:
+            return dict(saved)
+        last_error: Exception | None = None
+        for register in (_register_playback_device, _register_playback_device_compat):
+            try:
+                pair = register()
+                with _STREAM_LOCK:
+                    _STREAM_STATE["playback_device"] = dict(pair)
+                    _STREAM_STATE["playback_device_at"] = time.monotonic()
+                    _STREAM_STATE["device"] = dict(pair, registered=True)
+                return pair
+            except Exception as error:
+                last_error = error
+        # A temporarily unavailable register endpoint is not a reason to throw
+        # away a previously valid identity without first trying it.
+        if isinstance(saved, dict) and saved.get("cdid"):
+            return dict(saved)
+        raise _PlaybackModelError("匿名播放裝置註冊失敗") from last_error
+
+
+def _model_from_response(result: Any, video_id: str) -> dict[str, Any]:
+    if not isinstance(result, Mapping):
+        raise _PlaybackModelError("播放模型回應格式無效")
+    code = result.get("Code", result.get("code", 0))
+    if str(code or "0") != "0":
+        raise _PlaybackModelError("播放模型被上游拒絕（code=%s）" % str(code)[:12])
+    data = result.get("data")
+    if not isinstance(data, Mapping):
+        raise _PlaybackModelError("播放模型缺少 data")
+    rows = data.get("video_model_data")
+    if not isinstance(rows, Mapping):
+        rows = data
+    entry = rows.get(video_id)
+    if not isinstance(entry, Mapping) and "video_model" in rows:
+        entry = rows
+    if not isinstance(entry, Mapping):
+        # One-episode responses may omit the requested ID as the dictionary key.
+        values = [v for v in rows.values() if isinstance(v, Mapping) and "video_model" in v]
+        if len(values) == 1:
+            entry = values[0]
+    if not isinstance(entry, Mapping):
+        raise _PlaybackModelError("播放模型未包含所選集數")
+    model = entry.get("video_model")
+    if isinstance(model, str):
+        try:
+            model = json.loads(model)
+        except ValueError as error:
+            raise _PlaybackModelError("播放模型 JSON 無效") from error
+    if not isinstance(model, Mapping):
+        raise _PlaybackModelError("播放模型格式無效")
+    rows = _video_list_from_model(model)
+    if not isinstance(rows, (Mapping, list)) or not rows:
+        raise _PlaybackModelError("播放模型皆為空")
+    return dict(model)
+
+
+def _video_tab_model(video_id: str, pair: Mapping[str, str], timeout: float) -> dict[str, Any]:
+    """Try the signed current video_tab GET route before legacy player POST."""
+    base = "https://api5-normal-sinfonlineb.fqnovel.com/reading/bookapi/video_tab/multi_video_model/v1/"
+    params = {
+        "iid": pair["install_id"], "device_id": pair["device_id"],
+        "ac": "wifi", "channel": "update_64", "aid": "8662",
+        "app_name": "novelread", "version_code": "71332", "version_name": "7.1.3.32",
+        "device_platform": "android", "os": "android", "ssmix": "a",
+        "device_type": "25053RT47C", "device_brand": "Redmi",
+        "language": "zh", "os_api": "36", "os_version": "16",
+        "manifest_version_code": "71332", "resolution": "1280*2772",
+        "dpi": "520", "update_version_code": "71332", "host_abi": "arm64-v8a",
+        "dragon_device_type": "phone", "pv_player": "71332",
+        "compliance_status": "0", "need_personal_recommend": "1",
+        "player_so_load": "1", "is_android_pad_screen": "0",
+        "video_id": video_id, "video_id_type": "0", "device_level": "1",
+        "need_all_video_definition": "1", "need_mp4_align": "0",
+        "use_os_player": "0", "video_platform": "1024", "source": "0",
+        "from_video_id": "",
+    }
+    device = _device_config(pair)
+    headers, url = _core_sixgod(
+        base, params, device, None,
+        {"User-Agent": APP_UA, "Accept": "application/json; charset=utf-8,application/x-protobuf"},
+    )
+    headers.update({"sdk-version": "2", "x-xs-from-web": "0",
+                    "x-tt-store-region": "cn", "x-tt-store-region-src": "did"})
+    response = requests.get(url, headers=headers, timeout=timeout, allow_redirects=False)
+    return _model_from_response(_json_response(response), video_id)
+
+
 def _video_model(video_id: str, config: Mapping[str, Any]) -> dict[str, Any]:
     if not re.fullmatch(r"[0-9]{1,30}", str(video_id)):
         raise _PlaybackModelError("分集識別無效")
     started = time.monotonic()
-    pair = _register_playback_device()
-    # 使用本次匿名註冊身份；不搬入上游固定裝置或持久化憑證。
+    pair = _playback_device()
+    # Avoid failing the entire request when the first endpoint is empty / unavailable.
+    last_error: Exception | None = None
+    try:
+        return _video_tab_model(video_id, pair, timeout=5)
+    except (requests.RequestException, HongguoPluginError, ValueError, KeyError) as error:
+        last_error = error
     routes = (
+        (False, "https://api5-normal-sinfonlineb.fqnovel.com/novel/player/multi_video_model/v1/"),
         (False, "https://reading.snssdk.com/novel/player/multi_video_model/player/v1"),
         (False, "https://api5-normal-sinfonlinea.fqnovel.com/novel/player/multi_video_model/player/v1"),
         (True, ""),
     )
     for shortplay, api_url in routes:
-        remaining = 12 - (time.monotonic() - started)
+        remaining = 16 - (time.monotonic() - started)
         if remaining <= 0:
-            raise _PlaybackModelError("播放模型等待逾時")
-        url, headers, body = _playback_request(video_id, pair, shortplay, api_url)
-        response = requests.post(url, headers=headers, data=body, timeout=remaining, allow_redirects=False)
-        response.raise_for_status()
-        if response.status_code != 200:
-            raise _PlaybackModelError("來源未提供播放模型")
-        if not response.content:
-            continue
+            break
         try:
-            result = _json_response(response)
-        except HongguoPluginError as error:
-            raise _PlaybackModelError("播放模型回應格式無效") from error
-        if not isinstance(result, Mapping) or str(result.get("Code", result.get("code", 0))) != "0":
-            raise _PlaybackModelError("來源拒絕提供播放模型")
-        data = result.get("data")
-        if not isinstance(data, Mapping):
-            raise _PlaybackModelError("播放模型回應格式無效")
-        entry = data.get(str(video_id))
-        if shortplay and not isinstance(entry, Mapping) and "video_model" in data:
-            entry = data
-        if not isinstance(entry, Mapping):
-            raise _PlaybackModelError("播放模型未包含所選集數")
-        model = entry.get("video_model")
-        if isinstance(model, str):
-            try:
-                model = json.loads(model)
-            except ValueError as error:
-                raise _PlaybackModelError("播放模型 JSON 無效") from error
-        if not isinstance(model, Mapping):
-            raise _PlaybackModelError("播放模型格式無效")
-        return dict(model)
-    raise _PlaybackModelError("主備播放模型皆為空，尚未取得正片")
+            url, headers, body = _playback_request(video_id, pair, shortplay, api_url)
+            response = requests.post(
+                url, headers=headers, data=body,
+                timeout=min(remaining, 5), allow_redirects=False,
+            )
+            if not response.content:
+                raise _PlaybackModelError("播放模型皆為空")
+            return _model_from_response(_json_response(response), video_id)
+        except (requests.RequestException, HongguoPluginError, ValueError, KeyError) as error:
+            last_error = error
+            # Access restrictions and account entitlements are not transient errors.
+            if isinstance(error, requests.HTTPError):
+                status = getattr(error.response, "status_code", None)
+                if status in (401, 403):
+                    raise _PlaybackModelError("上游拒絕播放請求（HTTP %d）" % status) from error
+            continue
+    raise _PlaybackModelError(
+        "播放模型均不可用：%s" % (str(last_error)[:120] if last_error else "無回應")
+    ) from last_error
+
 
 def _video_list_from_model(model: Mapping[str, Any]) -> Any:
     for key in ("video_list", "dynamic_video_list"):

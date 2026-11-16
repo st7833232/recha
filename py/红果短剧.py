@@ -2010,9 +2010,11 @@ def _fresh_device_pair() -> tuple[str, str]:
 
 
 def _is_empty_model_error(err: BaseException) -> bool:
-    if isinstance(err, _PlaybackModelError):
-        return False
     text = str(err)
+    # Only verified empty-model responses justify one identity refresh.
+    # Do not rotate on 401/403, entitlement errors, or malformed requests.
+    if isinstance(err, _PlaybackModelError):
+        return "播放模型皆為空" in text or "主備播放模型皆為空" in text
     return (
         "video_model 数据为空" in text
         or "video_model 为空" in text
@@ -2132,12 +2134,11 @@ def _video_model_rotating(video_id: str, config: Mapping[str, Any]) -> dict[str,
     except Exception as err:
         if not _is_empty_model_error(err):
             raise
-    pair = _rotate_stream_device()
-    try:
-        config["device_id"] = pair["device_id"]
-        config["install_id"] = pair["install_id"]
-    except (TypeError, AttributeError):
-        config = pair
+    # The model request uses the shared registered profile, not the random
+    # fields in config. Clear that profile for exactly one identity refresh.
+    with _STREAM_LOCK:
+        _STREAM_STATE.pop("playback_device", None)
+        _STREAM_STATE.pop("playback_device_at", None)
     return _video_model(video_id, config)
 
 

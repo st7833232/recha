@@ -1,0 +1,56 @@
+name: Hongguo one-shot live model probe
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/hongguo-live-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  anonymous-model:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install requests
+      - name: Probe registered v5 model for a published sample episode
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          python - <<'PY'
+          import importlib.util
+          spec = importlib.util.spec_from_file_location("hongguo", "py/红果短剧.py")
+          module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+          # Public sample episode from the upstream #130 validation report.
+          video_id = "7699003626647194649"
+          try:
+              pair = module._playback_device(force=True)
+          except Exception as e:
+              print("PROBE_STAGE=device_registration_failed")
+              print("PROBE_ERROR_CLASS=" + type(e).__name__)
+              raise SystemExit(2)
+          print("PROBE_STAGE=device_registration_ok")
+          # Never print identity, signed headers, URL, content keys, or media addresses.
+          try:
+              model = module._v5_playback_model(video_id, pair, timeout=10)
+              rows = module._video_list_from_model(model)
+              if not rows:
+                  raise RuntimeError("empty variants")
+              quality, item = module._select_quality(rows, "1080")
+              print("PROBE_STAGE=model_available")
+              print("PROBE_HAS_MEDIA_URL=" + str(bool(module._media_url(item))).lower())
+              print("PROBE_HAS_CENC_MATERIAL=" + str(bool(module._spade_value(item))).lower())
+              if not module._media_url(item) or not module._spade_value(item):
+                  raise RuntimeError("incomplete model metadata")
+          except Exception as e:
+              print("PROBE_STAGE=v5_model_unavailable")
+              print("PROBE_ERROR_CLASS=" + type(e).__name__)
+              raise SystemExit(3)
+          PY

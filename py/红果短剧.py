@@ -4655,17 +4655,16 @@ def _model_from_response(result: Any, video_id: str) -> dict[str, Any]:
     data = result.get("data")
     if not isinstance(data, Mapping):
         raise _PlaybackModelError("播放模型缺少 data")
-    rows = data.get("video_model_data")
+    rows = data.get("1004")
+    if not isinstance(rows, Mapping):
+        rows = data.get("video_model_data")
     if not isinstance(rows, Mapping):
         rows = data
     entry = rows.get(video_id)
     if not isinstance(entry, Mapping) and "video_model" in rows:
         entry = rows
-    if not isinstance(entry, Mapping):
-        # One-episode responses may omit the requested ID as the dictionary key.
-        values = [v for v in rows.values() if isinstance(v, Mapping) and "video_model" in v]
-        if len(values) == 1:
-            entry = values[0]
+    # Do not take a random dictionary entry: a model for another episode is
+    # not a valid response for the requested video ID.
     if not isinstance(entry, Mapping):
         raise _PlaybackModelError("播放模型未包含所選集數")
     model = entry.get("video_model")
@@ -4917,6 +4916,11 @@ class _V5Carrier:
         return key[31:] + out
 
 
+def _v5_rol8(value, count):
+    n = count & 7
+    return ((value << n) | (value >> ((8 - n) & 7))) & 255
+
+
 def _v5_xmxor(data, key):
     encoded = bytearray(len(data))
     for i, byte in enumerate(data):
@@ -4928,9 +4932,9 @@ def _v5_xmxor(data, key):
     last, first = encoded[-1] ^ encoded[-2], encoded[0]
     encoded[0] = (~last + first) & 255
     encoded[1] = ((encoded[0] ^ encoded[-1] ^ 254) + encoded[1]) & 255
-    encoded[2] = (encoded[2] + ((last - first) ^ _v5_rol32(encoded[1], 3) ^ 2)) & 255
+    encoded[2] = (encoded[2] + ((last - first) ^ _v5_rol8(encoded[1], 3) ^ 2)) & 255
     for i in range(len(encoded) - 4):
-        temp = _v5_rol32(encoded[i + 2], 3) ^ encoded[i + 1] ^ (i + 3)
+        temp = _v5_rol8(encoded[i + 2], 3) ^ encoded[i + 1] ^ (i + 3)
         encoded[i + 3] = (~temp + encoded[i + 3]) & 255
     encoded[-1] ^= encoded[-2]
     encoded[0] = ((encoded[0] ^ encoded[1]) + sum(encoded[1:])) & 255
@@ -5104,44 +5108,86 @@ def _video_tab_model(video_id: str, pair: Mapping[str, str], timeout: float) -> 
     return _model_from_response(_json_response(response), video_id)
 
 
+
+def _v5_playback_model(video_id: str, pair: Mapping[str, str],
+                       timeout: float, alternate: bool = False) -> dict[str, Any]:
+    url, headers, body = _v5_playback_request(video_id, pair, alternate)
+    response = requests.post(
+        url, headers=headers, data=body, timeout=timeout,
+        allow_redirects=False,
+    )
+    if response.status_code in (401, 403, 429):
+        raise _PlaybackModelError(
+            "上游拒絕播放請求（HTTP %d）" % response.status_code
+        )
+    response.raise_for_status()
+    if not response.content:
+        raise _PlaybackModelError("播放模型皆為空")
+    return _model_from_response(_json_response(response), video_id)
+
+
 def _video_model(video_id: str, config: Mapping[str, Any]) -> dict[str, Any]:
+    """Resolve precisely this episode, preferring the upstream-tested v5 POST."""
     if not re.fullmatch(r"[0-9]{1,30}", str(video_id)):
         raise _PlaybackModelError("分集識別無效")
     started = time.monotonic()
-    pair = _playback_device()
-    # Avoid failing the entire request when the first endpoint is empty / unavailable.
+    # Source identities may be single-use. Keep search/catalogue independent and
+    # refresh the playback registration for a new episode (jackotom 7.5).
+    pair = _playback_device(force=True)
     last_error: Exception | None = None
-    try:
-        return _video_tab_model(video_id, pair, timeout=5)
-    except (requests.RequestException, HongguoPluginError, ValueError, KeyError) as error:
-        last_error = error
+    # The v5 player endpoint is the current upstream-supported primary route.
+    # Try its alternate host only for empty/transient responses, never for a
+    # business rejection or authentication/entitlement failure.
+    for alternate in (False, True):
+        remaining = 12 - (time.monotonic() - started)
+        if remaining <= 1.0:
+            break
+        try:
+            return _v5_playback_model(
+                video_id, pair, timeout=min(remaining, 5.5),
+                alternate=alternate,
+            )
+        except _PlaybackModelError as error:
+            last_error = error
+            if "播放模型皆為空" not in str(error):
+                raise
+        except requests.HTTPError as error:
+            last_error = error
+            if getattr(error.response, "status_code", None) in (401, 403, 429):
+                raise _PlaybackModelError("上游拒絕播放請求") from error
+        except (requests.RequestException, HongguoPluginError, ValueError, KeyError) as error:
+            last_error = error
+
+    # Older variants remain a bounded compatibility fallback after v5 failure.
     routes = (
         (False, "https://api5-normal-sinfonlineb.fqnovel.com/novel/player/multi_video_model/v1/"),
         (False, "https://reading.snssdk.com/novel/player/multi_video_model/player/v1"),
-        (False, "https://api5-normal-sinfonlinea.fqnovel.com/novel/player/multi_video_model/player/v1"),
         (True, ""),
     )
     for shortplay, api_url in routes:
         remaining = 16 - (time.monotonic() - started)
-        if remaining <= 0:
+        if remaining <= 0.5:
             break
         try:
             url, headers, body = _playback_request(video_id, pair, shortplay, api_url)
             response = requests.post(
                 url, headers=headers, data=body,
-                timeout=min(remaining, 5), allow_redirects=False,
+                timeout=min(remaining, 4), allow_redirects=False,
             )
+            if response.status_code in (401, 403, 429):
+                raise _PlaybackModelError("上游拒絕播放請求")
+            response.raise_for_status()
             if not response.content:
-                raise _PlaybackModelError("播放模型皆為空")
+                last_error = _PlaybackModelError("播放模型皆為空")
+                continue
             return _model_from_response(_json_response(response), video_id)
+        except _PlaybackModelError as error:
+            last_error = error
+            if "播放模型皆為空" not in str(error):
+                raise
         except (requests.RequestException, HongguoPluginError, ValueError, KeyError) as error:
             last_error = error
-            # Access restrictions and account entitlements are not transient errors.
-            if isinstance(error, requests.HTTPError):
-                status = getattr(error.response, "status_code", None)
-                if status in (401, 403):
-                    raise _PlaybackModelError("上游拒絕播放請求（HTTP %d）" % status) from error
-            continue
+
     raise _PlaybackModelError(
         "播放模型均不可用：%s" % (str(last_error)[:120] if last_error else "無回應")
     ) from last_error
@@ -5229,6 +5275,7 @@ def _select_quality(video_list: Any, wanted: str = "1080") -> tuple[str, dict[st
             key in value
             for key in (
                 "main_url",
+                "play_url",
                 "backup_url",
                 "backup_url_1",
                 "play_addr",

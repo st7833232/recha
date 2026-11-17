@@ -114,14 +114,37 @@ class PlaybackContractTests(unittest.TestCase):
         with self.assertRaises(module._PlaybackModelError):
             module._model_from_response(response, "888")
 
-    def test_v5_is_first_model_request(self):
+    def test_only_v5_primary_is_used_on_success(self):
         with patch.object(module, "_playback_device", return_value=PAIR) as profile, \
-             patch.object(module, "_v5_playback_model", return_value=MODEL) as play, \
-             patch.object(module, "_video_tab_model") as obsolete:
+             patch.object(module, "_v5_playback_model", return_value=MODEL) as play:
             self.assertEqual(module._video_model(VID, {}), MODEL)
             profile.assert_called_once_with(force=True)
             play.assert_called_once()
-            obsolete.assert_not_called()
+            self.assertFalse(play.call_args.kwargs["alternate"])
+
+    def test_v5_backup_host_only_on_empty_model(self):
+        side_effect = [module._PlaybackModelError("播放模型皆為空"), MODEL]
+        with patch.object(module, "_playback_device", return_value=PAIR), \
+             patch.object(module, "_v5_playback_model", side_effect=side_effect) as play:
+            self.assertEqual(module._video_model(VID, {}), MODEL)
+            self.assertEqual([v.kwargs["alternate"] for v in play.call_args_list],
+                             [False, True])
+
+    def test_business_rejection_has_no_fallback(self):
+        with patch.object(module, "_playback_device", return_value=PAIR), \
+             patch.object(module, "_v5_playback_model",
+                          side_effect=module._PlaybackModelError("上游拒絕播放請求（HTTP 403）")) as play:
+            with self.assertRaises(module._PlaybackModelError):
+                module._video_model(VID, {})
+            play.assert_called_once()
+
+    def test_no_obsolete_playback_api_targets_remain(self):
+        source = SOURCE.read_text(encoding="utf-8")
+        self.assertNotIn("/reading/bookapi/video_tab/multi_video_model/v1", source)
+        self.assertNotIn("/novel/player/multi_video_model/v1/", source)
+        self.assertNotIn("/novel/player/video_model/v1/", source)
+        self.assertNotIn("def _playback_request(", source)
+        self.assertIn('for alternate in (False, True):', source)
 
     def test_legacy_play_url_leaf_is_not_dropped(self):
         name, item = module._select_quality(

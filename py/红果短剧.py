@@ -1,7 +1,17 @@
 # -*- coding: utf-8 -*-
 # === 發布與修改說明 ===
 # SPDX-License-Identifier: GPL-3.0-only
-# 紅果短劇 Python 修改版，修改日期：2026-11-12。
+# 紅果短劇 Python 修改版，最近修改日期：2026-11-17。
+# 2026-11-17 播放路徑修復：以 jackotom/hongguo-drama 7.5 的
+# src/native/playback-v5.js（GPL-3.0-only）為比對來源，該實作又依
+# N3urda/hongguoTV 的公開 GPL-3.0-only v5 簽章實作移植。
+# 在本 Python 檔加入 v5 原生簽章、gzip POST player/v1、1004 精確分集，
+# 並保留原版模型備援、CENC/Range 串流與 TVBox Spider 介面。
+# 同步新增離線測試：32 組 F13、4 組 carrier 公開向量與
+# 與 jackotom JavaScript 原版的完整簽章交叉比對。
+# 以上只代表程式與離線協定驗證；上游真實取源及 iOS/Android 實播未驗。
+# 下列 2026-11-12 日期描述均為歷史版本記錄，不表示本次提交僅改註解，
+# 也不代表該日真機驗收可沿用到 2026-11-17 的修改版本。
 # 本修改版依 GNU General Public License version 3 發布。
 # 完整授權與來源聲明隨本檔附於下方；不另加禁止商用或 24 小時刪除限制。
 # 獨立取得此單檔即可取得可修改的原始碼、GPL 副本與必要來源資訊。

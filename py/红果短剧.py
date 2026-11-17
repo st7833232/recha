@@ -4708,6 +4708,371 @@ def _model_from_response(result: Any, video_id: str) -> dict[str, Any]:
     return dict(model)
 
 
+
+# Playback v5 signing port from jackotom/hongguo-drama src/native/playback-v5.js
+# (GPL-3.0-only; upstream attributes N3urda/hongguoTV and drpys).
+# This is the player/v1 gzip POST signer, not the older 551 or GET signer.
+_V5_MAGIC = bytes.fromhex("2d4b4fca49750d433fb5ae2c226dcc56")
+_V5_SIGN_KEY = bytes.fromhex("b23c2a470a20d105dc3f8c4438f8272ed46d6c89ffdcdedd5108698d26e9489d")
+_V5_SBOX = bytes.fromhex("53290fe9e51f316f90f74a7e034d367784ab49237cd0135cdc632c322fd3be0e2624a417ecd9151a7ff64f60730a87f9445ec6ada2f865d22b696c4188f24c0df37b75510b939f6bc2fe6883e68bc8c722181ba0bdb08c9871b50c9a16b46eea8eed20ba4b8a14e0fcf1468dbbef05a93e5a9d7dcf06898635c1fd99f5de287a80c594daaab19b6279fbd75070cb52eb2555c456e39e7839853874e2f0013ac0b64742d8ca10e4b79c955de8b843ce4ed464a6a72ed508091c92e7b3eedd1e1dd12afac321618fa3d65f9167c982f43d66a53c6a1997585b346dbf9672ff37cdbc073b2dae11453304df00815476b2a13fccdb30b957a8acafe127400248591238922563e36406d37a24100b7902a028044e218453c2a399199c9d13dc40c55ba67e502273850ebdc1a2e2188b8f2d9e3cb909b8c46a2a9f4a6dd93007eafa65b7b3a881aa908cc74f0ad76bbbb58617c37012ca05a469fd44e62eecf1e4272ce860c0ae5eadf99b20d8f0234174006f3f110d7657d01645d4eff8f71471cbfe1cb2f52648727bf3c9de55153e031b4d61757db63dbf7782eeafe9018a8891362fb14759ac32bab03b349aeb5a377c5156be4c8dfbe13a684bda39cf836697c894545fe0f2491acea9fc6252f4ff1e0fe72bd2df6e67a7f635e5bcc6d1a5dd951d89960887a18eb40c785cdb1f80ed42299333ab98cdd67f316cd54346585dccd759fb722789b08807cc0fda293f7e5e1819bb0353517020b31d3d00374952bea2c421e862040a9ec892a05b266b7a0d0cc316f483b81af39715657ffe32ad8de0c13077646035236ee5363e5f900e9a7cf850a81cd9960b6df73317226f99eaa6fff15cec34acb98246639b918ab2851466a7cdfc4ad1b52c2ae95a58d3734e47ddd5b7560193f644ef9c408b7dee39b4d6aabf4de761e3252d4c7ba3843187745d55e6a5db05d42b45caed43c0c5d0b64bfa9d94a4a9d8f2f0e1a108dcfd288fd2bc1fc7bd675412138169cb09249875ba3b68cfb11180afae104fc9789571c6dfce02413886796ae21e3c488cc21b9f423a066c2eabf98e2fdeeb5776e4f5d09a515ba58cbbab3e37b09fd4f6d9244df80512e84cd7956be301cf64f1429d58577cc241f3a2c655144f81aaf95a4e108da894b38970561ae9002619fbbac91fa922ed202bfc62cb08e0de2a7f3631435f8b47c8a3c563b4db4071ce74c46da6fa696a9e282d1e825d663b93bfd56c48dce1884bb10fccea063929f746443fd830a4232e53da21a1f2d1bdfebc3a02c10a1b8ad31d04fd616590d272ac737e98eb33af60528716bee78ec0ee8699031177277d9cff32542c67caf5f44591681335ae0e178f3409a7803db83892dde5b9b7f0c750e24aef077badd678a09b850b84ec1597e4963cb5e675df1c0d6fb618496ecd76c35c798325590c2fb27a5e")
+_V5_HASH_TABLE = [0xebb64faf,0x7aadcc2,0xcf3187bf,0xe01138ff,0x6d0bfcff,0x5a30a3be,0xb41ad638,0x34180eb8,0xf233eb6f,0xb1a584cc,0xccc30dc7,0x47d1db51,0xd55653de,0x70a84fa1,0x57473c12,0xf76f0288,0x2c077f0a,0xda0dcad0,0xfbb86f6c,0xfdc4cf00,0x688a020d,0xe676c6a6,0x8cd6338b,0x1a3c8d0e,0xcce8b06b,0x6ad0ed0b,0xa0522717,0xdc71ac83,0x2285db71,0xd5b4dda6,0x736f8650,0x6560306c,0x617ce2a6,0xe423417e,0xa40e143,0x544e4032,0x88dffb2a,0x716c1ae0,0x4c467a88,0x5b23bb3,0xe1d0b866,0xbaa3dcb8,0xae3374d3,0xc3381a50,0x1702f75b,0xfe6da368,0xf0b4cf48,0x4e0ffbb8,0x72aad10d,0x26c53a3d,0xf2bce0f6,0xb4557581,0x4a257fdd,0x8c3182a2,0xab0b3b86,0x3d5dfb14,0x4f103634,0xd37b52d7,0x444eff16,0xeb0a33d1,0x6ca86f6e,0x284ba7,0x8387cfa,0x5fb37586]
+_V5_PROCESS_NONCE = base64.urlsafe_b64encode(os.urandom(18)).decode("ascii").rstrip("=")
+_V5_PROCESS_STARTED = int(time.time() * 1000)
+_V5_U32 = (1 << 32) - 1
+_V5_U64 = (1 << 64) - 1
+
+
+def _v5_u32(value):
+    return value & _V5_U32
+
+
+def _v5_le32(value):
+    return struct.pack("<I", _v5_u32(value))
+
+
+def _v5_rol32(value, count):
+    n = count & 31
+    return ((value << n) | (value >> ((32 - n) & 31))) & _V5_U32
+
+
+def _v5_ror32(value, count):
+    return _v5_rol32(value, -count)
+
+
+def _v5_ror64(value, count):
+    n = count & 63
+    return ((value >> n) | (value << ((64 - n) & 63))) & _V5_U64
+
+
+def _v5_varint(value):
+    n = int(value)
+    if n < 0:
+        raise ValueError("negative protobuf varint")
+    out = bytearray()
+    while n > 127:
+        out.append((n & 127) | 128)
+        n >>= 7
+    out.append(n)
+    return bytes(out)
+
+
+def _v5_proto(fields):
+    out = bytearray()
+    for tag, value, *opts in fields:
+        if value is None:
+            continue
+        kind = opts[0] if opts else ""
+        if kind == "sint":
+            n = int(value)
+            out.extend(_v5_varint(tag * 8))
+            out.extend(_v5_varint(-n * 2 - 1 if n < 0 else n * 2))
+        else:
+            b = value if isinstance(value, bytes) else str(value).encode("utf-8")
+            if b:
+                out.extend(_v5_varint(tag * 8 + 2))
+                out.extend(_v5_varint(len(b)))
+                out.extend(b)
+    return bytes(out)
+
+
+def _v5_get_iv(initial, data):
+    v = initial & _V5_U32
+    for i, b in enumerate(data):
+        if i & 1:
+            v = ~((v >> 7) ^ v ^ (b | (v << 12))) & _V5_U32
+        else:
+            v = ((v >> 4) ^ v ^ (v << 6) ^ b) & _V5_U32
+    return v
+
+
+def _v5_branch(query_hash, body_md5, ts):
+    return _v5_get_iv(
+        _v5_get_iv(_v5_get_iv(0x20230928, query_hash), body_md5),
+        _v5_le32(ts),
+    ) & 15
+
+
+def _v5_sum_md5(value):
+    check = 0x20220420
+    for i in range(12):
+        temp = (check >> (3 if not i & 1 else 5)) ^ check
+        if i & 1:
+            check = (~(value[i] | (check << 11)) ^ temp) & _V5_U32
+        else:
+            check = ((value[i] ^ (check << 7)) ^ temp) & _V5_U32
+    return ((check | 4) ^ 0x1000000) & _V5_U32
+
+
+def _v5_hash_f13(query_hash, body_md5, ts):
+    if _v5_branch(query_hash, body_md5, ts) != 12:
+        raise ValueError("unsupported v5 hash branch")
+    seed, count = 0x9d4a97c2, _v5_u32(0x9d4a97c2 + ts)
+    table = [_v5_ror32(v, count + 1) for v in _V5_HASH_TABLE]
+    shift = (count + 2) & 7
+    pad = bytes((((v | (v << 8)) >> shift) & 255) for v in (0xfa, 0x45, 0x61, 0xd7))
+    data = query_hash + body_md5 + _v5_le32(ts) + pad + bytes.fromhex("00000000000001a0")
+    schedule = list(struct.unpack(">%dI" % (len(data) // 4), data))
+    for i in range(112):
+        x, y = schedule[i + 1], schedule[i + 14]
+        schedule.append(_v5_u32(
+            schedule[i] + schedule[i + 9]
+            + (_v5_rol32(x, 14) ^ _v5_rol32(x, 25) ^ (x >> 3))
+            + (_v5_rol32(y, 13) ^ _v5_rol32(y, 15) ^ (y >> 10))
+        ))
+    initial = [_v5_ror32(v, count) for v in
+               (0x7aba4fc8, 0x67166507, 0x6403fa00, 0x340f512f,
+                984304912, 3005047866, 2874125293, 2152413264)]
+    state = list(initial)
+    for i in range(96):
+        base = seed + i
+        n1 = ((state[4] ^ state[0]) & state[1]) ^ state[4]
+        n2 = _v5_rol32(state[1], 26) ^ _v5_rol32(state[1], 21) ^ _v5_rol32(state[1], 7)
+        n4 = _v5_u32(schedule[base & 127] + n1 + n2 + table[base & 63] + state[6])
+        n5 = _v5_rol32(state[3], 30) ^ _v5_rol32(state[3], 19) ^ _v5_rol32(state[3], 10)
+        n6 = (state[3] & state[5]) | ((state[3] | state[5]) & state[2])
+        old = state[7]
+        state.insert(0, state.pop())
+        state[7] = _v5_u32(n5 + n6 + n4)
+        state[0] = _v5_u32(old + n4)
+    out = b"".join(struct.pack(">I", _v5_u32(a + b)) for a, b in zip(state, initial))
+    folded = bytes(a ^ b for a, b in zip(out[:16], out[16:]))
+    return folded + _v5_le32(_v5_sum_md5(folded) | 0x20)
+
+
+class _V5Carrier:
+    """Protocol-specific two-round carrier, not standard AES."""
+
+    def __init__(self, key, ts):
+        word = ts & 3
+        self.box = _V5_SBOX[word * 256:(word + 1) * 256]
+        self.con = ((2, 0, 3, 1), (1, 3, 2, 0), (3, 2, 1, 0), (2, 3, 1, 0))[word]
+        self.order = (
+            (0, 9, 14, 15, 4, 13, 2, 7, 8, 1, 6, 3, 12, 5, 10, 11),
+            (0, 9, 14, 11, 4, 13, 2, 3, 8, 1, 6, 15, 12, 5, 10, 7),
+            (0, 9, 14, 3, 4, 13, 2, 15, 8, 1, 6, 11, 12, 5, 10, 7),
+            (0, 9, 14, 15, 4, 13, 2, 3, 8, 1, 6, 11, 12, 5, 10, 7),
+        )[word]
+        initial = (0xbbb5de72, 0xd4638d5b, 0x92a5f73b, 0x89f8a1c9)[word]
+        expanded = bytearray(bytes(a ^ b for a, b in zip(_v5_le32(initial) * 4, key)) + bytes(32))
+        rounds = 8
+        for i in range(4, 12):
+            at = 4 * (i - 1)
+            a, b, c, d = expanded[at:at + 4]
+            if (i & 3) == 0:
+                temp = ((initial >> (rounds & 24)) ^ self.box[b]) & 255
+                b, c, d, a = self.box[c], self.box[d], self.box[a], temp
+            rounds += 2
+            expanded[at + 4] = a ^ expanded[at - 12]
+            expanded[at + 5] = b ^ expanded[at - 11]
+            expanded[at + 6] = c ^ expanded[at - 10]
+            expanded[at + 7] = d ^ expanded[at - 9]
+        self.keys = [expanded[i * 4:i * 4 + 4] for i in range(12)]
+
+    def block(self, value):
+        rows = [list(value[i * 4:i * 4 + 4]) for i in range(4)]
+
+        def add(offset):
+            for i in range(4):
+                for j in range(4):
+                    rows[i][j] ^= self.keys[offset + i][self.con[j]]
+
+        add(0)
+        for round_no in (1, 2):
+            before = [[self.box[v] for v in row] for row in rows]
+            flat = [v for i in self.con for v in before[i]]
+            rows = [[flat[self.order[i * 4 + j]] for j in range(4)] for i in range(4)]
+            if round_no == 1:
+                rows = [[row[i] for i in self.con] for row in rows]
+                def xt(v):
+                    return ((v << 1) ^ (0x1b if v & 128 else 0)) & 255
+                for i in range(4):
+                    t = rows[0][i] ^ rows[1][i] ^ rows[2][i] ^ rows[3][i]
+                    u = rows[0][i]
+                    rows[0][i] ^= t ^ xt(rows[0][i] ^ rows[1][i])
+                    rows[1][i] ^= t ^ xt(rows[1][i] ^ rows[2][i])
+                    rows[2][i] ^= t ^ xt(rows[2][i] ^ rows[3][i])
+                    rows[3][i] ^= t ^ xt(rows[3][i] ^ u)
+            add(round_no * 4)
+        for i in range(4):
+            for j in range(4):
+                rows[i][j] ^= self.keys[4 + i][j]
+        return bytes(v for row in rows for v in row)
+
+    def encrypt(self, source, iv):
+        if len(source) < 248:
+            raise ValueError("v5 carrier needs 248 bytes")
+        wire, compact = (6, 5, 3, 4, 2, 7, 1, 0), (1, 7, 3, 6, 2, 0, 4, 5)
+        plaintext = bytearray(32)
+        for i in range(31):
+            for j in range(8):
+                plaintext[i] |= ((source[i * 8 + j] >> wire[j]) & 1) << compact[j]
+        plaintext[31] = 1
+        first = self.block(bytes(a ^ b for a, b in zip(plaintext[:16], iv)))
+        key = first + self.block(bytes(a ^ b for a, b in zip(plaintext[16:], first)))
+        out = bytearray(source)
+        for i in range(31):
+            for j in range(8):
+                at = i * 8 + j
+                out[at] = (out[at] & ~(1 << wire[j])) | (((key[i] >> compact[j]) & 1) << wire[j])
+        return key[31:] + out
+
+
+def _v5_xmxor(data, key):
+    encoded = bytearray(len(data))
+    for i, byte in enumerate(data):
+        at = (i * 4) & 28
+        d0, d1 = key[at], key[at + 1]
+        value = (~((((byte << 4) | (byte >> 4)) & 255) + d0)) ^ d1
+        value = (((value & 255) << 3) | ((value & 255) >> 5)) & 255
+        encoded[len(data) - i - 1] = ~(((value + d1) & 255) ^ d0) & 255
+    last, first = encoded[-1] ^ encoded[-2], encoded[0]
+    encoded[0] = (~last + first) & 255
+    encoded[1] = ((encoded[0] ^ encoded[-1] ^ 254) + encoded[1]) & 255
+    encoded[2] = (encoded[2] + ((last - first) ^ _v5_rol32(encoded[1], 3) ^ 2)) & 255
+    for i in range(len(encoded) - 4):
+        temp = _v5_rol32(encoded[i + 2], 3) ^ encoded[i + 1] ^ (i + 3)
+        encoded[i + 3] = (~temp + encoded[i + 3]) & 255
+    encoded[-1] ^= encoded[-2]
+    encoded[0] = ((encoded[0] ^ encoded[1]) + sum(encoded[1:])) & 255
+    return bytes(encoded)
+
+
+def _v5_medusa(query_hash, f13, ts, who):
+    flags = bytes(8)
+    device = _v5_proto([
+        (1, 1, "sint"), (2, 2, "sint"), (3, "8662"),
+        (4, who["device_id"]), (5, _V5_PROCESS_NONCE), (6, "!noperm!"),
+        (12, "Asia/Shanghai,8"), (13, "zh_CN"),
+        (22, who["os_version"]), (25, _V5_PROCESS_STARTED, "sint"),
+        (30, who["device_type"]), (31, "HONOR"),
+        (32, who["device_type"]), (34, "HONOR"),
+    ])
+    env = _v5_proto([
+        (6, "v04.10.03.04-bugfix"), (8, who["channel"]),
+        (12, device), (14, who["version_name"]),
+    ])
+    message = _v5_proto([
+        (1, _V5_MAGIC), (2, 5, "sint"),
+        (3, int.from_bytes(os.urandom(4), "little"), "sint"),
+        (4, "8662"), (5, who["device_id"]), (6, "646637794"),
+        (7, who["version_name"]), (8, "v04.10.03-ml-android"),
+        (9, 0x040a0300, "sint"), (10, flags), (12, ts, "sint"),
+        (13, f13), (14, query_hash[:6]),
+        (15, _v5_proto([(1, 1, "sint"), (2, 1, "sint"),
+                         (3, 1, "sint"), (5, 1, "sint")])),
+        (17, ts, "sint"), (20, "none"), (21, 377, "sint"),
+        (23, env), (24, '{"cmr":16777216,"cmr2":16777216,"un_h":11,"vpn":0,"kd":0,"dyn":"","do":1,"tk":true}'),
+    ])
+    nonce = int.from_bytes(os.urandom(4), "little")
+    high = (nonce >> 16) & 255
+    h = SM3(_V5_SIGN_KEY + _v5_le32(nonce) + _V5_SIGN_KEY).digest()
+    seed = _v5_le32(~(((high << 11) | (nonce >> 24)) ^ (high >> 5) ^ high))
+    transformed = bytearray((flags + _v5_xmxor(message, h))[::-1])
+    for i in range(len(transformed)):
+        transformed[i] ^= seed[(~i) & 3]
+    check = 0x18000001 | ((query_hash[0] & 63) << 14) | ((f13[0] & 63) << 8)
+    packed = (b"\xca" + os.urandom(4) + _v5_le32(check)
+              + bytes(transformed) + bytes([(nonce >> 16) & 255, (nonce >> 24) & 255]))
+    md5 = lambda value: hashlib.md5(value).digest()
+    encrypted = _V5Carrier(md5(_V5_SIGN_KEY[:16]), ts).encrypt(
+        packed, md5(_V5_SIGN_KEY[16:]))
+    prefix = bytearray(_v5_le32(5) + _V5_MAGIC)
+    t = _v5_le32(ts)
+    for i in range(len(prefix)):
+        prefix[i] ^= t[i & 3]
+    out = bytes(prefix) + bytes([nonce & 255, (nonce >> 8) & 255, 0, 1]) + encrypted
+    return base64.b64encode(out).decode("ascii")
+
+
+def _v5_helios(ts):
+    nonce = os.urandom(4)
+    ascii_md5 = hashlib.md5(nonce + b"8662").hexdigest().encode("ascii")
+    words = list(struct.unpack("<4Q", ascii_md5))
+    table = [words[0]]
+    b0, b8 = words.pop(0), words.pop(0)
+    for i in range(34):
+        value = ((_v5_ror64(b8, 8) + b0) & _V5_U64) ^ i
+        words.append(value)
+        value = (value ^ _v5_ror64(b0, 61)) & _V5_U64
+        table.append(value)
+        b0, b8 = value, words.pop(0)
+    message = ("%d-646637794-8662" % ts).encode("ascii")
+    data = _dm_pkcs7(message)
+    output = bytearray()
+    for at in range(0, len(data), 16):
+        a, b = struct.unpack("<2Q", data[at:at + 16])
+        for i in range(34):
+            b = (table[i] ^ (a + _v5_ror64(b, 8))) & _V5_U64
+            a = (b ^ _v5_ror64(a, 61)) & _V5_U64
+        output.extend(struct.pack("<2Q", a, b))
+    return base64.b64encode(nonce + output).decode("ascii")
+
+
+def _v5_sign(base, values, body):
+    if not base.startswith("https://") or "?" in base or "#" in base:
+        raise ValueError("invalid v5 endpoint")
+    if not isinstance(body, bytes) or not body.startswith(b"\x1f\x8b\x08"):
+        raise ValueError("v5 requires a gzip body")
+    now = int(time.time() * 1000)
+    ts = now // 1000
+    body_hash = hashlib.md5(body).digest()
+    vals = dict(values)
+    if "ts" in vals:
+        vals["ts"] = str(ts)
+    for offset in range(1024):
+        ticket = str(now + offset)
+        query = "&".join(
+            quote(str(k), safe="-_.~*") + "=" + quote(str(v), safe="-_.~*")
+            for k, v in dict(vals, _rticket=ticket).items()
+        )
+        hash_query = SM3(query.encode("utf-8")).digest()
+        if _v5_branch(hash_query, body_hash, ts) != 12:
+            continue
+        f13 = _v5_hash_f13(hash_query, body_hash, ts)
+        headers = {
+            "x-khronos": str(ts),
+            "x-helios": _v5_helios(ts),
+            "x-medusa": _v5_medusa(hash_query, f13, ts, vals),
+            "x-ss-stub": body_hash.hex().upper(),
+            "x-ss-req-ticket": ticket,
+        }
+        return base + "?" + query, headers
+    raise HongguoPluginError("播放 v5 簽章分支無法建立")
+
+
+def _v5_playback_request(video_id, pair, alternate=False):
+    params = {
+        "aid": "8662", "app_name": "novelread", "version_code": "74332",
+        "version_name": "7.4.3.32", "channel": "vivo_8662_64",
+        "device_platform": "android", "device_type": "PGT-AN10",
+        "os_version": "12", "update_version_code": "74332",
+        "iid": pair["install_id"], "cdid": pair["cdid"],
+        "device_id": pair["device_id"],
+    }
+    payload = {
+        "biz_param": {
+            "detail_page_version": 0, "device_level": 3,
+            "disable_digg_stat": False, "disable_video_relate_book": False,
+            "need_all_video_definition": True, "need_mp4_align": False,
+            "use_os_player": False, "use_server_dns": False,
+            "video_platform": 1024,
+        },
+        "mixed_video_id_map": {"1004": [str(video_id)]},
+        "dr_scene": "player",
+    }
+    body = gzip.compress(json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8"),
+                         compresslevel=6, mtime=0)
+    host = "sinfonlinea" if alternate else "sinfonlineb"
+    base = "https://api5-normal-%s.fqnovel.com/novel/player/multi_video_model/player/v1" % host
+    url, signed = _v5_sign(base, params, body)
+    signed.update({
+        "User-Agent": "com.phoenix.read/73932 (Linux; U; Android 12; zh_CN_#Hans; PGT-AN10; Build/V417IR;tt-ok/3.12.13.20)",
+        "Accept": "application/json", "Content-Type": "application/json; charset=utf-8",
+        "Content-Encoding": "gzip",
+    })
+    return url, signed, body
+
+
 def _video_tab_model(video_id: str, pair: Mapping[str, str], timeout: float) -> dict[str, Any]:
     """Try the signed current video_tab GET route before legacy player POST."""
     base = "https://api5-normal-sinfonlineb.fqnovel.com/reading/bookapi/video_tab/multi_video_model/v1/"

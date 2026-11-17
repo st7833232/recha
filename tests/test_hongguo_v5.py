@@ -27,6 +27,32 @@ MODEL = {"video_id": VID, "video_duration": 120,
 
 
 class PlaybackContractTests(unittest.TestCase):
+    # Public synthetic vectors from N3urda/hongguoTV (GPL-3.0), carried by
+    # jackotom/hongguo-drama src/native/fixtures/playback-v5-vectors.
+    def test_v5_f13_matches_32_independent_reference_vectors(self):
+        data = json.loads((SOURCE.parents[1] / "tests" / "fixtures" /
+                          "hongguo-signing-v5-f13.json").read_text(encoding="utf-8"))
+        self.assertEqual(len(data), 32)
+        for row in data:
+            with self.subTest(ts=row["ts"]):
+                q, b = bytes.fromhex(row["query"]), bytes.fromhex(row["body"])
+                self.assertEqual(module._v5_branch(q, b, row["ts"]), 12)
+                digest = module._v5_hash_f13(q, b, row["ts"])
+                self.assertEqual(digest[:16].hex(), row["digest"])
+                self.assertEqual(len(digest), 20)
+
+    def test_v5_carrier_matches_four_reference_ciphertexts(self):
+        data = json.loads((SOURCE.parents[1] / "tests" / "fixtures" /
+                          "hongguo-signing-v5-carrier.json").read_text(encoding="utf-8"))
+        self.assertEqual(len(data), 4)
+        for row in data:
+            with self.subTest(ts=row["ts"]):
+                source = bytes.fromhex(row["source"])
+                actual = module._V5Carrier(
+                    bytes.fromhex(row["key"]), row["ts"]
+                ).encrypt(source, bytes.fromhex(row["iv"]))
+                self.assertEqual(actual.hex(), row["encrypted"])
+
     def test_v5_signer_generates_complete_gzip_post(self):
         url, headers, body = module._v5_playback_request(VID, PAIR)
         self.assertIn("/novel/player/multi_video_model/player/v1", url)

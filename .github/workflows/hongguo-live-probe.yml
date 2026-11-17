@@ -54,3 +54,37 @@ jobs:
               print("PROBE_ERROR_CLASS=" + type(e).__name__)
               raise SystemExit(3)
           PY
+      - name: Probe local decrypted MP4 Range (no full video download)
+        run: |
+          python - <<'PY'
+          import importlib.util
+          import requests
+          from urllib.parse import urlencode
+          spec = importlib.util.spec_from_file_location("hongguo", "py/红果短剧.py")
+          module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+          vid = "7699003626647194649"
+          try:
+              session = module._stream_session(vid, {}, "1080")
+              if session.total <= 4096 or not session.samples:
+                  raise RuntimeError("MP4 index or media length invalid")
+              port = module._start_stream_server()
+              if not port:
+                  raise RuntimeError("streaming HTTP server failed")
+              endpoint = ("http://127.0.0.1:%d/hg.mp4?" % port) + urlencode(
+                  {"vid": vid, "q": "1080"})
+              response = requests.get(endpoint, headers={"Range": "bytes=0-4095"},
+                                      timeout=15)
+              if response.status_code != 206:
+                  raise RuntimeError("local HTTP status " + str(response.status_code))
+              if not (response.headers.get("Content-Range", "").startswith("bytes 0-4095/")
+                      and len(response.content) == 4096
+                      and b"ftyp" in response.content[:64]):
+                  raise RuntimeError("invalid local MP4 byte range")
+              print("PROBE_STREAM=range206_ok")
+              print("PROBE_INDEX=tracks_available")
+          except Exception as e:
+              print("PROBE_STREAM=failed")
+              print("PROBE_STREAM_ERROR_CLASS=" + type(e).__name__)
+              raise SystemExit(4)
+          PY

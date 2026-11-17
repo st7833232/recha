@@ -7,6 +7,7 @@ import base64
 import gzip
 import importlib.util
 import json
+import subprocess
 from pathlib import Path
 import unittest
 from unittest.mock import patch
@@ -27,6 +28,48 @@ MODEL = {"video_id": VID, "video_duration": 120,
 
 
 class PlaybackContractTests(unittest.TestCase):
+    def test_full_v5_signature_matches_reference_js(self):
+        # The upstream GPL JS signer is used only as a test oracle; the Python
+        # spider still runs without Node, Java, or a remote signing service.
+        now = 1800000000123
+        values = {
+            "aid": "8662", "app_name": "novelread",
+            "version_code": "74332", "version_name": "7.4.3.32",
+            "channel": "vivo_8662_64", "device_platform": "android",
+            "device_type": "PGT-AN10", "os_version": "12",
+            "update_version_code": "74332",
+            "iid": PAIR["install_id"], "cdid": PAIR["cdid"],
+            "device_id": PAIR["device_id"],
+        }
+        body = gzip.compress(json.dumps({"dr_scene": "player"}).encode(), mtime=0)
+        base = "https://api5-normal-sinfonlineb.fqnovel.com/novel/player/multi_video_model/player/v1"
+        payload = json.dumps({
+            "now": now, "base": base, "values": values,
+            "body": base64.b64encode(body).decode("ascii"),
+        })
+        process = subprocess.run(
+            ["node", str(SOURCE.parents[1] / "tests" / "v5_reference" / "reference.cjs")],
+            input=payload, text=True, capture_output=True, check=True, timeout=20,
+        )
+        expected = json.loads(process.stdout)
+        old_nonce = module._V5_PROCESS_NONCE
+        old_started = module._V5_PROCESS_STARTED
+        module._V5_PROCESS_NONCE = base64.urlsafe_b64encode(bytes([1]) * 18).decode().rstrip("=")
+        module._V5_PROCESS_STARTED = now
+        calls = [1]
+        def deterministic(n):
+            calls[0] += 1
+            return bytes([calls[0]]) * n
+        try:
+            with patch.object(module.time, "time", return_value=now / 1000), \
+                 patch.object(module.os, "urandom", side_effect=deterministic):
+                url, headers = module._v5_sign(base, values, body)
+        finally:
+            module._V5_PROCESS_NONCE = old_nonce
+            module._V5_PROCESS_STARTED = old_started
+        self.assertEqual(url, expected["url"])
+        self.assertEqual(headers, expected["headers"])
+
     # Public synthetic vectors from N3urda/hongguoTV (GPL-3.0), carried by
     # jackotom/hongguo-drama src/native/fixtures/playback-v5-vectors.
     def test_v5_f13_matches_32_independent_reference_vectors(self):

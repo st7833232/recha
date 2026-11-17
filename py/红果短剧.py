@@ -2,6 +2,9 @@
 # === 發布與修改說明 ===
 # SPDX-License-Identifier: GPL-3.0-only
 # 紅果短劇 Python 修改版，最近修改日期：2026-11-17。
+# 2026-11-17 播放端點清理：失效的舊版 API 已從主流程移除，僅保留
+# v5 player/v1 的主機 sinfonlineb／備用主機 sinfonlinea；維持既有的裝置
+# 註冊、CENC 解密與 MP4 Range 串流功能。
 # 2026-11-17 播放路徑修復：以 jackotom/hongguo-drama 7.5 的
 # src/native/playback-v5.js（GPL-3.0-only）為比對來源，該實作又依
 # N3urda/hongguoTV 的公開 GPL-3.0-only v5 簽章實作移植。
@@ -1387,7 +1390,6 @@ def _hg_category_page(route, cat, page):
     p = ((v.get("loaderData") or {}).get("category_$") or {})
     return p
 
-VIDEO_URL = "https://api5-normal-sinfonlineb.fqnovel.com/novel/player/multi_video_model/v1/"
 UA = "Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
 APP_UA = "com.phoenix.read/71332 (Linux; U; Android 16; zh_CN; 25053RT47C; Build/BP2A.250605.031.A3; Cronet/TTNetVersion:04657795 2026-01-23 QuicVersion:c67e9834 2025-09-08)"
 MEDIA_UA = "com.phoenix.read/71332"
@@ -4515,55 +4517,6 @@ def _device_config(config: Mapping[str, Any]) -> dict[str, str]:
         "ua": APP_UA,
     }
 
-def _playback_request(video_id: str, pair: Mapping[str, str], shortplay: bool = False, api_url: str = "") -> tuple[str, dict[str, str], bytes]:
-    devices = _device_config(pair)
-    if shortplay:
-        params = {
-            "iid": devices["install_id"], "device_id": devices["device_id"], "aid": "1967",
-            "app_name": "novelapp", "version_code": "72132", "version_name": "7.2.1.32",
-            "device_platform": "android", "device_brand": "Xiaomi", "os_version": "13", "cdid": pair["cdid"],
-        }
-        payload = {"video_id": str(video_id), "content_type": 1004, "biz_param": {
-            "detail_page_version": 0, "device_level": 3, "disable_digg_stat": False, "disable_video_relate_book": False,
-            "from_video_id": "", "need_all_video_definition": True, "need_mp4_align": False, "source": 4,
-            "use_os_player": False, "use_server_dns": False, "video_platform": 3,
-        }}
-        body = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode()
-        headers = {"User-Agent": "com.dragon.read", "Content-Type": "application/json; charset=utf-8"}
-        api_url = "https://api3-normal-sinfonlinea.fqnovel.com/novel/player/video_model/v1/"
-    else:
-        params = {
-            "ac": "wifi", "channel": "update_64", "aid": "8662", "app_name": "novelread",
-            "version_code": "74332", "version_name": "7.4.3.32", "device_platform": "android", "os": "android",
-            "ssmix": "a", "device_type": "25053RT47C", "device_brand": "Redmi", "language": "zh", "os_api": "36",
-            "os_version": "16", "manifest_version_code": "74332", "resolution": "1280*2772", "dpi": "520",
-            "update_version_code": "74332", "host_abi": "arm64-v8a", "dragon_device_type": "phone", "pv_player": "74332",
-            "compliance_status": "0", "need_personal_recommend": "1", "player_so_load": "1", "is_android_pad_screen": "0",
-            "device_id": devices["device_id"], "iid": devices["install_id"], "cdid": pair["cdid"], "_rticket": str(int(time.time() * 1000)),
-        }
-        payload = {"dr_scene": "player", "biz_param": {
-            "detail_page_version": 0, "device_level": 3, "disable_digg_stat": False, "need_all_video_definition": True,
-            "need_mp4_align": False, "use_os_player": False, "use_server_dns": False, "video_platform": 1024,
-        }, "mixed_video_id_map": {"1004": [str(video_id)]}}
-        body = gzip.compress(json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode(), compresslevel=6, mtime=0)
-        headers = {
-            "User-Agent": APP_UA.replace("/71332 ", "/74332 ", 1), "Accept": "application/json; charset=utf-8,application/x-protobuf",
-            "Content-Type": "application/json; charset=UTF-8", "Content-Encoding": "gzip", "sdk-version": "2",
-            "passport-sdk-version": "5051452", "x-xs-from-web": "0", "x-ss-dp": "8662",
-        }
-        api_url = api_url or "https://reading.snssdk.com/novel/player/multi_video_model/player/v1"
-    query = _url_encode(params)
-    headers.update(_playback_sign_headers(query, body, int(time.time())))
-    cookie = pair.get("cookie") or ("store-region=cn-bj; store-region-src=did; install_id=" + devices["install_id"] if not shortplay else "")
-    if cookie:
-        headers["Cookie"] = cookie
-    return api_url + "?" + query, headers, body
-
-
-# N3urda/hongguoTV Kotlin ContentRepository.kt:
-# The signed GET video_tab route is newer than the legacy POST /novel/player
-# family. Keep both, and don't register a new anonymous device per episode.
-# GPL-3.0-only adaptation; no credentials or fixed upstream identity are copied.
 def _register_playback_device_compat() -> dict[str, str]:
     """Fallback to the older, encrypted device-register contract (aid=1967)."""
     now = int(time.time() * 1000)
@@ -5087,38 +5040,6 @@ def _v5_playback_request(video_id, pair, alternate=False):
     return url, signed, body
 
 
-def _video_tab_model(video_id: str, pair: Mapping[str, str], timeout: float) -> dict[str, Any]:
-    """Try the signed current video_tab GET route before legacy player POST."""
-    base = "https://api5-normal-sinfonlineb.fqnovel.com/reading/bookapi/video_tab/multi_video_model/v1/"
-    params = {
-        "iid": pair["install_id"], "device_id": pair["device_id"],
-        "ac": "wifi", "channel": "update_64", "aid": "8662",
-        "app_name": "novelread", "version_code": "71332", "version_name": "7.1.3.32",
-        "device_platform": "android", "os": "android", "ssmix": "a",
-        "device_type": "25053RT47C", "device_brand": "Redmi",
-        "language": "zh", "os_api": "36", "os_version": "16",
-        "manifest_version_code": "71332", "resolution": "1280*2772",
-        "dpi": "520", "update_version_code": "71332", "host_abi": "arm64-v8a",
-        "dragon_device_type": "phone", "pv_player": "71332",
-        "compliance_status": "0", "need_personal_recommend": "1",
-        "player_so_load": "1", "is_android_pad_screen": "0",
-        "video_id": video_id, "video_id_type": "0", "device_level": "1",
-        "need_all_video_definition": "1", "need_mp4_align": "0",
-        "use_os_player": "0", "video_platform": "1024", "source": "0",
-        "from_video_id": "",
-    }
-    device = _device_config(pair)
-    headers, url = _core_sixgod(
-        base, params, device, None,
-        {"User-Agent": APP_UA, "Accept": "application/json; charset=utf-8,application/x-protobuf"},
-    )
-    headers.update({"sdk-version": "2", "x-xs-from-web": "0",
-                    "x-tt-store-region": "cn", "x-tt-store-region-src": "did"})
-    response = requests.get(url, headers=headers, timeout=timeout, allow_redirects=False)
-    return _model_from_response(_json_response(response), video_id)
-
-
-
 def _v5_playback_model(video_id: str, pair: Mapping[str, str],
                        timeout: float, alternate: bool = False) -> dict[str, Any]:
     url, headers, body = _v5_playback_request(video_id, pair, alternate)
@@ -5137,7 +5058,7 @@ def _v5_playback_model(video_id: str, pair: Mapping[str, str],
 
 
 def _video_model(video_id: str, config: Mapping[str, Any]) -> dict[str, Any]:
-    """Resolve precisely this episode, preferring the upstream-tested v5 POST."""
+    """Resolve precisely this episode through v5 POST (primary/alternate host only)."""
     if not re.fullmatch(r"[0-9]{1,30}", str(video_id)):
         raise _PlaybackModelError("分集識別無效")
     started = time.monotonic()
@@ -5168,38 +5089,8 @@ def _video_model(video_id: str, config: Mapping[str, Any]) -> dict[str, Any]:
         except (requests.RequestException, HongguoPluginError, ValueError, KeyError) as error:
             last_error = error
 
-    # Older variants remain a bounded compatibility fallback after v5 failure.
-    routes = (
-        (False, "https://api5-normal-sinfonlineb.fqnovel.com/novel/player/multi_video_model/v1/"),
-        (False, "https://reading.snssdk.com/novel/player/multi_video_model/player/v1"),
-        (True, ""),
-    )
-    for shortplay, api_url in routes:
-        remaining = 16 - (time.monotonic() - started)
-        if remaining <= 0.5:
-            break
-        try:
-            url, headers, body = _playback_request(video_id, pair, shortplay, api_url)
-            response = requests.post(
-                url, headers=headers, data=body,
-                timeout=min(remaining, 4), allow_redirects=False,
-            )
-            if response.status_code in (401, 403, 429):
-                raise _PlaybackModelError("上游拒絕播放請求")
-            response.raise_for_status()
-            if not response.content:
-                last_error = _PlaybackModelError("播放模型皆為空")
-                continue
-            return _model_from_response(_json_response(response), video_id)
-        except _PlaybackModelError as error:
-            last_error = error
-            if "播放模型皆為空" not in str(error):
-                raise
-        except (requests.RequestException, HongguoPluginError, ValueError, KeyError) as error:
-            last_error = error
-
     raise _PlaybackModelError(
-        "播放模型均不可用：%s" % (str(last_error)[:120] if last_error else "無回應")
+        "v5 播放模型不可用：%s" % (str(last_error)[:120] if last_error else "無回應")
     ) from last_error
 
 

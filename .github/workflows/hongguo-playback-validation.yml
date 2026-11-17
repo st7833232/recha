@@ -1,0 +1,28 @@
+name: Hongguo Python playback checks
+on:
+  push:
+    branches: [main]
+    paths:
+      - "py/红果短剧.py"
+      - "tests/test_hongguo_v5.py"
+      - ".github/workflows/hongguo-playback-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Dependencies
+        run: python -m pip install requests
+      - name: Python syntax
+        run: python -m py_compile "py/红果短剧.py"
+      - name: Offline playback contract tests
+        run: python -m unittest discover -s tests -p 'test_hongguo_v5.py' -v

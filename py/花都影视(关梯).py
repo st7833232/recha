@@ -1,5 +1,5 @@
 # coding=utf-8
-import re, html, base64, requests, urllib.parse
+import re, html, base64, requests, urllib.parse, json
 from base.spider import Spider
 
 pub_urls = ["https://abc.hdfby.com","https://b.hdfby.com","https://b.hdfby.net","https://b.hdfby.org"]
@@ -77,6 +77,18 @@ class Spider(Spider):
         m = re.search(r'(?<![\w-])' + re.escape(key) + r'\s*=\s*(["\'])(.*?)\1',
                       tag, re.I | re.S)
         return html.unescape(m.group(2).strip()) if m else ""
+    def _poster_url(self, url):
+        """Attach TVBox-compatible image headers for anti-hotlink CDNs.
+
+        WebHTV iOS ImageRequest understands @Headers JSON and Android TVBox
+        image loaders also support this convention. Leave playback untouched.
+        """
+        url = self._fix(url)
+        if not url: return ""
+        return url + "@Headers=" + json.dumps({
+            "Referer": self.host,
+            "User-Agent": self.ua,
+        }, ensure_ascii=False, separators=(",", ":"))
     def _pic(self, s):
         # Most STUI themes store the cover on <a data-original=...>, not <img>.
         tags = re.findall(r'<(?:img|a)\b[^>]*>', s, re.I | re.S)
@@ -88,12 +100,12 @@ class Spider(Spider):
                 url = self._attr(tag, key)
                 if url and not any(x in url.lower() for x in
                                    ('blank', 'loading', 'default')):
-                    return self._fix(url)
+                    return self._poster_url(url)
             style = self._attr(tag, 'style')
             m = re.search(r'background(?:-image)?\s*:\s*url\(\s*["\']?([^"\')]+)',
                           style, re.I)
             if m:
-                return self._fix(m.group(1))
+                return self._poster_url(m.group(1))
         return ""
     def _videos(self, text):
         out, seen = [], set()

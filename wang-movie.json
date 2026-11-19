@@ -1420,6 +1420,24 @@
       "url": "https://funnylife.neocities.org/TW-LiveCAM.txt",
       "ua": "okhttp/4.12",
       "epg": "http://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Taipei"
+    },
+    {
+      "name": "🇹🇼 台灣電視｜IPTV-org",
+      "type": 0,
+      "ua": "okhttp",
+      "url": "https://iptv-org.github.io/iptv/countries/tw.m3u"
+    },
+    {
+      "name": "🇰🇷 韓國電視｜IPTV-org",
+      "type": 0,
+      "ua": "okhttp",
+      "url": "https://iptv-org.github.io/iptv/countries/kr.m3u"
+    },
+    {
+      "name": "🇯🇵 日本電視｜IPTV-org",
+      "type": 0,
+      "ua": "okhttp",
+      "url": "https://iptv-org.github.io/iptv/countries/jp.m3u"
     }
   ],
   "parses": [

@@ -403,7 +403,8 @@ class Spider(BaseSpider):
             if image:
                 return host in ('pic.drleao.cn', 'new.drleao.cn',
                                 'new2.drleao.cn', 'image.drleao.cn',
-                                'pic.eanfog.cn', 'pic.zdmhyg.cn', 'pic.tuafjz.cn')
+                                'pic.eanfog.cn', 'pic.zdmhyg.cn', 'pic.tuafjz.cn',
+                'pic.qnlycc.cn')  # 2026-11-19: current encrypted cover CDN
             return (host in ('yd-hls.hzjvlo.cn', 'yd-lphu-hls.hzjvlo.cn',
                              'tp3.drleao.cn') or host.endswith('.hzjvlo.cn')
                     or host.endswith('.drleao.cn'))

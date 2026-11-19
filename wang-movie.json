@@ -1422,22 +1422,28 @@
       "epg": "http://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Taipei"
     },
     {
-      "name": "🇹🇼 台灣電視｜IPTV-org",
+      "name": "多國驗證直播源",
       "type": 0,
       "ua": "okhttp",
-      "url": "https://iptv-org.github.io/iptv/countries/tw.m3u"
+      "url": "https://raw.githubusercontent.com/zyq1120/iptv-playlist/main/iptv-ffprobe-only.m3u"
     },
     {
-      "name": "🇰🇷 韓國電視｜IPTV-org",
+      "name": "全球免費直播源",
       "type": 0,
       "ua": "okhttp",
-      "url": "https://iptv-org.github.io/iptv/countries/kr.m3u"
+      "url": "https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8"
     },
     {
-      "name": "🇯🇵 日本電視｜IPTV-org",
+      "name": "港澳台精選直播源",
       "type": 0,
       "ua": "okhttp",
-      "url": "https://iptv-org.github.io/iptv/countries/jp.m3u"
+      "url": "https://raw.githubusercontent.com/Hawaiine/Oasisic-IPTV/main/output/live_gangtai.m3u"
+    },
+    {
+      "name": "多源聚合備援",
+      "type": 0,
+      "ua": "okhttp",
+      "url": "https://raw.githubusercontent.com/cs3306/IPTV-Sources/main/data/output/iptv_collection.m3u"
     }
   ],
   "parses": [

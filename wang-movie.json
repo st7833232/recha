@@ -1420,6 +1420,12 @@
       "url": "https://funnylife.neocities.org/TW-LiveCAM.txt",
       "ua": "okhttp/4.12",
       "epg": "http://epg.112114.xyz/?ch={name}&date={date}&serverTimeZone=Asia/Taipei"
+    },
+    {
+      "name": "🔞 成人直播｜Adult",
+      "type": 0,
+      "ua": "okhttp",
+      "url": "https://raw.githubusercontent.com/jiusanzhou/tvbox/refs/heads/main/shared/lives/Adult.m3u"
     }
   ],
   "parses": [

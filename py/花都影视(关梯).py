@@ -4,6 +4,8 @@ from base.spider import Spider
 
 pub_urls = ["https://abc.hdfby.com","https://b.hdfby.com","https://b.hdfby.net","https://b.hdfby.org"]
 domain_list = ["https://hd28.huadutx.com/","https://rb.huaduys.org/"]
+# Additional discovery candidate; used only when its actual HTML passes _ok().
+extra_domains = ["https://hd.huadudm.com/"]
 
 class Spider(Spider):
     def getName(self): return "花都影视"
@@ -34,22 +36,29 @@ class Spider(Spider):
             {"type_id":"/vodshow/16-----------.html","type_name":"AI短剧"}
         ]
     def _get(self, url):
+        # Do not cache transient 4xx/5xx, timeouts or empty responses forever.
+        if not url or not url.startswith(("https://", "http://")): return ""
         if url in self.cache: return self.cache[url]
         try:
-            r = self.session.get(url, headers=self.headers, timeout=8, verify=False, allow_redirects=True)
-            r.encoding = "utf-8"
-            self.cache[url] = r.text
-            return r.text
-        except Exception:
-            self.cache[url] = ""
+            r = self.session.get(url, headers=self.headers, timeout=(5, 10),
+                                 verify=False, allow_redirects=True)
+            r.raise_for_status()
+            body = r.text
+            if not body or not body.strip(): return ""
+            if len(self.cache) >= 100: self.cache.pop(next(iter(self.cache)))
+            self.cache[url] = body
+            return body
+        except requests.RequestException:
             return ""
     def _fix(self, u):
-        return "https:" + u if u.startswith("//") else self.host.rstrip("/") + u if u.startswith("/") else u
+        u = html.unescape(str(u or "").strip())
+        result = urllib.parse.urljoin(self.host, u)
+        return result if result.startswith(("https://", "http://")) else ""
     def _ok(self, u):
         t = self._get(u if u.endswith("/") else u + "/")
         return len(t) > 200 and any(x in t for x in ["花都","huadu","vodtype","voddetail","stui"])
     def _domain(self):
-        for u in domain_list:
+        for u in domain_list + extra_domains:
             if self._ok(u): return u
         for p in pub_urls:
             t = self._get(p)
@@ -63,27 +72,49 @@ class Spider(Spider):
         return "" if j < 0 else text[i + len(a):j].replace("\\","")
     def _txt(self, s):
         return re.sub(r'\s+'," ",re.sub(r'<[^>]+>',"",html.unescape(s))).strip()
+    @staticmethod
+    def _attr(tag, key):
+        m = re.search(r'(?<![\w-])' + re.escape(key) + r'\s*=\s*(["\'])(.*?)\1',
+                      tag, re.I | re.S)
+        return html.unescape(m.group(2).strip()) if m else ""
     def _pic(self, s):
-        for k in ["data-original","data-src","data-lazyload","data-lazy-src","src"]:
-            m = re.search(r'<img[^>]+%s=["\']([^"\']+)' % k, s)
+        # Most STUI themes store the cover on <a data-original=...>, not <img>.
+        tags = re.findall(r'<(?:img|a)\b[^>]*>', s, re.I | re.S)
+        tags.sort(key=lambda tag: 'stui-vodlist__thumb' not in tag.lower())
+        for tag in tags:
+            for key in ('data-original', 'data-src', 'data-lazyload',
+                        'data-lazy-src', 'data-bg', 'data-background',
+                        'data-cover', 'src'):
+                url = self._attr(tag, key)
+                if url and not any(x in url.lower() for x in
+                                   ('blank', 'loading', 'default')):
+                    return self._fix(url)
+            style = self._attr(tag, 'style')
+            m = re.search(r'background(?:-image)?\s*:\s*url\(\s*["\']?([^"\')]+)',
+                          style, re.I)
             if m:
-                u = m.group(1).strip()
-                if u and "blank" not in u.lower() and "loading" not in u.lower() and "default" not in u.lower():
-                    return self._fix(u)
+                return self._fix(m.group(1))
         return ""
     def _videos(self, text):
         out, seen = [], set()
-        for b in re.findall(r'<li[\s\S]*?</li>', text):
-            if "stui-vodlist__thumb" not in b and "voddetail" not in b: continue
+        for b in re.findall(r'<li\b[\s\S]*?</li>', text, re.I):
+            if not re.search(r'stui-vodlist__thumb|voddetail', b, re.I): continue
             if any(x in b for x in ["广告点赞","开元棋牌","澳门新葡京","好色直播","注册送","棋牌","赌场","葡京","博彩"]): continue
-            hm = re.search(r'<h4[^>]*class=["\'][^"\']*title[^"\']*["\'][\s\S]*?<a[^>]+href=["\']([^"\']+)["\'][^>]*>([\s\S]*?)</a>', b)
-            am = re.search(r'<a[^>]+class=["\'][^"\']*stui-vodlist__thumb[^"\']*["\'][^>]+href=["\']([^"\']+)["\']', b)
-            href = hm.group(1) if hm else am.group(1) if am else ""
-            if "voddetail" not in href: continue
-            name = self._txt(hm.group(2)) if hm else ""
-            if not name:
-                tm = re.search(r'title=["\']([^"\']+)["\']', b)
-                name = tm.group(1).strip() if tm else ""
+            # HTML attribute order varies: href often precedes class or title.
+            links = re.findall(r'(<a\b[^>]*>)([\s\S]*?)</a>', b, re.I)
+            links = [(tag, inner) for tag, inner in links
+                     if 'voddetail' in self._attr(tag, 'href').lower()]
+            if not links: continue
+            thumb = next(((tag, inner) for tag, inner in links
+                          if 'stui-vodlist__thumb' in tag.lower()), links[0])
+            href = self._attr(thumb[0], 'href')
+            h4 = re.search(r'<h4\b[^>]*>([\s\S]*?)</h4>', b, re.I)
+            name = ""
+            if h4:
+                hm = re.search(r'(<a\b[^>]*>)([\s\S]*?)</a>', h4.group(1), re.I)
+                if hm:
+                    name = self._attr(hm.group(1), 'title') or self._txt(hm.group(2))
+            name = name or self._attr(thumb[0], 'title') or self._txt(thumb[1])
             if not href or not name or href in seen or len(name) < 2: continue
             pic = self._pic(b)
             if not pic: continue

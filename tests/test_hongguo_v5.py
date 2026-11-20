@@ -8,6 +8,7 @@ import gzip
 import importlib.util
 import json
 import subprocess
+import requests
 from pathlib import Path
 import unittest
 from unittest.mock import patch
@@ -226,6 +227,41 @@ class PlaybackContractTests(unittest.TestCase):
                     "quality_desc": "720", "codec_type": "h264"}}, "720")
         self.assertEqual(name, "720")
         self.assertIn("play_url", item)
+
+    def test_local_http_prefetch_error_returns_502_not_truncated_206(self):
+        class BrokenMedia:
+            total = 10000
+            def read_range(self, start, end):
+                raise module.HongguoPluginError("simulated CDN failure")
+
+        port = module._start_stream_server()
+        self.assertGreater(port, 0)
+        with patch.object(module, "_stream_session", return_value=BrokenMedia()):
+            result = requests.get(
+                "http://127.0.0.1:%d/hg.mp4?vid=%s&q=1080" % (port, VID),
+                headers={"Range": "bytes=0-4095"}, timeout=5,
+            )
+        self.assertEqual(result.status_code, 502)
+        self.assertNotIn("Content-Range", result.headers)
+
+    def test_local_http_prefetch_valid_range_remains_206(self):
+        class WorkingMedia:
+            total = 10000
+            def read_range(self, start, end):
+                return bytes([42]) * (end - start + 1)
+            def iter_range(self, start, end):
+                yield bytes([42]) * (end - start + 1)
+
+        port = module._start_stream_server()
+        self.assertGreater(port, 0)
+        with patch.object(module, "_stream_session", return_value=WorkingMedia()):
+            result = requests.get(
+                "http://127.0.0.1:%d/hg.mp4?vid=%s&q=1080" % (port, VID),
+                headers={"Range": "bytes=0-4095"}, timeout=5,
+            )
+        self.assertEqual(result.status_code, 206)
+        self.assertEqual(result.headers.get("Content-Range"), "bytes 0-4095/10000")
+        self.assertEqual(result.content, bytes([42]) * 4096)
 
     def test_range_requires_exact_offset(self):
         class MockResponse:

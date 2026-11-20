@@ -10,7 +10,7 @@ const { signPlaybackV5 } = require('./playback-v5');
 const result = signPlaybackV5({
   base: data.base,
   values: data.values,
-  body: Buffer.from(data.body, 'base64'),
+  body: data.body === null ? null : Buffer.from(data.body, 'base64'),
   now: data.now,
 });
 process.stdout.write(JSON.stringify(result));

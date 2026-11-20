@@ -97,6 +97,13 @@ jobs:
                   capture_output=True, text=True, timeout=90,
               )
               if result.returncode != 0:
+                  # Print bounded stderr with local endpoint obscured; never
+                  # expose upstream signed media addresses or content keys.
+                  diagnostic = (result.stderr or "")[-2200:]
+                  diagnostic = diagnostic.replace(endpoint, "[local MP4 stream]")
+                  for value in ("http://127.0.0.1:", "https://"):
+                      diagnostic = diagnostic.replace(value, "[url]:")
+                  print("PROBE_DECODE_ERROR=" + diagnostic.replace("\n", " | ")[:2200])
                   raise RuntimeError("ffmpeg video decode failed (exit=%d)" % result.returncode)
               print("PROBE_DECODE=video_2s_ok")
           except Exception as e:

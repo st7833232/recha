@@ -5010,7 +5010,6 @@ def _v5_sign(base, values, body):
         }
         if has_body:
             headers["x-ss-stub"] = body_hash.hex().upper()
-            headers["x-ss-req-ticket"] = ticket
         return base + "?" + query, headers
     raise HongguoPluginError("播放 v5 簽章分支無法建立")
 

@@ -2,6 +2,8 @@
 # === 發布與修改說明 ===
 # SPDX-License-Identifier: GPL-3.0-only
 # 紅果短劇 Python 修改版，最近修改日期：2026-11-17。
+# 2026-11-20 同步 jackotom/hongguo-drama 7.7：v5 POST 主備回應空時，
+# 改用 v5 無正文簽章的 video_tab GET，取消 POST 專用 x-ss-stub 等標頭。
 # 2026-11-17 播放端點清理：失效的舊版 API 已從主流程移除，僅保留
 # v5 player/v1 的主機 sinfonlineb／備用主機 sinfonlinea；維持既有的裝置
 # 註冊、CENC 解密與 MP4 Range 串流功能。
@@ -2026,7 +2028,10 @@ def _is_empty_model_error(err: BaseException) -> bool:
     # Only verified empty-model responses justify one identity refresh.
     # Do not rotate on 401/403, entitlement errors, or malformed requests.
     if isinstance(err, _PlaybackModelError):
-        return "播放模型皆為空" in text or "主備播放模型皆為空" in text
+        return (
+            "播放模型皆為空" in text or "主備播放模型皆為空" in text
+            or "code=110001" in text or "均不可用" in text
+        )
     return (
         "video_model 数据为空" in text
         or "video_model 为空" in text
@@ -4978,11 +4983,13 @@ def _v5_helios(ts):
 def _v5_sign(base, values, body):
     if not base.startswith("https://") or "?" in base or "#" in base:
         raise ValueError("invalid v5 endpoint")
-    if not isinstance(body, bytes) or not body.startswith(b"\x1f\x8b\x08"):
-        raise ValueError("v5 requires a gzip body")
+    # 7.7: video_tab GET signs an empty body and MUST omit POST-only headers.
+    has_body = body is not None
+    if has_body and (not isinstance(body, bytes) or not body.startswith(b"\x1f\x8b\x08")):
+        raise ValueError("v5 requires a gzip body or None for GET")
     now = int(time.time() * 1000)
     ts = now // 1000
-    body_hash = hashlib.md5(body).digest()
+    body_hash = hashlib.md5(body if has_body else b"").digest()
     vals = dict(values)
     if "ts" in vals:
         vals["ts"] = str(ts)
@@ -5000,9 +5007,10 @@ def _v5_sign(base, values, body):
             "x-khronos": str(ts),
             "x-helios": _v5_helios(ts),
             "x-medusa": _v5_medusa(hash_query, f13, ts, vals),
-            "x-ss-stub": body_hash.hex().upper(),
-            "x-ss-req-ticket": ticket,
         }
+        if has_body:
+            headers["x-ss-stub"] = body_hash.hex().upper()
+            headers["x-ss-req-ticket"] = ticket
         return base + "?" + query, headers
     raise HongguoPluginError("播放 v5 簽章分支無法建立")
 
@@ -5040,6 +5048,44 @@ def _v5_playback_request(video_id, pair, alternate=False):
     return url, signed, body
 
 
+def _v5_video_tab_request(video_id: str, pair: Mapping[str, str]) -> tuple[str, dict[str, str]]:
+    """7.7 signed GET recovery, not the obsolete generic Argus/Ladon GET."""
+    params = {
+        "aid": "8662", "app_name": "novelread",
+        "version_code": "74332", "version_name": "7.4.3.32",
+        "channel": "vivo_8662_64", "device_platform": "android",
+        "device_type": "PGT-AN10", "os_version": "12",
+        "update_version_code": "74332", "iid": pair["install_id"],
+        "cdid": pair["cdid"], "device_id": pair["device_id"],
+        "video_id": str(video_id), "video_id_type": "0", "device_level": "1",
+        "need_all_video_definition": "1", "need_mp4_align": "0",
+        "use_os_player": "0", "video_platform": "1024", "source": "0",
+        "from_video_id": "",
+    }
+    base = "https://api5-normal-sinfonlineb.fqnovel.com/reading/bookapi/video_tab/multi_video_model/v1/"
+    url, headers = _v5_sign(base, params, None)
+    headers.update({
+        "User-Agent": "com.phoenix.read/73932 (Linux; U; Android 12; zh_CN_#Hans; PGT-AN10; Build/V417IR;tt-ok/3.12.13.20)",
+        "Accept": "application/json",
+    })
+    return url, headers
+
+
+def _v5_video_tab_model(video_id: str, pair: Mapping[str, str], timeout: float) -> dict[str, Any]:
+    url, headers = _v5_video_tab_request(video_id, pair)
+    response = requests.get(
+        url, headers=headers, timeout=timeout, allow_redirects=False,
+    )
+    if response.status_code in (401, 403, 429):
+        raise _PlaybackModelError(
+            "上游拒絕播放請求（HTTP %d）" % response.status_code
+        )
+    response.raise_for_status()
+    if not response.content:
+        raise _PlaybackModelError("播放模型皆為空")
+    return _model_from_response(_json_response(response), video_id)
+
+
 def _v5_playback_model(video_id: str, pair: Mapping[str, str],
                        timeout: float, alternate: bool = False) -> dict[str, Any]:
     url, headers, body = _v5_playback_request(video_id, pair, alternate)
@@ -5058,29 +5104,41 @@ def _v5_playback_model(video_id: str, pair: Mapping[str, str],
 
 
 def _video_model(video_id: str, config: Mapping[str, Any]) -> dict[str, Any]:
-    """Resolve precisely this episode through v5 POST (primary/alternate host only)."""
+    """Use signed v5 POST, alternate host, then 7.7 signed video_tab GET."""
     if not re.fullmatch(r"[0-9]{1,30}", str(video_id)):
         raise _PlaybackModelError("分集識別無效")
-    started = time.monotonic()
-    # Source identities may be single-use. Keep search/catalogue independent and
-    # refresh the playback registration for a new episode (jackotom 7.5).
     pair = _playback_device(force=True)
+    started = time.monotonic()
     last_error: Exception | None = None
-    # The v5 player endpoint is the current upstream-supported primary route.
-    # Try its alternate host only for empty/transient responses, never for a
-    # business rejection or authentication/entitlement failure.
+    # Keep time for the signed GET fallback instead of exhausting the whole
+    # model deadline on two POST endpoints that return empty data.
     for alternate in (False, True):
         remaining = 12 - (time.monotonic() - started)
-        if remaining <= 1.0:
+        if remaining < 2.5:
             break
         try:
             return _v5_playback_model(
-                video_id, pair, timeout=min(remaining, 5.5),
+                video_id, pair, timeout=min(remaining - 2, 3.5),
                 alternate=alternate,
             )
         except _PlaybackModelError as error:
             last_error = error
-            if "播放模型皆為空" not in str(error):
+            if not _is_empty_model_error(error):
+                raise
+        except requests.HTTPError as error:
+            last_error = error
+            if getattr(error.response, "status_code", None) in (401, 403, 429):
+                raise _PlaybackModelError("上游拒絕播放請求") from error
+        except (requests.RequestException, HongguoPluginError, ValueError, KeyError) as error:
+            last_error = error
+
+    remaining = 12 - (time.monotonic() - started)
+    if remaining >= 0.5:
+        try:
+            return _v5_video_tab_model(video_id, pair, timeout=min(remaining, 5))
+        except _PlaybackModelError as error:
+            last_error = error
+            if not _is_empty_model_error(error):
                 raise
         except requests.HTTPError as error:
             last_error = error
@@ -5090,7 +5148,8 @@ def _video_model(video_id: str, config: Mapping[str, Any]) -> dict[str, Any]:
             last_error = error
 
     raise _PlaybackModelError(
-        "v5 播放模型不可用：%s" % (str(last_error)[:120] if last_error else "無回應")
+        "v5 播放模型與 video_tab 均不可用：%s"
+        % (str(last_error)[:120] if last_error else "請求逾時")
     ) from last_error
 
 

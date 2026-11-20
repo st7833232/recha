@@ -2397,6 +2397,19 @@ class _StreamHandler(BaseHTTPRequestHandler):
             self.end_headers()
             return
         start, end = requested if requested else (0, session.total - 1)
+        # Do not advertise HTTP 206 and a complete Content-Length before the
+        # first upstream CDN segment has actually arrived. A premature success
+        # with a closed connection appears to the player as a corrupt MP4.
+        first_end = min(start + _STREAM_CHUNK - 1, end)
+        first_block = b""
+        if body:
+            try:
+                first_block = session.read_range(start, first_end)
+                if len(first_block) != first_end - start + 1:
+                    raise HongguoPluginError("首個媒體分段長度不符")
+            except Exception:
+                self._fail(502, b"upstream first media range unavailable")
+                return
         self.send_response(206 if requested else 200)
         self.send_header("Content-Type", "video/mp4")
         self.send_header("Accept-Ranges", "bytes")
@@ -2410,8 +2423,10 @@ class _StreamHandler(BaseHTTPRequestHandler):
         if not body:
             return
         try:
-            for block in session.iter_range(start, end):
-                self.wfile.write(block)
+            self.wfile.write(first_block)
+            if first_end < end:
+                for block in session.iter_range(first_end + 1, end):
+                    self.wfile.write(block)
         except (BrokenPipeError, ConnectionResetError):
             self.close_connection = True
         except Exception:

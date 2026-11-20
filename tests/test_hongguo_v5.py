@@ -70,6 +70,52 @@ class PlaybackContractTests(unittest.TestCase):
         self.assertEqual(url, expected["url"])
         self.assertEqual(headers, expected["headers"])
 
+    def test_bodyless_v5_get_signature_matches_reference_js(self):
+        now = 1800000000123
+        pair = dict(PAIR)
+        with patch.object(module, "_v5_sign") as signer:
+            signer.return_value = ("https://example.test/test", {
+                "x-khronos": "1800000000", "x-helios": "a", "x-medusa": "b",
+            })
+            endpoint, headers = module._v5_video_tab_request(VID, pair)
+        base, values, body = signer.call_args.args
+        self.assertIsNone(body)
+        self.assertTrue(base.endswith("/reading/bookapi/video_tab/multi_video_model/v1/"))
+        self.assertEqual(values["video_id"], VID)
+        self.assertEqual(values["from_video_id"], "")
+        self.assertEqual(values["aid"], "8662")
+        self.assertFalse(any(k.lower() in ("x-ss-stub", "x-ss-req-ticket",
+                                           "content-type", "content-encoding",
+                                           "x-argus", "x-ladon") for k in headers))
+        self.assertEqual(endpoint, "https://example.test/test")
+
+        # Compare the same full signed empty-body request against the 7.7 JS.
+        payload = json.dumps({
+            "now": now, "base": base, "values": values, "body": None,
+        })
+        process = subprocess.run(
+            ["node", str(SOURCE.parents[1] / "tests" / "v5_reference" / "reference.cjs")],
+            input=payload, text=True, capture_output=True, check=True, timeout=20,
+        )
+        expected = json.loads(process.stdout)
+        old_nonce, old_started = module._V5_PROCESS_NONCE, module._V5_PROCESS_STARTED
+        module._V5_PROCESS_NONCE = base64.urlsafe_b64encode(bytes([1]) * 18).decode().rstrip("=")
+        module._V5_PROCESS_STARTED = now
+        calls = [1]
+        def deterministic(n):
+            calls[0] += 1
+            return bytes([calls[0]]) * n
+        try:
+            with patch.object(module.time, "time", return_value=now / 1000), \
+                 patch.object(module.os, "urandom", side_effect=deterministic):
+                url, headers = module._v5_sign(base, values, None)
+        finally:
+            module._V5_PROCESS_NONCE = old_nonce
+            module._V5_PROCESS_STARTED = old_started
+        self.assertEqual(url, expected["url"])
+        self.assertEqual(headers, expected["headers"])
+        self.assertEqual(set(headers), {"x-khronos", "x-helios", "x-medusa"})
+
     # Public synthetic vectors from N3urda/hongguoTV (GPL-3.0), carried by
     # jackotom/hongguo-drama src/native/fixtures/playback-v5-vectors.
     def test_v5_f13_matches_32_independent_reference_vectors(self):
@@ -102,9 +148,9 @@ class PlaybackContractTests(unittest.TestCase):
         self.assertIn("device_id=" + PAIR["device_id"], url)
         self.assertEqual(json.loads(gzip.decompress(body))
                          ["mixed_video_id_map"]["1004"], [VID])
-        for name in ("x-khronos", "x-ss-stub", "x-helios",
-                     "x-medusa", "x-ss-req-ticket"):
+        for name in ("x-khronos", "x-ss-stub", "x-helios", "x-medusa"):
             self.assertTrue(headers.get(name), name)
+        self.assertNotIn("x-ss-req-ticket", headers)
         self.assertGreater(len(base64.b64decode(headers["x-medusa"])), 100)
 
     def test_exact_nested_1004_episode_selection(self):
@@ -140,11 +186,39 @@ class PlaybackContractTests(unittest.TestCase):
 
     def test_no_obsolete_playback_api_targets_remain(self):
         source = SOURCE.read_text(encoding="utf-8")
-        self.assertNotIn("/reading/bookapi/video_tab/multi_video_model/v1", source)
+        self.assertIn("/reading/bookapi/video_tab/multi_video_model/v1", source)
         self.assertNotIn("/novel/player/multi_video_model/v1/", source)
         self.assertNotIn("/novel/player/video_model/v1/", source)
         self.assertNotIn("def _playback_request(", source)
         self.assertIn('for alternate in (False, True):', source)
+
+    def test_empty_post_resolves_via_v5_video_tab(self):
+        with patch.object(module, "_playback_device", return_value=PAIR), \
+             patch.object(module, "_v5_playback_model",
+                          side_effect=module._PlaybackModelError("播放模型皆為空")) as post, \
+             patch.object(module, "_v5_video_tab_model", return_value=MODEL) as tab:
+            self.assertEqual(module._video_model(VID, {}), MODEL)
+            self.assertEqual([x.kwargs["alternate"] for x in post.call_args_list],
+                             [False, True])
+            tab.assert_called_once()
+
+    def test_upstream_110001_allows_video_tab_without_old_endpoint(self):
+        with patch.object(module, "_playback_device", return_value=PAIR), \
+             patch.object(module, "_v5_playback_model",
+                          side_effect=module._PlaybackModelError("播放模型被上游拒絕（code=110001）")) as post, \
+             patch.object(module, "_v5_video_tab_model", return_value=MODEL) as tab:
+            self.assertEqual(module._video_model(VID, {}), MODEL)
+            self.assertEqual(post.call_count, 2)
+            tab.assert_called_once()
+
+    def test_explicit_rejection_stops_before_tab(self):
+        with patch.object(module, "_playback_device", return_value=PAIR), \
+             patch.object(module, "_v5_playback_model",
+                          side_effect=module._PlaybackModelError("上游拒絕播放請求（HTTP 403）")), \
+             patch.object(module, "_v5_video_tab_model") as tab:
+            with self.assertRaises(module._PlaybackModelError):
+                module._video_model(VID, {})
+            tab.assert_not_called()
 
     def test_legacy_play_url_leaf_is_not_dropped(self):
         name, item = module._select_quality(

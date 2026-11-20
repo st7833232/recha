@@ -83,6 +83,22 @@ jobs:
                   raise RuntimeError("invalid local MP4 byte range")
               print("PROBE_STREAM=range206_ok")
               print("PROBE_INDEX=tracks_available")
+              # Read and decode the first two seconds from the same local
+              # CENC-decrypting HTTP endpoint. This catches failures hidden by
+              # a correct MP4 header / 206-only probe.
+              import shutil
+              import subprocess
+              if not shutil.which("ffmpeg"):
+                  raise RuntimeError("ffmpeg decoder unavailable")
+              result = subprocess.run(
+                  ["ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error",
+                   "-rw_timeout", "25000000", "-i", endpoint, "-t", "2",
+                   "-map", "0:v:0", "-an", "-sn", "-f", "null", "-"],
+                  capture_output=True, text=True, timeout=90,
+              )
+              if result.returncode != 0:
+                  raise RuntimeError("ffmpeg video decode failed (exit=%d)" % result.returncode)
+              print("PROBE_DECODE=video_2s_ok")
           except Exception as e:
               print("PROBE_STREAM=failed")
               print("PROBE_STREAM_ERROR_CLASS=" + type(e).__name__)

@@ -2,6 +2,9 @@
 # === 發布與修改說明 ===
 # SPDX-License-Identifier: GPL-3.0-only
 # 紅果短劇 Python 修改版，最近修改日期：2026-11-17。
+# 2026-11-20 本機串流服務自我修復：iOS 凍結暫停中的 App 會關閉監聽 socket，
+# 回傳快取連接埠前先以 HEAD 確認仍會回應，不回應就關閉舊服務並重新開啟，
+# 不必重啟 App；不涉及簽章、取流或解密。
 # 2026-11-20 同步 jackotom/hongguo-drama 7.7：v5 POST 主備回應空時，
 # 改用 v5 無正文簽章的 video_tab GET，取消 POST 專用 x-ss-stub 等標頭。
 # 2026-11-17 播放端點清理：失效的舊版 API 已從主流程移除，僅保留
@@ -814,6 +817,7 @@ import os
 import lzma
 import random
 import re
+import socket
 import struct
 import tempfile
 import concurrent.futures
@@ -2433,10 +2437,39 @@ class _StreamHandler(BaseHTTPRequestHandler):
             self.close_connection = True
 
 
+def _stream_server_answers(port: int) -> bool:
+    """本機串流服務是否仍會回應。iOS 凍結暫停中的 App 時會關閉它的監聽 socket，快取的連接埠就此失效。"""
+    try:
+        with socket.create_connection(("127.0.0.1", port), timeout=1.0) as probe:
+            probe.settimeout(1.0)
+            probe.sendall(b"HEAD /hg_ping HTTP/1.0\r\nHost: 127.0.0.1\r\n\r\n")
+            return probe.recv(16).startswith(b"HTTP/")
+    except OSError:
+        return False
+
+
+def _close_stream_server(server: Any) -> None:
+    # shutdown() 會等 serve_forever 結束，所以放在背景執行緒，不在鎖內等待。
+    try:
+        server.shutdown()
+    except Exception:
+        pass
+    try:
+        server.server_close()
+    except Exception:
+        pass
+
+
 def _start_stream_server() -> int:
     with _STREAM_LOCK:
-        if _STREAM_STATE["port"]:
-            return int(_STREAM_STATE["port"])
+        cached = int(_STREAM_STATE["port"] or 0)
+        if cached and _stream_server_answers(cached):
+            return cached
+        stale = _STREAM_STATE["server"]
+        _STREAM_STATE["port"] = 0
+        _STREAM_STATE["server"] = None
+        if stale is not None:
+            threading.Thread(target=_close_stream_server, args=(stale,), daemon=True).start()
         for port in range(_STREAM_PORT_RANGE[0], _STREAM_PORT_RANGE[1]):
             try:
                 server = ThreadingHTTPServer(("127.0.0.1", port), _StreamHandler)

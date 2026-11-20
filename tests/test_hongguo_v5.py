@@ -279,5 +279,36 @@ class PlaybackContractTests(unittest.TestCase):
                 module._range_get("https://example.test/movie.mp4", 4, 7)
 
 
+class StreamServerRecoveryTests(unittest.TestCase):
+    """iOS 凍結暫停中的 App 時會關閉本機串流服務的監聽 socket。快取的連接埠若不再回應，
+    播放網址就一直失效，只能重啟 App；所以回傳前必須確認它仍會回應，否則重新開啟。"""
+
+    def tearDown(self):
+        server = module._STREAM_STATE.get("server")
+        module._STREAM_STATE["port"] = 0
+        module._STREAM_STATE["server"] = None
+        if server is not None:
+            server.shutdown()
+            server.server_close()
+
+    def test_a_live_stream_server_keeps_its_port(self):
+        port = module._start_stream_server()
+        self.assertTrue(port)
+        self.assertTrue(module._stream_server_answers(port))
+        self.assertEqual(module._start_stream_server(), port)
+
+    def test_a_closed_stream_server_is_opened_again(self):
+        port = module._start_stream_server()
+        closed = module._STREAM_STATE["server"]
+        closed.shutdown()
+        closed.server_close()
+        # 狀態仍留著舊連接埠，正如 App 從凍結回來時。
+        self.assertEqual(module._STREAM_STATE["port"], port)
+        self.assertFalse(module._stream_server_answers(port))
+        reopened = module._start_stream_server()
+        self.assertTrue(module._stream_server_answers(reopened))
+        self.assertIsNot(module._STREAM_STATE["server"], closed)
+
+
 if __name__ == "__main__":
     unittest.main()

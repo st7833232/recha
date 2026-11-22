@@ -6,6 +6,7 @@ on:
     paths:
       - 'py/anime1.py'
       - 'tests/test_anime1.py'
+      - 'tests/live_probe_anime1.py'
       - 'wang-movie.json'
       - '.github/workflows/anime1-source-check.yml'
   workflow_dispatch:
@@ -41,3 +42,8 @@ jobs:
           assert sites[i+1]['api'] == './py/anime1.py'
           print('Anime1 configured after Hongguo:', sites[i+1])
           PY
+
+      - name: Best-effort live site and stream probe
+        continue-on-error: true
+        timeout-minutes: 3
+        run: python tests/live_probe_anime1.py

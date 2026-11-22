@@ -55,6 +55,16 @@ def main():
     except requests.RequestException as error:
         raise SystemExit("CDN_HTTP_ERROR: %s" % type(error).__name__)
 
+    # Synopsis is sourced separately from Bangumi and shown on the detail page.
+    # Search one well-known title, avoiding a large number of public API calls.
+    known = next((x for x in catalog if x["title"] == "葬送的芙莉蓮"), None)
+    if known:
+        metadata = spider._metadata(known)
+        print("BANGUMI SYNOPSIS", bool(metadata.get("summary")),
+              "ARTWORK", bool(metadata.get("pic")))
+    else:
+        print("BANGUMI SYNOPSIS", "not checked: known fixture not in catalog")
+
 
 if __name__ == "__main__":
     main()

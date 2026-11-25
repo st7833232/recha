@@ -26,7 +26,8 @@ jobs:
             sudo apt-get install -y -qq ffmpeg
           fi
           ffmpeg -version | head -n 1
-      - name: Probe 8.2 current-app preload for a published sample episode
+      - name: Diagnostic probe of 8.2 current-app preload (non-blocking)
+        continue-on-error: true
         env:
           PYTHONDONTWRITEBYTECODE: "1"
         run: |
@@ -59,6 +60,10 @@ jobs:
           except Exception as e:
               print("PROBE_STAGE=preload_model_unavailable")
               print("PROBE_ERROR_CLASS=" + type(e).__name__)
+              reason = str(e)
+              import re
+              if isinstance(e, module._PlaybackModelError) and not re.search(r"https?://|[0-9]{15,}", reason):
+                  print("PROBE_MODEL_REASON=" + reason[:180])
               raise SystemExit(3)
           PY
       - name: Probe recovered decrypted MP4 Range (no full video download)
@@ -118,5 +123,10 @@ jobs:
           except Exception as e:
               print("PROBE_STREAM=failed")
               print("PROBE_STREAM_ERROR_CLASS=" + type(e).__name__)
+              import re
+              reason = str(e)
+              if isinstance(e, module._PlaybackModelError) and not re.search(r"https?://|[0-9]{15,}", reason):
+                  print("PROBE_MODEL_REASON=" + reason[:180])
+              print("PROBE_LAST_ROUTE=" + str(module._STREAM_STATE.get("playback_last_route", "none")))
               raise SystemExit(4)
           PY

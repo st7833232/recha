@@ -473,6 +473,28 @@ class PlaybackContractTests(unittest.TestCase):
             with self.assertRaisesRegex(module._StreamDiagnosticError, "HG02"):
                 module._stream_session(video_id, {}, "1080")
 
+    def test_source_diagnostic_distinguishes_upstream_failure_categories(self):
+        cases = (
+            (module._PlaybackModelError("播放模型皆為空（8.2 官方取源）"), "HG01A"),
+            (module._PlaybackModelError("上游拒絕播放請求（HTTP 403）"), "HG01B"),
+            (module._PlaybackModelError("播放模型被上游拒絕（code=PRIVATE）"), "HG01B"),
+            (module._PlaybackModelError("播放模型 JSON 無效"), "HG01C"),
+            (module._PlaybackModelError("本集暫無指定畫質 1080P"), "HG01D"),
+            (module.requests.Timeout("PRIVATE"), "HG01E"),
+            (RuntimeError("PRIVATE"), "HG01"),
+        )
+        for error, code in cases:
+            with self.subTest(code=code):
+                stage = module._source_failure_stage(error)
+                diagnostic = str(module._StreamDiagnosticError(stage))
+                self.assertTrue(diagnostic.startswith(code + " ·"))
+                self.assertNotIn("PRIVATE", diagnostic)
+
+    def test_stream_session_carries_detailed_source_error_to_player(self):
+        with patch.object(module, "_video_model_rotating", side_effect=module._PlaybackModelError("本集暫無指定畫質 1080P")):
+            with self.assertRaisesRegex(module._StreamDiagnosticError, "HG01D"):
+                module._stream_session("123456788", {}, "1080")
+
     def test_local_http_diagnostic_is_consumed_for_the_same_episode_and_quality(self):
         video_id = "123456789"
         port = module._start_stream_server()

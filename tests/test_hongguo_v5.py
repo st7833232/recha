@@ -414,6 +414,21 @@ class PlaybackContractTests(unittest.TestCase):
         rows[0]["video_meta"].update(vwidth=1080, vheight=1920)
         self.assertEqual(module._select_quality(rows, "1080", strict=True)[0], "1080")
 
+    def test_exact_quality_prefers_avc_or_hevc_over_same_resolution_bytevc2(self):
+        bytevc2 = {"main_url": "https://example.test/bytevc2.mp4",
+                   "definition": "1080p", "codec_type": "ByteVC2"}
+        lower = {"main_url": "https://example.test/720.mp4",
+                 "definition": "720p", "codec_type": "H.264"}
+        for codec in ("avc1.640028", "hvc1.1.6.L120", "H.265"):
+            compatible = {"main_url": "https://example.test/1080.mp4",
+                          "width": 1080, "height": 1920, "video_meta": {"codec": codec}}
+            for rows in ([bytevc2, compatible, lower], [compatible, bytevc2, lower]):
+                with self.subTest(codec=codec, first=rows[0]["main_url"]):
+                    self.assertEqual(module._select_quality(rows, "1080", strict=True),
+                                     ("1080", compatible))
+        self.assertEqual(module._select_quality([lower, bytevc2], "1080", strict=True),
+                         ("1080", bytevc2))
+
     def test_empty_response_does_not_rotate_registered_identity(self):
         with patch.object(module, "_video_model", side_effect=module._PlaybackModelError("播放模型皆為空")) as model:
             with self.assertRaises(module._PlaybackModelError):
@@ -442,6 +457,42 @@ class PlaybackContractTests(unittest.TestCase):
             )
         self.assertEqual(result.status_code, 502)
         self.assertNotIn("Content-Range", result.headers)
+        self.assertEqual(result.content.decode(), module._STREAM_FAILURE_MESSAGES["first-range"])
+        self.assertEqual(module._take_stream_failure(VID, "1080"), "first-range")
+
+    def test_stream_session_distinguishes_source_and_media_initialization(self):
+        video_id = "123456789"
+        with patch.object(module, "_video_model_rotating", side_effect=module._PlaybackModelError("hidden")):
+            with self.assertRaisesRegex(module._StreamDiagnosticError, "HG01"):
+                module._stream_session(video_id, {}, "1080")
+        response = {"video_list": [{"main_url": "https://example.test/movie.mp4",
+                                   "quality_desc": "1080p", "spade_a": "stub"}]}
+        with patch.object(module, "_video_model_rotating", return_value=response), \
+                patch.object(module, "_fetch_moov", side_effect=RuntimeError("hidden")), \
+                patch.object(module.time, "sleep"):
+            with self.assertRaisesRegex(module._StreamDiagnosticError, "HG02"):
+                module._stream_session(video_id, {}, "1080")
+
+    def test_local_http_diagnostic_is_consumed_for_the_same_episode_and_quality(self):
+        video_id = "123456789"
+        port = module._start_stream_server()
+        url = "http://127.0.0.1:%d/hg.mp4?vid=%s&q=1080" % (port, video_id)
+        with patch.object(module, "_stream_session", side_effect=module._StreamDiagnosticError("source")):
+            result = requests.head(url, timeout=5)
+        self.assertEqual(result.status_code, 502)
+        self.assertEqual(result.content, b"")
+        self.assertEqual(module._take_stream_failure(video_id, "720"), "")
+        self.assertEqual(module._take_stream_failure(VID, "1080"), "")
+        spider = module.Spider()
+        with patch.object(spider, "_adopt_working_pair"):
+            with self.assertRaisesRegex(module._StreamDiagnosticError, "HG01"):
+                spider.playerContent("超清", module.EPISODE_PREFIX + "1080:" + video_id)
+        self.assertEqual(module._take_stream_failure(video_id, "1080"), "")
+
+    def test_expired_stream_diagnostic_is_discarded(self):
+        with patch.object(module.time, "monotonic", side_effect=(10, 10 + module._STREAM_FAILURE_TTL)):
+            module._remember_stream_failure(VID, "1080", "session")
+            self.assertEqual(module._take_stream_failure(VID, "1080"), "")
 
     def test_local_http_prefetch_valid_range_remains_206(self):
         class WorkingMedia:

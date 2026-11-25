@@ -49,6 +49,8 @@ jobs:
           except Exception as error:
               print("PUBLIC_SOURCE_PROBE=unavailable")
               print("PUBLIC_ERROR_CLASS=" + type(error).__name__)
+              if isinstance(error, module.HongguoPluginError):
+                  print("PUBLIC_REASON=" + str(error)[:150])
               raise SystemExit(3)
           PY
       - name: Diagnostic probe of 8.2 current-app preload (non-blocking)

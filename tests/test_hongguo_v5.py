@@ -290,6 +290,46 @@ class PlaybackContractTests(unittest.TestCase):
                 module._public_web_media_url("not-an-episode")
             post.assert_not_called()
 
+    def test_public_player_page_requires_exact_episode_and_clear_full_video(self):
+        from unittest.mock import Mock
+        sid = "123456789"
+        media = module.SITE + "/video/public/" + VID + "/movie.mp4"
+        page = module.SITE + "/player/" + sid + "/" + VID
+        data = {"isSuccess": True, "protectedPlayback": False, "vid": VID,
+                "series_id": sid, "seriesDetail": {"series_id": sid},
+                "publicVideoSeo": {"available": True, "itemId": VID, "seriesId": sid}}
+        def response(protected=False, mismatch=False):
+            row = dict(data, protectedPlayback=protected, vid="999" if mismatch else VID)
+            html = "<script>window._ROUTER_DATA=" + json.dumps(
+                {"loaderData": {"player_(series_id)/(vid)/page": row}}) + "</script>"
+            html += '<script type="application/ld+json">' + json.dumps(
+                {"@type": "VideoObject", "url": page, "contentUrl": media}) + "</script>"
+            return Mock(status_code=200, text=html, content=html.encode())
+        with patch.object(module.requests, "get", return_value=response()) as get:
+            result = module.Spider().playerContent(module._PUBLIC_PAGE_LINE,
+                                                    module._PUBLIC_PAGE_PREFIX + sid + ":" + VID)
+            self.assertEqual(result["url"], media)
+            self.assertFalse(get.call_args.kwargs["allow_redirects"])
+        for bad in (response(protected=True), response(mismatch=True)):
+            with patch.object(module.requests, "get", return_value=bad):
+                with self.assertRaises(module.HongguoPluginError):
+                    module._public_page_media_url(sid, VID)
+
+    def test_exact_quality_prefers_real_dimensions_and_never_downgrades(self):
+        rows = [{"main_url": "https://example.test/video.mp4",
+                 "video_meta": {"definition": "1080p", "vwidth": 360, "vheight": 640}}]
+        self.assertEqual(module._select_quality(rows, "360", strict=True)[0], "360")
+        with self.assertRaises(module._PlaybackModelError):
+            module._select_quality(rows, "1080", strict=True)
+        rows[0]["video_meta"].update(vwidth=1080, vheight=1920)
+        self.assertEqual(module._select_quality(rows, "1080", strict=True)[0], "1080")
+
+    def test_empty_response_does_not_rotate_registered_identity(self):
+        with patch.object(module, "_video_model", side_effect=module._PlaybackModelError("播放模型皆為空")) as model:
+            with self.assertRaises(module._PlaybackModelError):
+                module._video_model_rotating(VID, {})
+            model.assert_called_once()
+
     def test_legacy_play_url_leaf_is_not_dropped(self):
         name, item = module._select_quality(
             {"hd": {"play_url": "https://example.test/movie.mp4",

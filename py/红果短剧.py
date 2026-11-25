@@ -5,6 +5,9 @@
 # 2026-11-20 本機串流服務自我修復：iOS 凍結暫停中的 App 會關閉監聽 socket，
 # 回傳快取連接埠前先以 HEAD 確認仍會回應，不回應就關閉舊服務並重新開啟，
 # 不必重啟 App；不涉及簽章、取流或解密。
+# 2026-11-25 依 8.3 官網公開播放器資料及 0.4.1 畫質模型調整：
+# 增加明確公開、非預覽的原始畫質線路；指定畫質不可靜默降級。
+# 不移植模擬裝置狀態或 SDK 原生模擬器；上游拒絕後停止，不輪換身分。
 # 2026-11-25 參考 jackotom/hongguo-drama 8.3（f31d874）：新增官網公開 360P 線路，
 # 僅接受公開完整片源 API 的有效 HTTPS CDN 網址，拒絕受限回應，不抓取 SEO 預覽。
 # 保留原 App 品質線路及原生播放器介面；未引入需要額外 runtime 的 SDK。
@@ -1040,6 +1043,8 @@ SITE = "https://hongguoduanju.com"
 EPISODE_PREFIX = "hg-episode-v1:"
 _PUBLIC_EPISODE_PREFIX = "hg-public-v1:"
 _PUBLIC_LINE = "官網公開 360P"
+_PUBLIC_PAGE_PREFIX = "hg-public-page-v1:"
+_PUBLIC_PAGE_LINE = "官網公開原始畫質"
 _PUBLIC_WEB_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
 # 红果每集视频模型按清晰度返回多条独立线路（360/480/540/720/1080），
 # 每条带 main_url + backup_url 双 CDN 与独立加密材料。这里把清晰度作为
@@ -1109,6 +1114,63 @@ def _public_web_media_url(video_id: str) -> str:
     return raw
 
 
+def _public_page_media_url(series_id: str, video_id: str) -> str:
+    """Read the matching public, non-protected player page; never use SEO previews.
+    Adapted from the public web route in hongguo-drama 8.3 (GPL-3.0-only).
+    The official page must itself explicitly mark the episode as unprotected.
+    No guessed media addresses, private hosts, or redirect retries.
+    """
+    if not all(re.fullmatch(r"[0-9]{1,30}", str(v)) for v in (series_id, video_id)):
+        raise HongguoPluginError("公開分集識別無效")
+    path = "/player/%s/%s" % (series_id, video_id)
+    response = requests.get(SITE + path, headers={
+        "User-Agent": _PUBLIC_WEB_UA, "Accept": "text/html",
+        "Referer": SITE + "/",
+    }, timeout=6, allow_redirects=False)
+    if response.status_code != 200:
+        raise HongguoPluginError("官網公開頁面不可用（HTTP %d）" % response.status_code)
+    if len(response.content) > 2 * 1024 * 1024:
+        raise HongguoPluginError("官網公開頁面回應過大")
+    html = response.text
+    router = _router_data(html)
+    loader = router.get("loaderData")
+    data = loader.get("player_(series_id)/(vid)/page") if isinstance(loader, dict) else None
+    if not isinstance(data, dict):
+        raise HongguoPluginError("官網缺少目前分集資料")
+    detail = data.get("seriesDetail")
+    seo = data.get("publicVideoSeo")
+    if (data.get("isSuccess") is False or data.get("protectedPlayback") is not False
+            or str(data.get("vid")) != video_id or str(data.get("series_id")) != series_id
+            or not isinstance(detail, dict) or str(detail.get("series_id")) != series_id
+            or not isinstance(seo, dict) or seo.get("available") is not True
+            or str(seo.get("itemId")) != video_id or str(seo.get("seriesId")) != series_id):
+        raise HongguoPluginError("本集未確認為公開完整影片")
+    for script in re.finditer(r"<script\b([^>]*)>([\s\S]*?)</script\s*>", html, re.I):
+        if not re.search(r"""\btype\s*=\s*["']application/ld\+json["']""", script.group(1), re.I):
+            continue
+        try:
+            obj = json.loads(script.group(2))
+            if not isinstance(obj, dict) or obj.get("@type") != "VideoObject":
+                continue
+            media = obj.get("contentUrl")
+            if not isinstance(media, str) or len(media) > 8192 or re.search(r"[\s\\]", media):
+                continue
+            target = urlparse(media)
+            if (target.scheme != "https" or target.username is not None or target.password is not None
+                    or target.port not in (None, 443)):
+                continue
+            # Restrict to the official episode-specific public media path.
+            if target.hostname != "hongguoduanju.com" or not target.path.startswith("/video/public/%s/" % video_id):
+                continue
+            allowed_pages = {SITE + path, SITE + "/player/" + series_id}
+            if obj.get("url") not in allowed_pages or (obj.get("@id") and obj["@id"] not in allowed_pages):
+                continue
+            return media
+        except (TypeError, ValueError):
+            continue
+    raise HongguoPluginError("官網未提供匹配的公開完整片源")
+
+
 def _split_episode_token(token: str) -> tuple[str, str]:
     """把 'hg-episode-v1:<q>:<vid>' 解析为 (清晰度, vid)；兼容旧格式 'hg-episode-v1:<vid>'。"""
     body = str(token or "")
@@ -1173,7 +1235,7 @@ def _hg_cache_dir() -> str:
 
 
 def _hg_cache_path(vid: str, quality: str) -> str:
-    safe = re.sub(r"[^0-9A-Za-z_-]", "", str(vid))[:40]
+    safe = "qexact2_" + re.sub(r"[^0-9A-Za-z_-]", "", str(vid))[:40]
     q = re.sub(r"[^0-9A-Za-z]", "", str(quality or "q"))[:8]
     return os.path.join(_hg_cache_dir(), "%s_%s.mp4" % (safe, q))
 
@@ -2210,16 +2272,7 @@ def _working_device_pair() -> dict[str, str] | None:
 
 
 def _video_model_rotating(video_id: str, config: Mapping[str, Any]) -> dict[str, Any]:
-    try:
-        return _video_model(video_id, config)
-    except Exception as err:
-        if not _is_empty_model_error(err):
-            raise
-    # The model request uses the shared registered profile, not the random
-    # fields in config. Clear that profile for exactly one identity refresh.
-    with _STREAM_LOCK:
-        _STREAM_STATE.pop("playback_device", None)
-        _STREAM_STATE.pop("playback_device_at", None)
+    """Legacy entry point. Reuse the registered profile; do not rotate on refusal."""
     return _video_model(video_id, config)
 
 
@@ -2258,12 +2311,12 @@ def _stream_session(video_id: str, config: Mapping[str, Any], quality: str = "10
                 key_seed = _key_seed_from_model(model) or ""
                 # 视轨校验：个别清晰度的流不带视轨（只有声音），
                 # 此时按清晰度顺序回退到确实带视轨的那条，避免「切到低清就没画面」。
-                wanted_order = [quality] + [q for q in _QUALITY_ORDER if q != quality]
+                wanted_order = [quality]
                 seen_urls = set()
                 reason = "媒体会话创建失败"
                 probed = 0
                 for want in wanted_order:
-                    _, item = _select_quality(rows, want)
+                    _, item = _select_quality(rows, want, strict=True)
                     raw_url = _media_url(item)
                     spade = _spade_value(item)
                     if not raw_url or not spade:
@@ -5359,6 +5412,16 @@ def _definition_of(item: Mapping[str, Any]) -> str:
     meta = item.get("video_meta")
     if not isinstance(meta, Mapping):
         meta = {}
+    # 0.4.1 stream metadata uses the smaller dimension for vertical video.
+    # Prefer reported dimensions over a potentially misleading quality label.
+    for values in (item, meta):
+        try:
+            width = int(values.get("vwidth") or values.get("width") or 0)
+            height = int(values.get("vheight") or values.get("height") or 0)
+        except (ValueError, TypeError):
+            continue
+        if width > 0 and height > 0:
+            return str(min(width, height))
     for value in (
         item.get("definition"),
         item.get("definition_code"),
@@ -5382,7 +5445,7 @@ def _definition_of(item: Mapping[str, Any]) -> str:
             return hint
     return ""
 
-def _select_quality(video_list: Any, wanted: str = "1080") -> tuple[str, dict[str, Any]]:
+def _select_quality(video_list: Any, wanted: str = "1080", strict: bool = False) -> tuple[str, dict[str, Any]]:
     def rows_from(value: Any, hinted_quality: str = "") -> list[tuple[str, dict[str, Any]]]:
         if isinstance(value, list):
             result: list[tuple[str, dict[str, Any]]] = []
@@ -5426,6 +5489,10 @@ def _select_quality(video_list: Any, wanted: str = "1080") -> tuple[str, dict[st
     if not rows:
         raise HongguoPluginError("播放模型没有清晰度")
     requested = _quality(wanted)
+    if strict:
+        if requested not in rows:
+            raise _PlaybackModelError("本集暫無指定畫質 %sP" % requested)
+        return requested, rows[requested]
     order = [requested] + [item for item in _QUALITY_ORDER if item != requested]
     for definition in order:
         if definition in rows:
@@ -6666,8 +6733,10 @@ class Spider(_BaseSpider):
             _dm_series_save()
         except Exception:
             pass
-        play_from = [_PUBLIC_LINE]
+        play_from = [_PUBLIC_LINE, _PUBLIC_PAGE_LINE]
         play_url = ["#".join("%d$%s%s" % (i + 1, _PUBLIC_EPISODE_PREFIX, str(v))
+                             for i, v in enumerate(vids)),
+                    "#".join("%d$%s%s:%s" % (i + 1, _PUBLIC_PAGE_PREFIX, sid, str(v))
                              for i, v in enumerate(vids))]
         for q, line_name in _HG_QUALITY_LINES:
             eps = "#".join(
@@ -6679,6 +6748,15 @@ class Spider(_BaseSpider):
         return {"list": [{"vod_id": sid, "vod_name": str(s.get("series_name") or ""), "vod_pic": str(s.get("series_cover") or ""), "vod_year": "", "vod_area": "", "vod_director": "", "vod_actor": ",".join(actors), "vod_content": str(s.get("series_intro") or ""), "vod_remarks": str(s.get("episode_right_text") or ""), "vod_play_from": "$$$".join(play_from), "vod_play_url": "$$$".join(play_url)}]}
     def playerContent(self, flag, id, vipFlags=None):
         token = str(id or "")
+        if token.startswith(_PUBLIC_PAGE_PREFIX):
+            try:
+                sid, vid = token[len(_PUBLIC_PAGE_PREFIX):].split(":", 1)
+                url = _public_page_media_url(sid, vid)
+            except (ValueError, HongguoPluginError, requests.RequestException):
+                return {"parse": 0, "jx": 0, "playUrl": "", "url": "",
+                        "header": {}, "msg": "本集官網公開完整片源暫不可用"}
+            return {"parse": 0, "jx": 0, "playUrl": "", "url": url,
+                    "header": {"User-Agent": _PUBLIC_WEB_UA, "Referer": SITE + "/"}}
         if token.startswith(_PUBLIC_EPISODE_PREFIX):
             vid = token[len(_PUBLIC_EPISODE_PREFIX):]
             try:
@@ -6823,7 +6901,7 @@ class Spider(_BaseSpider):
             user_q = str(param.get("q") or param.get("quality") or "").strip()
             # 有原生 AES：优先 1080；纯 Python AES 很慢：先 720 保证能播，再尝试更高
             if user_q:
-                order = [user_q, "1080", "720", "480", "360"]
+                order = [user_q]
             elif _aes_is_fast():
                 order = ["1080", "720", "480", "360"]
             else:
@@ -6847,28 +6925,8 @@ class Spider(_BaseSpider):
                 if cached:
                     return [200, "video/mp4", cached]
 
-            model = None
-            rows = None
-            for _round in range(4):
-                try:
-                    model = _video_model(vid, cfg)
-                except Exception as err:
-                    if not _is_empty_model_error(err) or _round >= 3:
-                        raise
-                    pair = _rotate_stream_device()
-                    cfg = {"device_id": pair["device_id"], "install_id": pair["install_id"]}
-                    self.device_id = pair["device_id"]
-                    self.install_id = pair["install_id"]
-                    continue
-                rows = _video_list_from_model(model)
-                if rows:
-                    break
-                if _round >= 3:
-                    break
-                pair = _rotate_stream_device()
-                cfg = {"device_id": pair["device_id"], "install_id": pair["install_id"]}
-                self.device_id = pair["device_id"]
-                self.install_id = pair["install_id"]
+            model = _video_model(vid, cfg)
+            rows = _video_list_from_model(model)
             if not rows:
                 return [500, "text/plain; charset=utf-8", b"empty video list"]
 
@@ -6880,7 +6938,7 @@ class Spider(_BaseSpider):
                     if cached:
                         return [200, "video/mp4", cached]
 
-                    _, item = _select_quality(rows, wanted)
+                    _, item = _select_quality(rows, wanted, strict=True)
                     url = _media_url(item)
                     spade = _spade_value(item)
                     if not url or not spade:

@@ -1706,7 +1706,9 @@ class _PlaybackModelError(HongguoPluginError):
 
 
 _STREAM_FAILURE_MESSAGES = {
-    "source": "HG01 · 取源失敗：未取得這集指定畫質的播放資料",
+    "source": "HG01F · 請求播放資料時發生未分類錯誤",
+    "source-response": "HG01G · 讀取回應欄位時發生未分類錯誤",
+    "source-variant": "HG01H · 選擇或準備指定畫質時發生未分類錯誤",
     "source-empty": "HG01A · 上游回應沒有播放資料",
     "source-rejected": "HG01B · 上游拒絕或限制播放請求",
     "source-format": "HG01C · 播放資料格式異常或缺少必要欄位",
@@ -1725,7 +1727,7 @@ class _StreamDiagnosticError(HongguoPluginError):
         super().__init__(_STREAM_FAILURE_MESSAGES[stage])
 
 
-def _source_failure_stage(error: Exception) -> str:
+def _source_failure_stage(error: Exception, fallback: str = "source") -> str:
     """Map known failures to fixed labels. Never show the upstream error verbatim."""
     if isinstance(error, requests.HTTPError):
         status = getattr(error.response, "status_code", None)
@@ -1734,8 +1736,10 @@ def _source_failure_stage(error: Exception) -> str:
         return "source-network"
     if isinstance(error, (requests.Timeout, requests.ConnectionError)):
         return "source-network"
+    if isinstance(error, json.JSONDecodeError):
+        return "source-format"
     if not isinstance(error, HongguoPluginError):
-        return "source"
+        return fallback
 
     message = str(error)
     if message.startswith(("上游拒絕播放請求（HTTP ", "播放模型被上游拒絕（code=", "來源拒絕匿名播放註冊")):
@@ -1754,7 +1758,7 @@ def _source_failure_stage(error: Exception) -> str:
         "播放模型没有清晰度",
     ):
         return "source-format"
-    return "source"
+    return fallback
 
 
 def _remember_stream_failure(video_id: str, quality: str, stage: str) -> None:
@@ -2560,6 +2564,7 @@ def _stream_session(video_id: str, config: Mapping[str, Any], quality: str = "10
             stage = "source"
             try:
                 model = _video_model_rotating(video_id, config)
+                stage = "source-response"
                 rows = _video_list_from_model(model)
                 key_seed = _key_seed_from_model(model) or ""
                 # 视轨校验：个别清晰度的流不带视轨（只有声音），
@@ -2569,6 +2574,7 @@ def _stream_session(video_id: str, config: Mapping[str, Any], quality: str = "10
                 reason = "媒体会话创建失败"
                 probed = 0
                 for want in wanted_order:
+                    stage = "source-variant"
                     _, item = _select_quality(rows, want, strict=True)
                     raw_url = _media_url(item)
                     spade = _spade_value(item)
@@ -2603,7 +2609,7 @@ def _stream_session(video_id: str, config: Mapping[str, Any], quality: str = "10
             except Exception as err:
                 if (_attempt == 2 or isinstance(err, _PlaybackModelError)
                         or isinstance(err, requests.HTTPError) and getattr(err.response, "status_code", None) in (403, 429)):
-                    diagnostic = _source_failure_stage(err) if stage == "source" else stage
+                    diagnostic = stage if stage == "session" else _source_failure_stage(err, stage)
                     raise _StreamDiagnosticError(diagnostic) from None
                 try:
                     time.sleep(0.4 * (_attempt + 1))

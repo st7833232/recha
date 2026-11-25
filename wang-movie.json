@@ -73,9 +73,9 @@
     },
     {
       "key": "hongguo-codec-test",
-      "name": "红果 • 編碼相容測試",
+      "name": "红果 • 播放診斷測試",
       "type": 3,
-      "api": "https://raw.githubusercontent.com/st7833232/recha/edcfb2e6057c1b5f4a509d753c83ea269d475842/py/%E7%BA%A2%E6%9E%9C%E7%9F%AD%E5%89%A7.py",
+      "api": "https://raw.githubusercontent.com/st7833232/recha/70d7d3be106a6cba905bd302c30ff14ec3c2c7a2/py/%E7%BA%A2%E6%9E%9C%E7%9F%AD%E5%89%A7.py",
       "genre": "shortdrama"
     },
     {

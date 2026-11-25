@@ -2038,7 +2038,6 @@ MEDIA_HEADERS = {"User-Agent": MEDIA_UA, "Referer": "https://novel.snssdk.com/"}
 
 _STREAM_PORT_RANGE = (10010, 10030)
 _STREAM_CHUNK = 1 << 20
-_STREAM_START_BYTES = 512 * 1024  # Matches WebHTV's loopback MP4 probe.
 _STREAM_HEAD_PROBE = 1 << 16
 _STREAM_TTL_SECONDS = 900
 _STREAM_MAX_SESSIONS = 4
@@ -2339,7 +2338,7 @@ class _StreamSession:
     def prepare_start(self) -> None:
         if self._startup_prefix:
             return
-        count = min(self.total, _STREAM_START_BYTES)
+        count = min(self.total, _STREAM_CHUNK)
         if count <= 0:
             raise _StreamDiagnosticError("first-range")
         try:

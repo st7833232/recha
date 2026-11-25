@@ -524,6 +524,28 @@ class PlaybackContractTests(unittest.TestCase):
             self.assertEqual(session.read_range(0, 15), b"x" * 16)
             read.assert_called_once_with(session.url, 0, 31)
 
+    def test_open_ended_first_range_reuses_preflight_without_an_upstream_refetch(self):
+        payload = b"x" * module._STREAM_CHUNK
+        with patch.object(module, "_rewrite_moov", return_value=b""), \
+                patch.object(module, "_sample_table", return_value=[]):
+            session = module._StreamSession("https://example.test/movie.mp4", b"0" * 16, len(payload), 0, b"")
+
+        def read_once(url, start, end):
+            if read.call_count > 1:
+                raise OSError("simulated second upstream read failure")
+            return payload[start:end + 1], len(payload)
+
+        port = module._start_stream_server()
+        video_id = "123456781"
+        url = "http://127.0.0.1:%d/hg.mp4?vid=%s&q=1080" % (port, video_id)
+        with patch.object(module, "_range_get", side_effect=read_once) as read, \
+                patch.object(module, "_stream_session", return_value=session):
+            session.prepare_start()
+            response = requests.get(url, headers={"Range": "bytes=0-"}, timeout=5)
+        self.assertEqual(response.status_code, 206)
+        self.assertEqual(response.content, payload)
+        read.assert_called_once_with(session.url, 0, len(payload) - 1)
+
     def test_local_http_prefetch_valid_range_remains_206(self):
         class WorkingMedia:
             total = 10000

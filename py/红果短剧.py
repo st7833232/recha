@@ -6733,10 +6733,10 @@ class Spider(_BaseSpider):
             _dm_series_save()
         except Exception:
             pass
-        play_from = [_PUBLIC_LINE, _PUBLIC_PAGE_LINE]
+        # The public player page route is not live-verified. Keep its old
+        # token parser for history compatibility, but do not advertise it.
+        play_from = [_PUBLIC_LINE]
         play_url = ["#".join("%d$%s%s" % (i + 1, _PUBLIC_EPISODE_PREFIX, str(v))
-                             for i, v in enumerate(vids)),
-                    "#".join("%d$%s%s:%s" % (i + 1, _PUBLIC_PAGE_PREFIX, sid, str(v))
                              for i, v in enumerate(vids))]
         for q, line_name in _HG_QUALITY_LINES:
             eps = "#".join(

@@ -290,6 +290,21 @@ class PlaybackContractTests(unittest.TestCase):
                 module._public_web_media_url("not-an-episode")
             post.assert_not_called()
 
+    def test_detail_does_not_advertise_unverified_public_page_line(self):
+        sid = "123456789"
+        payload = {"loaderData": {"detail_page": {"seriesDetail": {
+            "series_id": sid, "series_name": "Test", "vid_list": [VID]}}}}
+        with patch.object(module, "_data", return_value=payload), \
+             patch.object(module, "_dm_series_load"), \
+             patch.object(module, "_dm_remember_series"), \
+             patch.object(module, "_dm_series_save"):
+            detail = module.Spider().detailContent([sid])["list"][0]
+        lines = detail["vod_play_from"].split("$$")
+        tokens = detail["vod_play_url"].split("$$")
+        self.assertEqual(lines, [module._PUBLIC_LINE] + [name for _, name in module._HG_QUALITY_LINES])
+        self.assertEqual(len(lines), len(tokens))
+        self.assertNotIn(module._PUBLIC_PAGE_PREFIX, detail["vod_play_url"])
+
     def test_public_player_page_requires_exact_episode_and_clear_full_video(self):
         from unittest.mock import Mock
         sid = "123456789"

@@ -6,6 +6,14 @@
       "type": 3,
       "api": "./py/红果短剧.py",
       "genre": "shortdrama"
+    },
+    {
+      "key": "hongguo_preview_cms_control",
+      "name": "創享｜匯入對照",
+      "type": 1,
+      "api": "https://ys.cxkjg.cn/api/provide/vod",
+      "searchable": 0,
+      "quickSearch": 0
     }
   ]
 }

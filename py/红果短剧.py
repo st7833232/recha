@@ -2,6 +2,7 @@
 # === 發布與修改說明 ===
 # SPDX-License-Identifier: GPL-3.0-only
 # 紅果短劇 Python 修改版，最近修改日期：2026-11-17。
+# 2026-11-25 擴大官網公開片源的首段 MP4 Range 並放寬網路逾時，改善起播。
 # 2026-11-20 本機串流服務自我修復：iOS 凍結暫停中的 App 會關閉監聽 socket，
 # 回傳快取連接埠前先以 HEAD 確認仍會回應，不回應就關閉舊服務並重新開啟，
 # 不必重啟 App；不涉及簽章、取流或解密。
@@ -1135,7 +1136,7 @@ def _public_mp4_range(url: str, start: int, end: int, deadline: float):
         raise HongguoPluginError("公開片源驗證逾時")
     headers = {"User-Agent": _PUBLIC_WEB_UA, "Referer": SITE + "/",
                "Range": "bytes=%d-%d" % (start, end), "Accept-Encoding": "identity"}
-    with requests.get(url, headers=headers, timeout=min(4, remaining),
+    with requests.get(url, headers=headers, timeout=min(10, remaining),
                       stream=True, allow_redirects=False) as response:
         if response.status_code != 206:
             raise HongguoPluginError("公開媒體不支援 Range 或拒絕播放（HTTP %d）" % response.status_code)
@@ -1167,7 +1168,9 @@ def _public_mp4_info(url: str) -> dict:
                     or any(host == d or host.endswith("." + d) for d in domains))):
         raise HongguoPluginError("公開媒體主機不受信任")
     deadline = time.monotonic() + 12
-    head, total = _public_mp4_range(url, 0, 65535, deadline)
+    # The public 360p CDN can place an 80+ KiB moov at the start of the file.
+    # Read 128 KiB first so these episodes need only one metadata request.
+    head, total = _public_mp4_range(url, 0, 128 * 1024 - 1, deadline)
     if len(head) < 16 or head[4:8] != b"ftyp":
         raise HongguoPluginError("公開媒體不是 MP4")
     at = 0
@@ -1221,7 +1224,7 @@ def _public_web_media_url(video_id: str) -> str:
     response = requests.post(
         SITE + "/api/video/protected/fallback-play-info",
         json={"item_id": str(video_id)}, headers=headers,
-        timeout=6, allow_redirects=False,
+        timeout=12, allow_redirects=False,
     )
     if response.status_code in (401, 403, 429):
         raise HongguoPluginError("官網拒絕公開播放（HTTP %d）" % response.status_code)

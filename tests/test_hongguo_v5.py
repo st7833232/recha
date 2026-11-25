@@ -494,6 +494,36 @@ class PlaybackContractTests(unittest.TestCase):
             module._remember_stream_failure(VID, "1080", "session")
             self.assertEqual(module._take_stream_failure(VID, "1080"), "")
 
+    def test_player_content_exposes_startup_errors_on_first_request(self):
+        video_id = "123456780"
+        spider = module.Spider()
+        token = module.EPISODE_PREFIX + "1080:" + video_id
+        with patch.object(spider, "_adopt_working_pair"), patch.object(module, "_start_stream_server", return_value=8123):
+            for error, code in ((module._StreamDiagnosticError("source"), "HG01"),
+                                (RuntimeError("private URL"), "HG02")):
+                with patch.object(module, "_stream_session", side_effect=error):
+                    with self.assertRaisesRegex(module._StreamDiagnosticError, code):
+                        spider.playerContent("超清", token)
+            with patch.object(module, "_stream_session") as make_session:
+                prepare = make_session.return_value.prepare_start
+                prepare.side_effect = module._StreamDiagnosticError("first-range")
+                with self.assertRaisesRegex(module._StreamDiagnosticError, "HG03"):
+                    spider.playerContent("超清", token)
+                prepare.side_effect = None
+                self.assertIn("127.0.0.1:8123/hg.mp4", spider.playerContent("超清", token)["url"])
+
+    def test_startup_probe_reuses_the_verified_first_range(self):
+        with patch.object(module, "_rewrite_moov", return_value=b""), \
+                patch.object(module, "_sample_table", return_value=[]):
+            session = module._StreamSession("https://example.test/movie.mp4", b"0" * 16, 32, 0, b"")
+        with patch.object(module, "_range_get", return_value=(b"short", 32)):
+            with self.assertRaisesRegex(module._StreamDiagnosticError, "HG03"):
+                session.prepare_start()
+        with patch.object(module, "_range_get", return_value=(b"x" * 32, 32)) as read:
+            session.prepare_start()
+            self.assertEqual(session.read_range(0, 15), b"x" * 16)
+            read.assert_called_once_with(session.url, 0, 31)
+
     def test_local_http_prefetch_valid_range_remains_206(self):
         class WorkingMedia:
             total = 10000

@@ -2038,6 +2038,7 @@ MEDIA_HEADERS = {"User-Agent": MEDIA_UA, "Referer": "https://novel.snssdk.com/"}
 
 _STREAM_PORT_RANGE = (10010, 10030)
 _STREAM_CHUNK = 1 << 20
+_STREAM_START_BYTES = 512 * 1024  # Matches WebHTV's loopback MP4 probe.
 _STREAM_HEAD_PROBE = 1 << 16
 _STREAM_TTL_SECONDS = 900
 _STREAM_MAX_SESSIONS = 4
@@ -2288,6 +2289,7 @@ class _StreamSession:
         self.samples = _sample_table(moov, moov_start)
         self.offsets = [item[0] for item in self.samples]
         self.created = time.time()
+        self._startup_prefix = b""
 
     def expired(self) -> bool:
         return time.time() - self.created > _STREAM_TTL_SECONDS
@@ -2324,12 +2326,29 @@ class _StreamSession:
             ]
 
     def read_range(self, start: int, end: int) -> bytes:
+        prefix = self._startup_prefix
+        if 0 <= start <= end < len(prefix):
+            return prefix[start : end + 1]
         raw, _ = _range_get(self.url, start, end)
         if not raw:
             raise HongguoPluginError("媒体分片为空")
         buffer = bytearray(raw)
         self._patch(buffer, start)
         return bytes(buffer)
+
+    def prepare_start(self) -> None:
+        if self._startup_prefix:
+            return
+        count = min(self.total, _STREAM_START_BYTES)
+        if count <= 0:
+            raise _StreamDiagnosticError("first-range")
+        try:
+            prefix = self.read_range(0, count - 1)
+        except Exception:
+            raise _StreamDiagnosticError("first-range") from None
+        if len(prefix) != count:
+            raise _StreamDiagnosticError("first-range")
+        self._startup_prefix = prefix
 
     def iter_range(self, start: int, end: int):
         cursor = start
@@ -7026,25 +7045,22 @@ class Spider(_BaseSpider):
         # 超过播放器默认 8s 读超时）。首集常因缓存或重试侥幸起播，切到第二集时播放器
         # 按新 URL 重新请求即超时失败，表现为“第 1 集能放、第 2 集不能放”。
         # 本机流服务支持 206 / Content-Range / Accept-Ranges，首字节约 1s，切集稳定。
-        # 会话构建（取 video_model + 拉 moov）在冷启动时约 3~18s，若等到播放器连上来
-        # 才建会话，响应头会被拖延到读超时。这里先异步预热会话，让播放器连接时命中缓存。
-        def _warm_session():
-            try:
-                _stream_session(vid, {
-                    "device_id": self.device_id or "",
-                    "install_id": self.install_id or "",
-                }, q)
-            except Exception:
-                pass
-        try:
-            threading.Thread(target=_warm_session, daemon=True).start()
-        except Exception:
-            pass
         try:
             port = _start_stream_server()
         except Exception:
             port = 0
         if port:
+            # Resolve here so the host can show a diagnostic on the first tap.
+            try:
+                session = _stream_session(vid, {
+                    "device_id": self.device_id or "",
+                    "install_id": self.install_id or "",
+                }, q)
+            except _StreamDiagnosticError:
+                raise
+            except Exception:
+                raise _StreamDiagnosticError("session") from None
+            session.prepare_start()
             query = urlencode(
                 {
                     "vid": vid,

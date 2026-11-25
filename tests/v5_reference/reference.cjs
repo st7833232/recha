@@ -12,5 +12,6 @@ const result = signPlaybackV5({
   values: data.values,
   body: data.body === null ? null : Buffer.from(data.body, 'base64'),
   now: data.now,
+  ...(data.field21 === undefined ? {} : { field21: data.field21 }),
 });
 process.stdout.write(JSON.stringify(result));

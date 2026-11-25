@@ -5,6 +5,9 @@
 # 2026-11-20 本機串流服務自我修復：iOS 凍結暫停中的 App 會關閉監聽 socket，
 # 回傳快取連接埠前先以 HEAD 確認仍會回應，不回應就關閉舊服務並重新開啟，
 # 不必重啟 App；不涉及簽章、取流或解密。
+# 2026-11-25 同步 jackotom/hongguo-drama 8.2（4ef6b05）：新增 current-app preload/v1，
+# 沿用 GPL-3.0-only V5 簽章並支援新版 field21，優先新版來源；保留單檔 Python 及原有 MP4 Range。
+# 來源：src/native/app-source.js、src/native/playback-v5.js；不引入桌面 SDK helper。
 # 2026-11-20 同步 jackotom/hongguo-drama 7.7：v5 POST 主備回應空時，
 # 改用 v5 無正文簽章的 video_tab GET，取消 POST 專用 x-ss-stub 等標頭。
 # 2026-11-17 播放端點清理：失效的舊版 API 已從主流程移除，僅保留
@@ -4957,7 +4960,7 @@ def _v5_xmxor(data, key):
     return bytes(encoded)
 
 
-def _v5_medusa(query_hash, f13, ts, who):
+def _v5_medusa(query_hash, f13, ts, who, field21=377):
     flags = bytes(8)
     device = _v5_proto([
         (1, 1, "sint"), (2, 2, "sint"), (3, "8662"),
@@ -4980,7 +4983,7 @@ def _v5_medusa(query_hash, f13, ts, who):
         (13, f13), (14, query_hash[:6]),
         (15, _v5_proto([(1, 1, "sint"), (2, 1, "sint"),
                          (3, 1, "sint"), (5, 1, "sint")])),
-        (17, ts, "sint"), (20, "none"), (21, 377, "sint"),
+        (17, ts, "sint"), (20, "none"), (21, field21, "sint"),
         (23, env), (24, '{"cmr":16777216,"cmr2":16777216,"un_h":11,"vpn":0,"kd":0,"dyn":"","do":1,"tk":true}'),
     ])
     nonce = int.from_bytes(os.urandom(4), "little")
@@ -5028,7 +5031,9 @@ def _v5_helios(ts):
     return base64.b64encode(nonce + output).decode("ascii")
 
 
-def _v5_sign(base, values, body):
+def _v5_sign(base, values, body, field21=377):
+    if type(field21) is not int or not 0 <= field21 <= 65535:
+        raise ValueError("invalid v5 field21")
     if not base.startswith("https://") or "?" in base or "#" in base:
         raise ValueError("invalid v5 endpoint")
     # 7.7: video_tab GET signs an empty body and MUST omit POST-only headers.
@@ -5054,7 +5059,7 @@ def _v5_sign(base, values, body):
         headers = {
             "x-khronos": str(ts),
             "x-helios": _v5_helios(ts),
-            "x-medusa": _v5_medusa(hash_query, f13, ts, vals),
+            "x-medusa": _v5_medusa(hash_query, f13, ts, vals, field21),
         }
         if has_body:
             headers["x-ss-stub"] = body_hash.hex().upper()
@@ -5073,7 +5078,7 @@ def _v5_playback_request(video_id, pair, alternate=False):
     }
     payload = {
         "biz_param": {
-            "detail_page_version": 0, "device_level": 3,
+            "detail_page_version": 0, "device_level": 1,
             "disable_digg_stat": False, "disable_video_relate_book": False,
             "need_all_video_definition": True, "need_mp4_align": False,
             "use_os_player": False, "use_server_dns": False,
@@ -5093,6 +5098,56 @@ def _v5_playback_request(video_id, pair, alternate=False):
         "Content-Encoding": "gzip",
     })
     return url, signed, body
+
+
+def _v8_preload_request(video_id: str, pair: Mapping[str, str]) -> tuple[str, dict[str, str], bytes]:
+    """Current-app preload route from jackotom/hongguo-drama 8.2 (GPL-3.0-only).
+    Ordinary drama episodes use 1004; keep the existing Spider episode IDs.
+    """
+    params = {
+        "aid": "8662", "app_name": "novelread",
+        "version_code": "74532", "version_name": "7.4.5.32",
+        "update_version_code": "74532", "manifest_version_code": "74532",
+        "os": "android", "ssmix": "a", "channel": "update_64",
+        "device_platform": "android", "device_type": "25053RT47C",
+        "device_brand": "Redmi", "os_version": "16", "os_api": "36",
+        "ac": "wifi", "language": "zh", "host_abi": "arm64-v8a",
+        "iid": pair["install_id"], "cdid": pair["cdid"],
+        "device_id": pair["device_id"],
+    }
+    payload = {
+        "biz_param": {
+            "detail_page_version": 0, "device_level": 2,
+            "disable_digg_stat": False, "disable_video_relate_book": False,
+            "need_all_video_definition": True, "need_mp4_align": False,
+            "use_os_player": False, "use_server_dns": False,
+            "video_platform": 1024,
+        },
+        "mixed_video_id_map": {"1004": [str(video_id)]},
+        "dr_scene": "preload",
+    }
+    body = gzip.compress(json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8"),
+                         compresslevel=6, mtime=0)
+    base = "https://reading.snssdk.com/novel/player/multi_video_model/preload/v1"
+    url, headers = _v5_sign(base, params, body, field21=312)
+    headers.update({"User-Agent": "okhttp/4.12.0", "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Content-Encoding": "gzip"})
+    return url, headers, body
+
+
+def _v8_preload_model(video_id: str, pair: Mapping[str, str], timeout: float) -> dict[str, Any]:
+    url, headers, body = _v8_preload_request(video_id, pair)
+    response = requests.post(url, headers=headers, data=body, timeout=timeout,
+                             allow_redirects=False)
+    if response.status_code in (401, 403, 429):
+        raise _PlaybackModelError("上游拒絕播放請求（HTTP %d）" % response.status_code)
+    if 300 <= response.status_code < 400:
+        raise _PlaybackModelError("播放端點發生不受支援的跳轉")
+    response.raise_for_status()
+    if not response.content or not response.content.strip():
+        raise _PlaybackModelError("播放模型皆為空")
+    return _model_from_response(_json_response(response), video_id)
 
 
 def _v5_video_tab_request(video_id: str, pair: Mapping[str, str]) -> tuple[str, dict[str, str]]:
@@ -5151,53 +5206,54 @@ def _v5_playback_model(video_id: str, pair: Mapping[str, str],
 
 
 def _video_model(video_id: str, config: Mapping[str, Any]) -> dict[str, Any]:
-    """Use signed v5 POST, alternate host, then 7.7 signed video_tab GET."""
+    """8.2 current-app preload first, then supported V5 official routes."""
     if not re.fullmatch(r"[0-9]{1,30}", str(video_id)):
         raise _PlaybackModelError("分集識別無效")
-    pair = _playback_device(force=True)
+    # 8.2 reuses the anonymous registration; the existing rotating wrapper
+    # can refresh it once for a verified empty response.
+    pair = _playback_device(force=False)
     started = time.monotonic()
     last_error: Exception | None = None
-    # Keep time for the signed GET fallback instead of exhausting the whole
-    # model deadline on two POST endpoints that return empty data.
-    for alternate in (False, True):
+    routes = (
+        ("preload_current", lambda timeout: _v8_preload_model(video_id, pair, timeout)),
+        ("video_tab", lambda timeout: _v5_video_tab_model(video_id, pair, timeout)),
+        ("player_b", lambda timeout: _v5_playback_model(video_id, pair, timeout, alternate=False)),
+        ("player_a", lambda timeout: _v5_playback_model(video_id, pair, timeout, alternate=True)),
+    )
+    all_empty = True
+    for index, (name, route) in enumerate(routes):
         remaining = 12 - (time.monotonic() - started)
-        if remaining < 2.5:
+        if remaining <= 0.5:
+            all_empty = False
             break
         try:
-            return _v5_playback_model(
-                video_id, pair, timeout=min(remaining - 2, 3.5),
-                alternate=alternate,
-            )
+            # Bound each attempt so an unavailable route cannot consume all
+            # of the budget before the next supported route is tried.
+            timeout = min(remaining, 4.0 if index == 0 else 3.0)
+            model = route(timeout)
+            with _STREAM_LOCK:
+                _STREAM_STATE["playback_last_route"] = name
+            return model
         except _PlaybackModelError as error:
             last_error = error
-            if not _is_empty_model_error(error):
+            # Explicit business rejection is not a reason to try a different
+            # route; the existing wrapper handles the upstream empty case.
+            if "播放模型皆為空" not in str(error):
                 raise
         except requests.HTTPError as error:
+            status = getattr(error.response, "status_code", None)
+            if status in (401, 403, 429):
+                raise _PlaybackModelError("上游拒絕播放請求（HTTP %s）" % status) from error
+            if status not in (404, 408, 500, 502, 503, 504):
+                raise _PlaybackModelError("播放端點 HTTP 錯誤") from error
             last_error = error
-            if getattr(error.response, "status_code", None) in (401, 403, 429):
-                raise _PlaybackModelError("上游拒絕播放請求") from error
-        except (requests.RequestException, HongguoPluginError, ValueError, KeyError) as error:
+            all_empty = False
+        except (requests.Timeout, requests.ConnectionError) as error:
             last_error = error
-
-    remaining = 12 - (time.monotonic() - started)
-    if remaining >= 0.5:
-        try:
-            return _v5_video_tab_model(video_id, pair, timeout=min(remaining, 5))
-        except _PlaybackModelError as error:
-            last_error = error
-            if not _is_empty_model_error(error):
-                raise
-        except requests.HTTPError as error:
-            last_error = error
-            if getattr(error.response, "status_code", None) in (401, 403, 429):
-                raise _PlaybackModelError("上游拒絕播放請求") from error
-        except (requests.RequestException, HongguoPluginError, ValueError, KeyError) as error:
-            last_error = error
-
-    raise _PlaybackModelError(
-        "v5 播放模型與 video_tab 均不可用：%s"
-        % (str(last_error)[:120] if last_error else "請求逾時")
-    ) from last_error
+            all_empty = False
+    if all_empty:
+        raise _PlaybackModelError("播放模型皆為空（8.2 官方取源）") from last_error
+    raise _PlaybackModelError("8.2 官方播放端點逾時或暫時無法連線") from last_error
 
 
 def _video_list_from_model(model: Mapping[str, Any]) -> Any:

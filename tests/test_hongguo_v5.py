@@ -161,65 +161,99 @@ class PlaybackContractTests(unittest.TestCase):
         with self.assertRaises(module._PlaybackModelError):
             module._model_from_response(response, "888")
 
-    def test_only_v5_primary_is_used_on_success(self):
-        with patch.object(module, "_playback_device", return_value=PAIR) as profile, \
-             patch.object(module, "_v5_playback_model", return_value=MODEL) as play:
-            self.assertEqual(module._video_model(VID, {}), MODEL)
-            profile.assert_called_once_with(force=True)
-            play.assert_called_once()
-            self.assertFalse(play.call_args.kwargs["alternate"])
+    def test_v8_preload_request_matches_current_app_contract(self):
+        with patch.object(module, "_v5_sign", return_value=("https://example.test/model", {})) as signer:
+            url, headers, body = module._v8_preload_request(VID, PAIR)
+        base, params, signed_body = signer.call_args.args
+        self.assertTrue(base.endswith("/novel/player/multi_video_model/preload/v1"))
+        self.assertEqual(params["version_code"], "74532")
+        self.assertEqual(params["device_type"], "25053RT47C")
+        self.assertEqual(signer.call_args.kwargs["field21"], 312)
+        self.assertEqual(body, signed_body)
+        payload = json.loads(gzip.decompress(body))
+        self.assertEqual(payload["dr_scene"], "preload")
+        self.assertEqual(payload["biz_param"]["device_level"], 2)
+        self.assertEqual(payload["mixed_video_id_map"], {"1004": [VID]})
+        self.assertEqual(headers["User-Agent"], "okhttp/4.12.0")
+        self.assertEqual(headers["Content-Encoding"], "gzip")
 
-    def test_v5_backup_host_only_on_empty_model(self):
-        side_effect = [module._PlaybackModelError("播放模型皆為空"), MODEL]
-        with patch.object(module, "_playback_device", return_value=PAIR), \
-             patch.object(module, "_v5_playback_model", side_effect=side_effect) as play:
-            self.assertEqual(module._video_model(VID, {}), MODEL)
-            self.assertEqual([v.kwargs["alternate"] for v in play.call_args_list],
-                             [False, True])
+    def test_v8_preload_signature_matches_82_reference_js(self):
+        now = 1800000000123
+        with patch.object(module, "_v5_sign", return_value=("https://example.test/model", {})) as mock:
+            module._v8_preload_request(VID, PAIR)
+        base, values, body = mock.call_args.args
+        payload = json.dumps({"now": now, "base": base, "values": values,
+                              "body": base64.b64encode(body).decode("ascii"), "field21": 312})
+        process = subprocess.run(
+            ["node", str(SOURCE.parents[1] / "tests" / "v5_reference" / "reference.cjs")],
+            input=payload, text=True, capture_output=True, check=True, timeout=20,
+        )
+        expected = json.loads(process.stdout)
+        old_nonce, old_started = module._V5_PROCESS_NONCE, module._V5_PROCESS_STARTED
+        module._V5_PROCESS_NONCE = base64.urlsafe_b64encode(bytes([1]) * 18).decode().rstrip("=")
+        module._V5_PROCESS_STARTED = now
+        calls = [1]
+        def deterministic(n):
+            calls[0] += 1
+            return bytes([calls[0]]) * n
+        try:
+            with patch.object(module.time, "time", return_value=now / 1000), \
+                 patch.object(module.os, "urandom", side_effect=deterministic):
+                url, headers = module._v5_sign(base, values, body, field21=312)
+        finally:
+            module._V5_PROCESS_NONCE, module._V5_PROCESS_STARTED = old_nonce, old_started
+        self.assertEqual(url, expected["url"])
+        self.assertEqual(headers, expected["headers"])
 
-    def test_business_rejection_has_no_fallback(self):
+    def test_preload_is_first_and_identity_is_reused(self):
+        with patch.object(module, "_playback_device", return_value=PAIR) as device, \
+             patch.object(module, "_v8_preload_model", return_value=MODEL) as preload, \
+             patch.object(module, "_v5_video_tab_model") as tab, \
+             patch.object(module, "_v5_playback_model") as play:
+            self.assertEqual(module._video_model(VID, {}), MODEL)
+            device.assert_called_once_with(force=False)
+            preload.assert_called_once()
+            tab.assert_not_called()
+            play.assert_not_called()
+
+    def test_empty_preload_uses_video_tab_next(self):
         with patch.object(module, "_playback_device", return_value=PAIR), \
-             patch.object(module, "_v5_playback_model",
-                          side_effect=module._PlaybackModelError("上游拒絕播放請求（HTTP 403）")) as play:
-            with self.assertRaises(module._PlaybackModelError):
-                module._video_model(VID, {})
-            play.assert_called_once()
+             patch.object(module, "_v8_preload_model", side_effect=module._PlaybackModelError("播放模型皆為空")), \
+             patch.object(module, "_v5_video_tab_model", return_value=MODEL) as tab, \
+             patch.object(module, "_v5_playback_model") as play:
+            self.assertEqual(module._video_model(VID, {}), MODEL)
+            tab.assert_called_once()
+            play.assert_not_called()
+
+    def test_empty_preload_and_tab_use_v5_hosts(self):
+        empty = module._PlaybackModelError("播放模型皆為空")
+        with patch.object(module, "_playback_device", return_value=PAIR), \
+             patch.object(module, "_v8_preload_model", side_effect=empty), \
+             patch.object(module, "_v5_video_tab_model", side_effect=empty), \
+             patch.object(module, "_v5_playback_model", side_effect=[empty, MODEL]) as play:
+            self.assertEqual(module._video_model(VID, {}), MODEL)
+            self.assertEqual([x.kwargs["alternate"] for x in play.call_args_list], [False, True])
+
+    def test_explicit_rejection_stops_before_other_routes(self):
+        for message in ("上游拒絕播放請求（HTTP 403）", "上游拒絕播放請求（HTTP 429）",
+                        "播放模型被上游拒絕（code=110001）"):
+            with self.subTest(message=message), \
+                 patch.object(module, "_playback_device", return_value=PAIR), \
+                 patch.object(module, "_v8_preload_model", side_effect=module._PlaybackModelError(message)), \
+                 patch.object(module, "_v5_video_tab_model") as tab, \
+                 patch.object(module, "_v5_playback_model") as play:
+                with self.assertRaises(module._PlaybackModelError):
+                    module._video_model(VID, {})
+                tab.assert_not_called()
+                play.assert_not_called()
 
     def test_no_obsolete_playback_api_targets_remain(self):
         source = SOURCE.read_text(encoding="utf-8")
+        self.assertIn("/novel/player/multi_video_model/preload/v1", source)
         self.assertIn("/reading/bookapi/video_tab/multi_video_model/v1", source)
         self.assertNotIn("/novel/player/multi_video_model/v1/", source)
         self.assertNotIn("/novel/player/video_model/v1/", source)
         self.assertNotIn("def _playback_request(", source)
-        self.assertIn('for alternate in (False, True):', source)
-
-    def test_empty_post_resolves_via_v5_video_tab(self):
-        with patch.object(module, "_playback_device", return_value=PAIR), \
-             patch.object(module, "_v5_playback_model",
-                          side_effect=module._PlaybackModelError("播放模型皆為空")) as post, \
-             patch.object(module, "_v5_video_tab_model", return_value=MODEL) as tab:
-            self.assertEqual(module._video_model(VID, {}), MODEL)
-            self.assertEqual([x.kwargs["alternate"] for x in post.call_args_list],
-                             [False, True])
-            tab.assert_called_once()
-
-    def test_upstream_110001_allows_video_tab_without_old_endpoint(self):
-        with patch.object(module, "_playback_device", return_value=PAIR), \
-             patch.object(module, "_v5_playback_model",
-                          side_effect=module._PlaybackModelError("播放模型被上游拒絕（code=110001）")) as post, \
-             patch.object(module, "_v5_video_tab_model", return_value=MODEL) as tab:
-            self.assertEqual(module._video_model(VID, {}), MODEL)
-            self.assertEqual(post.call_count, 2)
-            tab.assert_called_once()
-
-    def test_explicit_rejection_stops_before_tab(self):
-        with patch.object(module, "_playback_device", return_value=PAIR), \
-             patch.object(module, "_v5_playback_model",
-                          side_effect=module._PlaybackModelError("上游拒絕播放請求（HTTP 403）")), \
-             patch.object(module, "_v5_video_tab_model") as tab:
-            with self.assertRaises(module._PlaybackModelError):
-                module._video_model(VID, {})
-            tab.assert_not_called()
 
     def test_legacy_play_url_leaf_is_not_dropped(self):
         name, item = module._select_quality(

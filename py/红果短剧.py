@@ -6880,16 +6880,8 @@ class Spider(_BaseSpider):
             _dm_series_save()
         except Exception:
             pass
-        # The public player page route is not live-verified. Keep its old
-        # token parser for history compatibility, but do not advertise it.
-        # Public availability is independent from the total episode count.
-        accessible = s.get("accessible_episode_cnt")
-        public_count = min(int(accessible), len(vids)) if re.fullmatch(
-            r"[0-9]{1,10}", str(accessible)) else len(vids)
-        public_eps = "#".join("%d$%s%s" % (i + 1, _PUBLIC_EPISODE_PREFIX, str(v))
-                              for i, v in enumerate(vids[:public_count]))
-        play_from = [_PUBLIC_LINE] if public_eps else []
-        play_url = [public_eps] if public_eps else []
+        play_from = []
+        play_url = []
         for q, line_name in _HG_QUALITY_LINES:
             eps = "#".join(
                 "%d%s%s%s%s" % (i + 1, "$", EPISODE_PREFIX, q + ":", str(v))

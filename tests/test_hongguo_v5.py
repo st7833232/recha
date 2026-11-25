@@ -299,10 +299,13 @@ class PlaybackContractTests(unittest.TestCase):
              patch.object(module, "_dm_remember_series"), \
              patch.object(module, "_dm_series_save"):
             detail = module.Spider().detailContent([sid])["list"][0]
-        lines = detail["vod_play_from"].split("$$")
-        tokens = detail["vod_play_url"].split("$$")
+        lines = detail["vod_play_from"].split("$$$")
+        tokens = detail["vod_play_url"].split("$$$")
         self.assertEqual(lines, [module._PUBLIC_LINE] + [name for _, name in module._HG_QUALITY_LINES])
-        self.assertEqual(len(lines), len(tokens))
+        self.assertEqual(tokens, ["1$" + module._PUBLIC_EPISODE_PREFIX + VID] + [
+            "1$" + module.EPISODE_PREFIX + quality + ":" + VID
+            for quality, _ in module._HG_QUALITY_LINES
+        ])
         self.assertNotIn(module._PUBLIC_PAGE_PREFIX, detail["vod_play_url"])
 
     def test_public_player_page_requires_exact_episode_and_clear_full_video(self):

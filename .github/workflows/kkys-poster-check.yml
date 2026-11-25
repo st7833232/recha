@@ -43,6 +43,29 @@ jobs:
                   print('PAGE', path, r.status_code, len(r.content), r.url)
                   print('RDUL declarations', [x[:500] for x in re.findall(r'\bRDUL\s*=\s*[^;\n]+', r.text)[:4]])
                   print('resolved image host', m._image_host(r.text))
+                  if path.startswith('/show'):
+                      from urllib.parse import urljoin
+                      print('INLINE SIGNALS', [x[:600] for x in re.findall(r'.{0,80}(?:RDUL|vres|vod1|resDomain|imgDomain).{0,120}', r.text, re.I) if 'data-original' not in x][:18])
+                      scripts = re.findall(r'<script\b[^>]*\bsrc=["\x27]([^"\x27]+)', r.text, re.I)
+                      for js in scripts[:25]:
+                          url = urljoin(r.url,js)
+                          try:
+                              j = requests.get(url, headers=headers,timeout=6)
+                              print('SCRIPT',url,j.status_code,len(j.content))
+                              for hit in re.finditer(r'RDUL|vres\.|/vod1/|resDomain|imgDomain',j.text,re.I):
+                                  print('JS SIGNAL', j.text[max(0,hit.start()-100):hit.start()+180].replace('\n',' ')[:280])
+                                  if hit.start() > 0 and sum(1 for _ in re.finditer(r'RDUL|vres\.|/vod1/|resDomain|imgDomain',j.text[:hit.start()],re.I)) >= 7: break
+                          except requests.RequestException as e:
+                              print('SCRIPT ERROR',type(e).__name__)
+                      sample = re.search(r'data-original=["\x27](/vod1/[^"\x27]+)',r.text)
+                      if sample:
+                          for origin in [m.SITE,'https://vf.jzxjlj.com','https://vf.wkcyvs.cn']:
+                              try:
+                                  with requests.get(origin+sample.group(1),headers=headers,timeout=6,stream=True) as im:
+                                      print('CANDIDATE',origin,im.status_code,im.headers.get('Content-Type'),next(im.iter_content(16),b'').hex())
+                              except requests.RequestException as e:
+                                  print('CANDIDATE ERROR',origin,type(e).__name__,str(e)[:200])
+
                   root = m._parse_dom(r.text)
                   imgs = m._find_all(root, tag='img')
                   for img in imgs[:12]:

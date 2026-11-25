@@ -1707,6 +1707,11 @@ class _PlaybackModelError(HongguoPluginError):
 
 _STREAM_FAILURE_MESSAGES = {
     "source": "HG01 · 取源失敗：未取得這集指定畫質的播放資料",
+    "source-empty": "HG01A · 上游回應沒有播放資料",
+    "source-rejected": "HG01B · 上游拒絕或限制播放請求",
+    "source-format": "HG01C · 播放資料格式異常或缺少必要欄位",
+    "source-quality": "HG01D · 播放資料中沒有指定畫質",
+    "source-network": "HG01E · 上游連線失敗、逾時或服務暫不可用",
     "session": "HG02 · 串流初始化失敗：無法讀取或準備影片資料",
     "first-range": "HG03 · 首段影片讀取失敗",
 }
@@ -1718,6 +1723,38 @@ class _StreamDiagnosticError(HongguoPluginError):
     def __init__(self, stage: str) -> None:
         self.stage = stage
         super().__init__(_STREAM_FAILURE_MESSAGES[stage])
+
+
+def _source_failure_stage(error: Exception) -> str:
+    """Map known failures to fixed labels. Never show the upstream error verbatim."""
+    if isinstance(error, requests.HTTPError):
+        status = getattr(error.response, "status_code", None)
+        if status in (401, 403, 429):
+            return "source-rejected"
+        return "source-network"
+    if isinstance(error, (requests.Timeout, requests.ConnectionError)):
+        return "source-network"
+    if not isinstance(error, HongguoPluginError):
+        return "source"
+
+    message = str(error)
+    if message.startswith(("上游拒絕播放請求（HTTP ", "播放模型被上游拒絕（code=", "來源拒絕匿名播放註冊")):
+        return "source-rejected"
+    if message.startswith("本集暫無指定畫質 "):
+        return "source-quality"
+    if message in ("播放模型皆為空", "播放模型皆為空（8.2 官方取源）"):
+        return "source-empty"
+    if message in ("8.2 官方播放端點逾時或暫時無法連線", "播放端點 HTTP 錯誤"):
+        return "source-network"
+    if message.startswith(("播放模型缺少地址或密钥材料 ", "播放模型缺少 data")) or message in (
+        "播放模型回應格式無效",
+        "播放模型 JSON 無效",
+        "播放模型格式無效",
+        "播放模型未包含所選集數",
+        "播放模型没有清晰度",
+    ):
+        return "source-format"
+    return "source"
 
 
 def _remember_stream_failure(video_id: str, quality: str, stage: str) -> None:
@@ -2566,7 +2603,8 @@ def _stream_session(video_id: str, config: Mapping[str, Any], quality: str = "10
             except Exception as err:
                 if (_attempt == 2 or isinstance(err, _PlaybackModelError)
                         or isinstance(err, requests.HTTPError) and getattr(err.response, "status_code", None) in (403, 429)):
-                    raise _StreamDiagnosticError(stage) from None
+                    diagnostic = _source_failure_stage(err) if stage == "source" else stage
+                    raise _StreamDiagnosticError(diagnostic) from None
                 try:
                     time.sleep(0.4 * (_attempt + 1))
                 except Exception:

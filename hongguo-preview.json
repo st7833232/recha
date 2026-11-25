@@ -1,0 +1,11 @@
+{
+  "sites": [
+    {
+      "key": "hongguo_clear_mp4_preview",
+      "name": "红果 • 測試",
+      "type": 3,
+      "api": "./py/红果短剧.py",
+      "genre": "shortdrama"
+    }
+  ]
+}

@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # 紅果短劇 Python 修改版，最近修改日期：2026-11-17。
 # 2026-11-25 擴大官網公開片源的首段 MP4 Range 並放寬網路逾時，改善起播。
+# 2026-11-25 測試版參考 N3urda/hongguoTV PlaybackModels.kt（GPL-3.0-only）：
+# 在既有的播放資料中辨識未加密 MP4，驗證實際畫質後直接轉發。
 # 2026-11-20 本機串流服務自我修復：iOS 凍結暫停中的 App 會關閉監聽 socket，
 # 回傳快取連接埠前先以 HEAD 確認仍會回應，不回應就關閉舊服務並重新開啟，
 # 不必重啟 App；不涉及簽章、取流或解密。
@@ -1138,6 +1140,8 @@ def _public_mp4_range(url: str, start: int, end: int, deadline: float):
                "Range": "bytes=%d-%d" % (start, end), "Accept-Encoding": "identity"}
     with requests.get(url, headers=headers, timeout=min(10, remaining),
                       stream=True, allow_redirects=False) as response:
+        if response.status_code in (401, 403, 429):
+            raise _PlaybackModelError("媒體服務拒絕播放（HTTP %d）" % response.status_code)
         if response.status_code != 206:
             raise HongguoPluginError("公開媒體不支援 Range 或拒絕播放（HTTP %d）" % response.status_code)
         match = re.fullmatch(r"bytes\s+(\d+)-(\d+)/(\d+)", response.headers.get("Content-Range", ""))
@@ -1159,6 +1163,8 @@ def _public_mp4_range(url: str, start: int, end: int, deadline: float):
 
 def _public_mp4_info(url: str) -> dict:
     """Inspect actual coded size using bounded Range reads, including tail moov."""
+    if len(url) > 8192 or re.search(r"[\s\\]", url):
+        raise _PlaybackModelError("媒體網址格式無效")
     parsed = urlparse(url)
     host = (parsed.hostname or "").lower()
     domains = ("qznovelvod.com", "fqnovelvod.com", "douyinvod.com")
@@ -1166,7 +1172,7 @@ def _public_mp4_info(url: str) -> dict:
             or parsed.port not in (None, 443)
             or not (host == "hongguoduanju.com" and parsed.path.startswith("/video/public/")
                     or any(host == d or host.endswith("." + d) for d in domains))):
-        raise HongguoPluginError("公開媒體主機不受信任")
+        raise _PlaybackModelError("公開媒體主機不受信任")
     deadline = time.monotonic() + 12
     # The public 360p CDN can place an 80+ KiB moov at the start of the file.
     # Read 128 KiB first so these episodes need only one metadata request.
@@ -1205,7 +1211,7 @@ def _public_mp4_info(url: str) -> dict:
                 box, other_total = _public_mp4_range(url, at, at + size - 1, deadline)
                 if other_total != total or len(box) != size:
                     raise HongguoPluginError("公開 MP4 metadata 不完整")
-            return _public_clear_video_info(box[header:])
+            return {**_public_clear_video_info(box[header:]), "size_bytes": total}
         at += size
     raise HongguoPluginError("公開 MP4 找不到可驗證的 moov")
 
@@ -2216,27 +2222,29 @@ def _sample_table(moov: bytes, moov_start: int) -> list[tuple[int, int, bytes]]:
 
 
 class _StreamSession:
-    """按 Range 逐块拉取加密 MP4，边下边解 CENC，供本地播放器直连。"""
+    """Serve MP4 ranges to the local player."""
 
     def __init__(
         self,
         url: str,
-        content_key: bytes,
+        content_key: bytes | None,
         total: int,
-        moov_start: int,
-        moov: bytes,
+        moov_start: int = 0,
+        moov: bytes = b"",
     ) -> None:
-        if len(content_key) != 16:
-            raise HongguoPluginError("CENC 密钥长度错误")
         self.url = url
         self.content_key = content_key
         self.total = total
+        self.created = time.time()
+        if content_key is None:
+            return
+        if len(content_key) != 16:
+            raise HongguoPluginError("CENC 密钥长度错误")
         self.moov_start = moov_start
         self.moov_plain = _rewrite_moov(moov)
         self.moov_end = moov_start + len(moov)
         self.samples = _sample_table(moov, moov_start)
         self.offsets = [item[0] for item in self.samples]
-        self.created = time.time()
 
     def expired(self) -> bool:
         return time.time() - self.created > _STREAM_TTL_SECONDS
@@ -2273,6 +2281,11 @@ class _StreamSession:
             ]
 
     def read_range(self, start: int, end: int) -> bytes:
+        if self.content_key is None:
+            raw, total = _public_mp4_range(self.url, start, end, time.monotonic() + 12)
+            if total != self.total or len(raw) != end - start + 1:
+                raise HongguoPluginError("媒體長度已變更")
+            return raw
         raw, _ = _range_get(self.url, start, end)
         if not raw:
             raise HongguoPluginError("媒体分片为空")
@@ -2423,6 +2436,21 @@ def _video_model_rotating(video_id: str, config: Mapping[str, Any]) -> dict[str,
     return _video_model(video_id, config)
 
 
+def _clear_stream_session(url: str, item: Mapping[str, Any], quality: str) -> _StreamSession:
+    protection = item.get("encrypt_info")
+    unencrypted = (False, 0, "0", "false")
+    if (protection is not None and
+            (not isinstance(protection, Mapping) or protection.get("encrypt") not in unencrypted)):
+        raise _PlaybackModelError("播放資料未確認為未加密 MP4")
+    for field in ("encrypt", "drm"):
+        if item.get(field) not in (None, *unencrypted):
+            raise _PlaybackModelError("播放資料仍受保護")
+    info = _public_mp4_info(url)
+    if str(info["quality"]) != quality:
+        raise _PlaybackModelError("媒體實際解析度不符指定畫質 %sP" % quality)
+    return _StreamSession(url, None, info["size_bytes"])
+
+
 def _stream_session(video_id: str, config: Mapping[str, Any], quality: str = "1080") -> "_StreamSession":
     quality = quality if quality in _QUALITY_LINE_NAME_TO_Q else "1080"
     cache_key = "%s|%s" % (video_id, quality)
@@ -2431,23 +2459,18 @@ def _stream_session(video_id: str, config: Mapping[str, Any], quality: str = "10
         for key in [key for key, item in sessions.items() if item.expired()]:
             sessions.pop(key, None)
         session = sessions.get(cache_key)
-    if session is not None:
-        return session
-    # 预热线程与播放器可能同时请求同一集；用 in-flight 事件去重，
-    # 避免重复拉 video_model 与 moov（冷启动 3~18s，重复会叠加首字节延迟）。
-    with _STREAM_LOCK:
-        inflight = _STREAM_STATE.setdefault("inflight", {})
-        event = inflight.get(cache_key)
-        leader = event is None
-        if leader:
-            event = threading.Event()
-            inflight[cache_key] = event
-    if not leader:
-        event.wait(_STREAM_INFLIGHT_WAIT)
-        with _STREAM_LOCK:
-            session = _STREAM_STATE["sessions"].get(cache_key)
         if session is not None:
             return session
+        # Share the result with a concurrent prefetch or player request,
+        # including refusals, so one click cannot resolve a source twice.
+        inflight = _STREAM_STATE.setdefault("inflight", {})
+        attempt = inflight.get(cache_key)
+        leader = attempt is None
+        if leader:
+            attempt = concurrent.futures.Future()
+            inflight[cache_key] = attempt
+    if not leader:
+        return attempt.result(timeout=_STREAM_INFLIGHT_WAIT)
     last_err = None
     try:
         # 上游偶发抖动（同一集首次 502、重试即通）——冷启动这里做短重试。
@@ -2456,22 +2479,14 @@ def _stream_session(video_id: str, config: Mapping[str, Any], quality: str = "10
                 model = _video_model_rotating(video_id, config)
                 rows = _video_list_from_model(model)
                 key_seed = _key_seed_from_model(model) or ""
-                # 视轨校验：个别清晰度的流不带视轨（只有声音），
-                # 此时按清晰度顺序回退到确实带视轨的那条，避免「切到低清就没画面」。
-                wanted_order = [quality]
-                seen_urls = set()
-                reason = "媒体会话创建失败"
-                probed = 0
-                for want in wanted_order:
-                    _, item = _select_quality(rows, want, strict=True)
-                    raw_url = _media_url(item)
-                    spade = _spade_value(item)
-                    if not raw_url or not spade:
-                        reason = reason if reason != "媒体会话创建失败" else "播放模型缺少地址或密钥材料 q=%s" % want
-                        continue
-                    if raw_url in seen_urls:
-                        continue
-                    seen_urls.add(raw_url)
+                _, item = _select_quality(rows, quality, strict=True)
+                raw_url = _media_url(item)
+                if not raw_url:
+                    raise _PlaybackModelError("播放資料缺少影片網址")
+                spade = _spade_value(item)
+                if not spade:
+                    session = _clear_stream_session(raw_url, item, quality)
+                else:
                     url = raw_url
                     if key_seed:
                         try:
@@ -2479,20 +2494,16 @@ def _stream_session(video_id: str, config: Mapping[str, Any], quality: str = "10
                         except HongguoPluginError:
                             url = raw_url
                     total, moov_start, moov = _fetch_moov(url)
-                    if _moov_has_video_track(moov):
-                        session = _StreamSession(url, derive_content_key(spade), total, moov_start, moov)
-                        with _STREAM_LOCK:
-                            sessions = _STREAM_STATE["sessions"]
-                            while len(sessions) >= _STREAM_MAX_SESSIONS:
-                                sessions.pop(next(iter(sessions)), None)
-                            sessions[cache_key] = session
-                        return session
-                    reason = "该清晰度没有视轨 q=%s" % want
-                    probed += 1
-                    # 最多多探 2 条，避免冷启动被拖慢
-                    if probed >= 2:
-                        break
-                raise HongguoPluginError(reason)
+                    if not _moov_has_video_track(moov):
+                        raise HongguoPluginError("该清晰度没有视轨 q=%s" % quality)
+                    session = _StreamSession(url, derive_content_key(spade), total, moov_start, moov)
+                with _STREAM_LOCK:
+                    sessions = _STREAM_STATE["sessions"]
+                    while len(sessions) >= _STREAM_MAX_SESSIONS:
+                        sessions.pop(next(iter(sessions)), None)
+                    sessions[cache_key] = session
+                attempt.set_result(session)
+                return session
             except Exception as err:
                 if isinstance(err, _PlaybackModelError) or isinstance(err, requests.HTTPError) and getattr(err.response, "status_code", None) in (403, 429):
                     raise
@@ -2504,11 +2515,12 @@ def _stream_session(video_id: str, config: Mapping[str, Any], quality: str = "10
         if last_err is not None:
             raise last_err
         raise HongguoPluginError("媒体会话创建失败")
+    except Exception as error:
+        attempt.set_exception(error)
+        raise
     finally:
-        if leader:
-            with _STREAM_LOCK:
-                _STREAM_STATE.get("inflight", {}).pop(cache_key, None)
-            event.set()
+        with _STREAM_LOCK:
+            _STREAM_STATE["inflight"].pop(cache_key, None)
 
 
 _RANGE_UNSATISFIABLE = "unsatisfiable"
@@ -4951,6 +4963,10 @@ def _model_from_response(result: Any, video_id: str) -> dict[str, Any]:
             raise _PlaybackModelError("播放模型 JSON 無效") from error
     if not isinstance(model, Mapping):
         raise _PlaybackModelError("播放模型格式無效")
+    for source in (entry, model):
+        response_id = source.get("video_id") or source.get("vid")
+        if response_id is not None and str(response_id) != video_id:
+            raise _PlaybackModelError("播放模型與所選集數不符")
     rows = _video_list_from_model(model)
     if not isinstance(rows, (Mapping, list)) or not rows:
         # Some newer models provide only fallback_api, not inline video_list.
@@ -4976,6 +4992,9 @@ def _model_from_response(result: Any, video_id: str) -> dict[str, Any]:
                 if isinstance(info, Mapping):
                     candidate = info.get("data")
                     if isinstance(candidate, Mapping):
+                        response_id = candidate.get("video_id") or candidate.get("vid")
+                        if response_id is not None and str(response_id) != video_id:
+                            raise _PlaybackModelError("備用播放模型與所選集數不符")
                         rows = _video_list_from_model(candidate)
                         if isinstance(rows, (Mapping, list)) and rows:
                             return dict(candidate)
@@ -7103,9 +7122,14 @@ class Spider(_BaseSpider):
                     _, item = _select_quality(rows, wanted, strict=True)
                     url = _media_url(item)
                     spade = _spade_value(item)
-                    if not url or not spade:
-                        last_err = "missing url/spade q=%s" % wanted
+                    if not url:
+                        last_err = "missing url q=%s" % wanted
                         continue
+                    if not spade:
+                        session = _clear_stream_session(url, item, wanted)
+                        if session.total > 45 * 1024 * 1024:
+                            raise _PlaybackModelError("影片超出本機代理可讀取的大小")
+                        return [200, "video/mp4", session.read_range(0, session.total - 1)]
                     try:
                         key_seed = _key_seed_from_model(model)
                         if key_seed:

@@ -481,7 +481,7 @@ class PlaybackContractTests(unittest.TestCase):
             (module._PlaybackModelError("播放模型 JSON 無效"), "HG01C"),
             (module._PlaybackModelError("本集暫無指定畫質 1080P"), "HG01D"),
             (module.requests.Timeout("PRIVATE"), "HG01E"),
-            (RuntimeError("PRIVATE"), "HG01"),
+            (RuntimeError("PRIVATE"), "HG01F"),
         )
         for error, code in cases:
             with self.subTest(code=code):
@@ -489,6 +489,14 @@ class PlaybackContractTests(unittest.TestCase):
                 diagnostic = str(module._StreamDiagnosticError(stage))
                 self.assertTrue(diagnostic.startswith(code + " ·"))
                 self.assertNotIn("PRIVATE", diagnostic)
+
+    def test_unclassified_diagnostic_keeps_the_current_playback_phase(self):
+        with patch.object(module, "_video_model_rotating", return_value={}), \
+                patch.object(module.time, "sleep"):
+            for name, code in (("_video_list_from_model", "HG01G"), ("_select_quality", "HG01H")):
+                with self.subTest(code=code), patch.object(module, name, side_effect=RuntimeError("private")):
+                    with self.assertRaisesRegex(module._StreamDiagnosticError, code):
+                        module._stream_session("123456787", {}, "1080")
 
     def test_stream_session_carries_detailed_source_error_to_player(self):
         with patch.object(module, "_video_model_rotating", side_effect=module._PlaybackModelError("本集暫無指定畫質 1080P")):

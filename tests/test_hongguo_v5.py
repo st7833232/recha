@@ -260,7 +260,9 @@ class PlaybackContractTests(unittest.TestCase):
         media = "https://v1.fqnovelvod.com/test.mp4"
         response = Mock(status_code=200, content=b"{}")
         response.json.return_value = {"code": 0, "main_url": media}
-        with patch.object(module.requests, "post", return_value=response) as post:
+        with patch.object(module.requests, "post", return_value=response) as post, \
+             patch.object(module, "_public_mp4_info", return_value={"quality": 360, "width": 360,
+                          "height": 640, "codec": "avc1"}):
             result = module.Spider().playerContent(module._PUBLIC_LINE, module._PUBLIC_EPISODE_PREFIX + VID)
         self.assertEqual(result["url"], media)
         self.assertEqual(result["parse"], 0)
@@ -323,7 +325,9 @@ class PlaybackContractTests(unittest.TestCase):
             html += '<script type="application/ld+json">' + json.dumps(
                 {"@type": "VideoObject", "url": page, "contentUrl": media}) + "</script>"
             return Mock(status_code=200, text=html, content=html.encode())
-        with patch.object(module.requests, "get", return_value=response()) as get:
+        with patch.object(module.requests, "get", return_value=response()) as get, \
+             patch.object(module, "_public_mp4_info", return_value={"quality": 1080, "width": 1080,
+                          "height": 1920, "codec": "avc1"}):
             result = module.Spider().playerContent(module._PUBLIC_PAGE_LINE,
                                                     module._PUBLIC_PAGE_PREFIX + sid + ":" + VID)
             self.assertEqual(result["url"], media)
@@ -332,6 +336,77 @@ class PlaybackContractTests(unittest.TestCase):
             with patch.object(module.requests, "get", return_value=bad):
                 with self.assertRaises(module.HongguoPluginError):
                     module._public_page_media_url(sid, VID)
+
+    def test_public_episode_count_is_not_total_series_count(self):
+        sid = "123456789"
+        for count in (0, 1):
+            payload = {"loaderData": {"detail_page": {"seriesDetail": {
+                "series_id": sid, "vid_list": [VID, "123456789"],
+                "accessible_episode_cnt": count}}}}
+            with patch.object(module, "_data", return_value=payload), \
+                 patch.object(module, "_dm_series_load"), \
+                 patch.object(module, "_dm_remember_series"), \
+                 patch.object(module, "_dm_series_save"):
+                detail = module.Spider().detailContent([sid])["list"][0]
+            lines = detail["vod_play_from"].split("$$$")
+            tokens = detail["vod_play_url"].split("$$$")
+            self.assertEqual(len(lines), len(tokens))
+            if count:
+                self.assertEqual(lines[0], module._PUBLIC_LINE)
+                self.assertEqual(tokens[0], "1$" + module._PUBLIC_EPISODE_PREFIX + VID)
+            else:
+                self.assertNotIn(module._PUBLIC_LINE, lines)
+
+    def test_public_360_label_rejects_wrong_actual_resolution(self):
+        with patch.object(module, "_public_web_media_url", return_value="https://v1.fqnovelvod.com/test.mp4"), \
+             patch.object(module, "_public_mp4_info", return_value={"quality": 720, "width": 720,
+                          "height": 1280, "codec": "avc1"}):
+            result = module.Spider().playerContent(module._PUBLIC_LINE, module._PUBLIC_EPISODE_PREFIX + VID)
+        self.assertEqual(result["url"], "")
+
+    def test_clear_mp4_inspector_rejects_protection_or_missing_video(self):
+        for body in (b"pssh", b"encv", b"", b"\x00\x00\x00\x08free"):
+            with self.subTest(body=body), self.assertRaises(module.HongguoPluginError):
+                module._public_clear_video_info(body)
+
+    def test_public_mp4_range_rejects_http_denial_and_wrong_offsets(self):
+        import time
+        from unittest.mock import MagicMock
+        for status, headers in ((403, {}), (302, {}), (200, {}),
+                                (206, {"Content-Range": "bytes 1-4/100"})):
+            response = MagicMock(status_code=status, headers=headers)
+            response.__enter__.return_value = response
+            with patch.object(module.requests, "get", return_value=response) as get:
+                with self.assertRaises(module.HongguoPluginError):
+                    module._public_mp4_range("https://v1.fqnovelvod.com/test.mp4", 0, 3, time.monotonic() + 3)
+                self.assertFalse(get.call_args.kwargs["allow_redirects"])
+                response.iter_content.assert_not_called()
+
+    def test_public_mp4_actual_720_and_1080_fixture(self):
+        # Generate ordinary clear MP4s locally, not an upstream playback claim.
+        import shutil
+        import tempfile
+        if not shutil.which("ffmpeg"):
+            self.skipTest("ffmpeg unavailable")
+        with tempfile.TemporaryDirectory() as directory:
+            for quality, width, height, faststart in ((720, 720, 1280, False),
+                                                      (1080, 1080, 1920, True)):
+                path = Path(directory) / ("%d.mp4" % quality)
+                cmd = ["ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error",
+                       "-f", "lavfi", "-i", "color=c=blue:s=%dx%d:r=10" % (width, height),
+                       "-t", "0.3", "-c:v", "libx264", "-threads", "1", "-pix_fmt", "yuv420p"]
+                if faststart:
+                    cmd += ["-movflags", "+faststart"]
+                subprocess.run(cmd + [str(path)], check=True, timeout=30)
+                data = path.read_bytes()
+                def fetch(url, start, end, deadline):
+                    return data[start:end + 1], len(data)
+                with patch.object(module, "_public_mp4_range", side_effect=fetch):
+                    result = module._public_mp4_info("https://v1.fqnovelvod.com/test.mp4")
+                self.assertEqual((result["width"], result["height"], result["quality"], result["codec"]),
+                                 (width, height, quality, "avc1"))
+                subprocess.run(["ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error",
+                                "-i", str(path), "-f", "null", "-"], check=True, timeout=30)
 
     def test_exact_quality_prefers_real_dimensions_and_never_downgrades(self):
         rows = [{"main_url": "https://example.test/video.mp4",

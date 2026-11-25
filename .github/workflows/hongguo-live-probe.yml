@@ -26,134 +26,26 @@ jobs:
             sudo apt-get install -y -qq ffmpeg
           fi
           ffmpeg -version | head -n 1
-      - name: Probe official public 360p source (no protected playback)
-        continue-on-error: true
+      - name: Verify public 360p source and its actual video dimensions
         run: |
           python - <<'PY'
           import importlib.util
-          import requests
           spec = importlib.util.spec_from_file_location("hongguo", "py/红果短剧.py")
           module = importlib.util.module_from_spec(spec)
           spec.loader.exec_module(module)
           try:
               url = module._public_web_media_url("7699003626647194649")
-              print("PUBLIC_SOURCE=available")
-              with requests.get(url, headers={"Range": "bytes=0-4095",
-                                              "User-Agent": module._PUBLIC_WEB_UA,
-                                              "Referer": module.SITE + "/"},
-                                timeout=10, stream=True, allow_redirects=False) as response:
-                  data = next(response.iter_content(4096), b"")
-                  if response.status_code not in (200, 206) or b"ftyp" not in data[:64]:
-                      raise RuntimeError("not an MP4 response")
-                  print("PUBLIC_MP4_HEADER=ok")
+              info = module._public_mp4_info(url)
+              print("PUBLIC_WIDTH=" + str(info["width"]))
+              print("PUBLIC_HEIGHT=" + str(info["height"]))
+              print("PUBLIC_CODEC=" + info["codec"])
+              if info["quality"] != 360:
+                  raise module.HongguoPluginError("actual resolution differs from 360P")
+              print("PUBLIC_METADATA_VERIFIED=true")
           except Exception as error:
               print("PUBLIC_SOURCE_PROBE=unavailable")
               print("PUBLIC_ERROR_CLASS=" + type(error).__name__)
               if isinstance(error, module.HongguoPluginError):
                   print("PUBLIC_REASON=" + str(error)[:150])
               raise SystemExit(3)
-          PY
-      - name: Diagnostic probe of 8.2 current-app preload (non-blocking)
-        continue-on-error: true
-        env:
-          PYTHONDONTWRITEBYTECODE: "1"
-        run: |
-          python - <<'PY'
-          import importlib.util
-          spec = importlib.util.spec_from_file_location("hongguo", "py/红果短剧.py")
-          module = importlib.util.module_from_spec(spec)
-          spec.loader.exec_module(module)
-          # Public sample episode from the upstream #130 validation report.
-          video_id = "7699003626647194649"
-          try:
-              pair = module._playback_device(force=True)
-          except Exception as e:
-              print("PROBE_STAGE=device_registration_failed")
-              print("PROBE_ERROR_CLASS=" + type(e).__name__)
-              raise SystemExit(2)
-          print("PROBE_STAGE=device_registration_ok")
-          # Never print identity, signed headers, URL, content keys, or media addresses.
-          try:
-              model = module._v8_preload_model(video_id, pair, timeout=10)
-              rows = module._video_list_from_model(model)
-              if not rows:
-                  raise RuntimeError("empty variants")
-              quality, item = module._select_quality(rows, "1080")
-              print("PROBE_STAGE=preload_model_available")
-              print("PROBE_HAS_MEDIA_URL=" + str(bool(module._media_url(item))).lower())
-              print("PROBE_HAS_CENC_MATERIAL=" + str(bool(module._spade_value(item))).lower())
-              if not module._media_url(item) or not module._spade_value(item):
-                  raise RuntimeError("incomplete model metadata")
-          except Exception as e:
-              print("PROBE_STAGE=preload_model_unavailable")
-              print("PROBE_ERROR_CLASS=" + type(e).__name__)
-              reason = str(e)
-              import re
-              if isinstance(e, module._PlaybackModelError) and not re.search(r"https?://|[0-9]{15,}", reason):
-                  print("PROBE_MODEL_REASON=" + reason[:180])
-              raise SystemExit(3)
-          PY
-      - name: Probe recovered decrypted MP4 Range (no full video download)
-        run: |
-          python - <<'PY'
-          import importlib.util
-          import requests
-          from urllib.parse import urlencode
-          spec = importlib.util.spec_from_file_location("hongguo", "py/红果短剧.py")
-          module = importlib.util.module_from_spec(spec)
-          spec.loader.exec_module(module)
-          vid = "7699003626647194649"
-          try:
-              # Exercise actual production route selection without mocks.
-              session = module._stream_session(vid, {}, "1080")
-              print("PROBE_ROUTE=" + str(module._STREAM_STATE.get("playback_last_route", "unknown")))
-              if session.total <= 4096 or not session.samples:
-                  raise RuntimeError("MP4 index or media length invalid")
-              port = module._start_stream_server()
-              if not port:
-                  raise RuntimeError("streaming HTTP server failed")
-              endpoint = ("http://127.0.0.1:%d/hg.mp4?" % port) + urlencode(
-                  {"vid": vid, "q": "1080"})
-              response = requests.get(endpoint, headers={"Range": "bytes=0-4095"},
-                                      timeout=15)
-              if response.status_code != 206:
-                  raise RuntimeError("local HTTP status " + str(response.status_code))
-              if not (response.headers.get("Content-Range", "").startswith("bytes 0-4095/")
-                      and len(response.content) == 4096
-                      and b"ftyp" in response.content[:64]):
-                  raise RuntimeError("invalid local MP4 byte range")
-              print("PROBE_STREAM=range206_ok")
-              print("PROBE_INDEX=tracks_available")
-              # Read and decode the first two seconds from the same local
-              # CENC-decrypting HTTP endpoint. This catches failures hidden by
-              # a correct MP4 header / 206-only probe.
-              import shutil
-              import subprocess
-              if not shutil.which("ffmpeg"):
-                  raise RuntimeError("ffmpeg decoder unavailable")
-              result = subprocess.run(
-                  ["ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error",
-                   "-rw_timeout", "25000000", "-i", endpoint, "-t", "2",
-                   "-map", "0:v:0", "-an", "-sn", "-f", "null", "-"],
-                  capture_output=True, text=True, timeout=90,
-              )
-              if result.returncode != 0:
-                  # Print bounded stderr with local endpoint obscured; never
-                  # expose upstream signed media addresses or content keys.
-                  diagnostic = (result.stderr or "")[-2200:]
-                  diagnostic = diagnostic.replace(endpoint, "[local MP4 stream]")
-                  for value in ("http://127.0.0.1:", "https://"):
-                      diagnostic = diagnostic.replace(value, "[url]:")
-                  print("PROBE_DECODE_ERROR=" + diagnostic.replace("\n", " | ")[:2200])
-                  raise RuntimeError("ffmpeg video decode failed (exit=%d)" % result.returncode)
-              print("PROBE_DECODE=video_2s_ok")
-          except Exception as e:
-              print("PROBE_STREAM=failed")
-              print("PROBE_STREAM_ERROR_CLASS=" + type(e).__name__)
-              import re
-              reason = str(e)
-              if isinstance(e, module._PlaybackModelError) and not re.search(r"https?://|[0-9]{15,}", reason):
-                  print("PROBE_MODEL_REASON=" + reason[:180])
-              print("PROBE_LAST_ROUTE=" + str(module._STREAM_STATE.get("playback_last_route", "none")))
-              raise SystemExit(4)
           PY

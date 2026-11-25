@@ -1063,6 +1063,150 @@ _QUALITY_LINE_NAME_TO_Q = {
 }
 
 
+def _public_mp4_boxes(blob: bytes):
+    """Yield complete ISO BMFF children, rejecting invalid/truncated boxes."""
+    at = 0
+    while at < len(blob):
+        if len(blob) - at < 8:
+            raise HongguoPluginError("MP4 metadata truncated")
+        size, kind = struct.unpack_from(">I4s", blob, at)
+        header = 8
+        if size == 1:
+            if len(blob) - at < 16:
+                raise HongguoPluginError("MP4 large box header truncated")
+            size = struct.unpack_from(">Q", blob, at + 8)[0]
+            header = 16
+        elif size == 0:
+            size = len(blob) - at
+        if size < header or at + size > len(blob):
+            raise HongguoPluginError("MP4 box outside metadata")
+        yield kind, blob[at + header:at + size]
+        at += size
+
+
+def _public_clear_video_info(moov: bytes) -> dict:
+    """Read coded dimensions and codec from an ordinary clear MP4; no decryption."""
+    if any(marker in moov for marker in (b"pssh", b"encv", b"enca", b"sinf", b"tenc")):
+        raise HongguoPluginError("公開片源不是可直接播放的未加密 MP4")
+    tracks = []
+    for kind, trak in _public_mp4_boxes(moov):
+        if kind != b"trak":
+            continue
+        for media_kind, mdia in _public_mp4_boxes(trak):
+            if media_kind != b"mdia":
+                continue
+            children = list(_public_mp4_boxes(mdia))
+            if not any(k == b"hdlr" and len(v) >= 12 and v[8:12] == b"vide"
+                       for k, v in children):
+                continue
+            for k, minf in children:
+                if k != b"minf":
+                    continue
+                for table_kind, stbl in _public_mp4_boxes(minf):
+                    if table_kind != b"stbl":
+                        continue
+                    for sample_kind, stsd in _public_mp4_boxes(stbl):
+                        if sample_kind != b"stsd" or len(stsd) < 8:
+                            continue
+                        entries = list(_public_mp4_boxes(stsd[8:]))
+                        if len(entries) != struct.unpack_from(">I", stsd, 4)[0]:
+                            raise HongguoPluginError("MP4 sample descriptions invalid")
+                        for codec, entry in entries:
+                            if codec not in (b"avc1", b"avc3", b"hvc1", b"hev1") or len(entry) < 78:
+                                continue
+                            width, height = struct.unpack_from(">HH", entry, 24)
+                            config_type = b"avcC" if codec in (b"avc1", b"avc3") else b"hvcC"
+                            if not any(k == config_type and len(v) > 0
+                                       for k, v in _public_mp4_boxes(entry[78:])):
+                                continue
+                            if 0 < width <= 7680 and 0 < height <= 7680:
+                                tracks.append({"width": width, "height": height,
+                                               "quality": min(width, height),
+                                               "codec": codec.decode("ascii")})
+    if not tracks:
+        raise HongguoPluginError("公開 MP4 缺少可辨識的 H.264/HEVC 視訊軌")
+    return max(tracks, key=lambda info: info["width"] * info["height"])
+
+
+def _public_mp4_range(url: str, start: int, end: int, deadline: float):
+    """Bounded, exact public CDN range read. A denial or redirect is terminal."""
+    remaining = deadline - time.monotonic()
+    if remaining <= 0:
+        raise HongguoPluginError("公開片源驗證逾時")
+    headers = {"User-Agent": _PUBLIC_WEB_UA, "Referer": SITE + "/",
+               "Range": "bytes=%d-%d" % (start, end), "Accept-Encoding": "identity"}
+    with requests.get(url, headers=headers, timeout=min(4, remaining),
+                      stream=True, allow_redirects=False) as response:
+        if response.status_code != 206:
+            raise HongguoPluginError("公開媒體不支援 Range 或拒絕播放（HTTP %d）" % response.status_code)
+        match = re.fullmatch(r"bytes\s+(\d+)-(\d+)/(\d+)", response.headers.get("Content-Range", ""))
+        if not match:
+            raise HongguoPluginError("公開媒體 Content-Range 無效")
+        first, last, total = map(int, match.groups())
+        if first != start or total <= start or last != min(end, total - 1):
+            raise HongguoPluginError("公開媒體 Range 偏移不符")
+        expected = last - first + 1
+        body = bytearray()
+        for chunk in response.iter_content(16384):
+            if time.monotonic() >= deadline or len(body) + len(chunk) > expected:
+                raise HongguoPluginError("公開媒體 Range 回應過大或逾時")
+            body.extend(chunk)
+        if len(body) != expected:
+            raise HongguoPluginError("公開媒體 Range 回應不完整")
+        return bytes(body), total
+
+
+def _public_mp4_info(url: str) -> dict:
+    """Inspect actual coded size using bounded Range reads, including tail moov."""
+    parsed = urlparse(url)
+    host = (parsed.hostname or "").lower()
+    domains = ("qznovelvod.com", "fqnovelvod.com", "douyinvod.com")
+    if (parsed.scheme != "https" or parsed.username is not None or parsed.password is not None
+            or parsed.port not in (None, 443)
+            or not (host == "hongguoduanju.com" and parsed.path.startswith("/video/public/")
+                    or any(host == d or host.endswith("." + d) for d in domains))):
+        raise HongguoPluginError("公開媒體主機不受信任")
+    deadline = time.monotonic() + 12
+    head, total = _public_mp4_range(url, 0, 65535, deadline)
+    if len(head) < 16 or head[4:8] != b"ftyp":
+        raise HongguoPluginError("公開媒體不是 MP4")
+    at = 0
+    for _ in range(24):
+        if at >= total:
+            break
+        if at + 16 <= len(head):
+            prefix = head[at:at + 16]
+        else:
+            prefix, other_total = _public_mp4_range(url, at, min(total - 1, at + 15), deadline)
+            if other_total != total:
+                raise HongguoPluginError("公開媒體長度已變更")
+        if len(prefix) < 8:
+            break
+        size, kind = struct.unpack_from(">I4s", prefix)
+        header = 8
+        if size == 1:
+            if len(prefix) < 16:
+                break
+            size = struct.unpack_from(">Q", prefix, 8)[0]
+            header = 16
+        elif size == 0:
+            size = total - at
+        if size < header or at + size > total:
+            raise HongguoPluginError("公開 MP4 box 越界")
+        if kind == b"moov":
+            if size > 2 * 1024 * 1024:
+                raise HongguoPluginError("公開 MP4 metadata 過大")
+            if at + size <= len(head):
+                box = head[at:at + size]
+            else:
+                box, other_total = _public_mp4_range(url, at, at + size - 1, deadline)
+                if other_total != total or len(box) != size:
+                    raise HongguoPluginError("公開 MP4 metadata 不完整")
+            return _public_clear_video_info(box[header:])
+        at += size
+    raise HongguoPluginError("公開 MP4 找不到可驗證的 moov")
+
+
 def _public_web_media_url(video_id: str) -> str:
     """Resolve only the official web player's publicly supplied full 360p MP4.
     Adapted from jackotom/hongguo-drama 8.3 src/native/hongguo.js (GPL-3.0-only).
@@ -6735,9 +6879,14 @@ class Spider(_BaseSpider):
             pass
         # The public player page route is not live-verified. Keep its old
         # token parser for history compatibility, but do not advertise it.
-        play_from = [_PUBLIC_LINE]
-        play_url = ["#".join("%d$%s%s" % (i + 1, _PUBLIC_EPISODE_PREFIX, str(v))
-                             for i, v in enumerate(vids))]
+        # Public availability is independent from the total episode count.
+        accessible = s.get("accessible_episode_cnt")
+        public_count = min(int(accessible), len(vids)) if re.fullmatch(
+            r"[0-9]{1,10}", str(accessible)) else len(vids)
+        public_eps = "#".join("%d$%s%s" % (i + 1, _PUBLIC_EPISODE_PREFIX, str(v))
+                              for i, v in enumerate(vids[:public_count]))
+        play_from = [_PUBLIC_LINE] if public_eps else []
+        play_url = [public_eps] if public_eps else []
         for q, line_name in _HG_QUALITY_LINES:
             eps = "#".join(
                 "%d%s%s%s%s" % (i + 1, "$", EPISODE_PREFIX, q + ":", str(v))
@@ -6752,21 +6901,31 @@ class Spider(_BaseSpider):
             try:
                 sid, vid = token[len(_PUBLIC_PAGE_PREFIX):].split(":", 1)
                 url = _public_page_media_url(sid, vid)
+                info = _public_mp4_info(url)
+                if info["quality"] > 1080:
+                    raise HongguoPluginError("公開片源超過支援的最高畫質")
             except (ValueError, HongguoPluginError, requests.RequestException):
                 return {"parse": 0, "jx": 0, "playUrl": "", "url": "",
                         "header": {}, "msg": "本集官網公開完整片源暫不可用"}
             return {"parse": 0, "jx": 0, "playUrl": "", "url": url,
-                    "header": {"User-Agent": _PUBLIC_WEB_UA, "Referer": SITE + "/"}}
+                    "header": {"User-Agent": _PUBLIC_WEB_UA, "Referer": SITE + "/"},
+                    "quality": "%dP" % info["quality"], "width": info["width"],
+                    "height": info["height"], "codec": info["codec"]}
         if token.startswith(_PUBLIC_EPISODE_PREFIX):
             vid = token[len(_PUBLIC_EPISODE_PREFIX):]
             try:
                 url = _public_web_media_url(vid)
-            except (HongguoPluginError, requests.RequestException):
+                info = _public_mp4_info(url)
+                if info["quality"] != 360:
+                    raise HongguoPluginError("官網片源實際解析度不符 360P")
+            except (ValueError, HongguoPluginError, requests.RequestException):
                 # Fail explicitly; never substitute a different episode or preview.
                 return {"parse": 0, "jx": 0, "playUrl": "", "url": "",
                         "header": {}, "msg": "本集官網公開完整片源暫不可用"}
             return {"parse": 0, "jx": 0, "playUrl": "", "url": url,
-                    "header": {"User-Agent": _PUBLIC_WEB_UA, "Referer": SITE + "/"}}
+                    "header": {"User-Agent": _PUBLIC_WEB_UA, "Referer": SITE + "/"},
+                    "quality": "%dP" % info["quality"], "width": info["width"],
+                    "height": info["height"], "codec": info["codec"]}
         self._adopt_working_pair()
         # 从线路名（flag，如“红果超清/红果高清”）与集 token 双路解析清晰度。
         # token 已是 'hg-episode-v1:<q>:<vid>'，flag 用于旧壳只传线路名时兜底。

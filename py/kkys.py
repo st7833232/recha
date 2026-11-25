@@ -24,7 +24,7 @@ from base.spider import Spider as BaseSpider
 
 
 SITE = "https://www.kkys20.com"
-IMG_HOST = "https://vres.esadj.com"
+IMG_HOST = "https://vres.jzxjlj.com"
 UA = (
     "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) "
     "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 "
@@ -491,6 +491,8 @@ class Spider(BaseSpider):
         self.session = _requests.Session() if _requests is not None else None
         self._ad_cache = {}  # 網址 → (時間, 處理好的清單)
         self._ad_lock = threading.Lock()
+        self._image_lock = threading.Lock()
+        self._image_config = {}
         if self.session is not None:
             self.session.headers.update(self.headers)
 
@@ -545,6 +547,33 @@ class Spider(BaseSpider):
     # ------------------------------------------------------------------
     # Shared parsing
     # ------------------------------------------------------------------
+
+    def _page_image_host(self, source, base_url, fallback=IMG_HOST):
+        """Resolve RDUL from the linked site configuration, once per script URL."""
+        inline = _image_host(source, "")
+        if inline:
+            return inline
+        root = _parse_dom(source)
+        for script in _find_all(root, tag="script", attr_name="src"):
+            url = _absolute(script.attr("src"), base_url)
+            try:
+                parts = urlsplit(url)
+                if (parts.scheme != "https" or not parts.hostname or parts.username
+                        or parts.password or parts.path.rsplit("/", 1)[-1].lower() != "rdul.js"):
+                    continue
+            except ValueError:
+                continue
+            with self._image_lock:
+                cached = self._image_config.get(url)
+                if cached and time.monotonic() - cached[0] < 300:
+                    return cached[1]
+            config = self._get(url, base_url, timeout=5)
+            host = _image_host(config, "")
+            if host:
+                with self._image_lock:
+                    self._image_config = {url: (time.monotonic(), host)}
+                return host
+        return fallback
 
     def _poster(self, node, base_url, image_host=IMG_HOST):
         images = _find_all(node, tag="img")
@@ -641,7 +670,7 @@ class Spider(BaseSpider):
         return item
 
     def _parse_list(self, source, base_url, fallback_host=IMG_HOST):
-        image_host = _image_host(source, fallback_host)
+        image_host = self._page_image_host(source, base_url, fallback_host)
         root = _parse_dom(source)
         candidates = _find_all(root, cls="module-item")
         if not candidates:
@@ -800,7 +829,7 @@ class Spider(BaseSpider):
         return self._image_from_raw_fragment(fragment, image_host, base_url)
 
     def _parse_search_list(self, source, base_url, fallback_host=IMG_HOST):
-        image_host = _image_host(source, fallback_host)
+        image_host = self._page_image_host(source, base_url, fallback_host)
         root = _parse_dom(source)
         nodes = _find_all(root, cls="search-result-item")
 
@@ -1036,14 +1065,15 @@ class Spider(BaseSpider):
             if meta_title:
                 title = _clean(meta_title.attr("content"))
 
+        image_host = self._page_image_host(source, detail_url)
         pic = ""
         pic_box = _first(_find_all(root, cls="detail-pic"))
         if pic_box:
-            pic = self._poster(pic_box, detail_url, _image_host(source))
+            pic = self._poster(pic_box, detail_url, image_host)
         if not pic:
             for meta in _find_all(root, tag="meta"):
                 if meta.attr("property") == "og:image":
-                    pic = _rewrite_image(meta.attr("content"), _image_host(source), detail_url)
+                    pic = _rewrite_image(meta.attr("content"), image_host, detail_url)
                     if pic:
                         break
 
@@ -1262,7 +1292,7 @@ class Spider(BaseSpider):
             self.log("KKYS search failed: %s" % error)
             source, request_url, seed_source = "", self.site + "/search", ""
 
-        items = self._parse_search_list(source, request_url, _image_host(seed_source)) if source else []
+        items = self._parse_search_list(source, request_url, self._page_image_host(seed_source, request_url)) if source else []
 
         if not items and seed_source:
             items = self._parse_search_list(

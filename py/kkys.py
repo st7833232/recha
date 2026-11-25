@@ -150,38 +150,41 @@ def _origin_of(value):
     return match.group(1) if match else ""
 
 
-def _rewrite_image(value):
-    raw = _clean(value)
-    if not raw:
+def _image_host(source, fallback=IMG_HOST):
+    """Use the current page's RDUL[0] without executing site JavaScript."""
+    match = re.search(r"""\bRDUL\s*=\s*\[\s*(["'])([^"']+)\1""", source or "")
+    if not match:
+        return fallback
+    value = _clean(match.group(2)).replace("\\/", "/")
+    if value.startswith("//"):
+        value = "https:" + value
+    try:
+        parts = urlsplit(value)
+        if (parts.scheme.lower() in ("http", "https") and parts.hostname
+                and not parts.username and not parts.password
+                and not parts.query and not parts.fragment
+                and not re.search(r"\s", value)):
+            return value.rstrip("/")
+    except ValueError:
+        pass
+    return fallback
+
+
+def _rewrite_image(value, image_host=IMG_HOST, base_url=SITE + "/"):
+    raw = _clean(value).replace("\\/", "/")
+    if not raw or re.search(r"logo_placeholder|placeholder_vertical", raw, re.I):
         return ""
-
-    raw = raw.replace("\\/", "/")
-
-    # Do not return KKYS lazy-loading placeholders as posters.
-    if re.search(r"logo_placeholder|placeholder_vertical", raw, re.I):
-        return ""
-
-    if re.match(r"^https?://", raw, re.I):
-        image_origin = _origin_of(raw)
-
-        # Already on the image CDN (or an explicit host:port image endpoint).
-        if re.search(r"vres\.", image_origin, re.I) or re.search(r":\d+$", image_origin):
-            return raw
-
-        # KKYS sometimes emits its image path on the website origin even though
-        # the asset is actually served from the dedicated image host.
-        if image_origin == _origin_of(SITE):
-            return re.sub(r"^https?://[^/]+", IMG_HOST, raw, flags=re.I)
-
-        return raw
-
+    # Ignore inline placeholders and other non-web schemes.
     if raw.startswith("//"):
         return "https:" + raw
-
-    if raw.startswith("/"):
-        return IMG_HOST + raw
-
-    return IMG_HOST + "/" + raw.lstrip("/")
+    if re.match(r"^https?://", raw, re.I):
+        image_origin = _origin_of(raw)
+        if image_origin.lower() == _origin_of(base_url).lower():
+            return image_host + raw[len(image_origin):]
+        return raw
+    if re.match(r"^[a-z][a-z0-9+.-]*:", raw, re.I) or raw.startswith("#"):
+        return ""
+    return image_host + "/" + raw.lstrip("/")
 
 
 def _media_decode(value):
@@ -543,7 +546,7 @@ class Spider(BaseSpider):
     # Shared parsing
     # ------------------------------------------------------------------
 
-    def _poster(self, node, base_url):
+    def _poster(self, node, base_url, image_host=IMG_HOST):
         images = _find_all(node, tag="img")
         if not images:
             return ""
@@ -576,7 +579,7 @@ class Spider(BaseSpider):
             ])
 
         for value in candidates:
-            image_url = _rewrite_image(value)
+            image_url = _rewrite_image(value, image_host, base_url)
             if image_url:
                 return image_url
 
@@ -619,7 +622,7 @@ class Spider(BaseSpider):
                     return text
         return ""
 
-    def _item_from_node(self, node, base_url):
+    def _item_from_node(self, node, base_url, image_host=IMG_HOST):
         anchor = self._detail_anchor(node)
         if not anchor:
             return None
@@ -630,14 +633,15 @@ class Spider(BaseSpider):
         item = {
             "vod_id": href,
             "vod_name": title,
-            "vod_pic": self._poster(node, base_url),
+            "vod_pic": self._poster(node, base_url, image_host),
         }
         remark = self._item_remark(node)
         if remark:
             item["vod_remarks"] = remark
         return item
 
-    def _parse_list(self, source, base_url):
+    def _parse_list(self, source, base_url, fallback_host=IMG_HOST):
+        image_host = _image_host(source, fallback_host)
         root = _parse_dom(source)
         candidates = _find_all(root, cls="module-item")
         if not candidates:
@@ -646,7 +650,7 @@ class Spider(BaseSpider):
         result = []
         seen = set()
         for node in candidates:
-            item = self._item_from_node(node, base_url)
+            item = self._item_from_node(node, base_url, image_host)
             if not item:
                 continue
             key = item["vod_id"]
@@ -672,7 +676,7 @@ class Spider(BaseSpider):
                 result.append({
                     "vod_id": absolute,
                     "vod_name": title,
-                    "vod_pic": "",
+                    "vod_pic": self._poster(anchor, base_url, image_host),
                 })
         return result
 
@@ -717,7 +721,7 @@ class Spider(BaseSpider):
         )
         return _clean(match.group(1)) if match else ""
 
-    def _image_from_raw_fragment(self, fragment):
+    def _image_from_raw_fragment(self, fragment, image_host=IMG_HOST, base_url=SITE + "/"):
         if not fragment:
             return ""
 
@@ -747,13 +751,13 @@ class Spider(BaseSpider):
                 )
                 if not found:
                     continue
-                picture = _rewrite_image(found.group(1))
+                picture = _rewrite_image(found.group(1), image_host, base_url)
                 if picture:
                     return picture
 
         return ""
 
-    def _search_picture_from_raw_html(self, source, detail_id):
+    def _search_picture_from_raw_html(self, source, detail_id, image_host=IMG_HOST, base_url=SITE + "/"):
         if not source or not detail_id:
             return ""
 
@@ -789,13 +793,14 @@ class Spider(BaseSpider):
                 )
                 if not found:
                     continue
-                picture = _rewrite_image(found.group(1))
+                picture = _rewrite_image(found.group(1), image_host, base_url)
                 if picture:
                     return picture
 
-        return self._image_from_raw_fragment(fragment)
+        return self._image_from_raw_fragment(fragment, image_host, base_url)
 
-    def _parse_search_list(self, source, base_url):
+    def _parse_search_list(self, source, base_url, fallback_host=IMG_HOST):
+        image_host = _image_host(source, fallback_host)
         root = _parse_dom(source)
         nodes = _find_all(root, cls="search-result-item")
 
@@ -842,7 +847,7 @@ class Spider(BaseSpider):
                     images[0].attr("src"),
                 ]
                 for value in candidates:
-                    picture = _rewrite_image(value)
+                    picture = _rewrite_image(value, image_host, base_url)
                     if picture:
                         break
 
@@ -850,7 +855,7 @@ class Spider(BaseSpider):
             # pages. If HTMLParser loses the <img> from the card tree, recover
             # it directly from the raw HTML around /detail/{id}.html.
             if not picture:
-                picture = self._search_picture_from_raw_html(source, detail_id)
+                picture = self._search_picture_from_raw_html(source, detail_id, image_host, base_url)
 
             # W-234：類型與年份不再混進片名，改放備註。
             header = _first(_find_all(node, cls="search-result-item-header"))
@@ -867,7 +872,7 @@ class Spider(BaseSpider):
             seen.add(detail_id)
 
         if not result:
-            result = self._parse_list(source, base_url)
+            result = self._parse_list(source, base_url, image_host)
 
         for item in result:
             if item.get("vod_pic"):
@@ -876,7 +881,7 @@ class Spider(BaseSpider):
             match = re.search(r"/detail/(\d+)\.html(?:[?#].*)?$", value, re.I)
             detail_id = match.group(1) if match else ""
             if detail_id:
-                item["vod_pic"] = self._search_picture_from_raw_html(source, detail_id)
+                item["vod_pic"] = self._search_picture_from_raw_html(source, detail_id, image_host, base_url)
 
         return result
 
@@ -1034,7 +1039,13 @@ class Spider(BaseSpider):
         pic = ""
         pic_box = _first(_find_all(root, cls="detail-pic"))
         if pic_box:
-            pic = self._poster(pic_box, detail_url)
+            pic = self._poster(pic_box, detail_url, _image_host(source))
+        if not pic:
+            for meta in _find_all(root, tag="meta"):
+                if meta.attr("property") == "og:image":
+                    pic = _rewrite_image(meta.attr("content"), _image_host(source), detail_url)
+                    if pic:
+                        break
 
         content = ""
         for meta in _find_all(root, tag="meta"):
@@ -1251,7 +1262,7 @@ class Spider(BaseSpider):
             self.log("KKYS search failed: %s" % error)
             source, request_url, seed_source = "", self.site + "/search", ""
 
-        items = self._parse_search_list(source, request_url) if source else []
+        items = self._parse_search_list(source, request_url, _image_host(seed_source)) if source else []
 
         if not items and seed_source:
             items = self._parse_search_list(
@@ -1489,6 +1500,27 @@ def _ad_self_check(fixture_dir=None):
     return checked
 
 
+def _poster_self_check():
+    host = _image_host('<script>window.RDUL = ["https://cdn.example.org/"];</script>')
+    assert host == 'https://cdn.example.org'
+    assert _image_host(r"var RDUL=['https:\/\/cdn2.example.org:8443/'];") == 'https://cdn2.example.org:8443'
+    assert _image_host('RDUL=["//cdn.example.org"]') == host
+    assert _image_host('RDUL=["javascript:alert(1)"]', host) == host
+    assert _image_host('RDUL=["https://u:p@bad.example.org"]', host) == host
+    assert _image_host('', host) == host
+    assert _image_host('') == IMG_HOST
+    assert _rewrite_image('/poster/a.jpg', host) == host + '/poster/a.jpg'
+    assert _rewrite_image('poster/a.jpg', host) == host + '/poster/a.jpg'
+    assert _rewrite_image(SITE + '/poster/a.jpg?x=1&amp;y=2', host) == host + '/poster/a.jpg?x=1&y=2'
+    assert _rewrite_image('https://other.example.org/a.jpg', host) == 'https://other.example.org/a.jpg'
+    assert _rewrite_image('//other.example.org/a.jpg', host) == 'https://other.example.org/a.jpg'
+    assert _rewrite_image('https://mirror.example.org/a.jpg', host, 'https://mirror.example.org/show/1.html') == host + '/a.jpg'
+    for value in ('', 'data:image/png;base64,xxx', 'logo_placeholder.png', 'placeholder_vertical.jpg', '#'):
+        assert _rewrite_image(value, host) == ''
+    return 18
+
+
 if __name__ == "__main__":
     import sys
+    print("poster self-check passed: %d cases" % _poster_self_check())
     print("ad self-check passed: %d cases" % _ad_self_check(sys.argv[1] if len(sys.argv) > 1 else None))

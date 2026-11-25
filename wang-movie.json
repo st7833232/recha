@@ -72,17 +72,6 @@
       "genre": "shortdrama"
     },
     {
-      "key": "hongguo_python_v15",
-      "name": "红果 • 短剧 v15",
-      "type": 3,
-      "api": "https://raw.githubusercontent.com/li7573185/hongguo-tvbox/3cb6c13e1d7edd4c0090e265a38ba67f2864a48d/hongguo_v15.py",
-      "searchable": 1,
-      "quickSearch": 0,
-      "filterable": 0,
-      "ext": "",
-      "genre": "shortdrama"
-    },
-    {
       "key": "anime1",
       "name": "Anime1 • 動畫",
       "type": 3,

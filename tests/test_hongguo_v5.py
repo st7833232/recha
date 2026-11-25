@@ -292,7 +292,7 @@ class PlaybackContractTests(unittest.TestCase):
                 module._public_web_media_url("not-an-episode")
             post.assert_not_called()
 
-    def test_detail_does_not_advertise_unverified_public_page_line(self):
+    def test_detail_only_advertises_full_episode_lines(self):
         sid = "123456789"
         payload = {"loaderData": {"detail_page": {"seriesDetail": {
             "series_id": sid, "series_name": "Test", "vid_list": [VID]}}}}
@@ -303,8 +303,8 @@ class PlaybackContractTests(unittest.TestCase):
             detail = module.Spider().detailContent([sid])["list"][0]
         lines = detail["vod_play_from"].split("$$$")
         tokens = detail["vod_play_url"].split("$$$")
-        self.assertEqual(lines, [module._PUBLIC_LINE] + [name for _, name in module._HG_QUALITY_LINES])
-        self.assertEqual(tokens, ["1$" + module._PUBLIC_EPISODE_PREFIX + VID] + [
+        self.assertEqual(lines, [name for _, name in module._HG_QUALITY_LINES])
+        self.assertEqual(tokens, [
             "1$" + module.EPISODE_PREFIX + quality + ":" + VID
             for quality, _ in module._HG_QUALITY_LINES
         ])
@@ -337,7 +337,7 @@ class PlaybackContractTests(unittest.TestCase):
                 with self.assertRaises(module.HongguoPluginError):
                     module._public_page_media_url(sid, VID)
 
-    def test_public_episode_count_is_not_total_series_count(self):
+    def test_detail_does_not_expose_partial_episode_lines(self):
         sid = "123456789"
         for count in (0, 1):
             payload = {"loaderData": {"detail_page": {"seriesDetail": {
@@ -351,11 +351,8 @@ class PlaybackContractTests(unittest.TestCase):
             lines = detail["vod_play_from"].split("$$$")
             tokens = detail["vod_play_url"].split("$$$")
             self.assertEqual(len(lines), len(tokens))
-            if count:
-                self.assertEqual(lines[0], module._PUBLIC_LINE)
-                self.assertEqual(tokens[0], "1$" + module._PUBLIC_EPISODE_PREFIX + VID)
-            else:
-                self.assertNotIn(module._PUBLIC_LINE, lines)
+            self.assertNotIn(module._PUBLIC_LINE, lines)
+            self.assertTrue(all(len(line.split("#")) == 2 for line in tokens))
 
     def test_public_360_label_rejects_wrong_actual_resolution(self):
         with patch.object(module, "_public_web_media_url", return_value="https://v1.fqnovelvod.com/test.mp4"), \

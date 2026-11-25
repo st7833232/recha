@@ -255,6 +255,41 @@ class PlaybackContractTests(unittest.TestCase):
         self.assertNotIn("/novel/player/video_model/v1/", source)
         self.assertNotIn("def _playback_request(", source)
 
+    def test_public_web_360_direct_playback(self):
+        from unittest.mock import Mock
+        media = "https://v1.fqnovelvod.com/test.mp4"
+        response = Mock(status_code=200, content=b"{}")
+        response.json.return_value = {"code": 0, "main_url": media}
+        with patch.object(module.requests, "post", return_value=response) as post:
+            result = module.Spider().playerContent(module._PUBLIC_LINE, module._PUBLIC_EPISODE_PREFIX + VID)
+        self.assertEqual(result["url"], media)
+        self.assertEqual(result["parse"], 0)
+        self.assertEqual(post.call_args.kwargs["json"], {"item_id": VID})
+        self.assertFalse(post.call_args.kwargs["allow_redirects"])
+
+    def test_public_web_stops_on_denial_or_invalid_media(self):
+        from unittest.mock import Mock
+        for status, payload in (
+            (403, {}), (429, {}),
+            (200, {"error": "public_fallback_unavailable"}),
+            (200, {"code": 0, "main_url": "https://evil.fqnovelvod.com.example/test.mp4"}),
+            (200, {"code": 0, "main_url": "https://v1.fqnovelvod.com:8443/test.mp4"}),
+            (200, {"code": 0, "main_url": "https://v1.fqnovelvod.com/test.mp4", "url_expire": 1}),
+        ):
+            with self.subTest(status=status, payload=payload):
+                response = Mock(status_code=status, content=b"{}")
+                response.json.return_value = payload
+                with patch.object(module.requests, "post", return_value=response) as post:
+                    with self.assertRaises(module.HongguoPluginError):
+                        module._public_web_media_url(VID)
+                    post.assert_called_once()
+
+    def test_public_web_validates_episode_before_network(self):
+        with patch.object(module.requests, "post") as post:
+            with self.assertRaises(module.HongguoPluginError):
+                module._public_web_media_url("not-an-episode")
+            post.assert_not_called()
+
     def test_legacy_play_url_leaf_is_not_dropped(self):
         name, item = module._select_quality(
             {"hd": {"play_url": "https://example.test/movie.mp4",

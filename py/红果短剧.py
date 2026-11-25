@@ -5,6 +5,9 @@
 # 2026-11-20 本機串流服務自我修復：iOS 凍結暫停中的 App 會關閉監聽 socket，
 # 回傳快取連接埠前先以 HEAD 確認仍會回應，不回應就關閉舊服務並重新開啟，
 # 不必重啟 App；不涉及簽章、取流或解密。
+# 2026-11-25 參考 jackotom/hongguo-drama 8.3（f31d874）：新增官網公開 360P 線路，
+# 僅接受公開完整片源 API 的有效 HTTPS CDN 網址，拒絕受限回應，不抓取 SEO 預覽。
+# 保留原 App 品質線路及原生播放器介面；未引入需要額外 runtime 的 SDK。
 # 2026-11-25 同步 jackotom/hongguo-drama 8.2（4ef6b05）：新增 current-app preload/v1，
 # 沿用 GPL-3.0-only V5 簽章並支援新版 field21，優先新版來源；保留單檔 Python 及原有 MP4 Range。
 # 來源：src/native/app-source.js、src/native/playback-v5.js；不引入桌面 SDK helper。
@@ -1035,6 +1038,9 @@ def _aes_cbc_decrypt(key: bytes, iv: bytes, data: bytes) -> bytes:
 
 SITE = "https://hongguoduanju.com"
 EPISODE_PREFIX = "hg-episode-v1:"
+_PUBLIC_EPISODE_PREFIX = "hg-public-v1:"
+_PUBLIC_LINE = "官網公開 360P"
+_PUBLIC_WEB_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
 # 红果每集视频模型按清晰度返回多条独立线路（360/480/540/720/1080），
 # 每条带 main_url + backup_url 双 CDN 与独立加密材料。这里把清晰度作为
 # TVBox 多线路暴露；内封音/视轨在解密 _rewrite_moov 时天然全部保留。
@@ -1050,6 +1056,57 @@ _QUALITY_LINE_NAME_TO_Q = {
     "流畅": "480", "极速": "360", "1080": "1080", "720": "720",
     "540": "540", "480": "480", "360": "360",
 }
+
+
+def _public_web_media_url(video_id: str) -> str:
+    """Resolve only the official web player's publicly supplied full 360p MP4.
+    Adapted from jackotom/hongguo-drama 8.3 src/native/hongguo.js (GPL-3.0-only).
+    Do not retry a refusal, scrape protected previews, or guess media URLs.
+    """
+    if not re.fullmatch(r"[0-9]{1,30}", str(video_id)):
+        raise HongguoPluginError("公開分集識別無效")
+    headers = {
+        "User-Agent": _PUBLIC_WEB_UA, "Accept": "application/json",
+        "Referer": SITE + "/", "Content-Type": "application/json",
+    }
+    response = requests.post(
+        SITE + "/api/video/protected/fallback-play-info",
+        json={"item_id": str(video_id)}, headers=headers,
+        timeout=6, allow_redirects=False,
+    )
+    if response.status_code in (401, 403, 429):
+        raise HongguoPluginError("官網拒絕公開播放（HTTP %d）" % response.status_code)
+    if response.status_code != 200:
+        raise HongguoPluginError("官網公開播放暫時不可用（HTTP %d）" % response.status_code)
+    if len(response.content) > 65536:
+        raise HongguoPluginError("官網公開播放回應過大")
+    try:
+        data = response.json()
+    except ValueError as error:
+        raise HongguoPluginError("官網公開播放回應無效") from error
+    if not isinstance(data, dict):
+        raise HongguoPluginError("官網公開播放回應無效")
+    base = data.get("base_resp")
+    code = base.get("StatusCode", data.get("code", 0)) if isinstance(base, dict) else data.get("code", 0)
+    if str(code or 0) != "0" or data.get("error"):
+        raise HongguoPluginError("官網未提供本集公開完整片源")
+    raw = data.get("main_url")
+    if not isinstance(raw, str) or not raw or len(raw) > 8192 or re.search(r"[\s\\]", raw):
+        raise HongguoPluginError("官網公開媒體網址無效")
+    try:
+        parsed = urlparse(raw)
+        host = (parsed.hostname or "").lower()
+        allowed = ("qznovelvod.com", "fqnovelvod.com", "douyinvod.com")
+        if (parsed.scheme != "https" or parsed.username is not None or parsed.password is not None
+                or parsed.port not in (None, 443)
+                or not any(host == domain or host.endswith("." + domain) for domain in allowed)):
+            raise ValueError("untrusted media URL")
+        expires = data.get("url_expire")
+        if expires not in (None, "", 0, "0") and float(expires) <= time.time() + 5:
+            raise ValueError("expired media URL")
+    except (TypeError, ValueError) as error:
+        raise HongguoPluginError("官網公開媒體網址無效或已過期") from error
+    return raw
 
 
 def _split_episode_token(token: str) -> tuple[str, str]:
@@ -6609,8 +6666,9 @@ class Spider(_BaseSpider):
             _dm_series_save()
         except Exception:
             pass
-        play_from = []
-        play_url = []
+        play_from = [_PUBLIC_LINE]
+        play_url = ["#".join("%d$%s%s" % (i + 1, _PUBLIC_EPISODE_PREFIX, str(v))
+                             for i, v in enumerate(vids))]
         for q, line_name in _HG_QUALITY_LINES:
             eps = "#".join(
                 "%d%s%s%s%s" % (i + 1, "$", EPISODE_PREFIX, q + ":", str(v))
@@ -6620,6 +6678,17 @@ class Spider(_BaseSpider):
             play_url.append(eps)
         return {"list": [{"vod_id": sid, "vod_name": str(s.get("series_name") or ""), "vod_pic": str(s.get("series_cover") or ""), "vod_year": "", "vod_area": "", "vod_director": "", "vod_actor": ",".join(actors), "vod_content": str(s.get("series_intro") or ""), "vod_remarks": str(s.get("episode_right_text") or ""), "vod_play_from": "$$$".join(play_from), "vod_play_url": "$$$".join(play_url)}]}
     def playerContent(self, flag, id, vipFlags=None):
+        token = str(id or "")
+        if token.startswith(_PUBLIC_EPISODE_PREFIX):
+            vid = token[len(_PUBLIC_EPISODE_PREFIX):]
+            try:
+                url = _public_web_media_url(vid)
+            except (HongguoPluginError, requests.RequestException):
+                # Fail explicitly; never substitute a different episode or preview.
+                return {"parse": 0, "jx": 0, "playUrl": "", "url": "",
+                        "header": {}, "msg": "本集官網公開完整片源暫不可用"}
+            return {"parse": 0, "jx": 0, "playUrl": "", "url": url,
+                    "header": {"User-Agent": _PUBLIC_WEB_UA, "Referer": SITE + "/"}}
         self._adopt_working_pair()
         # 从线路名（flag，如“红果超清/红果高清”）与集 token 双路解析清晰度。
         # token 已是 'hg-episode-v1:<q>:<vid>'，flag 用于旧壳只传线路名时兜底。

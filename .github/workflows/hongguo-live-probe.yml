@@ -26,6 +26,31 @@ jobs:
             sudo apt-get install -y -qq ffmpeg
           fi
           ffmpeg -version | head -n 1
+      - name: Probe official public 360p source (no protected playback)
+        continue-on-error: true
+        run: |
+          python - <<'PY'
+          import importlib.util
+          import requests
+          spec = importlib.util.spec_from_file_location("hongguo", "py/红果短剧.py")
+          module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+          try:
+              url = module._public_web_media_url("7699003626647194649")
+              print("PUBLIC_SOURCE=available")
+              with requests.get(url, headers={"Range": "bytes=0-4095",
+                                              "User-Agent": module._PUBLIC_WEB_UA,
+                                              "Referer": module.SITE + "/"},
+                                timeout=10, stream=True, allow_redirects=False) as response:
+                  data = next(response.iter_content(4096), b"")
+                  if response.status_code not in (200, 206) or b"ftyp" not in data[:64]:
+                      raise RuntimeError("not an MP4 response")
+                  print("PUBLIC_MP4_HEADER=ok")
+          except Exception as error:
+              print("PUBLIC_SOURCE_PROBE=unavailable")
+              print("PUBLIC_ERROR_CLASS=" + type(error).__name__)
+              raise SystemExit(3)
+          PY
       - name: Diagnostic probe of 8.2 current-app preload (non-blocking)
         continue-on-error: true
         env:

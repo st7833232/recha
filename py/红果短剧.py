@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # 紅果短劇 Python 修改版，最近修改日期：2026-11-17。
 # 2026-11-25 擴大官網公開片源的首段 MP4 Range 並放寬網路逾時，改善起播。
+# 2026-11-26 同步 Drama 8.3 的公開頁面備援：公開接口暫時故障時，僅查同一集的非預覽公開 MP4。
 # 2026-11-20 本機串流服務自我修復：iOS 凍結暫停中的 App 會關閉監聽 socket，
 # 回傳快取連接埠前先以 HEAD 確認仍會回應，不回應就關閉舊服務並重新開啟，
 # 不必重啟 App；不涉及簽章、取流或解密。
@@ -1228,6 +1229,8 @@ def _public_web_media_url(video_id: str) -> str:
     )
     if response.status_code in (401, 403, 429):
         raise HongguoPluginError("官網拒絕公開播放（HTTP %d）" % response.status_code)
+    if 500 <= response.status_code < 600:
+        raise PublicPlaybackUnavailable("官網公開播放暫時不可用（HTTP %d）" % response.status_code)
     if response.status_code != 200:
         raise HongguoPluginError("官網公開播放暫時不可用（HTTP %d）" % response.status_code)
     if len(response.content) > 65536:
@@ -1316,6 +1319,17 @@ def _public_page_media_url(series_id: str, video_id: str) -> str:
         except (TypeError, ValueError):
             continue
     raise HongguoPluginError("官網未提供匹配的公開完整片源")
+
+
+def _public_360_media_url(video_id: str) -> str:
+    """Use Drama's public page fallback only when the public endpoint is unavailable."""
+    try:
+        return _public_web_media_url(video_id)
+    except (PublicPlaybackUnavailable, requests.Timeout, requests.ConnectionError):
+        series_id = _dm_series_of(video_id)
+        if not series_id:
+            raise
+        return _public_page_media_url(series_id, video_id)
 
 
 def _split_episode_token(token: str) -> tuple[str, str]:
@@ -1682,6 +1696,10 @@ _RANGE_FETCH_BACKOFF_SECONDS = 0.8
 
 class HongguoPluginError(RuntimeError):
     pass
+
+
+class PublicPlaybackUnavailable(HongguoPluginError):
+    """The public endpoint failed temporarily, without refusing playback."""
 
 class _PlaybackModelError(HongguoPluginError):
     pass
@@ -5592,6 +5610,19 @@ def _definition_of(item: Mapping[str, Any]) -> str:
             return hint
     return ""
 
+
+def _playback_codec(item: Mapping[str, Any]) -> str:
+    """Read a declared video codec without assuming a missing field means H.264."""
+    meta = item.get("video_meta")
+    if not isinstance(meta, Mapping):
+        meta = {}
+    for source in (item, meta):
+        codec = _first(source.get("codec_type"), source.get("codec"), source.get("video_codec"))
+        if codec:
+            return codec.lower().strip().replace("h.26", "h26").split(".", 1)[0]
+    return ""
+
+
 def _select_quality(video_list: Any, wanted: str = "1080", strict: bool = False) -> tuple[str, dict[str, Any]]:
     def rows_from(value: Any, hinted_quality: str = "") -> list[tuple[str, dict[str, Any]]]:
         if isinstance(value, list):
@@ -5631,7 +5662,13 @@ def _select_quality(video_list: Any, wanted: str = "1080", strict: bool = False)
     # 无法识别清晰度时用 idxN 兜底成唯一 key，保证每条候选都被保留（不再互相覆盖）
     for index, (hinted_quality, item) in enumerate(candidates):
         definition = _definition_of(item) or _quality_hint(hinted_quality) or ("idx%d" % index)
-        if definition not in rows:
+        previous = rows.get(definition)
+        # hongguoTV 0.16.17 prioritizes streams the platform decoder can use.
+        # Prefer standard AVC/HEVC over ByteVC2 when both offer the same resolution.
+        if previous is None or (
+            _playback_codec(previous) == "bytevc2"
+            and _playback_codec(item) in {"avc", "avc1", "avc3", "h264", "hevc", "hvc1", "hev1", "h265", "bytevc1"}
+        ):
             rows[definition] = item
     if not rows:
         raise HongguoPluginError("播放模型没有清晰度")
@@ -6917,7 +6954,7 @@ class Spider(_BaseSpider):
         if token.startswith(_PUBLIC_EPISODE_PREFIX):
             vid = token[len(_PUBLIC_EPISODE_PREFIX):]
             try:
-                url = _public_web_media_url(vid)
+                url = _public_360_media_url(vid)
                 info = _public_mp4_info(url)
                 if info["quality"] != 360:
                     raise HongguoPluginError("官網片源實際解析度不符 360P")

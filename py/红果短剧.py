@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # 紅果短劇 Python 修改版，最近修改日期：2026-11-17。
 # 2026-11-25 擴大官網公開片源的首段 MP4 Range 並放寬網路逾時，改善起播。
-# 2026-11-26 同步 Drama 8.3 的公開頁面備援：公開接口暫時故障時，僅查同一集的非預覽公開 MP4。
 # 2026-11-20 本機串流服務自我修復：iOS 凍結暫停中的 App 會關閉監聽 socket，
 # 回傳快取連接埠前先以 HEAD 確認仍會回應，不回應就關閉舊服務並重新開啟，
 # 不必重啟 App；不涉及簽章、取流或解密。
@@ -1229,8 +1228,6 @@ def _public_web_media_url(video_id: str) -> str:
     )
     if response.status_code in (401, 403, 429):
         raise HongguoPluginError("官網拒絕公開播放（HTTP %d）" % response.status_code)
-    if 500 <= response.status_code < 600:
-        raise PublicPlaybackUnavailable("官網公開播放暫時不可用（HTTP %d）" % response.status_code)
     if response.status_code != 200:
         raise HongguoPluginError("官網公開播放暫時不可用（HTTP %d）" % response.status_code)
     if len(response.content) > 65536:
@@ -1319,17 +1316,6 @@ def _public_page_media_url(series_id: str, video_id: str) -> str:
         except (TypeError, ValueError):
             continue
     raise HongguoPluginError("官網未提供匹配的公開完整片源")
-
-
-def _public_360_media_url(video_id: str) -> str:
-    """Use Drama's public page fallback only when the public endpoint is unavailable."""
-    try:
-        return _public_web_media_url(video_id)
-    except (PublicPlaybackUnavailable, requests.Timeout, requests.ConnectionError):
-        series_id = _dm_series_of(video_id)
-        if not series_id:
-            raise
-        return _public_page_media_url(series_id, video_id)
 
 
 def _split_episode_token(token: str) -> tuple[str, str]:
@@ -1697,86 +1683,8 @@ _RANGE_FETCH_BACKOFF_SECONDS = 0.8
 class HongguoPluginError(RuntimeError):
     pass
 
-
-class PublicPlaybackUnavailable(HongguoPluginError):
-    """The public endpoint failed temporarily, without refusing playback."""
-
 class _PlaybackModelError(HongguoPluginError):
     pass
-
-
-_STREAM_FAILURE_MESSAGES = {
-    "source": "HG01F · 請求播放資料時發生未分類錯誤",
-    "source-response": "HG01G · 讀取回應欄位時發生未分類錯誤",
-    "source-variant": "HG01H · 選擇或準備指定畫質時發生未分類錯誤",
-    "source-empty": "HG01A · 上游回應沒有播放資料",
-    "source-rejected": "HG01B · 上游拒絕或限制播放請求",
-    "source-format": "HG01C · 播放資料格式異常或缺少必要欄位",
-    "source-quality": "HG01D · 播放資料中沒有指定畫質",
-    "source-network": "HG01E · 上游連線失敗、逾時或服務暫不可用",
-    "session": "HG02 · 串流初始化失敗：無法讀取或準備影片資料",
-    "first-range": "HG03 · 首段影片讀取失敗",
-}
-_STREAM_FAILURE_TTL = 120
-_STREAM_FAILURE_LIMIT = 16
-
-
-class _StreamDiagnosticError(HongguoPluginError):
-    def __init__(self, stage: str) -> None:
-        self.stage = stage
-        super().__init__(_STREAM_FAILURE_MESSAGES[stage])
-
-
-def _source_failure_stage(error: Exception, fallback: str = "source") -> str:
-    """Map known failures to fixed labels. Never show the upstream error verbatim."""
-    if isinstance(error, requests.HTTPError):
-        status = getattr(error.response, "status_code", None)
-        if status in (401, 403, 429):
-            return "source-rejected"
-        return "source-network"
-    if isinstance(error, (requests.Timeout, requests.ConnectionError)):
-        return "source-network"
-    if isinstance(error, json.JSONDecodeError):
-        return "source-format"
-    if not isinstance(error, HongguoPluginError):
-        return fallback
-
-    message = str(error)
-    if message.startswith(("上游拒絕播放請求（HTTP ", "播放模型被上游拒絕（code=", "來源拒絕匿名播放註冊")):
-        return "source-rejected"
-    if message.startswith("本集暫無指定畫質 "):
-        return "source-quality"
-    if message in ("播放模型皆為空", "播放模型皆為空（8.2 官方取源）"):
-        return "source-empty"
-    if message in ("8.2 官方播放端點逾時或暫時無法連線", "播放端點 HTTP 錯誤"):
-        return "source-network"
-    if message.startswith(("播放模型缺少地址或密钥材料 ", "播放模型缺少 data")) or message in (
-        "播放模型回應格式無效",
-        "播放模型 JSON 無效",
-        "播放模型格式無效",
-        "播放模型未包含所選集數",
-        "播放模型没有清晰度",
-    ):
-        return "source-format"
-    return fallback
-
-
-def _remember_stream_failure(video_id: str, quality: str, stage: str) -> None:
-    key = (video_id, quality)
-    with _STREAM_LOCK:
-        failures = _STREAM_STATE.setdefault("failures", {})
-        failures.pop(key, None)
-        if len(failures) >= _STREAM_FAILURE_LIMIT:
-            failures.pop(next(iter(failures)))
-        failures[key] = (stage, time.monotonic() + _STREAM_FAILURE_TTL)
-
-
-def _take_stream_failure(video_id: str, quality: str) -> str:
-    with _STREAM_LOCK:
-        previous = _STREAM_STATE.setdefault("failures", {}).pop((video_id, quality), None)
-    if previous and time.monotonic() < previous[1]:
-        return previous[0]
-    return ""
 
 
 def _text(value: Any) -> str:
@@ -2329,7 +2237,6 @@ class _StreamSession:
         self.samples = _sample_table(moov, moov_start)
         self.offsets = [item[0] for item in self.samples]
         self.created = time.time()
-        self._startup_prefix = b""
 
     def expired(self) -> bool:
         return time.time() - self.created > _STREAM_TTL_SECONDS
@@ -2366,29 +2273,12 @@ class _StreamSession:
             ]
 
     def read_range(self, start: int, end: int) -> bytes:
-        prefix = self._startup_prefix
-        if 0 <= start <= end < len(prefix):
-            return prefix[start : end + 1]
         raw, _ = _range_get(self.url, start, end)
         if not raw:
             raise HongguoPluginError("媒体分片为空")
         buffer = bytearray(raw)
         self._patch(buffer, start)
         return bytes(buffer)
-
-    def prepare_start(self) -> None:
-        if self._startup_prefix:
-            return
-        count = min(self.total, _STREAM_CHUNK)
-        if count <= 0:
-            raise _StreamDiagnosticError("first-range")
-        try:
-            prefix = self.read_range(0, count - 1)
-        except Exception:
-            raise _StreamDiagnosticError("first-range") from None
-        if len(prefix) != count:
-            raise _StreamDiagnosticError("first-range")
-        self._startup_prefix = prefix
 
     def iter_range(self, start: int, end: int):
         cursor = start
@@ -2558,13 +2448,12 @@ def _stream_session(video_id: str, config: Mapping[str, Any], quality: str = "10
             session = _STREAM_STATE["sessions"].get(cache_key)
         if session is not None:
             return session
+    last_err = None
     try:
         # 上游偶发抖动（同一集首次 502、重试即通）——冷启动这里做短重试。
         for _attempt in range(3):
-            stage = "source"
             try:
                 model = _video_model_rotating(video_id, config)
-                stage = "source-response"
                 rows = _video_list_from_model(model)
                 key_seed = _key_seed_from_model(model) or ""
                 # 视轨校验：个别清晰度的流不带视轨（只有声音），
@@ -2574,7 +2463,6 @@ def _stream_session(video_id: str, config: Mapping[str, Any], quality: str = "10
                 reason = "媒体会话创建失败"
                 probed = 0
                 for want in wanted_order:
-                    stage = "source-variant"
                     _, item = _select_quality(rows, want, strict=True)
                     raw_url = _media_url(item)
                     spade = _spade_value(item)
@@ -2584,7 +2472,6 @@ def _stream_session(video_id: str, config: Mapping[str, Any], quality: str = "10
                     if raw_url in seen_urls:
                         continue
                     seen_urls.add(raw_url)
-                    stage = "session"
                     url = raw_url
                     if key_seed:
                         try:
@@ -2607,14 +2494,16 @@ def _stream_session(video_id: str, config: Mapping[str, Any], quality: str = "10
                         break
                 raise HongguoPluginError(reason)
             except Exception as err:
-                if (_attempt == 2 or isinstance(err, _PlaybackModelError)
-                        or isinstance(err, requests.HTTPError) and getattr(err.response, "status_code", None) in (403, 429)):
-                    diagnostic = stage if stage == "session" else _source_failure_stage(err, stage)
-                    raise _StreamDiagnosticError(diagnostic) from None
+                if isinstance(err, _PlaybackModelError) or isinstance(err, requests.HTTPError) and getattr(err.response, "status_code", None) in (403, 429):
+                    raise
+                last_err = err
                 try:
                     time.sleep(0.4 * (_attempt + 1))
                 except Exception:
                     pass
+        if last_err is not None:
+            raise last_err
+        raise HongguoPluginError("媒体会话创建失败")
     finally:
         if leader:
             with _STREAM_LOCK:
@@ -2676,16 +2565,10 @@ class _StreamHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(message)))
         self.send_header("Connection", "close")
         self.end_headers()
-        if self.command == "HEAD":
-            return
         try:
             self.wfile.write(message)
         except OSError:
             pass
-
-    def _stream_failure(self, params: Mapping[str, str], stage: str) -> None:
-        _remember_stream_failure(params["vid"], params["quality"], stage)
-        self._fail(502, _STREAM_FAILURE_MESSAGES[stage].encode("utf-8"))
 
     def do_HEAD(self) -> None:  # noqa: N802 - 标准库回调命名
         self._serve(body=False)
@@ -2761,11 +2644,11 @@ class _StreamHandler(BaseHTTPRequestHandler):
                 },
                 params["quality"],
             )
-        except _StreamDiagnosticError as error:
-            self._stream_failure(params, error.stage)
-            return
-        except Exception:
-            self._stream_failure(params, "session")
+        except Exception as error:
+            # Expose only a short local failure reason (no signed media URL or key)
+            # so the player log distinguishes registration/model/MP4 range failures.
+            detail = (str(error) or type(error).__name__)[:160]
+            self._fail(502, ("media session failed: " + detail).encode("utf-8"))
             return
         raw_range = self.headers.get("Range") or ""
         requested = _parse_range(raw_range, session.total)
@@ -2789,7 +2672,7 @@ class _StreamHandler(BaseHTTPRequestHandler):
                 if len(first_block) != first_end - start + 1:
                     raise HongguoPluginError("首個媒體分段長度不符")
             except Exception:
-                self._stream_failure(params, "first-range")
+                self._fail(502, b"upstream first media range unavailable")
                 return
         self.send_response(206 if requested else 200)
         self.send_header("Content-Type", "video/mp4")
@@ -5709,19 +5592,6 @@ def _definition_of(item: Mapping[str, Any]) -> str:
             return hint
     return ""
 
-
-def _playback_codec(item: Mapping[str, Any]) -> str:
-    """Read a declared video codec without assuming a missing field means H.264."""
-    meta = item.get("video_meta")
-    if not isinstance(meta, Mapping):
-        meta = {}
-    for source in (item, meta):
-        codec = _first(source.get("codec_type"), source.get("codec"), source.get("video_codec"))
-        if codec:
-            return codec.lower().strip().replace("h.26", "h26").split(".", 1)[0]
-    return ""
-
-
 def _select_quality(video_list: Any, wanted: str = "1080", strict: bool = False) -> tuple[str, dict[str, Any]]:
     def rows_from(value: Any, hinted_quality: str = "") -> list[tuple[str, dict[str, Any]]]:
         if isinstance(value, list):
@@ -5761,13 +5631,7 @@ def _select_quality(video_list: Any, wanted: str = "1080", strict: bool = False)
     # 无法识别清晰度时用 idxN 兜底成唯一 key，保证每条候选都被保留（不再互相覆盖）
     for index, (hinted_quality, item) in enumerate(candidates):
         definition = _definition_of(item) or _quality_hint(hinted_quality) or ("idx%d" % index)
-        previous = rows.get(definition)
-        # hongguoTV 0.16.17 prioritizes streams the platform decoder can use.
-        # Prefer standard AVC/HEVC over ByteVC2 when both offer the same resolution.
-        if previous is None or (
-            _playback_codec(previous) == "bytevc2"
-            and _playback_codec(item) in {"avc", "avc1", "avc3", "h264", "hevc", "hvc1", "hev1", "h265", "bytevc1"}
-        ):
+        if definition not in rows:
             rows[definition] = item
     if not rows:
         raise HongguoPluginError("播放模型没有清晰度")
@@ -7045,7 +6909,7 @@ class Spider(_BaseSpider):
         if token.startswith(_PUBLIC_EPISODE_PREFIX):
             vid = token[len(_PUBLIC_EPISODE_PREFIX):]
             try:
-                url = _public_360_media_url(vid)
+                url = _public_web_media_url(vid)
                 info = _public_mp4_info(url)
                 if info["quality"] != 360:
                     raise HongguoPluginError("官網片源實際解析度不符 360P")
@@ -7076,11 +6940,6 @@ class Spider(_BaseSpider):
                 "url": SITE + "/",
                 "header": {"User-Agent": UA},
             }
-        # The installed app only shows the HTTP status from the local service.
-        # The next resolution of this exact episode and quality surfaces one safe diagnostic.
-        failure = _take_stream_failure(vid, q)
-        if failure:
-            raise _StreamDiagnosticError(failure)
         # 取流优先级：本机 Range 流服务 > 壳代理。
         # 壳代理（fongmi / OK影视 的 /proxy?do=py）实测会忽略 Range：对 bytes=0-1023
         # 也回 200 + 整片 + chunked，既无 Content-Range 也无 Accept-Ranges，且必须
@@ -7088,22 +6947,25 @@ class Spider(_BaseSpider):
         # 超过播放器默认 8s 读超时）。首集常因缓存或重试侥幸起播，切到第二集时播放器
         # 按新 URL 重新请求即超时失败，表现为“第 1 集能放、第 2 集不能放”。
         # 本机流服务支持 206 / Content-Range / Accept-Ranges，首字节约 1s，切集稳定。
+        # 会话构建（取 video_model + 拉 moov）在冷启动时约 3~18s，若等到播放器连上来
+        # 才建会话，响应头会被拖延到读超时。这里先异步预热会话，让播放器连接时命中缓存。
+        def _warm_session():
+            try:
+                _stream_session(vid, {
+                    "device_id": self.device_id or "",
+                    "install_id": self.install_id or "",
+                }, q)
+            except Exception:
+                pass
+        try:
+            threading.Thread(target=_warm_session, daemon=True).start()
+        except Exception:
+            pass
         try:
             port = _start_stream_server()
         except Exception:
             port = 0
         if port:
-            # Resolve here so the host can show a diagnostic on the first tap.
-            try:
-                session = _stream_session(vid, {
-                    "device_id": self.device_id or "",
-                    "install_id": self.install_id or "",
-                }, q)
-            except _StreamDiagnosticError:
-                raise
-            except Exception:
-                raise _StreamDiagnosticError("session") from None
-            session.prepare_start()
             query = urlencode(
                 {
                     "vid": vid,

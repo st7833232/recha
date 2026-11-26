@@ -5602,22 +5602,21 @@ def _video_model(video_id: str, config: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def _video_list_from_model(model: Mapping[str, Any]) -> Any:
-    for key in ("video_list", "dynamic_video_list"):
-        if model.get(key) is not None:
-            return model[key]
-    dynamic = model.get("dynamic_video")
-    if isinstance(dynamic, Mapping):
-        for key in ("dynamic_video_list", "video_list", "list"):
-            if dynamic.get(key) is not None:
-                return dynamic[key]
-    video_info = model.get("video_info")
-    if isinstance(video_info, Mapping):
-        data = video_info.get("data")
-        if isinstance(data, Mapping):
-            return _video_list_from_model(data)
-    data = model.get("data")
-    if isinstance(data, Mapping):
-        return _video_list_from_model(data)
+    for container, keys in (
+        (model, ("video_list", "dynamic_video_list")),
+        (model.get("dynamic_video"), ("dynamic_video_list", "video_list", "list")),
+    ):
+        if isinstance(container, Mapping):
+            for key in keys:
+                rows = container.get(key)
+                if isinstance(rows, (Mapping, list)) and rows:
+                    return rows
+    info = model.get("video_info")
+    for nested in (info.get("data") if isinstance(info, Mapping) else None, model.get("data")):
+        if isinstance(nested, Mapping):
+            rows = _video_list_from_model(nested)
+            if rows:
+                return rows
     return None
 
 

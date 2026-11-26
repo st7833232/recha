@@ -156,6 +156,27 @@ class PlaybackContractTests(unittest.TestCase):
         self.assertNotIn("x-ss-req-ticket", headers)
         self.assertGreater(len(base64.b64decode(headers["x-medusa"])), 100)
 
+    def test_empty_list_does_not_hide_other_renditions_for_the_same_episode(self):
+        renditions = [{"quality": q, "main_url": "https://example.test/" + q}
+                      for q in ("720", "1080")]
+        for model in (
+            {"video_list": {}, "dynamic_video_list": renditions},
+            {"video_list": [], "dynamic_video": {"dynamic_video_list": [], "list": renditions}},
+            {"video_info": {"data": {"video_list": []}}, "data": {"video_list": renditions}},
+        ):
+            with self.subTest(model=model):
+                payload = {"data": {"1004": {VID: {"video_model": model}}}}
+                parsed = module._model_from_response(payload, VID)
+                rows = module._video_list_from_model(parsed)
+                for q in ("720", "1080"):
+                    _, item = module._select_quality(rows, q, strict=True)
+                    self.assertEqual(item["main_url"], "https://example.test/" + q)
+
+    def test_empty_model_does_not_borrow_another_episodes_list(self):
+        entries = {VID: {"video_model": {"video_list": []}}, "123": {"video_model": MODEL}}
+        with self.assertRaisesRegex(module._PlaybackModelError, "播放模型皆為空"):
+            module._model_from_response({"data": {"1004": entries}}, VID)
+
     def test_exact_nested_1004_episode_selection(self):
         response = {"code": 0, "data": {"1004": {VID: {"video_model": MODEL},
                                                 "999": {"video_model": {}}}}}

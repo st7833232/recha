@@ -8,6 +8,7 @@ import gzip
 import importlib.util
 import io
 import json
+import struct
 import subprocess
 import requests
 from pathlib import Path
@@ -427,6 +428,65 @@ class PlaybackContractTests(unittest.TestCase):
                     "quality_desc": "720", "codec_type": "h264"}}, "720")
         self.assertEqual(name, "720")
         self.assertIn("play_url", item)
+
+    def test_tail_metadata_skips_large_mdat(self):
+        ftyp = struct.pack(">I4s4s", 12, b"ftyp", b"isom")
+        payload = bytes(196608)
+        mdat = struct.pack(">I4sQ", 1, b"mdat", len(payload) + 16) + payload
+        tail = b"moov payload" * 32
+        moov = struct.pack(">I4s", 0, b"moov") + tail
+        data = ftyp + mdat + moov
+        offset = len(ftyp + mdat)
+        def read(url, start, end, deadline):
+            return data[start:end + 1], len(data)
+        with patch.object(module, "_range_get", side_effect=read) as get:
+            self.assertEqual(module._fetch_moov("fixture"), (len(data), offset, moov))
+        self.assertLessEqual(get.call_count, 3)
+        for call in get.call_args_list[1:]:
+            self.assertGreaterEqual(call.args[1], offset)
+            self.assertEqual(call.args[3], get.call_args_list[0].args[3])
+
+    def test_metadata_detects_cdn_size_change(self):
+        head = struct.pack(">I4s", 150000, b"mdat") + bytes(65528)
+        header = struct.pack(">I4s8s", 16, b"moov", bytes(8))
+        with patch.object(module, "_range_get", side_effect=[(head, 150016), (header, 150017)]):
+            with self.assertRaisesRegex(module.HongguoPluginError, "長度已變更"):
+                module._fetch_moov("fixture")
+
+    def test_invalid_metadata_size_does_not_trigger_large_read(self):
+        for header in (struct.pack(">I4s", 7, b"free"), struct.pack(">I4s", 400, b"moov"),
+                       struct.pack(">I4s", 1, b"moov")):
+            with self.subTest(header=header), patch.object(
+                module, "_range_get", return_value=(header, len(header))
+            ) as get:
+                with self.assertRaises(module.HongguoPluginError):
+                    module._fetch_moov("fixture")
+                self.assertEqual(get.call_count, 1)
+
+    def test_player_reports_empty_source_before_handing_out_loopback(self):
+        spider = module.Spider()
+        err = module._PlaybackModelError("播放模型皆為空（8.2 官方取源）")
+        with patch.object(spider, "_adopt_working_pair"), \
+             patch.object(spider, "_danmaku_payload", return_value={}), \
+             patch.object(module, "_start_stream_server", return_value=10010), \
+             patch.object(module, "_stream_session", side_effect=err) as prepare:
+            with self.assertRaisesRegex(module.HongguoPluginError, "上游沒有回傳本集播放資料"):
+                spider.playerContent("超清", module.EPISODE_PREFIX + "1080:" + VID)
+            self.assertEqual(prepare.call_count, 1)
+
+    def test_player_prepares_selected_episode_before_returning_loopback(self):
+        spider = module.Spider()
+        import threading
+        order = []
+        def ready(vid, config, quality):
+            order.append((vid, quality, threading.get_ident()))
+        with patch.object(spider, "_adopt_working_pair"), \
+             patch.object(spider, "_danmaku_payload", return_value={}), \
+             patch.object(module, "_start_stream_server", return_value=10010), \
+             patch.object(module, "_stream_session", side_effect=ready):
+            result = spider.playerContent("高清", module.EPISODE_PREFIX + "720:" + VID)
+        self.assertEqual(order, [(VID, "720", threading.get_ident())])
+        self.assertIn("/hg.mp4?vid=" + VID + "&q=720", result["url"])
 
     def test_local_http_prefetch_error_returns_502_not_truncated_206(self):
         class BrokenMedia:

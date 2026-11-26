@@ -1997,23 +1997,6 @@ _STREAM_LOCK = threading.RLock()
 _PLAYBACK_REG_LOCK = threading.Lock()
 
 
-def _toplevel_boxes(buf: bytes) -> list[tuple[int, int, bytes]]:
-    boxes: list[tuple[int, int, bytes]] = []
-    cursor = 0
-    while cursor + 8 <= len(buf):
-        size = struct.unpack(">I", buf[cursor : cursor + 4])[0]
-        fourcc = bytes(buf[cursor + 4 : cursor + 8])
-        if size == 1:
-            if cursor + 16 > len(buf):
-                break
-            size = struct.unpack(">Q", buf[cursor + 8 : cursor + 16])[0]
-        if size < 8:
-            break
-        boxes.append((cursor, size, fourcc))
-        cursor += size
-    return boxes
-
-
 class _MediaRangeError(HongguoPluginError):
     """Terminal media transport error for this player request."""
 
@@ -2125,25 +2108,62 @@ def _range_get(url: str, start: int, end: int, deadline: float | None = None) ->
 def _fetch_moov(url: str) -> tuple[int, int, bytes]:
     deadline = time.monotonic() + _RANGE_BUDGET_SECONDS
     probe, total = _range_get(url, 0, _STREAM_HEAD_PROBE - 1, deadline)
-    if not total:
-        raise HongguoPluginError("媒体总长度未知")
-    moov_start = 0
-    moov_size = 0
-    for offset, size, fourcc in _toplevel_boxes(probe):
-        if fourcc == b"moov":
-            moov_start = offset
-            moov_size = size
-            break
-    if not moov_size:
-        raise HongguoPluginError("未找到 moov 顶层盒")
-    if moov_start + moov_size > total:
-        raise HongguoPluginError("moov 越界")
-    if moov_start + moov_size <= len(probe):
-        return total, moov_start, bytes(probe[moov_start : moov_start + moov_size])
-    moov, _ = _range_get(url, moov_start, moov_start + moov_size - 1, deadline)
-    if len(moov) != moov_size:
-        raise HongguoPluginError("moov 分片长度不符")
-    return total, moov_start, moov
+
+    def read_exact(start: int, length: int) -> bytes:
+        stop = start + length
+        if stop <= len(probe):
+            return probe[start:stop]
+        data, current_total = _range_get(url, start, stop - 1, deadline)
+        if current_total != total:
+            raise _MediaRangeError("讀取 MP4 索引時檔案長度已變更")
+        if len(data) != length:
+            raise _MediaRangeError("MP4 索引資料不完整")
+        return data
+
+    offset = 0
+    while offset + 8 <= total:
+        header = read_exact(offset, min(16, total - offset))
+        size, kind = struct.unpack_from(">I4s", header)
+        header_size = 8
+        if size == 1:
+            header_size = 16
+            if len(header) < header_size:
+                raise _MediaRangeError("MP4 索引標頭不完整")
+            size = struct.unpack_from(">Q", header, 8)[0]
+        elif size == 0:
+            size = total - offset
+        if size < header_size or size > total - offset:
+            raise _MediaRangeError("MP4 索引範圍無效")
+        if kind == b"moov":
+            # Avoid allocating an arbitrary file-sized box from a corrupt header.
+            if size > 32 * 1024 * 1024:
+                raise _MediaRangeError("MP4 索引過大")
+            return total, offset, read_exact(offset, size)
+        # Jump over the entire media payload even when it extends past the probe.
+        offset += size
+    raise _MediaRangeError("MP4 找不到播放索引")
+
+
+def _playback_start_message(error: Exception) -> str:
+    # Only fixed descriptions and numeric HTTP status codes cross the UI boundary.
+    if isinstance(error, _PlaybackModelError):
+        detail = str(error)
+        if "播放模型皆為空" in detail:
+            return "紅果上游沒有回傳本集播放資料"
+        if "指定畫質" in detail:
+            return "紅果上游沒有提供本集所選畫質"
+        if "逾時" in detail:
+            return "紅果取源逾時或暫時無法連線"
+        if "拒絕" in detail:
+            return "紅果上游拒絕本次取源"
+        return "紅果未能取得本集播放資料"
+    if isinstance(error, requests.HTTPError) and error.response is not None:
+        return "紅果播放請求失敗（HTTP %d）" % error.response.status_code
+    if isinstance(error, _MediaRangeError):
+        return "紅果讀取 MP4 索引或影片分段失敗"
+    if isinstance(error, (requests.Timeout, requests.ConnectionError)):
+        return "紅果播放連線逾時或中斷"
+    return "紅果無法準備本集影片"
 
 
 # 解码器配置盒 -> 真实 sample entry 四字符码。
@@ -2716,10 +2736,7 @@ class _StreamHandler(BaseHTTPRequestHandler):
                 params["quality"],
             )
         except Exception as error:
-            # Expose only a short local failure reason (no signed media URL or key)
-            # so the player log distinguishes registration/model/MP4 range failures.
-            detail = (str(error) or type(error).__name__)[:160]
-            self._fail(502, ("media session failed: " + detail).encode("utf-8"))
+            self._fail(502, _playback_start_message(error).encode("utf-8"))
             return
         raw_range = self.headers.get("Range") or ""
         requested = _parse_range(raw_range, session.total)
@@ -7011,32 +7028,18 @@ class Spider(_BaseSpider):
                 "url": SITE + "/",
                 "header": {"User-Agent": UA},
             }
-        # 取流优先级：本机 Range 流服务 > 壳代理。
-        # 壳代理（fongmi / OK影视 的 /proxy?do=py）实测会忽略 Range：对 bytes=0-1023
-        # 也回 200 + 整片 + chunked，既无 Content-Range 也无 Accept-Ranges，且必须
-        # 等整片下载 + CENC 解密完成后才吐首字节（单集 12~17MB，实测 8.7s / 16.3s，
-        # 超过播放器默认 8s 读超时）。首集常因缓存或重试侥幸起播，切到第二集时播放器
-        # 按新 URL 重新请求即超时失败，表现为“第 1 集能放、第 2 集不能放”。
-        # 本机流服务支持 206 / Content-Range / Accept-Ranges，首字节约 1s，切集稳定。
-        # 会话构建（取 video_model + 拉 moov）在冷启动时约 3~18s，若等到播放器连上来
-        # 才建会话，响应头会被拖延到读超时。这里先异步预热会话，让播放器连接时命中缓存。
-        def _warm_session():
-            try:
-                _stream_session(vid, {
-                    "device_id": self.device_id or "",
-                    "install_id": self.install_id or "",
-                }, q)
-            except Exception:
-                pass
-        try:
-            threading.Thread(target=_warm_session, daemon=True).start()
-        except Exception:
-            pass
         try:
             port = _start_stream_server()
         except Exception:
             port = 0
         if port:
+            # Prepare once before handing the player a loopback URL. The HTTP
+            # handler reuses this episode/quality session from the existing cache.
+            try:
+                _stream_session(vid, {"device_id": self.device_id or "",
+                                      "install_id": self.install_id or ""}, q)
+            except Exception as error:
+                raise HongguoPluginError(_playback_start_message(error)) from None
             query = urlencode(
                 {
                     "vid": vid,

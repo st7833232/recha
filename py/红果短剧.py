@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # === 發布與修改說明 ===
 # SPDX-License-Identifier: GPL-3.0-only
-# 紅果短劇 Python 修改版，最近修改日期：2026-11-17。
+# 紅果短劇 Python 修改版，最近修改日期：2026-11-26。
+# 2026-11-26 參考 Drama 8.4，檢查媒體轉址目標，並限制 Range 重試與讀取的等待時間。
 # 2026-11-25 擴大官網公開片源的首段 MP4 Range 並放寬網路逾時，改善起播。
 # 2026-11-20 本機串流服務自我修復：iOS 凍結暫停中的 App 會關閉監聽 socket，
 # 回傳快取連接埠前先以 HEAD 確認仍會回應，不回應就關閉舊服務並重新開啟，
@@ -838,7 +839,7 @@ from collections.abc import Mapping
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from html.parser import HTMLParser
 from typing import Any
-from urllib.parse import parse_qs, quote, urlencode, urlparse
+from urllib.parse import parse_qs, quote, urldefrag, urlencode, urljoin, urlparse
 import requests
 try:
     from cryptography.hazmat.primitives import hashes
@@ -1041,6 +1042,7 @@ def _aes_cbc_decrypt(key: bytes, iv: bytes, data: bytes) -> bytes:
 
 
 SITE = "https://hongguoduanju.com"
+_MEDIA_CDN_DOMAINS = ("qznovelvod.com", "fqnovelvod.com", "douyinvod.com")
 EPISODE_PREFIX = "hg-episode-v1:"
 _PUBLIC_EPISODE_PREFIX = "hg-public-v1:"
 _PUBLIC_LINE = "官網公開 360P"
@@ -1161,11 +1163,10 @@ def _public_mp4_info(url: str) -> dict:
     """Inspect actual coded size using bounded Range reads, including tail moov."""
     parsed = urlparse(url)
     host = (parsed.hostname or "").lower()
-    domains = ("qznovelvod.com", "fqnovelvod.com", "douyinvod.com")
     if (parsed.scheme != "https" or parsed.username is not None or parsed.password is not None
             or parsed.port not in (None, 443)
             or not (host == "hongguoduanju.com" and parsed.path.startswith("/video/public/")
-                    or any(host == d or host.endswith("." + d) for d in domains))):
+                    or any(host == d or host.endswith("." + d) for d in _MEDIA_CDN_DOMAINS))):
         raise HongguoPluginError("公開媒體主機不受信任")
     deadline = time.monotonic() + 12
     # The public 360p CDN can place an 80+ KiB moov at the start of the file.
@@ -1248,10 +1249,9 @@ def _public_web_media_url(video_id: str) -> str:
     try:
         parsed = urlparse(raw)
         host = (parsed.hostname or "").lower()
-        allowed = ("qznovelvod.com", "fqnovelvod.com", "douyinvod.com")
         if (parsed.scheme != "https" or parsed.username is not None or parsed.password is not None
                 or parsed.port not in (None, 443)
-                or not any(host == domain or host.endswith("." + domain) for domain in allowed)):
+                or not any(host == domain or host.endswith("." + domain) for domain in _MEDIA_CDN_DOMAINS)):
             raise ValueError("untrusted media URL")
         expires = data.get("url_expire")
         if expires not in (None, "", 0, "0") and float(expires) <= time.time() + 5:
@@ -1679,6 +1679,7 @@ _HTML_FETCH_BACKOFF_SECONDS = 1.5
 _RANGE_FETCH_ATTEMPTS = 3
 
 _RANGE_FETCH_BACKOFF_SECONDS = 0.8
+_RANGE_BUDGET_SECONDS = 20
 
 class HongguoPluginError(RuntimeError):
     pass
@@ -2013,49 +2014,117 @@ def _toplevel_boxes(buf: bytes) -> list[tuple[int, int, bytes]]:
     return boxes
 
 
-def _range_get(url: str, start: int, end: int) -> tuple[bytes, int]:
-    """Fetch an exact MP4 byte span; never pass an ignored Range through as valid.
+class _MediaRangeError(HongguoPluginError):
+    """Terminal media transport error for this player request."""
 
-    The local HTTP stream promises byte-accurate Content-Range to the player.
-    If the CDN replies 200 for a nonzero offset, treating the full object as
-    that offset corrupts the MP4 and prevents seeking / the next episode.
-    """
+
+class _MediaRangeTransport(requests.Session):
+    def get_redirect_target(self, response):
+        # Even with allow_redirects=False Requests prepares the next request and
+        # drains the redirect body. The Range reader owns each hop and closes it.
+        return None
+
+
+def _media_redirect(current: str, location: str) -> str:
+    if not location or len(location) > 8192 or re.search(r"[\s\\]", location):
+        raise _MediaRangeError("媒體重新導向網址無效")
+    try:
+        target = urldefrag(urljoin(current, location)).url
+        parsed = urlparse(target)
+        host = parsed.hostname or ""
+        source = urlparse(current)
+        same_origin = (source.scheme == "https" and source.hostname == host
+                       and source.port in (None, 443))
+        trusted_cdn = any(host == d or host.endswith("." + d) for d in _MEDIA_CDN_DOMAINS)
+        if (parsed.scheme == "https" and host and parsed.port in (None, 443)
+                and parsed.username is None and parsed.password is None
+                and (same_origin or trusted_cdn)):
+            return target
+    except ValueError:
+        pass
+    raise _MediaRangeError("媒體重新導向目標不受信任")
+
+
+def _read_media_range(response, start: int, end: int, deadline: float) -> tuple[bytes, int]:
+    response.raise_for_status()
+    if response.status_code == 206:
+        match = re.fullmatch(r"bytes\s+(\d+)-(\d+)/(\d+)", response.headers.get("Content-Range", "").strip())
+        if not match:
+            raise _MediaRangeError("媒体 CDN 缺少有效 Content-Range")
+        first, last, total = map(int, match.groups())
+        if first != start or total <= start or last != min(end, total - 1):
+            raise _MediaRangeError("媒体 CDN Range 偏移不匹配")
+        expected = last - first + 1
+    elif response.status_code == 200 and start == 0:
+        length = response.headers.get("Content-Length", "")
+        total = int(length) if length.isdigit() else 0
+        expected = min(end + 1, total) if total else end + 1
+    else:
+        raise _MediaRangeError("媒体 CDN 不支持请求的 Range（HTTP %d）" % response.status_code)
+    if response.headers.get("Content-Encoding", "identity").lower() != "identity":
+        raise _MediaRangeError("媒體回應的內容編碼不符")
+
+    body = bytearray()
+    received = 0
+    for chunk in response.iter_content(64 * 1024 if not total else min(expected, 64 * 1024)):
+        if time.monotonic() >= deadline:
+            raise _MediaRangeError("媒體分片讀取逾時")
+        received += len(chunk)
+        if response.status_code == 206 and received > expected:
+            raise _MediaRangeError("媒体分片长度不符")
+        body.extend(chunk[:expected - len(body)])
+        if response.status_code == 200 and total and len(body) == expected:
+            break
+    if time.monotonic() >= deadline:
+        raise _MediaRangeError("媒體分片讀取逾時")
+    if not total:
+        expected = min(expected, received)
+    if not received or len(body) != expected:
+        raise HongguoPluginError("媒体分片长度不符")
+    return bytes(body), total or received
+
+
+def _range_get(url: str, start: int, end: int, deadline: float | None = None) -> tuple[bytes, int]:
     if start < 0 or end < start:
         raise HongguoPluginError("媒体 Range 参数无效")
-    headers = dict(MEDIA_HEADERS)
-    headers["Range"] = "bytes=%d-%d" % (start, end)
+    if deadline is None:
+        deadline = time.monotonic() + _RANGE_BUDGET_SECONDS
+    headers = dict(MEDIA_HEADERS, Range="bytes=%d-%d" % (start, end))
     headers["Accept-Encoding"] = "identity"
-    last_error: Exception | None = None
-    for attempt in range(_RANGE_FETCH_ATTEMPTS):
-        if attempt:
-            time.sleep(_RANGE_FETCH_BACKOFF_SECONDS * attempt)
-        try:
-            response = requests.get(url, headers=headers, timeout=60)
-            response.raise_for_status()
-            body = response.content
-            if response.status_code == 206:
-                content_range = response.headers.get("Content-Range") or ""
-                matched = re.fullmatch(r"bytes\s+(\d+)-(\d+)/(\d+)", content_range.strip())
-                if not matched:
-                    raise HongguoPluginError("媒体 CDN 缺少有效 Content-Range")
-                first, last, total = (int(x) for x in matched.groups())
-                if first != start or total <= first or last != min(end, total - 1):
-                    raise HongguoPluginError("媒体 CDN Range 偏移不匹配")
-                if len(body) != last - first + 1:
-                    raise HongguoPluginError("媒体分片长度不符")
-                return body, total
-            if response.status_code == 200 and start == 0:
-                if len(body) < end - start + 1:
-                    raise HongguoPluginError("媒体 CDN 忽略 Range 且返回不完整正文")
-                return body[:end + 1], len(body)
-            raise HongguoPluginError("媒体 CDN 不支持非零 Range（HTTP %d）" % response.status_code)
-        except (requests.RequestException, HongguoPluginError) as error:
-            last_error = error
-    raise last_error or HongguoPluginError("媒体分片请求失败")
+    with _MediaRangeTransport() as session:
+        for attempt in range(_RANGE_FETCH_ATTEMPTS):
+            current = url
+            visited = {current}
+            try:
+                while True:
+                    remaining = deadline - time.monotonic()
+                    if remaining <= 0:
+                        raise _MediaRangeError("媒體分片讀取逾時")
+                    with session.get(current, headers=headers, timeout=min(12, remaining),
+                                     stream=True, allow_redirects=False) as response:
+                        if response.status_code not in (301, 302, 303, 307, 308):
+                            return _read_media_range(response, start, end, deadline)
+                        current = _media_redirect(current, response.headers.get("Location", ""))
+                        if current in visited or len(visited) >= 6:
+                            raise _MediaRangeError("媒體重新導向重複或次數過多")
+                        visited.add(current)
+            except _MediaRangeError:
+                raise
+            except (requests.RequestException, HongguoPluginError) as error:
+                status = getattr(getattr(error, "response", None), "status_code", 0)
+                if 400 <= status < 500 and status != 408:
+                    raise
+                delay = _RANGE_FETCH_BACKOFF_SECONDS * (attempt + 1)
+                if deadline - time.monotonic() <= delay:
+                    raise _MediaRangeError("媒體分片讀取逾時") from error
+                if attempt + 1 == _RANGE_FETCH_ATTEMPTS:
+                    raise
+                time.sleep(delay)
 
 
 def _fetch_moov(url: str) -> tuple[int, int, bytes]:
-    probe, total = _range_get(url, 0, _STREAM_HEAD_PROBE - 1)
+    deadline = time.monotonic() + _RANGE_BUDGET_SECONDS
+    probe, total = _range_get(url, 0, _STREAM_HEAD_PROBE - 1, deadline)
     if not total:
         raise HongguoPluginError("媒体总长度未知")
     moov_start = 0
@@ -2071,7 +2140,7 @@ def _fetch_moov(url: str) -> tuple[int, int, bytes]:
         raise HongguoPluginError("moov 越界")
     if moov_start + moov_size <= len(probe):
         return total, moov_start, bytes(probe[moov_start : moov_start + moov_size])
-    moov, _ = _range_get(url, moov_start, moov_start + moov_size - 1)
+    moov, _ = _range_get(url, moov_start, moov_start + moov_size - 1, deadline)
     if len(moov) != moov_size:
         raise HongguoPluginError("moov 分片长度不符")
     return total, moov_start, moov
@@ -2494,7 +2563,9 @@ def _stream_session(video_id: str, config: Mapping[str, Any], quality: str = "10
                         break
                 raise HongguoPluginError(reason)
             except Exception as err:
-                if isinstance(err, _PlaybackModelError) or isinstance(err, requests.HTTPError) and getattr(err.response, "status_code", None) in (403, 429):
+                if isinstance(err, (_PlaybackModelError, _MediaRangeError)):
+                    raise
+                if isinstance(err, requests.HTTPError) and err.response is not None and 400 <= err.response.status_code < 500 and err.response.status_code != 408:
                     raise
                 last_err = err
                 try:

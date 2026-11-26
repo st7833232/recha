@@ -6,6 +6,7 @@ This deliberately performs no network access and does not claim real playback.
 import base64
 import gzip
 import importlib.util
+import io
 import json
 import subprocess
 import requests
@@ -463,19 +464,101 @@ class PlaybackContractTests(unittest.TestCase):
         self.assertEqual(result.content, bytes([42]) * 4096)
 
     def test_range_requires_exact_offset(self):
-        class MockResponse:
-            def __init__(self, status, headers, body):
-                self.status_code, self.headers, self.content = status, headers, body
-            def raise_for_status(self):
-                return None
-        good = MockResponse(206, {"Content-Range": "bytes 4-7/20"}, b"abcd")
-        with patch.object(module.requests, "get", return_value=good):
+        good = self.media_response(206, {"Content-Range": "bytes 4-7/20"}, b"abcd")
+        with patch.object(requests.Session, "get", return_value=good):
             self.assertEqual(module._range_get("https://example.test/movie.mp4", 4, 7),
                              (b"abcd", 20))
-        bad = MockResponse(200, {"Content-Length": "20"}, b"x" * 20)
-        with patch.object(module.requests, "get", return_value=bad):
+        bad = self.media_response(200, {"Content-Length": "20"}, b"x" * 20)
+        with patch.object(requests.Session, "get", return_value=bad):
             with self.assertRaises(module.HongguoPluginError):
                 module._range_get("https://example.test/movie.mp4", 4, 7)
+
+    @staticmethod
+    def media_response(status, headers, body=b""):
+        response = requests.Response()
+        response.status_code = status
+        response.headers.update(headers)
+        response.raw = io.BytesIO(body)
+        return response
+
+    def test_media_redirect_uses_location_with_proxy_and_preserves_range(self):
+        first = "https://v1.fqnovelvod.com/first"
+        final = "https://v2.qznovelvod.com/video?token=sample"
+        redirects = [self.media_response(302, {"Location": "../second"}),
+                     self.media_response(307, {"Location": final}),
+                     self.media_response(206, {"Content-Range": "bytes 4-7/20"}, b"data")]
+        with patch.dict("os.environ", {"https_proxy": "http://127.0.0.1:7890", "no_proxy": ""}), \
+             patch.object(requests.adapters.HTTPAdapter, "send", side_effect=redirects) as send:
+            self.assertEqual(module._range_get(first, 4, 7), (b"data", 20))
+        self.assertEqual([c.args[0].url for c in send.call_args_list],
+                         [first, "https://v1.fqnovelvod.com/second", final])
+        for call in send.call_args_list:
+            self.assertEqual(call.args[0].headers["Range"], "bytes=4-7")
+            self.assertEqual(call.kwargs["proxies"]["https"], "http://127.0.0.1:7890")
+
+    def test_media_redirect_rejected_before_contact(self):
+        start = "https://v1.fqnovelvod.com/movie"
+        for target in ("http://127.0.0.1/private", "//v2.fqnovelvod.com.example/test",
+                       "https://u:p@v2.fqnovelvod.com/test", "https://v2.fqnovelvod.com:444/test",
+                       start, "", "https://["):
+            with self.subTest(target=target):
+                redirect = self.media_response(302, {"Location": target})
+                trap = self.media_response(206, {"Content-Range": "bytes 0-3/16"}, b"abcd")
+                with patch.object(requests.adapters.HTTPAdapter, "send", side_effect=[redirect, trap]) as send:
+                    with self.assertRaises(module.HongguoPluginError):
+                        module._range_get(start, 0, 3)
+                    self.assertEqual(send.call_count, 1)
+
+    def test_media_retry_budget_expires_before_another_get(self):
+        elapsed = [0.0]
+        def stall(*args, **kwargs):
+            elapsed[0] += 35
+            raise requests.Timeout()
+        with patch.object(module.time, "monotonic", side_effect=lambda: elapsed[0]), \
+             patch.object(module.time, "sleep") as sleep, \
+             patch.object(requests.Session, "get", side_effect=stall) as get:
+            with self.assertRaises((module.HongguoPluginError, requests.Timeout)):
+                module._range_get("https://v1.fqnovelvod.com/movie", 0, 3)
+            self.assertEqual(get.call_count, 1)
+            sleep.assert_not_called()
+
+    def test_media_prefix_and_total_when_server_ignores_range(self):
+        data = b"abcdefgh"
+        for headers in ({}, {"Content-Length": "8"}):
+            for end, expected in ((3, b"abcd"), (15, data)):
+                with self.subTest(headers=headers, end=end):
+                    response = self.media_response(200, headers, data)
+                    with patch.object(requests.Session, "get", return_value=response):
+                        self.assertEqual(module._range_get("https://v1.fqnovelvod.com/movie", 0, end),
+                                         (expected, len(data)))
+
+    def test_media_redirect_and_body_share_one_deadline(self):
+        elapsed = [0.0]
+        redirect = self.media_response(302, {"Location": "/video"})
+        final = self.media_response(206, {"Content-Range": "bytes 0-3/12"}, b"test")
+        def fetch(*args, **kwargs):
+            if not elapsed[0]:
+                elapsed[0] = 8.0
+                return redirect
+            self.assertLessEqual(kwargs["timeout"], 2.0)
+            elapsed[0] = 10.1
+            return final
+        with patch.object(module.time, "monotonic", side_effect=lambda: elapsed[0]), \
+             patch.object(requests.Session, "get", side_effect=fetch) as get:
+            with self.assertRaises(module.HongguoPluginError):
+                module._range_get("https://v1.fqnovelvod.com/movie", 0, 3, deadline=10.0)
+            self.assertEqual(get.call_count, 2)
+        self.assertTrue(final.raw.closed)
+
+    def test_media_denial_is_terminal(self):
+        for status in (401, 403, 429):
+            with self.subTest(status=status), \
+                 patch.object(module.time, "sleep"), \
+                 patch.object(requests.Session, "get", return_value=self.media_response(status, {})) as get:
+                with self.assertRaises(requests.HTTPError):
+                    module._range_get("https://v1.fqnovelvod.com/movie", 0, 3)
+                self.assertEqual(get.call_count, 1)
+
 
 
 class StreamServerRecoveryTests(unittest.TestCase):

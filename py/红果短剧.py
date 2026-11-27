@@ -2,6 +2,7 @@
 # === 發布與修改說明 ===
 # SPDX-License-Identifier: GPL-3.0-only
 # 紅果短劇 Python 修改版，最近修改日期：2026-11-27。
+# 完整選集依當季目錄與總集數建立；網頁公開集數僅用來選擇播放路徑。
 # 官網公開選集依詳情頁可點連結辨識，起播時重新讀取該集的公開識別碼。
 # 共用直連播放參考 never88gone/THLRedGuo 的 assets/sources/hongguo.js
 # （d9287676），支援劇集索引、公開播放器資料與原生 MP4/HLS。
@@ -1052,6 +1053,7 @@ _PUBLIC_LINE = "官網公開 360P"
 _PUBLIC_SLOT_PREFIX = "hg-web-slot-v1:"
 _PUBLIC_HD_SLOT_PREFIX = "hg-web-1080-slot-v1:"
 _NATIVE_SLOT_PREFIX = "hg-native-slot-v1:"
+_CATALOG_EPISODE_PREFIX = "hg-catalog-v1:"
 _NATIVE_AUTO_LINE = "直連・自動畫質"
 _NATIVE_HD_LINE = "直連・指定 1080P"
 _WEB_TOKEN = re.compile(r"v1_[A-Za-z0-9_-]{8,128}")
@@ -1446,8 +1448,12 @@ def _native_media_result(url, size_hint, fixed_hd, video_id=None):
 
 def _native_episode(series_id, number, episode_id, fixed_hd):
     vid = _fresh_public_slot(series_id, number, episode_id)
+    return _play_web_episode(series_id, vid, fixed_hd, first_episode=(number == 1), public_slot=True)
+
+
+def _play_web_episode(series_id, vid, fixed_hd, *, first_episode=False, public_slot=False):
     try:
-        rows = _public_page_media_rows(series_id, vid, first_episode=(number == 1))
+        rows = _public_page_media_rows(series_id, vid, first_episode=first_episode)
     except _PublicAccessDenied:
         raise
     except (HongguoPluginError, requests.RequestException):
@@ -1461,11 +1467,34 @@ def _native_episode(series_id, number, episode_id, fixed_hd):
             return _native_media_result(url, size, fixed_hd, vid)
         except (HongguoPluginError, ValueError, requests.RequestException):
             continue
-    return _native_media_result(_public_web_media_url(vid), 0, fixed_hd, vid)
+    if public_slot:
+        return _native_media_result(_public_web_media_url(vid), 0, fixed_hd, vid)
+    reason = "此集目前沒有可直接播放的 1080P" if fixed_hd else "此集目前沒有公開直連片源"
+    raise HongguoPluginError(reason)
 
 
 def _native_playback(target, flag):
     fixed_hd = flag == _NATIVE_HD_LINE or "1080" in str(flag) or "超清" in str(flag)
+    if target.startswith(_CATALOG_EPISODE_PREFIX):
+        match = re.fullmatch(r"(auto|1080):([0-9]{1,30}):([1-9][0-9]{0,3}):([0-9]{1,30}|pending|disabled)",
+                             target[len(_CATALOG_EPISODE_PREFIX):])
+        if not match:
+            raise HongguoPluginError("目錄分集識別無效")
+        quality, sid, index, vid = match.groups()
+        number = int(index)
+        if vid == "disabled":
+            raise HongguoPluginError("此集目前未開放播放")
+        if vid == "pending":
+            try:
+                return _native_episode(sid, number, None, quality == "1080")
+            except _PublicAccessDenied:
+                raise
+            except (HongguoPluginError, requests.RequestException):
+                entry = _catalog_video_ids(_read_episode_catalog(sid), sid).get(number)
+                if not entry or entry[1]:
+                    raise HongguoPluginError("第 %d 集目前沒有公開播放入口" % number)
+                vid = entry[0]
+        return _play_web_episode(sid, vid, quality == "1080")
     if target.startswith((_NATIVE_SLOT_PREFIX, _PUBLIC_HD_SLOT_PREFIX)):
         prefix, target = target.split(":", 1)
         fixed_hd = prefix + ":" == _PUBLIC_HD_SLOT_PREFIX
@@ -6016,10 +6045,15 @@ class _PublicEpisodeLinks(HTMLParser):
     def __init__(self):
         super().__init__()
         self.paths = set()
+        self.episode_links = []
+        self.anchor_path = None
+        self.anchor_text = []
 
     def handle_starttag(self, tag, attrs):
         if tag != "a":
             return
+        self.anchor_path = None
+        self.anchor_text = []
         href = dict(attrs).get("href")
         if not href:
             return
@@ -6027,7 +6061,79 @@ class _PublicEpisodeLinks(HTMLParser):
         if path.startswith(SITE + "/"):
             path = path[len(SITE):]
         if path.startswith("/player/"):
-            self.paths.add(path.rstrip("/"))
+            self.anchor_path = path.rstrip("/")
+            self.paths.add(self.anchor_path)
+
+    def handle_data(self, text):
+        if self.anchor_path is not None:
+            self.anchor_text.append(text)
+
+    def handle_endtag(self, tag):
+        if tag == "a" and self.anchor_path is not None:
+            match = re.fullmatch(r"\s*(?:第\s*)?([1-9][0-9]{0,3})(?:\s*集)?\s*",
+                                 "".join(self.anchor_text))
+            if match:
+                self.episode_links.append((int(match[1]), self.anchor_path))
+            self.anchor_path = None
+            self.anchor_text = []
+
+
+def _episode_number(value):
+    text = str(value or "")
+    return int(text) if re.fullmatch(r"[1-9][0-9]{0,3}", text) else 0
+
+
+def _series_count(detail):
+    info = detail.get("series_episode_info")
+    match = re.search(r"(?:全|共)\s*([1-9][0-9]{0,3})\s*集", str(detail.get("episode_right_text") or ""))
+    return max(_episode_number(detail.get("episode_cnt")),
+               _episode_number(detail.get("episode_total_cnt")),
+               _episode_number(info.get("episode_cnt")) if isinstance(info, dict) else 0,
+               int(match[1]) if match else 0)
+
+
+def _catalog_video_ids(detail, sid):
+    rows = detail.get("video_list")
+    if not isinstance(rows, list):
+        return {}
+    catalog = {}
+    ids = set()
+    for row in rows:
+        if not isinstance(row, dict) or str(row.get("series_id") or sid) != sid:
+            continue
+        number = _episode_number(row.get("vid_index"))
+        vid = str(row.get("vid") or row.get("video_id") or "")
+        if not number or not re.fullmatch(r"[0-9]{1,30}", vid):
+            continue
+        if number in catalog or vid in ids:
+            return {}
+        ids.add(vid)
+        catalog[number] = (vid, str(row.get("disable_play")).lower() in ("true", "1"))
+    return catalog
+
+
+def _read_episode_catalog(sid):
+    """Request the series directory only. A site error leaves web data available."""
+    try:
+        response = requests.post(
+            "https://api5-normal-sinfonlinea.fqnovel.com/novel/player/multi_video_detail/player/v1",
+            json={"series_id": sid, "dr_scene": "player", "biz_param": {
+                "detail_page_version": 0, "need_all_video_definition": False,
+                "need_mp4_align": False, "source": 7, "use_os_player": False, "use_server_dns": False}},
+            headers={"Accept": "application/json"}, timeout=(3, 5), allow_redirects=False)
+        if response.status_code != 200:
+            return {}
+        body = response.json()
+        if not isinstance(body, dict) or str(body.get("code")) != "0":
+            return {}
+        data = body.get("data")
+        entry = data.get(sid) if isinstance(data, dict) else None
+        detail = entry.get("video_data") if isinstance(entry, dict) else None
+        if isinstance(detail, dict) and str(detail.get("series_id_str") or detail.get("series_id")) == sid:
+            return detail
+    except (requests.RequestException, ValueError):
+        pass
+    return {}
 
 
 def _public_slots(payload, series_id):
@@ -6037,11 +6143,13 @@ def _public_slots(payload, series_id):
         return {}
     vids = detail.get("vid_list")
     paths = payload.get("_webhtv_player_paths") or set()
-    if not isinstance(vids, list) or not paths:
+    if not paths:
         return {}
+    if not isinstance(vids, list):
+        vids = []
     limit = detail.get("accessible_episode_cnt")
     if limit is None:
-        limit = len(vids)
+        limit = max(len(vids), _series_count(detail), 1)
     elif not re.fullmatch(r"[0-9]{1,7}", str(limit)):
         return {}
     root = "/player/" + series_id
@@ -6056,7 +6164,14 @@ def _public_slots(payload, series_id):
         seen.add(token)
         if root + "/" + token in paths or (number == 1 and root in paths):
             slots[number] = token
-    return slots
+    for number, path in payload.get("_webhtv_episode_links", ()):
+        if number in slots or number > int(limit) or not path.startswith(root + "/"):
+            continue
+        token = path[len(root) + 1:]
+        if token not in seen and (_WEB_TOKEN.fullmatch(token) or re.fullmatch(r"[0-9]{1,30}", token)):
+            slots[number] = token
+            seen.add(token)
+    return dict(sorted(slots.items()))
 
 
 def _decode_site_page(html, include_player_paths=False):
@@ -6074,6 +6189,7 @@ def _decode_site_page(html, include_player_paths=False):
         links.feed(html)
         links.close()
         obj["_webhtv_player_paths"] = links.paths
+        obj["_webhtv_episode_links"] = links.episode_links
     return obj
 
 
@@ -6083,6 +6199,8 @@ def _fresh_public_slot(series_id, number=None, episode_id=None):
         headers={"User-Agent": _PUBLIC_WEB_UA, "Accept": "text/html"},
         allow_redirects=False, timeout=6,
     )
+    if response.status_code in (401, 403, 429):
+        raise _PublicAccessDenied("官網暫未開放此播放頁（HTTP %d）" % response.status_code)
     if response.status_code != 200 or len(response.content) > 2 * 1024 * 1024:
         raise HongguoPluginError("官網公開分集暫時不可用")
     slots = _public_slots(_decode_site_page(response.text, True), series_id)
@@ -7215,17 +7333,38 @@ class Spider(_BaseSpider):
         sid = sid.replace("hg-series-v1:", "")
         if not re.fullmatch(r"[0-9]{1,30}", sid):
             return {"list": []}
-        payload = _data(SITE + "/detail?series_id=" + quote(sid, safe=""), include_player_paths=True)
+        try:
+            payload = _data(SITE + "/detail?series_id=" + quote(sid, safe=""), include_player_paths=True)
+        except (RuntimeError, requests.RequestException, ValueError):
+            payload = {}
         p = (payload.get("loaderData") or {}).get("detail_page") or {}
         s = p.get("seriesDetail") or {}
         if p.get("isSuccess") is False or str(s.get("series_id")) != sid:
-            return {"list": []}
+            payload, s = {}, {}
         vids = s.get("vid_list")
         if not isinstance(vids, list):
             vids = []
         numeric = [(i, str(v)) for i, v in enumerate(vids, 1)
                    if re.fullmatch(r"[0-9]{1,30}", str(v))]
         slots = _public_slots(payload, sid)
+        numeric_ids = dict(numeric)
+        catalog = _catalog_video_ids(s, sid)
+        declared = _series_count(s)
+        mapped = set(slots) | set(numeric_ids) | set(catalog)
+        if not declared or len(mapped) < declared:
+            extra = _read_episode_catalog(sid)
+            if extra:
+                catalog.update(_catalog_video_ids(extra, sid))
+                declared = max(declared, _series_count(extra))
+                if not s:
+                    s = extra
+        if not s:
+            return {"list": []}
+        total = max(declared, len(vids), max(slots, default=0), max(catalog, default=0))
+        blocked = {n for n, entry in catalog.items() if entry[1]}
+        slots = {n: vid for n, vid in slots.items() if n not in blocked}
+        numeric = [(n, vid) for n, vid in numeric if n not in blocked]
+        numeric_ids = dict(numeric)
         actors = [str(x.get("nickname")) for x in (s.get("celebrities") or []) if isinstance(x, dict) and x.get("nickname")]
         try:
             _dm_series_load()
@@ -7236,21 +7375,44 @@ class Spider(_BaseSpider):
             pass
         play_from = []
         play_url = []
-        if slots:
+        if total > len(slots.keys() | numeric_ids.keys()) or (slots and len(slots) < total):
+            for label, quality, slot_prefix in (("完整選集・自動", "auto", _NATIVE_SLOT_PREFIX),
+                                                ("完整選集・指定 1080P", "1080", _PUBLIC_HD_SLOT_PREFIX)):
+                episodes = []
+                for n in range(1, total + 1):
+                    title = "第%d集" % n
+                    if n in slots:
+                        token = "%s%s:%d" % (slot_prefix, sid, n)
+                    elif n in numeric_ids:
+                        token = "%s1080:%s" % (EPISODE_PREFIX, numeric_ids[n])
+                    else:
+                        vid, disabled = catalog.get(n, ("pending", False))
+                        if disabled:
+                            title += "（未開放）"
+                            vid = "disabled"
+                        elif vid == "pending":
+                            title += "（待取片源）"
+                        token = "%s%s:%s:%d:%s" % (_CATALOG_EPISODE_PREFIX, quality, sid, n, vid)
+                    episodes.append(title + "$" + token)
+                play_from.append(label)
+                play_url.append("#".join(episodes))
+        elif slots:
             for label, prefix in ((_NATIVE_AUTO_LINE, _NATIVE_SLOT_PREFIX),
-                                  (_NATIVE_HD_LINE, _PUBLIC_HD_SLOT_PREFIX),
-                                  (_PUBLIC_LINE, _PUBLIC_SLOT_PREFIX)):
+                                  (_NATIVE_HD_LINE, _PUBLIC_HD_SLOT_PREFIX)):
                 play_from.append(label)
                 play_url.append("#".join("%d$%s%s:%d" % (n, prefix, sid, n) for n in slots))
+        if slots:
+            play_from.append(_PUBLIC_LINE)
+            play_url.append("#".join("%d$%s%s:%d" % (n, _PUBLIC_SLOT_PREFIX, sid, n) for n in slots))
         if numeric:
             for q, line_name in _HG_QUALITY_LINES:
                 play_from.append(line_name)
                 play_url.append("#".join("%d$%s%s:%s" % (i, EPISODE_PREFIX, q, vid)
                                          for i, vid in numeric))
-        return {"list": [{"vod_id": sid, "vod_name": str(s.get("series_name") or ""), "vod_pic": str(s.get("series_cover") or ""), "vod_year": "", "vod_area": "", "vod_director": "", "vod_actor": ",".join(actors), "vod_content": str(s.get("series_intro") or ""), "vod_remarks": str(s.get("episode_right_text") or ""), "vod_play_from": "$$$".join(play_from), "vod_play_url": "$$$".join(play_url)}]}
+        return {"list": [{"vod_id": sid, "vod_name": str(s.get("series_name") or s.get("series_title") or ""), "vod_pic": str(s.get("series_cover") or ""), "vod_year": "", "vod_area": "", "vod_director": "", "vod_actor": ",".join(actors), "vod_content": str(s.get("series_intro") or ""), "vod_remarks": str(s.get("episode_right_text") or ("全%d集" % total if total else "")), "vod_play_from": "$$$".join(play_from), "vod_play_url": "$$$".join(play_url)}]}
     def playerContent(self, flag, id, vipFlags=None):
         token = str(id or "")
-        if (token.startswith((_NATIVE_SLOT_PREFIX, _PUBLIC_HD_SLOT_PREFIX, "hongguo:", "https://"))
+        if (token.startswith((_CATALOG_EPISODE_PREFIX, _NATIVE_SLOT_PREFIX, _PUBLIC_HD_SLOT_PREFIX, "hongguo:", "https://"))
                 or re.fullmatch(r"[0-9]{1,30}[/_][0-9]{1,30}", token)):
             try:
                 return _native_playback(token, flag)

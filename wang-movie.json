@@ -65,6 +65,16 @@
       "changeable": 1
     },
     {
+      "key": "py_hongguo",
+      "name": "紅果 • 短劇",
+      "type": 3,
+      "api": "https://raw.githubusercontent.com/cluntop/tvbox/main/py/hongguo.py",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "genre": "shortdrama"
+    },
+    {
       "key": "anime1",
       "name": "Anime1 • 動畫",
       "type": 3,

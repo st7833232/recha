@@ -323,10 +323,7 @@ class Spider(BaseSpider):
         parsed = urlsplit(url or "")
         return (parsed.netloc.lower(), parsed.path.rstrip("/").lower())
 
-    def _detail_poster_candidates(self, source, detail_url, title=""):
-        root = _parse_dom(source)
-        candidates = []
-
+    def _primary_detail_posters(self, root, detail_url):
         # Prefer explicit, movie-specific metadata and detail artwork.
         for meta in _find_all(root, tag="meta"):
             if (
@@ -337,13 +334,17 @@ class Spider(BaseSpider):
             ):
                 value = self._cover_url(meta.attr("content"), detail_url)
                 if value:
-                    candidates.append(value)
+                    yield value
 
-        for cls in ("detail-pic", "movie-poster", "poster", "cover", "movie-cover", "detail-cover"):
+        for cls in ("item-cover", "detail-pic", "movie-poster", "poster", "cover", "movie-cover", "detail-cover"):
             for node in _find_all(root, cls=cls):
                 value = self._picture_from_node(node, detail_url)
                 if value:
-                    candidates.append(value)
+                    yield value
+
+    def _detail_poster_candidates(self, source, detail_url, title=""):
+        root = _parse_dom(source)
+        candidates = list(self._primary_detail_posters(root, detail_url))
 
         for img in _find_all(root, tag="img"):
             labels = (
@@ -404,41 +405,31 @@ class Spider(BaseSpider):
         except Exception:
             return mid, []
 
-    def _enrich_posters(self, items, raw_candidates):
-        if not items:
-            return items
-
+    def _enrich_posters(self, items, detail_items):
         # The same promotional artwork appears for unrelated titles. Normalize
         # URLs without query strings before counting, to catch cache-busters.
         listing_frequency = Counter(
-            self._poster_identity(value)
-            for value in raw_candidates.values() if value
+            self._poster_identity(item["vod_pic"])
+            for item in items if item["vod_pic"]
         )
         listing_common = {
             identity for identity, count in listing_frequency.items()
             if count > 1
         }
 
-        # A title-specific listing image is usable immediately. Otherwise
-        # consult its own detail page, never a neighboring card's image.
-        missing = []
+        # Keep valid covers for every scanned title, including titles that
+        # did not match the current search.
         for item in items:
             mid = item["vod_id"]
-            picture = raw_candidates.get(mid, "")
-            identity = self._poster_identity(picture)
-            if picture and identity not in listing_common:
-                item["vod_pic"] = picture
+            picture = item["vod_pic"]
+            if picture and self._poster_identity(picture) not in listing_common:
                 self._poster_cache[mid] = picture
-            elif mid in self._poster_cache:
-                item["vod_pic"] = self._poster_cache[mid]
             else:
-                item["vod_pic"] = ""
-                missing.append(item)
+                item["vod_pic"] = self._poster_cache.get(mid, "")
 
-        # Only enrich the visible first batch. Bounded concurrent requests
-        # prevent a cold-start regression from dozens of sequential detail GETs.
-        if missing:
-            selected = missing[:16]
+        # Fetch details only for missing covers in the first displayed batch.
+        selected = [item for item in detail_items if not item["vod_pic"]][:16]
+        if selected:
             with ThreadPoolExecutor(max_workers=8) as pool:
                 fetched = list(pool.map(self._fetch_detail_posters, selected))
 
@@ -464,12 +455,10 @@ class Spider(BaseSpider):
             if len(self._title_index) >= 1000 and mid not in self._title_index:
                 self._title_index.pop(next(iter(self._title_index)))
             self._title_index[mid] = dict(item)
-        return items
 
     def _parse_movie_list(self, source, base_url):
         root = _parse_dom(source)
-        result = []
-        seen = set()
+        result = {}
 
         for anchor in _find_all(root, tag="a", attr_name="href"):
             href = anchor.attr("href")
@@ -477,37 +466,26 @@ class Spider(BaseSpider):
                 continue
             absolute = _absolute(href, base_url)
             mid = _movie_id(absolute)
-            if not mid or mid in {"1", "2", "3", "4", "5", "6"} or mid in seen:
+            if not mid or mid in {"1", "2", "3", "4", "5", "6"}:
+                continue
+
+            if mid in result:
+                # Some templates put a text link before the same title's image.
+                if not result[mid]["vod_pic"]:
+                    result[mid]["vod_pic"] = self._picture_for_movie_anchor(anchor, base_url)
                 continue
 
             title = self._anchor_title(anchor)
             if not title:
                 continue
 
-            seen.add(mid)
-            result.append({
+            result[mid] = {
                 "vod_id": mid,
                 "vod_name": title,
                 "vod_pic": self._picture_for_movie_anchor(anchor, base_url),
-            })
+            }
 
-        # Parsing remains network-free: search scans multiple category pages
-        # and must not trigger a detail request for every scanned title.
-        for item in result:
-            item["vod_pic"] = self._poster_cache.get(item["vod_id"], "")
-            if len(self._title_index) >= 1000 and item["vod_id"] not in self._title_index:
-                self._title_index.pop(next(iter(self._title_index)))
-            self._title_index[item["vod_id"]] = dict(item)
-        return result
-
-    def _listing_posters(self, source, base_url):
-        root = _parse_dom(source)
-        result = {}
-        for anchor in _find_all(root, tag="a", attr_name="href"):
-            mid = _movie_id(_absolute(anchor.attr("href"), base_url))
-            if mid and mid not in result:
-                result[mid] = self._picture_for_movie_anchor(anchor, base_url)
-        return result
+        return list(result.values())
 
     def _category_url(self, tid):
         value = str(tid or "").strip()
@@ -576,7 +554,7 @@ class Spider(BaseSpider):
         if not items:
             self.log("8Movie category returned no parsed items: tid=%s" % tid)
         else:
-            items = self._enrich_posters(items, self._listing_posters(source, url))
+            self._enrich_posters(items, items)
 
         return {
             "page": 1,
@@ -649,19 +627,9 @@ class Spider(BaseSpider):
 
             episodes.append("%s$%s" % (name, play_url))
 
-        poster = ""
-        for meta in _find_all(root, tag="meta"):
-            if meta.attr("property") in ("og:image", "twitter:image") or meta.attr("name") == "twitter:image":
-                poster = self._cover_url(meta.attr("content"), url)
-                if poster:
-                    break
+        poster = next(self._primary_detail_posters(root, url), "")
         if not poster:
-            for cls in ("detail-pic", "movie-poster", "poster", "cover"):
-                panel = _first(_find_all(root, cls=cls))
-                if panel:
-                    poster = self._picture_from_node(panel, url)
-                if poster:
-                    break
+            poster = self._poster_cache.get(mid, "")
 
         vod = {
             "vod_id": mid,
@@ -758,11 +726,10 @@ class Spider(BaseSpider):
             source = self._get(url, self.site + "/", timeout=2.5)
             if not source:
                 continue
-            found = self._search_result(self._parse_movie_list(source, url), keyword)
+            items = self._parse_movie_list(source, url)
+            found = self._search_result(items, keyword)
+            self._enrich_posters(items, found["list"])
             if found["list"]:
-                found["list"] = self._enrich_posters(
-                    found["list"], self._listing_posters(source, url)
-                )
                 return found
 
         # Best-effort GET form detection; do not assume these routes implement
@@ -782,11 +749,10 @@ class Spider(BaseSpider):
                     break
                 seen_urls.add(url)
                 source = self._get(url, self.site + "/", timeout=2.0)
-                found = self._search_result(self._parse_movie_list(source, url), keyword)
+                items = self._parse_movie_list(source, url)
+                found = self._search_result(items, keyword)
+                self._enrich_posters(items, found["list"])
                 if found["list"]:
-                    found["list"] = self._enrich_posters(
-                        found["list"], self._listing_posters(source, url)
-                    )
                     return found
 
         self.log("8Movie: keyword not found in visible pages; full search API unverified")

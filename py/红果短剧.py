@@ -2,6 +2,7 @@
 # === 發布與修改說明 ===
 # SPDX-License-Identifier: GPL-3.0-only
 # 紅果短劇 Python 修改版，最近修改日期：2026-11-27。
+# 每集各自取得公開畫質，由 1080P 至 360P 排序。完整目錄與下一集片源可重用。
 # 完整選集依當季目錄與總集數建立；網頁公開集數僅用來選擇播放路徑。
 # 官網公開選集依詳情頁可點連結辨識，起播時重新讀取該集的公開識別碼。
 # 共用直連播放參考 never88gone/THLRedGuo 的 assets/sources/hongguo.js
@@ -1392,8 +1393,18 @@ def _public_page_media_url(series_id: str, video_id: str) -> str:
     raise HongguoPluginError("官網未提供匹配的公開完整片源")
 
 
-def _fixed_hls_url(url, size_hint, video_id, headers):
-    with requests.get(url, headers=headers, stream=True, timeout=6, allow_redirects=False) as response:
+_PUBLIC_GRADES = (1080, 720, 540, 480, 360)
+
+
+def _public_headers():
+    return {"User-Agent": _PUBLIC_WEB_UA, "Referer": SITE + "/"}
+
+
+def _hls_grade_urls(url, size_hint, video_id):
+    with requests.get(url, headers=_public_headers(), stream=True, timeout=6,
+                      allow_redirects=False) as response:
+        if response.status_code in (401, 403, 429):
+            raise _PublicAccessDenied("官網暫未開放此播放清單")
         if response.status_code != 200:
             raise HongguoPluginError("HLS 播放清單不可用")
         body = bytearray()
@@ -1401,7 +1412,7 @@ def _fixed_hls_url(url, size_hint, video_id, headers):
             body.extend(chunk)
             if len(body) > 256 * 1024:
                 raise HongguoPluginError("HLS 播放清單過大")
-    lines = [x.strip() for x in bytes(body).decode("utf-8-sig").splitlines() if x.strip()]
+    lines = [line.strip() for line in body.decode("utf-8-sig").splitlines() if line.strip()]
     if not lines or lines[0] != "#EXTM3U":
         raise HongguoPluginError("HLS 播放清單無效")
     variants = []
@@ -1409,117 +1420,248 @@ def _fixed_hls_url(url, size_hint, video_id, headers):
         if not line.startswith("#EXT-X-STREAM-INF:"):
             continue
         attrs = line.partition(":")[2]
-        res = re.search(r"(?:^|,)RESOLUTION=(\d+)x(\d+)(?=,|$)", attrs, re.I)
-        size = min(map(int, res.groups())) if res else 0
+        match = re.search(r"(?:^|,)RESOLUTION=(\d+)x(\d+)(?=,|$)", attrs, re.I)
+        size = min(map(int, match.groups())) if match else 0
         uri = lines[i + 1] if i + 1 < len(lines) and not lines[i + 1].startswith("#") else ""
-        variants.append((size, attrs, urljoin(url, uri) if uri else ""))
+        variants.append((size, line, urljoin(url, uri) if uri else ""))
     if not variants:
-        if size_hint == 1080 and any(x.startswith("#EXTINF:") for x in lines):
-            return url
-    elif all(size == 1080 for size, _, _ in variants):
-        return url
-    for size, attrs, uri in variants:
-        # Returning a standalone rendition must not discard external audio or subtitles.
-        if size == 1080 and not re.search(r"(?:^|,)(?:AUDIO|VIDEO|SUBTITLES|CLOSED-CAPTIONS)=", attrs):
-            if _trusted_direct_url(uri, video_id):
-                return uri
-    raise HongguoPluginError("HLS 未提供可獨立直放的 1080P 版本")
+        if size_hint in _PUBLIC_GRADES and any(line.startswith("#EXTINF:") for line in lines):
+            return {size_hint: url}
+        return {}
+    sizes = {size for size, _, _ in variants}
+    if len(sizes) == 1 and sizes.issubset(_PUBLIC_GRADES):
+        return {sizes.pop(): url}
+    choices = {}
+    for size, tag, uri in variants:
+        if size not in _PUBLIC_GRADES or size in choices or not _trusted_direct_url(uri, video_id):
+            continue
+        # Grouped playlists must keep their audio, captions and master-level attributes.
+        if re.search(r"(?:[:,])(?:AUDIO|VIDEO|SUBTITLES|CLOSED-CAPTIONS)=", tag) or any(
+                line.startswith(("#EXT-X-DEFINE:", "#EXT-X-SESSION-KEY:")) for line in lines):
+            continue
+        choices[size] = uri
+    grouped = (sizes & set(_PUBLIC_GRADES)) - choices.keys()
+    for size in grouped:
+        uri = _local_hls_grade(lines, url, size, variants, video_id)
+        if uri:
+            choices[size] = uri
+    return choices
 
 
-def _native_media_result(url, size_hint, fixed_hd, video_id=None):
-    if not _trusted_direct_url(url, video_id):
-        raise HongguoPluginError("無可用的官網媒體網址")
-    headers = {"User-Agent": _PUBLIC_WEB_UA, "Referer": SITE + "/"}
-    result = {"parse": 0, "jx": 0, "playUrl": "", "url": url, "header": headers}
-    if not fixed_hd:
-        if size_hint > 0:
-            result["quality"] = "%dP" % size_hint
-        return result
-    if urlparse(url).path.lower().endswith(".m3u8"):
-        result["url"] = _fixed_hls_url(url, size_hint, video_id, headers)
-    else:
-        info = _public_mp4_info(url)
-        if info["quality"] != 1080:
-            raise HongguoPluginError("本集未提供可直放的 1080P")
-        result.update(width=info["width"], height=info["height"], codec=info["codec"])
-    result["quality"] = "1080P"
-    return result
-
-
-def _native_episode(series_id, number, episode_id, fixed_hd):
-    vid = _fresh_public_slot(series_id, number, episode_id)
-    return _play_web_episode(series_id, vid, fixed_hd, first_episode=(number == 1), public_slot=True)
-
-
-def _play_web_episode(series_id, vid, fixed_hd, *, first_episode=False, public_slot=False):
+def _local_hls_grade(lines, master, grade, variants, video_id):
+    """Preserve rendition groups in a normal HLS master restricted to one resolution."""
+    # Variable substitution depends on the original URL. A protected session cannot
+    # be represented by this small clear-playlist adapter.
+    if any(line.startswith(("#EXT-X-DEFINE:", "#EXT-X-SESSION-KEY:", "#EXT-X-CONTENT-STEERING:"))
+           for line in lines) or any("{$" in line for line in lines):
+        return None
+    selected = [(tag, uri) for size, tag, uri in variants
+                if size == grade and _trusted_direct_url(uri, video_id)]
+    if not selected:
+        return None
+    output = ["#EXTM3U"]
+    for line in lines:
+        if line.startswith("#EXT-X-MEDIA:"):
+            match = re.search(r'(?:[:,])URI="([^"]+)"', line)
+            if match:
+                target = urljoin(master, match[1])
+                if not _trusted_direct_url(target, video_id):
+                    return None
+                line = line[:match.start(1)] + target + line[match.end(1):]
+            output.append(line)
+        elif line.startswith(("#EXT-X-VERSION:", "#EXT-X-INDEPENDENT-SEGMENTS", "#EXT-X-START:")):
+            output.append(line)
+    for tag, uri in selected:
+        output.extend([tag, uri])
+    data = ("\n".join(output) + "\n").encode("utf-8")
+    key = hashlib.sha256(data).hexdigest()
     try:
-        rows = _public_page_media_rows(series_id, vid, first_episode=first_episode)
-    except _PublicAccessDenied:
-        raise
-    except (HongguoPluginError, requests.RequestException):
-        rows = []
-    seen = set()
-    for size, url in sorted(rows, key=lambda row: row[0], reverse=True):
-        if url in seen or size > 1080 or (fixed_hd and size not in (0, 1080)):
+        port = _start_stream_server()
+    except (OSError, RuntimeError):
+        return None
+    if not port:
+        return None
+    _GRADE_PLAYLISTS.get(key, lambda: (data, 1800))
+    return "http://127.0.0.1:%d/hg-quality/%s.m3u8" % (port, key)
+
+
+def _public_choices(rows, vid):
+    choices, seen = {}, set()
+    errors = []
+    for size, url in rows:
+        if not _trusted_direct_url(url, vid) or url in seen:
             continue
         seen.add(url)
         try:
-            return _native_media_result(url, size, fixed_hd, vid)
-        except (HongguoPluginError, ValueError, requests.RequestException):
+            if urlparse(url).path.lower().endswith(".m3u8"):
+                variants = _hls_grade_urls(url, size, vid)
+            else:
+                if not size:
+                    size = _public_mp4_info(url)["quality"]
+                variants = {size: url} if size in _PUBLIC_GRADES else {}
+            for grade, media in variants.items():
+                if _hd_result_lifetime(url) > 0 and _hd_result_lifetime(media) > 0:
+                    choices.setdefault(grade, media)
+        except _PublicAccessDenied:
+            raise
+        except (HongguoPluginError, requests.RequestException, ValueError) as error:
+            errors.append(error)
+    if not choices and errors:
+        raise errors[0]
+    return choices
+
+
+def _public_menu(choices, wanted=0):
+    grades = [grade for grade in _PUBLIC_GRADES if grade in choices]
+    if wanted:
+        if wanted not in grades:
+            raise HongguoPluginError("本集未提供可直放的 %dP" % wanted)
+        grades = [wanted]
+    if not grades:
+        raise HongguoPluginError("本集暫無可用的分集畫質")
+    values = []
+    for grade in grades:
+        values.extend(["%dP" % grade, choices[grade]])
+    return {"parse": 0, "jx": 0, "playUrl": "", "url": values,
+            "header": _public_headers(), "quality": values[0]}
+
+
+def _episode_choices(sid, vid, first_episode=False, public_slot=False):
+    try:
+        rows = _public_page_media_rows(sid, vid, first_episode=first_episode)
+        choices = _public_choices(rows, vid)
+    except _PublicAccessDenied:
+        raise
+    except HongguoPluginError:
+        if not public_slot:
+            raise
+        choices = {}
+    if choices or not public_slot:
+        return choices
+    # Only a listed public slot may use the site's publicly offered full episode.
+    return _public_choices([(0, _public_web_media_url(vid))], vid)
+
+
+def _hd_result_lifetime(url):
+    expiries = []
+    query = parse_qs(urlparse(url).query)
+    for name, values in query.items():
+        if name.lower() not in ("expire", "expires", "x-expires", "url_expire"):
             continue
-    if public_slot:
-        return _native_media_result(_public_web_media_url(vid), 0, fixed_hd, vid)
-    reason = "此集目前沒有可直接播放的 1080P" if fixed_hd else "此集目前沒有公開直連片源"
-    raise HongguoPluginError(reason)
+        for value in values:
+            if value.isascii() and value.isdigit() and len(value) in (10, 13):
+                expiry = int(value) / (1000 if len(value) == 13 else 1)
+                expiries.append(expiry - time.time() - 5)
+    return max(0, min([300] + expiries)) if expiries else 90
+
+
+def _numbered_choices(sid, number, hint=None):
+    def resolve():
+        directory = _DIRECTORY_MEMO.peek(sid)
+        if directory is None:
+            directory = _series_directory(sid)
+        entry = directory["catalog"].get(number)
+        if entry and entry[1]:
+            raise HongguoPluginError("第 %d 集未開放播放" % number)
+        slot = directory["slots"].get(number)
+        if slot and time.monotonic() - directory["read_at"] >= 25 and _WEB_TOKEN.fullmatch(slot):
+            slot = _fresh_public_slot(sid, number)
+        vid = slot or (entry[0] if entry else None) or directory["numeric"].get(number) or hint
+        if not vid:
+            raise HongguoPluginError("第 %d 集待取片源，目錄暫無播放入口" % number)
+        media = directory.get("media", {})
+        catalog_id = entry[0] if entry else directory["numeric"].get(number)
+        candidates = [(size, url) for size, url in media.get(catalog_id or vid, ())
+                      if _hd_result_lifetime(url) > 0]
+        try:
+            choices = _public_choices(candidates, catalog_id or vid) if candidates else {}
+        except _PublicAccessDenied:
+            raise
+        except (HongguoPluginError, requests.RequestException, ValueError):
+            choices = {}
+        if not choices:
+            choices = _episode_choices(sid, vid, bool(slot) and number == 1, bool(slot))
+        urls = list(choices.values()) + [url for _, url in candidates]
+        lifetime = min((_hd_result_lifetime(url) for url in urls), default=5)
+        return choices, lifetime
+
+    return _EPISODE_CHOICES.get((sid, number), resolve)
+
+
+def _prepare_next_public(sid, number):
+    directory = _DIRECTORY_MEMO.peek(sid)
+    if not directory or number > directory["total"]:
+        return
+    entry = directory["catalog"].get(number)
+    if entry and entry[1]:
+        return
+    if number not in directory["slots"] and not (entry and entry[0] in directory.get("media", {})):
+        return
+    if _EPISODE_CHOICES.peek((sid, number)) is not None or not _NEXT_PUBLIC.acquire(False):
+        return
+
+    def prepare():
+        try:
+            _numbered_choices(sid, number)
+        except (HongguoPluginError, ValueError, requests.RequestException):
+            pass
+        finally:
+            _NEXT_PUBLIC.release()
+
+    try:
+        threading.Thread(target=prepare, name="hongguo-next-episode", daemon=True).start()
+    except RuntimeError:
+        _NEXT_PUBLIC.release()
+
+
+def _play_number(sid, number, hint=None, wanted=0):
+    result = _public_menu(_numbered_choices(sid, number, hint), wanted)
+    _prepare_next_public(sid, number + 1)
+    return result
+
+
+def _native_episode(series_id, number, episode_id):
+    if number is not None:
+        return _play_number(series_id, number)
+    vid = _fresh_public_slot(series_id, episode_id=episode_id)
+    return _public_menu(_episode_choices(series_id, vid, public_slot=True))
 
 
 def _native_playback(target, flag):
-    fixed_hd = flag == _NATIVE_HD_LINE or "1080" in str(flag) or "超清" in str(flag)
     if target.startswith(_CATALOG_EPISODE_PREFIX):
-        match = re.fullmatch(r"(auto|1080):([0-9]{1,30}):([1-9][0-9]{0,3}):([0-9]{1,30}|pending|disabled)",
+        match = re.fullmatch(r"(auto|1080|720|540|480|360):([0-9]{1,30}):([1-9][0-9]{0,3}):([0-9]{1,30}|pending|disabled|listed)",
                              target[len(_CATALOG_EPISODE_PREFIX):])
         if not match:
             raise HongguoPluginError("目錄分集識別無效")
-        quality, sid, index, vid = match.groups()
-        number = int(index)
+        grade, sid, index, vid = match.groups()
         if vid == "disabled":
             raise HongguoPluginError("此集目前未開放播放")
-        if vid == "pending":
-            try:
-                return _native_episode(sid, number, None, quality == "1080")
-            except _PublicAccessDenied:
-                raise
-            except (HongguoPluginError, requests.RequestException):
-                entry = _catalog_video_ids(_read_episode_catalog(sid), sid).get(number)
-                if not entry or entry[1]:
-                    raise HongguoPluginError("第 %d 集目前沒有公開播放入口" % number)
-                vid = entry[0]
-        return _play_web_episode(sid, vid, quality == "1080")
-    if target.startswith((_NATIVE_SLOT_PREFIX, _PUBLIC_HD_SLOT_PREFIX)):
-        prefix, target = target.split(":", 1)
-        fixed_hd = prefix + ":" == _PUBLIC_HD_SLOT_PREFIX
-        match = re.fullmatch(r"([0-9]{1,30}):([1-9][0-9]{0,6})", target)
-        if match:
-            return _native_episode(match[1], int(match[2]), None, fixed_hd)
-        raise HongguoPluginError("公開分集識別無效")
+        hint = vid if vid.isdigit() else None
+        return _play_number(sid, int(index), hint, 0 if grade == "auto" else int(grade))
+    if target.startswith((_NATIVE_SLOT_PREFIX, _PUBLIC_HD_SLOT_PREFIX, _PUBLIC_SLOT_PREFIX)):
+        match = re.fullmatch(r"([0-9]{1,30}):([1-9][0-9]{0,6})", target.split(":", 1)[1])
+        if not match:
+            raise HongguoPluginError("公開分集識別無效")
+        wanted = 1080 if target.startswith(_PUBLIC_HD_SLOT_PREFIX) else 360 if target.startswith(_PUBLIC_SLOT_PREFIX) else 0
+        return _play_number(match[1], int(match[2]), wanted=wanted)
 
     target = target[len("hongguo:"):] if target.startswith("hongguo:") else target
     if target.startswith("https://"):
         if _trusted_direct_url(target) and urlparse(target).path.lower().endswith((".mp4", ".m3u8")):
-            return _native_media_result(target, 0, fixed_hd)
+            return _public_menu(_public_choices([(0, target)], None))
         page = urlparse(target)
         if page.netloc not in ("hongguoduanju.com", "www.hongguoduanju.com"):
             raise HongguoPluginError("此網址不是紅果公開播放頁或媒體")
         match = re.fullmatch(r"/player/([0-9]{1,30})(?:/([0-9]{1,30}|v1_[A-Za-z0-9_-]{8,128}))?/?", page.path)
         if match:
-            return _native_episode(match[1], None if match[2] else 1, match[2], fixed_hd)
+            return _native_episode(match[1], None if match[2] else 1, match[2])
     else:
         match = re.fullmatch(r"([0-9]{1,30})[/_]([1-9][0-9]{0,4})", target)
         if match:
-            return _native_episode(match[1], int(match[2]), None, fixed_hd)
+            return _native_episode(match[1], int(match[2]), None)
         match = re.fullmatch(r"([0-9]{1,30})_([0-9]{10,30})", target)
         if match:
-            return _native_episode(match[1], None, match[2], fixed_hd)
+            return _native_episode(match[1], None, match[2])
     raise HongguoPluginError("無法辨識此分集的播放資料")
 
 
@@ -2925,6 +3067,19 @@ class _StreamHandler(BaseHTTPRequestHandler):
 
     def _serve(self, body: bool) -> None:
         route = urlparse(self.path).path
+        if route.startswith("/hg-quality/"):
+            key = re.fullmatch(r"/hg-quality/([a-f0-9]{64})\.m3u8", route)
+            playlist = _GRADE_PLAYLISTS.peek(key[1]) if key else None
+            if not playlist:
+                self._fail(404, b"playlist expired")
+                return
+            self.send_response(200)
+            self.send_header("Content-Type", "application/vnd.apple.mpegurl")
+            self.send_header("Content-Length", str(len(playlist)))
+            self.end_headers()
+            if body:
+                self.wfile.write(playlist)
+            return
         if route.startswith("/hg_dm"):
             self._serve_danmaku(body)
             return
@@ -6078,6 +6233,120 @@ class _PublicEpisodeLinks(HTMLParser):
             self.anchor_text = []
 
 
+class _PlaybackMemo:
+    """Keep bounded in-process results and coalesce concurrent requests for each key."""
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.values = {}
+        self.loading = {}
+        self.lock = threading.Lock()
+
+    def peek(self, key):
+        with self.lock:
+            record = self.values.get(key)
+            return record[1] if record and record[0] > time.monotonic() else None
+
+    def get(self, key, loader):
+        with self.lock:
+            record = self.values.get(key)
+            if record and record[0] > time.monotonic():
+                return record[1]
+            future = self.loading.get(key)
+            leader = future is None
+            if leader:
+                future = self.loading[key] = concurrent.futures.Future()
+        if not leader:
+            return future.result()
+        try:
+            value, lifetime = loader()
+            with self.lock:
+                self.values.pop(key, None)
+                if lifetime > 0:
+                    if len(self.values) >= self.capacity:
+                        self.values.pop(next(iter(self.values)))
+                    self.values[key] = (time.monotonic() + lifetime, value)
+            future.set_result(value)
+            return value
+        except BaseException as error:
+            future.set_exception(error)
+            raise
+        finally:
+            with self.lock:
+                self.loading.pop(key, None)
+
+
+_DIRECTORY_MEMO = _PlaybackMemo(16)
+_EPISODE_CHOICES = _PlaybackMemo(64)
+_GRADE_PLAYLISTS = _PlaybackMemo(128)
+_PUBLIC_SLOT_MAP = _PlaybackMemo(16)
+_NEXT_PUBLIC = threading.Lock()
+
+
+def _series_directory(sid):
+    return _DIRECTORY_MEMO.get(sid, lambda: _load_series_directory(sid))
+
+
+def _catalog_media(detail, sid):
+    media = {}
+    rows = detail.get("video_list")
+    if not isinstance(rows, list):
+        return media
+    for row in rows:
+        if not isinstance(row, dict) or str(row.get("series_id") or sid) != sid:
+            continue
+        if (str(row.get("disable_play")).lower() in ("1", "true") or
+                any(row.get(key) for key in ("drm", "protectedPlayback", "license_url",
+                    "spade_a", "encrypt_info", "is_preview", "is_trial", "is_encrypted"))):
+            continue
+        vid = str(row.get("vid") or row.get("video_id") or "")
+        if not re.fullmatch(r"[0-9]{1,30}", vid):
+            continue
+        player = row.get("video_player_info")
+        candidates = _clear_web_rows(player, vid) if player else _clear_web_rows(row, vid)
+        if candidates:
+            media[vid] = candidates
+    return media
+
+
+def _load_series_directory(sid):
+    try:
+        payload = _data(SITE + "/detail?series_id=" + quote(sid, safe=""), include_player_paths=True)
+    except (RuntimeError, requests.RequestException, ValueError):
+        payload = {}
+    p = (payload.get("loaderData") or {}).get("detail_page") or {}
+    s = p.get("seriesDetail") or {}
+    if p.get("isSuccess") is False or str(s.get("series_id")) != sid:
+        payload, s = {}, {}
+    vids = s.get("vid_list")
+    if not isinstance(vids, list):
+        vids = []
+    numeric = [(i, str(v)) for i, v in enumerate(vids, 1)
+               if re.fullmatch(r"[0-9]{1,30}", str(v))]
+    slots = _public_slots(payload, sid)
+    numeric_ids = dict(numeric)
+    catalog = _catalog_video_ids(s, sid)
+    media = _catalog_media(s, sid)
+    declared = _series_count(s)
+    mapped = set(slots) | set(numeric_ids) | set(catalog)
+    if not mapped or (declared and len(mapped) < declared) or (not declared and s.get("accessible_episode_cnt") is not None):
+        extra = _read_episode_catalog(sid)
+        if extra:
+            catalog.update(_catalog_video_ids(extra, sid))
+            media.update(_catalog_media(extra, sid))
+            declared = max(declared, _series_count(extra))
+            if not s:
+                s = extra
+    total = max(declared, len(vids), max(slots, default=0), max(catalog, default=0))
+    blocked = {n for n, entry in catalog.items() if entry[1]}
+    slots = {n: vid for n, vid in slots.items() if n not in blocked}
+    numeric_ids = {n: vid for n, vid in numeric if n not in blocked}
+    known = slots.keys() | numeric_ids.keys() | catalog.keys()
+    complete = bool(declared and all(n in known for n in range(1, total + 1)))
+    data = {"detail": s, "total": total, "slots": slots, "numeric": numeric_ids,
+            "catalog": catalog, "media": media, "read_at": time.monotonic()}
+    return data, 900 if complete else 8
+
+
 def _episode_number(value):
     text = str(value or "")
     return int(text) if re.fullmatch(r"[1-9][0-9]{0,3}", text) else 0
@@ -6118,7 +6387,7 @@ def _read_episode_catalog(sid):
         response = requests.post(
             "https://api5-normal-sinfonlinea.fqnovel.com/novel/player/multi_video_detail/player/v1",
             json={"series_id": sid, "dr_scene": "player", "biz_param": {
-                "detail_page_version": 0, "need_all_video_definition": False,
+                "detail_page_version": 0, "need_all_video_definition": True,
                 "need_mp4_align": False, "source": 7, "use_os_player": False, "use_server_dns": False}},
             headers={"Accept": "application/json"}, timeout=(3, 5), allow_redirects=False)
         if response.status_code != 200:
@@ -6193,17 +6462,25 @@ def _decode_site_page(html, include_player_paths=False):
     return obj
 
 
-def _fresh_public_slot(series_id, number=None, episode_id=None):
+def _read_web_directory_page(url):
     response = requests.get(
-        SITE + "/detail", params={"series_id": series_id},
-        headers={"User-Agent": _PUBLIC_WEB_UA, "Accept": "text/html"},
-        allow_redirects=False, timeout=6,
+        url, headers={"User-Agent": _PUBLIC_WEB_UA, "Accept": "text/html"},
+        allow_redirects=False, timeout=(3, 6),
     )
     if response.status_code in (401, 403, 429):
         raise _PublicAccessDenied("官網暫未開放此播放頁（HTTP %d）" % response.status_code)
     if response.status_code != 200 or len(response.content) > 2 * 1024 * 1024:
         raise HongguoPluginError("官網公開分集暫時不可用")
-    slots = _public_slots(_decode_site_page(response.text, True), series_id)
+    return _decode_site_page(response.text, True)
+
+
+def _fresh_public_slot(series_id, number=None, episode_id=None):
+    def fetch_slots():
+        payload = _read_web_directory_page(SITE + "/detail?series_id=" + quote(series_id, safe=""))
+        slots = _public_slots(payload, series_id)
+        return slots, 20 if slots else 3
+
+    slots = _PUBLIC_SLOT_MAP.get(series_id, fetch_slots)
     if episode_id is not None:
         if episode_id in slots.values():
             return episode_id
@@ -6214,7 +6491,9 @@ def _fresh_public_slot(series_id, number=None, episode_id=None):
 
 
 def _data(url, include_player_paths=False):
-    return _decode_site_page(_page(url), include_player_paths)
+    if include_player_paths:
+        return _read_web_directory_page(url)
+    return _decode_site_page(_page(url))
 
 
 def _item(x):
@@ -7333,86 +7612,38 @@ class Spider(_BaseSpider):
         sid = sid.replace("hg-series-v1:", "")
         if not re.fullmatch(r"[0-9]{1,30}", sid):
             return {"list": []}
-        try:
-            payload = _data(SITE + "/detail?series_id=" + quote(sid, safe=""), include_player_paths=True)
-        except (RuntimeError, requests.RequestException, ValueError):
-            payload = {}
-        p = (payload.get("loaderData") or {}).get("detail_page") or {}
-        s = p.get("seriesDetail") or {}
-        if p.get("isSuccess") is False or str(s.get("series_id")) != sid:
-            payload, s = {}, {}
-        vids = s.get("vid_list")
-        if not isinstance(vids, list):
-            vids = []
-        numeric = [(i, str(v)) for i, v in enumerate(vids, 1)
-                   if re.fullmatch(r"[0-9]{1,30}", str(v))]
-        slots = _public_slots(payload, sid)
-        numeric_ids = dict(numeric)
-        catalog = _catalog_video_ids(s, sid)
-        declared = _series_count(s)
-        mapped = set(slots) | set(numeric_ids) | set(catalog)
-        if not declared or len(mapped) < declared:
-            extra = _read_episode_catalog(sid)
-            if extra:
-                catalog.update(_catalog_video_ids(extra, sid))
-                declared = max(declared, _series_count(extra))
-                if not s:
-                    s = extra
+        directory = _series_directory(sid)
+        s = directory["detail"]
         if not s:
             return {"list": []}
-        total = max(declared, len(vids), max(slots, default=0), max(catalog, default=0))
-        blocked = {n for n, entry in catalog.items() if entry[1]}
-        slots = {n: vid for n, vid in slots.items() if n not in blocked}
-        numeric = [(n, vid) for n, vid in numeric if n not in blocked]
-        numeric_ids = dict(numeric)
+        total, slots = directory["total"], directory["slots"]
+        numeric_ids, catalog = directory["numeric"], directory["catalog"]
         actors = [str(x.get("nickname")) for x in (s.get("celebrities") or []) if isinstance(x, dict) and x.get("nickname")]
         try:
             _dm_series_load()
-            for _, video_id in numeric:
+            for video_id in numeric_ids.values():
                 _dm_remember_series(video_id, sid)
             _dm_series_save()
         except Exception:
             pass
-        play_from = []
-        play_url = []
-        if total > len(slots.keys() | numeric_ids.keys()) or (slots and len(slots) < total):
-            for label, quality, slot_prefix in (("完整選集・自動", "auto", _NATIVE_SLOT_PREFIX),
-                                                ("完整選集・指定 1080P", "1080", _PUBLIC_HD_SLOT_PREFIX)):
-                episodes = []
-                for n in range(1, total + 1):
-                    title = "第%d集" % n
-                    if n in slots:
-                        token = "%s%s:%d" % (slot_prefix, sid, n)
-                    elif n in numeric_ids:
-                        token = "%s1080:%s" % (EPISODE_PREFIX, numeric_ids[n])
-                    else:
-                        vid, disabled = catalog.get(n, ("pending", False))
-                        if disabled:
-                            title += "（未開放）"
-                            vid = "disabled"
-                        elif vid == "pending":
-                            title += "（待取片源）"
-                        token = "%s%s:%s:%d:%s" % (_CATALOG_EPISODE_PREFIX, quality, sid, n, vid)
-                    episodes.append(title + "$" + token)
-                play_from.append(label)
-                play_url.append("#".join(episodes))
-        elif slots:
-            for label, prefix in ((_NATIVE_AUTO_LINE, _NATIVE_SLOT_PREFIX),
-                                  (_NATIVE_HD_LINE, _PUBLIC_HD_SLOT_PREFIX)):
-                play_from.append(label)
-                play_url.append("#".join("%d$%s%s:%d" % (n, prefix, sid, n) for n in slots))
-        if slots:
-            play_from.append(_PUBLIC_LINE)
-            play_url.append("#".join("%d$%s%s:%d" % (n, _PUBLIC_SLOT_PREFIX, sid, n) for n in slots))
-        if numeric:
-            for q, line_name in _HG_QUALITY_LINES:
-                play_from.append(line_name)
-                play_url.append("#".join("%d$%s%s:%s" % (i, EPISODE_PREFIX, q, vid)
-                                         for i, vid in numeric))
-        return {"list": [{"vod_id": sid, "vod_name": str(s.get("series_name") or s.get("series_title") or ""), "vod_pic": str(s.get("series_cover") or ""), "vod_year": "", "vod_area": "", "vod_director": "", "vod_actor": ",".join(actors), "vod_content": str(s.get("series_intro") or ""), "vod_remarks": str(s.get("episode_right_text") or ("全%d集" % total if total else "")), "vod_play_from": "$$$".join(play_from), "vod_play_url": "$$$".join(play_url)}]}
+        episodes = []
+        for n in range(1, total + 1):
+            title = "第%d集" % n
+            vid, disabled = catalog.get(n, (numeric_ids.get(n, "pending"), False))
+            if disabled:
+                title += "（未開放）"
+                vid = "disabled"
+            elif n in slots:
+                vid = "listed"
+            elif vid == "pending":
+                title += "（待取片源）"
+            token = "%sauto:%s:%d:%s" % (_CATALOG_EPISODE_PREFIX, sid, n, vid)
+            episodes.append(title + "$" + token)
+        return {"list": [{"vod_id": sid, "vod_name": str(s.get("series_name") or s.get("series_title") or ""), "vod_pic": str(s.get("series_cover") or ""), "vod_year": "", "vod_area": "", "vod_director": "", "vod_actor": ",".join(actors), "vod_content": str(s.get("series_intro") or ""), "vod_remarks": str(s.get("episode_right_text") or ("全%d集" % total if total else "")), "vod_play_from": "完整選集" if episodes else "", "vod_play_url": "#".join(episodes)}]}
     def playerContent(self, flag, id, vipFlags=None):
         token = str(id or "")
-        if (token.startswith((_CATALOG_EPISODE_PREFIX, _NATIVE_SLOT_PREFIX, _PUBLIC_HD_SLOT_PREFIX, "hongguo:", "https://"))
+        if (token.startswith((_CATALOG_EPISODE_PREFIX, _NATIVE_SLOT_PREFIX, _PUBLIC_HD_SLOT_PREFIX,
+                              _PUBLIC_SLOT_PREFIX, "hongguo:", "https://"))
                 or re.fullmatch(r"[0-9]{1,30}[/_][0-9]{1,30}", token)):
             try:
                 return _native_playback(token, flag)
@@ -7424,8 +7655,8 @@ class Spider(_BaseSpider):
                 sid, vid = token[len(_PUBLIC_PAGE_PREFIX):].split(":", 1)
                 url = _public_page_media_url(sid, vid)
                 info = _public_mp4_info(url)
-                if info["quality"] > 1080:
-                    raise HongguoPluginError("公開片源超過支援的最高畫質")
+                if info["quality"] not in _PUBLIC_GRADES:
+                    raise HongguoPluginError("片源未提供支援的畫質")
             except (ValueError, HongguoPluginError, requests.RequestException):
                 return {"parse": 0, "jx": 0, "playUrl": "", "url": "",
                         "header": {}, "msg": "本集官網公開完整片源暫不可用"}
@@ -7433,19 +7664,12 @@ class Spider(_BaseSpider):
                     "header": {"User-Agent": _PUBLIC_WEB_UA, "Referer": SITE + "/"},
                     "quality": "%dP" % info["quality"], "width": info["width"],
                     "height": info["height"], "codec": info["codec"]}
-        if token.startswith((_PUBLIC_SLOT_PREFIX, _PUBLIC_EPISODE_PREFIX)):
+        if token.startswith(_PUBLIC_EPISODE_PREFIX):
             wanted = 360
             try:
-                if token.startswith(_PUBLIC_SLOT_PREFIX):
-                    key = token.split(":", 1)[1]
-                    match = re.fullmatch(r"([0-9]{1,30}):([1-9][0-9]{0,6})", key)
-                    if not match:
-                        raise HongguoPluginError("公開分集識別無效")
-                    vid = _fresh_public_slot(match[1], int(match[2]))
-                else:
-                    vid = token[len(_PUBLIC_EPISODE_PREFIX):]
-                    if not re.fullmatch(r"[0-9]{1,30}", vid):
-                        raise HongguoPluginError("公開分集識別無效")
+                vid = token[len(_PUBLIC_EPISODE_PREFIX):]
+                if not re.fullmatch(r"[0-9]{1,30}", vid):
+                    raise HongguoPluginError("公開分集識別無效")
                 url = _public_web_media_url(vid)
                 info = _public_mp4_info(url)
                 if info["quality"] != wanted:

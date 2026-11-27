@@ -324,14 +324,69 @@ class PlaybackContractTests(unittest.TestCase):
              patch.object(module, "_dm_remember_series"), \
              patch.object(module, "_dm_series_save"):
             detail = module.Spider().detailContent([sid])["list"][0]
-        lines = detail["vod_play_from"].split("$$$")
-        tokens = detail["vod_play_url"].split("$$$")
-        self.assertEqual(lines, [name for _, name in module._HG_QUALITY_LINES])
-        self.assertEqual(tokens, [
-            "1$" + module.EPISODE_PREFIX + quality + ":" + VID
-            for quality, _ in module._HG_QUALITY_LINES
-        ])
-        self.assertNotIn(module._PUBLIC_PAGE_PREFIX, detail["vod_play_url"])
+        self.assertEqual(detail["vod_play_from"], "完整選集")
+        self.assertEqual(detail["vod_play_url"], "第1集$%sauto:%s:1:%s" % (
+            module._CATALOG_EPISODE_PREFIX, sid, VID))
+
+    def test_each_episode_lists_only_its_own_grades_and_keeps_missing_episodes(self):
+        sid = "9876543"
+        first, second = "101", "102"
+        cdn = "https://v1.fqnovelvod.com/"
+        def row(vid, n, grades):
+            return {"vid": vid, "vid_index": n, "video_player_info": {"video_list": [
+                {"width": g, "height": g * 2, "main_url": cdn + vid + "-" + str(g) + ".mp4"}
+                for g in grades]}}
+        detail = {"series_id": sid, "series_name": "Test", "episode_cnt": 4,
+                  "video_list": [row(first, 1, [360, 1080, 540]), row(second, 2, [480, 720]),
+                                 {"vid": "103", "vid_index": 3, "disable_play": True}]}
+        payload = {"loaderData": {"detail_page": {"seriesDetail": detail}}}
+        spider = module.Spider()
+        with patch.object(module, "_DIRECTORY_MEMO", module._PlaybackMemo(4)), \
+             patch.object(module, "_EPISODE_CHOICES", module._PlaybackMemo(8)), \
+             patch.object(module, "_data", return_value=payload) as fetch, \
+             patch.object(module, "_read_episode_catalog", return_value={}), \
+             patch.object(module, "_prepare_next_public"), \
+             patch.object(module, "_public_page_media_rows") as player_page, \
+             patch.object(module, "_dm_series_load"), patch.object(module, "_dm_series_save"):
+            listing = spider.detailContent(sid)["list"][0]
+            tokens = [item.split("$", 1)[1] for item in listing["vod_play_url"].split("#")]
+            self.assertEqual(len(tokens), 4)
+            for token, grades in zip(tokens[:2], ([1080, 540, 360], [720, 480])):
+                result = spider.playerContent("完整選集", token)["url"]
+                self.assertEqual(result[::2], ["%dP" % g for g in grades])
+            self.assertEqual(spider.playerContent("", tokens[1].replace("auto:", "1080:"))["url"], "")
+            self.assertIn("未開放", spider.playerContent("", tokens[2])["msg"])
+            self.assertIn("待取片源", spider.playerContent("", tokens[3])["msg"])
+            fetch.assert_called_once()
+            player_page.assert_not_called()
+
+    def test_hls_menu_uses_actual_portrait_and_landscape_renditions(self):
+        from unittest.mock import MagicMock
+        master = "https://v1.fqnovelvod.com/media/master.m3u8"
+        data = (b"#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=8,RESOLUTION=720x1280\n720.m3u8\n"
+                b"#EXT-X-STREAM-INF:BANDWIDTH=9,RESOLUTION=1920x1080\n1080.m3u8\n"
+                b"#EXT-X-STREAM-INF:BANDWIDTH=1,RESOLUTION=320x240\n240.m3u8\n")
+        response = MagicMock(status_code=200)
+        response.__enter__.return_value = response
+        response.iter_content.return_value = [data]
+        with patch.object(module.requests, "get", return_value=response):
+            result = module._public_menu(module._public_choices([(0, master)], VID))
+        self.assertEqual(result["url"], ["1080P", master.replace("master", "1080"),
+                                        "720P", master.replace("master", "720")])
+
+    def test_grouped_hls_preserves_external_audio_in_fixed_grade(self):
+        master = "https://v1.fqnovelvod.com/media/master.m3u8"
+        tags = ['#EXTM3U', '#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="a",NAME="Main",URI="a.m3u8"']
+        variants = [(g, '#EXT-X-STREAM-INF:RESOLUTION=%dx1920,AUDIO="a"' % g,
+                     master.replace("master", str(g))) for g in (1080, 720)]
+        with patch.object(module, "_GRADE_PLAYLISTS", module._PlaybackMemo(3)), \
+             patch.object(module, "_start_stream_server", return_value=4321):
+            local = module._local_hls_grade(tags, master, 720, variants, VID)
+            key = local.rsplit("/", 1)[1].split(".")[0]
+            playlist = module._GRADE_PLAYLISTS.peek(key).decode()
+        self.assertIn(master.replace("master", "a"), playlist)
+        self.assertIn(master.replace("master", "720"), playlist)
+        self.assertNotIn("1080", playlist)
 
     def test_public_player_page_requires_exact_episode_and_clear_full_video(self):
         from unittest.mock import Mock
@@ -366,7 +421,9 @@ class PlaybackContractTests(unittest.TestCase):
             payload = {"loaderData": {"detail_page": {"seriesDetail": {
                 "series_id": sid, "vid_list": [VID, "123456789"],
                 "accessible_episode_cnt": count}}}}
-            with patch.object(module, "_data", return_value=payload), \
+            with patch.object(module, "_DIRECTORY_MEMO", module._PlaybackMemo(4)), \
+                 patch.object(module, "_read_episode_catalog", return_value={}), \
+                 patch.object(module, "_data", return_value=payload), \
                  patch.object(module, "_dm_series_load"), \
                  patch.object(module, "_dm_remember_series"), \
                  patch.object(module, "_dm_series_save"):

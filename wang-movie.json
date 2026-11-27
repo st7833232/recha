@@ -65,13 +65,6 @@
       "changeable": 1
     },
     {
-      "key": "红果短剧",
-      "name": "红果 • 短剧",
-      "type": 3,
-      "api": "./py/红果短剧.py",
-      "genre": "shortdrama"
-    },
-    {
       "key": "anime1",
       "name": "Anime1 • 動畫",
       "type": 3,

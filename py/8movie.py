@@ -259,10 +259,19 @@ class Spider(BaseSpider):
         if re.search(r"\.(?:svg|gif)(?:[?#]|$)", raw, re.I):
             return ""
         # A brand/promo asset is not an individual title's poster.
-        name = urlsplit(_absolute(raw, base_url)).path.rsplit("/", 1)[-1]
-        if re.search(r"(?:^|[-_])(?:8movie|site[-_]?banner|promotion|promo)(?:[-_.]|$)", name, re.I):
+        url = _absolute(raw, base_url)
+        parsed = urlsplit(url)
+        name = parsed.path.rsplit("/", 1)[-1]
+        if re.search(r"(?:^|[-_])(?:8movie|site[-_]?banner|promotion|promo|hotlink)(?:[-_.]|$)", name, re.I):
             return ""
-        return _absolute(raw, base_url)
+
+        # Both WebHTV clients read this suffix as an image request header.
+        # 8Movie redirects poster requests without a Referer to its promo image.
+        if (parsed.scheme in ("http", "https")
+                and parsed.hostname in ("www.8movie.com", "8movie.com")
+                and parsed.path.startswith("/p/")):
+            return url + "@Referer=" + SITE + "/"
+        return url
 
     def _picture_from_node(self, node, base_url):
         if node is None:
@@ -320,7 +329,7 @@ class Spider(BaseSpider):
 
     @staticmethod
     def _poster_identity(url):
-        parsed = urlsplit(url or "")
+        parsed = urlsplit((url or "").partition("@Referer=")[0])
         return (parsed.netloc.lower(), parsed.path.rstrip("/").lower())
 
     def _primary_detail_posters(self, root, detail_url):

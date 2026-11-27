@@ -1,0 +1,7 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="test.hongguo">
+    <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="32" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application android:theme="@android:style/Theme.Material.NoActionBar">
+        <activity android:name=".ProbeActivity" android:exported="true" />
+    </application>
+</manifest>

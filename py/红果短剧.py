@@ -18,7 +18,7 @@ import threading
 import time
 from html.parser import HTMLParser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import parse_qs, quote, urljoin, urlparse
+from urllib.parse import parse_qs, quote, urldefrag, urljoin, urlparse
 
 import requests
 
@@ -558,18 +558,16 @@ def _public_page_media_rows(series_id: str, video_id: str, first_episode=False):
         raise HongguoPluginError("本集未確認為公開完整影片")
     public = (isinstance(seo, dict) and seo.get("available") is True
               and str(seo.get("itemId")) == video_id and str(seo.get("seriesId")) == series_id)
-    if data.get("protectedPlayback") is True:
-        if not public:
-            raise _PublicAccessDenied("本集未開放公開完整播放")
-        try:
-            return [(0, _public_web_media_url(video_id))]
-        except HongguoPluginError as error:
-            raise _PublicAccessDenied(str(error)) from error
-    if data.get("protectedPlayback") is not False:
+    protected = data.get("protectedPlayback")
+    if protected is True and not public:
+        raise _PublicAccessDenied("本集未開放公開完整播放")
+    if protected is not True and protected is not False:
         raise HongguoPluginError("本集未確認為公開完整影片")
-    rows = _clear_web_rows(data.get("video_player_info"), video_id)
+    rows = [] if protected else _clear_web_rows(data.get("video_player_info"), video_id)
     if not public:
         return rows
+    player_root = SITE + "/player/" + series_id
+    allowed_pages = {player_root, player_root + "/" + video_id}
     for script in re.finditer(r"<script\b([^>]*)>([\s\S]*?)</script\s*>", html, re.I):
         if not re.search(r"""\btype\s*=\s*["']application/ld\+json["']""", script.group(1), re.I):
             continue
@@ -587,12 +585,18 @@ def _public_page_media_rows(series_id: str, video_id: str, first_episode=False):
             # Restrict to the official episode-specific public media path.
             if target.hostname != "hongguoduanju.com" or not target.path.startswith("/video/public/%s/" % video_id):
                 continue
-            allowed_pages = {SITE + path, SITE + "/player/" + series_id}
-            if obj.get("url") not in allowed_pages or (obj.get("@id") and obj["@id"] not in allowed_pages):
+            identity = obj.get("@id")
+            if obj.get("url") not in allowed_pages or (identity and (
+                    not isinstance(identity, str) or urldefrag(identity).url not in allowed_pages)):
                 continue
             rows.append((0, media))
         except (TypeError, ValueError):
             continue
+    if protected and not rows:
+        try:
+            return [(0, _public_web_media_url(video_id))]
+        except HongguoPluginError as error:
+            raise _PublicAccessDenied(str(error)) from error
     return rows
 
 
@@ -973,7 +977,14 @@ def _numbered_choices(sid, number):
         slot = directory["slots"].get(number)
         entry = directory["catalog"].get(number)
         vid = entry[0] if entry else directory["numeric"].get(number)
-        choices = _public_choices(directory["media"].get(vid, []), vid)
+        try:
+            choices = _public_choices(directory["media"].get(vid, []), vid)
+        except _PublicAccessDenied:
+            raise
+        except (HongguoPluginError, requests.RequestException, ValueError):
+            if not slot:
+                raise
+            choices = {}
         if slot:
             try:
                 rows = _public_page_media_rows(sid, slot, first_episode=number == 1)

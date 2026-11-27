@@ -89,14 +89,16 @@ class PublicPlaybackTests(unittest.TestCase):
         data = {"isSuccess": True, "protectedPlayback": False, "vid": VID,
                 "series_id": sid, "seriesDetail": {"series_id": sid},
                 "publicVideoSeo": {"available": True, "itemId": VID, "seriesId": sid}}
-        def response(protected=False, mismatch=False, public=True):
+        def response(protected=False, mismatch=False, public=True, published_url=True):
             row = dict(data, protectedPlayback=protected, vid="999" if mismatch else VID)
             if not public:
                 row["publicVideoSeo"] = {"available": False}
             html = "<script>window._ROUTER_DATA=" + json.dumps(
                 {"loaderData": {"player_(series_id)/(vid)/page": row}}) + "</script>"
-            html += '<script type="application/ld+json">' + json.dumps(
-                {"@type": "VideoObject", "url": page, "contentUrl": media}) + "</script>"
+            if published_url:
+                html += '<script type="application/ld+json">' + json.dumps(
+                    {"@type": "VideoObject", "url": page, "@id": page + "#video",
+                     "contentUrl": media}) + "</script>"
             return Mock(status_code=200, text=html, content=html.encode())
         with patch.object(module.requests, "get", return_value=response()) as get, \
              patch.object(module, "_public_mp4_info", return_value={"quality": 1080, "width": 1080,
@@ -109,7 +111,12 @@ class PublicPlaybackTests(unittest.TestCase):
             with patch.object(module.requests, "get", return_value=bad):
                 with self.assertRaises(module.HongguoPluginError):
                     module._public_page_media_url(sid, VID)
-        with patch.object(module.requests, "get", return_value=response(protected=True)), \
+        with patch.object(module.requests, "get", return_value=response(protected=True)) as get, \
+             patch.object(module, "_public_web_media_url", return_value=media) as fallback:
+            self.assertEqual(module._public_page_media_rows(sid, VID, first_episode=True), [(0, media)])
+            self.assertEqual(get.call_args.args[0], module.SITE + "/player/" + sid)
+            fallback.assert_not_called()
+        with patch.object(module.requests, "get", return_value=response(protected=True, published_url=False)), \
              patch.object(module, "_public_web_media_url", return_value=media) as fallback:
             self.assertEqual(module._public_page_media_rows(sid, VID), [(0, media)])
             fallback.assert_called_once_with(VID)
@@ -167,6 +174,21 @@ class PublicPlaybackTests(unittest.TestCase):
 
 
 class SpiderContractTests(unittest.TestCase):
+    def test_invalid_catalog_media_can_use_the_same_episodes_public_player_page(self):
+        sid = "123"
+        stale = "https://v1.fqnovelvod.com/stale.mp4"
+        public = module.SITE + "/video/public/" + VID + "/movie.mp4"
+        directory = {"blocked": set(), "slots": {2: VID}, "catalog": {},
+                     "numeric": {2: VID}, "media": {VID: [(360, stale)]}}
+        with patch.object(module, "_series_directory", return_value=directory), \
+             patch.object(module, "_EPISODE_CHOICES", module._PlaybackMemo(4)), \
+             patch.object(module, "_public_mp4_info",
+                          side_effect=[module.HongguoPluginError("無效媒體"), {"quality": 360}]), \
+             patch.object(module, "_public_page_media_rows", return_value=[(360, public)]) as page:
+            result = module.Spider().playerContent("", "hg-catalog-v1:auto:%s:2:listed" % sid)
+        self.assertEqual(result["url"], ["360P", public])
+        page.assert_called_once_with(sid, VID, first_episode=False)
+
     def test_page_one_uses_canonical_category_and_filters_are_whitelisted(self):
         category = {"recommendList": [{"series_id": "123", "series_name": "Example",
                                       "series_cover": "https://images.example/cover.jpg"}],

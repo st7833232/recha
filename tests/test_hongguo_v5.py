@@ -325,7 +325,7 @@ class PlaybackContractTests(unittest.TestCase):
              patch.object(module, "_dm_series_save"):
             detail = module.Spider().detailContent([sid])["list"][0]
         self.assertEqual(detail["vod_play_from"], "完整選集")
-        self.assertEqual(detail["vod_play_url"], "第1集$%sauto:%s:1:%s" % (
+        self.assertEqual(detail["vod_play_url"], "第1集（待取片源）$%sauto:%s:1:%s" % (
             module._CATALOG_EPISODE_PREFIX, sid, VID))
 
     def test_each_episode_lists_only_its_own_grades_and_keeps_missing_episodes(self):
@@ -344,9 +344,12 @@ class PlaybackContractTests(unittest.TestCase):
         with patch.object(module, "_DIRECTORY_MEMO", module._PlaybackMemo(4)), \
              patch.object(module, "_EPISODE_CHOICES", module._PlaybackMemo(8)), \
              patch.object(module, "_data", return_value=payload) as fetch, \
-             patch.object(module, "_read_episode_catalog", return_value={}), \
+             patch.object(module, "_extra_episode_catalog", return_value={}), \
              patch.object(module, "_prepare_next_public"), \
-             patch.object(module, "_public_page_media_rows") as player_page, \
+             patch.object(module, "_public_mp4_info", side_effect=lambda url: {
+                 "quality": int(url.rsplit("-", 1)[1].split(".")[0])
+             }), \
+             patch.object(module, "_public_page_media_rows", return_value=[]) as player_page, \
              patch.object(module, "_dm_series_load"), patch.object(module, "_dm_series_save"):
             listing = spider.detailContent(sid)["list"][0]
             tokens = [item.split("$", 1)[1] for item in listing["vod_play_url"].split("#")]
@@ -358,7 +361,43 @@ class PlaybackContractTests(unittest.TestCase):
             self.assertIn("未開放", spider.playerContent("", tokens[2])["msg"])
             self.assertIn("待取片源", spider.playerContent("", tokens[3])["msg"])
             fetch.assert_called_once()
-            player_page.assert_not_called()
+            self.assertEqual([call.args[1] for call in player_page.call_args_list], [first, second])
+
+    def test_public_1080_is_found_after_catalog_360_and_measured_dimensions_win(self):
+        sid, vid = "135791", "246810"
+        cdn = "https://v1.fqnovelvod.com/"
+        directory = {"catalog": {1: (vid, False)}, "numeric": {1: vid}, "slots": {1: vid},
+                     "media": {vid: [(360, cdn + "low.mp4")]}, "catalog_checked": True}
+        player_1080 = [(1080, cdn + "mislabel.mp4"), (720, cdn + "actual1080.mp4")]
+        sizes = {"low.mp4": 360, "mislabel.mp4": 480, "actual1080.mp4": 1080}
+        with patch.object(module, "_series_directory", return_value=directory), \
+             patch.object(module, "_EPISODE_CHOICES", module._PlaybackMemo(8)), \
+             patch.object(module, "_prepare_next_public"), \
+             patch.object(module, "_public_page_media_rows", return_value=player_1080), \
+             patch.object(module, "_public_mp4_info", side_effect=lambda url: {
+                 "quality": sizes[url.rsplit("/", 1)[1]]
+             }):
+            directory["read_at"] = module.time.monotonic()
+            result = module._play_number(sid, 1)
+        self.assertEqual(result["url"], ["1080P", cdn + "actual1080.mp4",
+                                         "480P", cdn + "mislabel.mp4",
+                                         "360P", cdn + "low.mp4"])
+
+    def test_episode_ids_without_renditions_load_the_additional_catalog(self):
+        cdn = "https://v1.fqnovelvod.com/episode.mp4"
+        sid = "354982"
+        directory = {"catalog": {}, "numeric": {1: VID}, "slots": {},
+                     "media": {}, "catalog_checked": False}
+        extra = {"video_list": [{"vid": VID, "vid_index": 1, "width": 1080,
+                                 "height": 1920, "main_url": cdn}]}
+        with patch.object(module, "_series_directory", return_value=directory), \
+             patch.object(module, "_EPISODE_CHOICES", module._PlaybackMemo(8)), \
+             patch.object(module, "_extra_episode_catalog", return_value=extra) as fetch, \
+             patch.object(module, "_public_mp4_info", return_value={"quality": 1080}), \
+             patch.object(module, "_public_page_media_rows", return_value=[]):
+            choices = module._numbered_choices(sid, 1)
+        self.assertEqual(choices, {1080: cdn})
+        fetch.assert_called_once_with(sid)
 
     def test_hls_menu_uses_actual_portrait_and_landscape_renditions(self):
         from unittest.mock import MagicMock

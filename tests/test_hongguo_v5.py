@@ -268,3 +268,104 @@ class SpiderContractTests(unittest.TestCase):
         self.assertEqual(result["page"], 2)
         self.assertEqual(result["pagecount"], 3)
         self.assertEqual(get.call_args.kwargs["params"]["query"], "Example")
+
+
+class ShareLinkTests(unittest.TestCase):
+    SID = "7710503618658454553"
+    REF = "https://novelquickapp.com/s/Example/"
+    PREVIEW = "https://v3-share.qznovel.com/trial.mp4?start=0&end=30"
+    MEDIA = "https://v3-hgweb.qznovelvod.com/public.mp4"
+
+    def setUp(self):
+        self.spider = module.Spider()
+        self.info = {
+            "item": {"vod_id": self.SID, "vod_name": "溫夜潮濕", "vod_pic": ""},
+            "vid": VID, "preview": self.PREVIEW, "referer": "https://novelquickapp.com/",
+        }
+
+    def test_pasted_share_text_selects_the_exact_public_episode(self):
+        directory = {"slots": {2: VID}, "catalog": {}, "numeric": {}, "blocked": set()}
+        with patch.object(module, "_share_info", return_value=self.info) as resolve, \
+             patch.object(module, "_series_directory", return_value=directory), \
+             patch.object(module, "_EPISODE_CHOICES", module._PlaybackMemo(4)), \
+             patch.object(module, "_numbered_choices", return_value={360: self.MEDIA}) as play:
+            hits = self.spider.searchContent("來看紅果短劇！" + self.REF + "】", False, "1")
+            self.assertEqual(hits["total"], 1)
+            resolve.assert_called_once_with(self.REF)
+            item = self.spider.detailContent([hits["list"][0]["vod_id"]])["list"][0]
+            self.assertIn("公開完整版", item["vod_remarks"])
+            title, token = item["vod_play_url"].split("$", 1)
+            result = self.spider.playerContent(title, token)
+            self.assertEqual(result["url"], ["360P", self.MEDIA])
+            self.assertEqual(result["parse"], 0)
+            play.assert_called_once_with(self.SID, 2)
+
+    def test_explicit_preview_is_labeled_and_preserves_its_original_url(self):
+        with patch.object(module, "_share_info", return_value=self.info), \
+             patch.object(module, "_share_public_choices",
+                          side_effect=module._PublicAccessDenied("未開放")):
+            hit = self.spider.searchContent(self.REF)["list"][0]
+            item = self.spider.detailContent([hit["vod_id"]])["list"][0]
+            self.assertIn("試看", item["vod_remarks"])
+            label, token = item["vod_play_url"].split("$", 1)
+            self.assertIn("試看", label)
+            self.assertEqual(self.spider.playerContent(label, token)["url"], self.PREVIEW)
+            full = token.replace("hg-share-v1:preview:", "hg-share-v1:full:", 1)
+            self.assertEqual(self.spider.playerContent("", full)["url"], "")
+
+    def test_unbounded_share_media_is_not_presented_as_a_preview(self):
+        raw = self.PREVIEW.split("?")[0]
+        self.assertEqual(module._share_preview(raw), "")
+        self.assertEqual(module._share_preview(self.PREVIEW.replace("end=30", "end=0")), "")
+        self.assertEqual(module._share_preview(self.PREVIEW.replace("qznovel.com", "example.com")), "")
+
+    def test_share_landing_page_extracts_consistent_public_metadata(self):
+        from unittest.mock import MagicMock
+        payload = {"loaderData": {"video-animation-share_page": {
+            "linkParams": {"schemeParams": {"video_id": self.SID, "vid": VID}},
+            "pageData": {"used_chapter_id": VID, "series_data": {
+                "title": "溫夜潮濕", "play_url": self.PREVIEW,
+                "cover_url": "https://p3-novel.byteimg.com/share.jpg",
+            }},
+        }}}
+        redirect = MagicMock(status_code=302, headers={"Location": "/ug/pages/video-animation-share?v=1"})
+        redirect.__enter__.return_value = redirect
+        page = MagicMock(status_code=200)
+        page.__enter__.return_value = page
+        page.iter_content.return_value = [("window._ROUTER_DATA = " + json.dumps(payload)).encode()]
+        with patch.object(module.requests, "get", side_effect=[redirect, page]) as get:
+            info, lifetime = module._load_share(self.REF)
+        self.assertEqual(info["item"]["vod_id"], self.SID)
+        self.assertEqual(info["item"]["vod_name"], "溫夜潮濕")
+        self.assertEqual(info["vid"], VID)
+        self.assertEqual(info["preview"], self.PREVIEW)
+        self.assertGreater(lifetime, 0)
+        self.assertFalse(get.call_args.kwargs["allow_redirects"])
+
+    def test_share_redirect_cannot_send_a_request_to_another_host(self):
+        from unittest.mock import MagicMock
+        redirect = MagicMock(status_code=302, headers={"Location": "https://example.test/s/Elsewhere"})
+        redirect.__enter__.return_value = redirect
+        with patch.object(module.requests, "get", return_value=redirect) as get:
+            with self.assertRaises(module.HongguoPluginError):
+                module._load_share(self.REF)
+        self.assertEqual(get.call_count, 1)
+
+    def test_series_only_public_link_uses_the_original_catalog_identity(self):
+        sid = self.SID
+        directory = {"detail": {"series_id": sid, "series_name": "溫夜潮濕", "episode_cnt": 78}}
+        with patch.object(module, "_series_directory", return_value=directory), \
+             patch.object(module, "_SHARE_MEMO", module._PlaybackMemo(4)):
+            hit = self.spider.searchContent("https://hongguoduanju.com/player/" + sid)["list"][0]
+        self.assertEqual(hit["vod_id"], sid)
+        self.assertEqual(hit["vod_remarks"], "全78集")
+
+    def test_unavailable_numbered_episode_stops_before_public_page_probe(self):
+        directory = {"slots": {}, "catalog": {}, "numeric": {6: VID}, "blocked": {6}}
+        with patch.object(module, "_series_directory", return_value=directory), \
+             patch.object(module, "_public_page_media_rows") as resolve, \
+             patch.object(module, "_EPISODE_CHOICES", module._PlaybackMemo(4)):
+            with self.assertRaises(module._PublicAccessDenied):
+                module._share_public_choices(self.info)
+        resolve.assert_not_called()
+

@@ -18,7 +18,7 @@ import threading
 import time
 from html.parser import HTMLParser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import parse_qs, quote, urldefrag, urljoin, urlparse
+from urllib.parse import parse_qs, quote, unquote, urldefrag, urljoin, urlparse
 
 import requests
 
@@ -56,6 +56,7 @@ _NATIVE_SLOT_PREFIX = "hg-native-slot-v1:"
 
 
 _PUBLIC_PAGE_PREFIX = "hg-public-page-v1:"
+_SHARE_PREFIX = "hg-share-v1:"
 
 
 _PUBLIC_EPISODE_PREFIX = "hg-public-v1:"
@@ -754,6 +755,7 @@ _PROTECTED_FIELDS = (
 _SERIES_ID = re.compile(r"[0-9]{1,30}")
 _CATEGORIES = {route: dict(categories) for route, _, categories in _HG_CONTENT_TYPES}
 _DIRECTORY_MEMO = _PlaybackMemo(24)
+_SHARE_MEMO = _PlaybackMemo(24)
 _EPISODE_CHOICES = _PlaybackMemo(64)
 _GRADE_PLAYLISTS = _PlaybackMemo(128)
 _SERVER_LOCK = threading.Lock()
@@ -863,6 +865,179 @@ def _series_item(row):
         "vod_remarks": str(row.get("episode_right_text") or ("全%d集" % count if count else "")),
         "vod_content": str(row.get("series_intro") or ""),
     }
+
+
+def _share_url(raw):
+    if not isinstance(raw, str) or len(raw) > 4096 or re.search(r"[\s\\]", raw):
+        return None
+    try:
+        url = urlparse(raw)
+        if url.scheme != "https" or url.username is not None or url.password is not None or url.port not in (None, 443):
+            return None
+        host = url.hostname or ""
+    except ValueError:
+        return None
+    if host in ("hongguoduanju.com", "www.hongguoduanju.com"):
+        if (re.fullmatch(r"/player/[0-9]{1,30}(?:/(?:[0-9]{1,30}|v1_[A-Za-z0-9_-]{8,128}))?/?",
+                         url.path) or url.path.rstrip("/") == "/detail"):
+            return SITE + url.path + ("?" + url.query if url.query else "")
+    if host in ("novelquickapp.com", "www.novelquickapp.com"):
+        if (re.fullmatch(r"/s/[A-Za-z0-9_-]{1,128}/?", url.path)
+                or url.path.rstrip("/") == "/ug/pages/video-animation-share"):
+            return urldefrag(raw).url
+    return None
+
+
+def _share_in_text(text):
+    for match in re.finditer(r"""https://[^\s<>"'，。；、！？」）】]+""", text, re.I):
+        address = _share_url(match[0].rstrip("),.!?]"))
+        if address:
+            return address
+    return None
+
+
+def _share_preview(raw):
+    if not isinstance(raw, str) or not raw or len(raw) > 8192 or re.search(r"[\s\\]", raw):
+        return ""
+    try:
+        url = urlparse(raw)
+        if (url.scheme != "https" or url.username is not None or url.password is not None
+                or url.port not in (None, 443)
+                or url.hostname != "v3-share.qznovel.com" or not url.path.lower().endswith(".mp4")):
+            return ""
+        params = parse_qs(url.query)
+        start, end = params.get("start", ["0"]), params.get("end", [])
+        if (len(start) == 1 and len(end) == 1 and re.fullmatch(r"[0-9]{1,8}", start[0])
+                and re.fullmatch(r"[0-9]{1,8}", end[0]) and int(end[0]) > int(start[0])
+                and _hd_result_lifetime(raw) > 0):
+            return raw
+    except ValueError:
+        pass
+    return ""
+
+
+def _share_object(data, key):
+    value = data.get(key)
+    return value if isinstance(value, dict) else {}
+
+
+def _load_share(address):
+    for _ in range(6):
+        url = urlparse(address)
+        if url.hostname == "hongguoduanju.com":
+            parts = url.path.strip("/").split("/")
+            sid = parts[1] if parts[0] == "player" else (parse_qs(url.query).get("series_id") or [""])[0]
+            if not _SERIES_ID.fullmatch(sid):
+                raise HongguoPluginError("紅果分享連結缺少劇集 ID")
+            vid = parts[2] if len(parts) == 3 else ""
+            item = _series_item(_series_directory(sid)["detail"])
+            if not item:
+                raise HongguoPluginError("官網暫無此劇詳情")
+            return {"item": item, "vid": vid, "preview": ""}, 20
+
+        with requests.get(address, headers={"User-Agent": _PUBLIC_WEB_UA, "Accept": "text/html"},
+                          timeout=(4, 5), stream=True, allow_redirects=False) as response:
+            if response.status_code in (301, 302, 303, 307, 308):
+                location = response.headers.get("Location")
+                address = _share_url(urljoin(address, location)) if location else None
+                if not address:
+                    raise HongguoPluginError("分享連結導向不支援的頁面")
+                continue
+            if response.status_code in _DENIED_STATUSES:
+                raise _PublicAccessDenied("紅果未開放此分享頁")
+            if response.status_code != 200:
+                raise HongguoPluginError("紅果分享頁回應 HTTP %d" % response.status_code)
+            data = bytearray()
+            for chunk in response.iter_content(16384):
+                if len(data) + len(chunk) > 2 * 1024 * 1024:
+                    raise HongguoPluginError("紅果分享頁回應過大")
+                data.extend(chunk)
+
+        # Share metadata fields documented by ucmao/media-parser (MIT).
+        payload = _decode_site_page(data.decode("utf-8-sig", errors="replace"))
+        page = _loader_page(payload, "video-animation-share_page")
+        body = _share_object(page, "pageData")
+        series = _share_object(body, "series_data")
+        scheme = _share_object(_share_object(page, "linkParams"), "schemeParams")
+        declared_sid = str(series.get("series_id_str") or series.get("series_id") or "")
+        sid = str(scheme.get("video_id") or declared_sid)
+        vid = str(body.get("used_chapter_id") or scheme.get("vid") or "")
+        if (not _SERIES_ID.fullmatch(sid) or not _SERIES_ID.fullmatch(vid)
+                or (declared_sid and declared_sid != sid)
+                or (scheme.get("vid") and str(scheme["vid"]) != vid)):
+            raise HongguoPluginError("分享頁的劇集或單集識別碼無效")
+        cover = series.get("cover_url") or series.get("cover")
+        item = {
+            "vod_id": sid,
+            "vod_name": str(series.get("title") or "紅果分享單集"),
+            "vod_pic": cover if isinstance(cover, str) else "",
+            "vod_remarks": "分享單集",
+        }
+        return {"item": item, "vid": vid, "preview": _share_preview(series.get("play_url")),
+                "referer": "https://" + url.hostname + "/"}, 20
+    raise HongguoPluginError("紅果分享連結重新導向次數過多")
+
+
+def _share_info(ref):
+    address = _share_url(ref)
+    if not address:
+        raise HongguoPluginError("紅果分享連結格式無效")
+    return _SHARE_MEMO.get(address, lambda: _load_share(address))
+
+
+def _share_public_choices(info):
+    sid, vid = info["item"]["vod_id"], info["vid"]
+
+    def resolve():
+        directory = _series_directory(sid)
+        for number in directory["blocked"]:
+            if vid in (directory["catalog"].get(number, ("", False))[0],
+                       directory["numeric"].get(number), directory["slots"].get(number)):
+                raise _PublicAccessDenied("本集未開放公開播放")
+        for number, slot in directory["slots"].items():
+            if slot == vid:
+                choices = _numbered_choices(sid, number)
+                return choices, min(_hd_result_lifetime(url) for url in choices.values())
+        rows = _public_page_media_rows(sid, vid)
+        choices = _public_choices(rows, vid)
+        return choices, min((_hd_result_lifetime(url) for url in choices.values()), default=10)
+
+    return _EPISODE_CHOICES.get(("share", sid, vid), resolve)
+
+
+def _share_playback(token):
+    mode, sep, ref = token.partition(":")
+    if not sep or mode not in ("full", "preview"):
+        raise HongguoPluginError("紅果分享播放識別碼無效")
+    info = _share_info(unquote(ref))
+    if not info["vid"]:
+        raise HongguoPluginError("紅果分享連結缺少單集 ID")
+    if mode == "full":
+        return _public_menu(_share_public_choices(info))
+    preview = _share_preview(info["preview"])
+    if not preview:
+        raise HongguoPluginError("紅果試看片源已失效")
+    return {"parse": 0, "jx": 0, "url": preview,
+            "header": {"User-Agent": _PUBLIC_WEB_UA, "Referer": info["referer"]}}
+
+
+def _share_detail(ref):
+    info = _share_info(unquote(ref))
+    item = dict(info["item"], vod_id=_SHARE_PREFIX + ref)
+    try:
+        full = bool(info["vid"] and _share_public_choices(info))
+    except (HongguoPluginError, requests.RequestException, ValueError):
+        full = False
+    if full:
+        title, mode = "分享單集（公開完整版）", "full"
+    elif _share_preview(info["preview"]):
+        title, mode = "分享單集（試看）", "preview"
+    else:
+        item["vod_remarks"] = "分享單集目前無公開片源"
+        return item
+    item.update(vod_remarks=title, vod_play_from=title,
+                vod_play_url=title + "$" + _SHARE_PREFIX + mode + ":" + ref)
+    return item
 
 
 def _page_number(raw, default=1, minimum=1):
@@ -1028,6 +1203,8 @@ def _legacy_episode(token):
 
 
 def _playback(token):
+    if token.startswith(_SHARE_PREFIX):
+        return _share_playback(token[len(_SHARE_PREFIX):])
     if token.startswith(_CATALOG_EPISODE_PREFIX):
         match = re.fullmatch(r"(auto|1080|720|540|480|360):([0-9]{1,30}):([1-9][0-9]{0,3}):(?:[0-9]{1,30}|pending|disabled|listed)",
                              token[len(_CATALOG_EPISODE_PREFIX):])
@@ -1141,6 +1318,20 @@ class Spider(_BaseSpider):
         query = str(key or "").strip()
         if not query:
             return _listing([], page)
+        share = _share_in_text(query)
+        if share:
+            result = _listing([], page, 1)
+            if page == 1:
+                try:
+                    info = _share_info(share)
+                    item = dict(info["item"])
+                    if info["vid"]:
+                        item["vod_id"] = _SHARE_PREFIX + quote(share, safe="")
+                        item["vod_remarks"] = "分享單集"
+                    result.update(list=[item], limit=1, total=1)
+                except (HongguoPluginError, requests.RequestException, ValueError):
+                    pass
+            return result
         try:
             with requests.Session() as session:
                 # Establish the same anonymous web session used by the public search form.
@@ -1166,6 +1357,11 @@ class Spider(_BaseSpider):
     def detailContent(self, ids):
         value = ids[0] if isinstance(ids, (list, tuple)) and ids else ids
         sid = str(value or "")
+        if sid.startswith(_SHARE_PREFIX):
+            try:
+                return {"list": [_share_detail(sid[len(_SHARE_PREFIX):])]}
+            except (HongguoPluginError, requests.RequestException, ValueError):
+                return {"list": []}
         if sid.startswith("hg-series-v1:"):
             sid = sid[len("hg-series-v1:"):]
         if not _SERIES_ID.fullmatch(sid):

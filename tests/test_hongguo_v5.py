@@ -278,6 +278,49 @@ class PlaybackContractTests(unittest.TestCase):
         self.assertNotIn("/novel/player/video_model/v1/", source)
         self.assertNotIn("def _playback_request(", source)
 
+    def test_web_slots_use_public_anchors_and_refresh_for_native_playback(self):
+        from unittest.mock import Mock
+        sid = "123456789"
+        def markup(prefix):
+            vids = ["v1_" + prefix + str(n) for n in range(4)]
+            data = {"loaderData": {"detail_page": {"seriesDetail": {
+                "series_id": sid, "series_name": "Example", "episode_cnt": 71,
+                "accessible_episode_cnt": 3, "vid_list": vids}}}}
+            paths = ["/player/" + sid, "/player/" + sid + "/" + vids[2],
+                     "https://example.org/player/" + sid + "/" + vids[1],
+                     "/player/" + sid + "/" + vids[3]]
+            return ('<script>window._ROUTER_DATA=' + json.dumps(data) + ';</script>'
+                    + ''.join('<a href="' + path + '">play</a>' for path in paths))
+        old, fresh = markup("previous_"), markup("current__")
+        spider = module.Spider()
+        with patch.object(module, "_page", return_value=old), \
+             patch.object(module, "_dm_series_load"), patch.object(module, "_dm_series_save"):
+            row = spider.detailContent([sid])["list"][0]
+        self.assertEqual(row["vod_play_from"], module._PUBLIC_LINE)
+        self.assertEqual(row["vod_play_url"], "1$hg-web-slot-v1:123456789:1#3$hg-web-slot-v1:123456789:3")
+        response = Mock(status_code=200, text=fresh, content=fresh.encode())
+        media = "https://media.fqnovelvod.com/public.mp4"
+        reply = Mock(status_code=200, content=b"{}")
+        reply.json.return_value = {"main_url": media, "code": 0}
+        info = {"width": 360, "height": 640, "quality": 360, "codec": "avc1"}
+        with patch.object(module.requests, "get", return_value=response), \
+             patch.object(module.requests, "post", return_value=reply) as post, \
+             patch.object(module, "_public_mp4_info", return_value=info):
+            result = spider.playerContent(module._PUBLIC_LINE, row["vod_play_url"].split("$")[-1])
+            self.assertEqual((result["parse"], result["url"], result["quality"]), (0, media, "360P"))
+            self.assertEqual(post.call_args.kwargs["json"], {"item_id": "v1_current__2"})
+            post.reset_mock()
+            for key in ("123456789:2", "123456789:4", "987654321:1", "bad:1", "123456789:0"):
+                out = spider.playerContent(module._PUBLIC_LINE, module._PUBLIC_SLOT_PREFIX + key)
+                self.assertFalse(out["url"])
+            post.assert_not_called()
+
+    def test_stale_web_token_suggests_reopening_the_episode_directory(self):
+        key = module.EPISODE_PREFIX + "1080:v1_oldtokenABC"
+        out = module.Spider().playerContent("超清", key)
+        self.assertEqual(out["url"], "")
+        self.assertIn("詳情", out["msg"])
+
     def test_public_web_360_direct_playback(self):
         from unittest.mock import Mock
         media = "https://v1.fqnovelvod.com/test.mp4"

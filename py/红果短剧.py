@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 # === 發布與修改說明 ===
 # SPDX-License-Identifier: GPL-3.0-only
-# 紅果短劇 Python 修改版，最近修改日期：2026-11-26。
+# 紅果短劇 Python 修改版，最近修改日期：2026-11-27。
+# 官網公開選集依詳情頁可點連結辨識，起播時重新讀取該集的公開識別碼。
+# 共用直連播放參考 never88gone/THLRedGuo 的 assets/sources/hongguo.js
+# （d9287676），支援劇集索引、公開播放器資料與原生 MP4/HLS。
 # 2026-11-26 參考 Drama 8.4，檢查媒體轉址目標，並限制 Range 重試與讀取的等待時間。
 # 2026-11-25 擴大官網公開片源的首段 MP4 Range 並放寬網路逾時，改善起播。
 # 2026-11-20 本機串流服務自我修復：iOS 凍結暫停中的 App 會關閉監聽 socket，
@@ -1046,6 +1049,12 @@ _MEDIA_CDN_DOMAINS = ("qznovelvod.com", "fqnovelvod.com", "douyinvod.com")
 EPISODE_PREFIX = "hg-episode-v1:"
 _PUBLIC_EPISODE_PREFIX = "hg-public-v1:"
 _PUBLIC_LINE = "官網公開 360P"
+_PUBLIC_SLOT_PREFIX = "hg-web-slot-v1:"
+_PUBLIC_HD_SLOT_PREFIX = "hg-web-1080-slot-v1:"
+_NATIVE_SLOT_PREFIX = "hg-native-slot-v1:"
+_NATIVE_AUTO_LINE = "直連・自動畫質"
+_NATIVE_HD_LINE = "直連・指定 1080P"
+_WEB_TOKEN = re.compile(r"v1_[A-Za-z0-9_-]{8,128}")
 _PUBLIC_PAGE_PREFIX = "hg-public-page-v1:"
 _PUBLIC_PAGE_LINE = "官網公開原始畫質"
 _PUBLIC_WEB_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
@@ -1216,7 +1225,7 @@ def _public_web_media_url(video_id: str) -> str:
     Adapted from jackotom/hongguo-drama 8.3 src/native/hongguo.js (GPL-3.0-only).
     Do not retry a refusal, scrape protected previews, or guess media URLs.
     """
-    if not re.fullmatch(r"[0-9]{1,30}", str(video_id)):
+    if not (re.fullmatch(r"[0-9]{1,30}", str(video_id)) or _WEB_TOKEN.fullmatch(str(video_id))):
         raise HongguoPluginError("公開分集識別無效")
     headers = {
         "User-Agent": _PUBLIC_WEB_UA, "Accept": "application/json",
@@ -1261,19 +1270,72 @@ def _public_web_media_url(video_id: str) -> str:
     return raw
 
 
-def _public_page_media_url(series_id: str, video_id: str) -> str:
+def _trusted_direct_url(raw, video_id=None):
+    """Accept HTTPS media from this source's public CDN or its exact public-video path."""
+    if not isinstance(raw, str) or not raw or len(raw) > 8192 or re.search(r"[\s\\]", raw):
+        return False
+    try:
+        item = urlparse(raw)
+        host = item.hostname or ""
+        if (item.scheme != "https" or item.username is not None or item.password is not None
+                or item.port not in (None, 443)):
+            return False
+        if host == "hongguoduanju.com":
+            return bool(video_id and item.path.startswith("/video/public/%s/" % video_id))
+        return any(host == d or host.endswith("." + d) for d in _MEDIA_CDN_DOMAINS)
+    except ValueError:
+        return False
+
+
+def _clear_web_rows(player, video_id):
+    """Read the clear URLs published for the currently selected episode."""
+    if isinstance(player, str):
+        try:
+            player = json.loads(player)
+        except ValueError:
+            return []
+    if not isinstance(player, dict):
+        return []
+    def restricted(row):
+        return any(row.get(k) for k in ("spade_a", "encrypt_info", "drm", "license_url",
+                                        "is_preview", "is_trial", "is_encrypted"))
+    if restricted(player):
+        return []
+    variants = player.get("video_list")
+    if isinstance(variants, dict):
+        variants = list(variants.values())
+    rows = []
+    for row in ([player] + variants if isinstance(variants, list) else [player]):
+        if not isinstance(row, dict) or restricted(row):
+            continue
+        try:
+            size = min(int(row.get("vwidth") or row.get("width") or 0),
+                       int(row.get("vheight") or row.get("height") or 0))
+        except (TypeError, ValueError):
+            size = 0
+        for field in ("main_url", "backup_url"):
+            url = row.get(field)
+            if _trusted_direct_url(url, video_id):
+                rows.append((size, url))
+    return rows
+
+
+def _public_page_media_rows(series_id: str, video_id: str, first_episode=False):
     """Read the matching public, non-protected player page; never use SEO previews.
     Adapted from the public web route in hongguo-drama 8.3 (GPL-3.0-only).
     The official page must itself explicitly mark the episode as unprotected.
     No guessed media addresses, private hosts, or redirect retries.
     """
-    if not all(re.fullmatch(r"[0-9]{1,30}", str(v)) for v in (series_id, video_id)):
+    if (not re.fullmatch(r"[0-9]{1,30}", str(series_id)) or not (
+            re.fullmatch(r"[0-9]{1,30}", str(video_id)) or _WEB_TOKEN.fullmatch(str(video_id)))):
         raise HongguoPluginError("公開分集識別無效")
-    path = "/player/%s/%s" % (series_id, video_id)
+    path = "/player/" + series_id if first_episode else "/player/%s/%s" % (series_id, video_id)
     response = requests.get(SITE + path, headers={
         "User-Agent": _PUBLIC_WEB_UA, "Accept": "text/html",
         "Referer": SITE + "/",
     }, timeout=6, allow_redirects=False)
+    if response.status_code in (401, 403, 429):
+        raise _PublicAccessDenied("官網暫未開放此播放頁（HTTP %d）" % response.status_code)
     if response.status_code != 200:
         raise HongguoPluginError("官網公開頁面不可用（HTTP %d）" % response.status_code)
     if len(response.content) > 2 * 1024 * 1024:
@@ -1281,17 +1343,19 @@ def _public_page_media_url(series_id: str, video_id: str) -> str:
     html = response.text
     router = _router_data(html)
     loader = router.get("loaderData")
-    data = loader.get("player_(series_id)/(vid)/page") if isinstance(loader, dict) else None
+    data = (loader.get("player_(series_id)/(vid)/page") or loader.get("player_(series_id)/page")) if isinstance(loader, dict) else None
     if not isinstance(data, dict):
         raise HongguoPluginError("官網缺少目前分集資料")
     detail = data.get("seriesDetail")
     seo = data.get("publicVideoSeo")
     if (data.get("isSuccess") is False or data.get("protectedPlayback") is not False
             or str(data.get("vid")) != video_id or str(data.get("series_id")) != series_id
-            or not isinstance(detail, dict) or str(detail.get("series_id")) != series_id
-            or not isinstance(seo, dict) or seo.get("available") is not True
-            or str(seo.get("itemId")) != video_id or str(seo.get("seriesId")) != series_id):
+            or not isinstance(detail, dict) or str(detail.get("series_id")) != series_id):
         raise HongguoPluginError("本集未確認為公開完整影片")
+    rows = _clear_web_rows(data.get("video_player_info"), video_id)
+    if (not isinstance(seo, dict) or seo.get("available") is not True
+            or str(seo.get("itemId")) != video_id or str(seo.get("seriesId")) != series_id):
+        return rows
     for script in re.finditer(r"<script\b([^>]*)>([\s\S]*?)</script\s*>", html, re.I):
         if not re.search(r"""\btype\s*=\s*["']application/ld\+json["']""", script.group(1), re.I):
             continue
@@ -1312,10 +1376,122 @@ def _public_page_media_url(series_id: str, video_id: str) -> str:
             allowed_pages = {SITE + path, SITE + "/player/" + series_id}
             if obj.get("url") not in allowed_pages or (obj.get("@id") and obj["@id"] not in allowed_pages):
                 continue
-            return media
+            rows.append((0, media))
         except (TypeError, ValueError):
             continue
+    return rows
+
+
+def _public_page_media_url(series_id: str, video_id: str) -> str:
+    rows = _public_page_media_rows(series_id, video_id)
+    for _, url in sorted(rows, key=lambda row: row[0], reverse=True):
+        if not urlparse(url).path.lower().endswith(".m3u8"):
+            return url
     raise HongguoPluginError("官網未提供匹配的公開完整片源")
+
+
+def _fixed_hls_url(url, size_hint, video_id, headers):
+    with requests.get(url, headers=headers, stream=True, timeout=6, allow_redirects=False) as response:
+        if response.status_code != 200:
+            raise HongguoPluginError("HLS 播放清單不可用")
+        body = bytearray()
+        for chunk in response.iter_content(16384):
+            body.extend(chunk)
+            if len(body) > 256 * 1024:
+                raise HongguoPluginError("HLS 播放清單過大")
+    lines = [x.strip() for x in bytes(body).decode("utf-8-sig").splitlines() if x.strip()]
+    if not lines or lines[0] != "#EXTM3U":
+        raise HongguoPluginError("HLS 播放清單無效")
+    variants = []
+    for i, line in enumerate(lines):
+        if not line.startswith("#EXT-X-STREAM-INF:"):
+            continue
+        attrs = line.partition(":")[2]
+        res = re.search(r"(?:^|,)RESOLUTION=(\d+)x(\d+)(?=,|$)", attrs, re.I)
+        size = min(map(int, res.groups())) if res else 0
+        uri = lines[i + 1] if i + 1 < len(lines) and not lines[i + 1].startswith("#") else ""
+        variants.append((size, attrs, urljoin(url, uri) if uri else ""))
+    if not variants:
+        if size_hint == 1080 and any(x.startswith("#EXTINF:") for x in lines):
+            return url
+    elif all(size == 1080 for size, _, _ in variants):
+        return url
+    for size, attrs, uri in variants:
+        # Returning a standalone rendition must not discard external audio or subtitles.
+        if size == 1080 and not re.search(r"(?:^|,)(?:AUDIO|VIDEO|SUBTITLES|CLOSED-CAPTIONS)=", attrs):
+            if _trusted_direct_url(uri, video_id):
+                return uri
+    raise HongguoPluginError("HLS 未提供可獨立直放的 1080P 版本")
+
+
+def _native_media_result(url, size_hint, fixed_hd, video_id=None):
+    if not _trusted_direct_url(url, video_id):
+        raise HongguoPluginError("無可用的官網媒體網址")
+    headers = {"User-Agent": _PUBLIC_WEB_UA, "Referer": SITE + "/"}
+    result = {"parse": 0, "jx": 0, "playUrl": "", "url": url, "header": headers}
+    if not fixed_hd:
+        if size_hint > 0:
+            result["quality"] = "%dP" % size_hint
+        return result
+    if urlparse(url).path.lower().endswith(".m3u8"):
+        result["url"] = _fixed_hls_url(url, size_hint, video_id, headers)
+    else:
+        info = _public_mp4_info(url)
+        if info["quality"] != 1080:
+            raise HongguoPluginError("本集未提供可直放的 1080P")
+        result.update(width=info["width"], height=info["height"], codec=info["codec"])
+    result["quality"] = "1080P"
+    return result
+
+
+def _native_episode(series_id, number, episode_id, fixed_hd):
+    vid = _fresh_public_slot(series_id, number, episode_id)
+    try:
+        rows = _public_page_media_rows(series_id, vid, first_episode=(number == 1))
+    except _PublicAccessDenied:
+        raise
+    except (HongguoPluginError, requests.RequestException):
+        rows = []
+    seen = set()
+    for size, url in sorted(rows, key=lambda row: row[0], reverse=True):
+        if url in seen or size > 1080 or (fixed_hd and size not in (0, 1080)):
+            continue
+        seen.add(url)
+        try:
+            return _native_media_result(url, size, fixed_hd, vid)
+        except (HongguoPluginError, ValueError, requests.RequestException):
+            continue
+    return _native_media_result(_public_web_media_url(vid), 0, fixed_hd, vid)
+
+
+def _native_playback(target, flag):
+    fixed_hd = flag == _NATIVE_HD_LINE or "1080" in str(flag) or "超清" in str(flag)
+    if target.startswith((_NATIVE_SLOT_PREFIX, _PUBLIC_HD_SLOT_PREFIX)):
+        prefix, target = target.split(":", 1)
+        fixed_hd = prefix + ":" == _PUBLIC_HD_SLOT_PREFIX
+        match = re.fullmatch(r"([0-9]{1,30}):([1-9][0-9]{0,6})", target)
+        if match:
+            return _native_episode(match[1], int(match[2]), None, fixed_hd)
+        raise HongguoPluginError("公開分集識別無效")
+
+    target = target[len("hongguo:"):] if target.startswith("hongguo:") else target
+    if target.startswith("https://"):
+        if _trusted_direct_url(target) and urlparse(target).path.lower().endswith((".mp4", ".m3u8")):
+            return _native_media_result(target, 0, fixed_hd)
+        page = urlparse(target)
+        if page.netloc not in ("hongguoduanju.com", "www.hongguoduanju.com"):
+            raise HongguoPluginError("此網址不是紅果公開播放頁或媒體")
+        match = re.fullmatch(r"/player/([0-9]{1,30})(?:/([0-9]{1,30}|v1_[A-Za-z0-9_-]{8,128}))?/?", page.path)
+        if match:
+            return _native_episode(match[1], None if match[2] else 1, match[2], fixed_hd)
+    else:
+        match = re.fullmatch(r"([0-9]{1,30})[/_]([1-9][0-9]{0,4})", target)
+        if match:
+            return _native_episode(match[1], int(match[2]), None, fixed_hd)
+        match = re.fullmatch(r"([0-9]{1,30})_([0-9]{10,30})", target)
+        if match:
+            return _native_episode(match[1], None, match[2], fixed_hd)
+    raise HongguoPluginError("無法辨識此分集的播放資料")
 
 
 def _split_episode_token(token: str) -> tuple[str, str]:
@@ -1682,6 +1858,10 @@ _RANGE_FETCH_BACKOFF_SECONDS = 0.8
 _RANGE_BUDGET_SECONDS = 20
 
 class HongguoPluginError(RuntimeError):
+    pass
+
+
+class _PublicAccessDenied(HongguoPluginError):
     pass
 
 class _PlaybackModelError(HongguoPluginError):
@@ -5832,15 +6012,92 @@ def _page(url):
                 pass
     raise RuntimeError("page fetch failed: %s" % last_err)
 
-def _data(url):
-    html = _page(url)
+class _PublicEpisodeLinks(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.paths = set()
+
+    def handle_starttag(self, tag, attrs):
+        if tag != "a":
+            return
+        href = dict(attrs).get("href")
+        if not href:
+            return
+        path = href.split("?", 1)[0].split("#", 1)[0]
+        if path.startswith(SITE + "/"):
+            path = path[len(SITE):]
+        if path.startswith("/player/"):
+            self.paths.add(path.rstrip("/"))
+
+
+def _public_slots(payload, series_id):
+    page = (payload.get("loaderData") or {}).get("detail_page") or {}
+    detail = page.get("seriesDetail") or {}
+    if page.get("isSuccess") is False or str(detail.get("series_id")) != series_id:
+        return {}
+    vids = detail.get("vid_list")
+    paths = payload.get("_webhtv_player_paths") or set()
+    if not isinstance(vids, list) or not paths:
+        return {}
+    limit = detail.get("accessible_episode_cnt")
+    if limit is None:
+        limit = len(vids)
+    elif not re.fullmatch(r"[0-9]{1,7}", str(limit)):
+        return {}
+    root = "/player/" + series_id
+    slots = {}
+    seen = set()
+    for number, token in enumerate(vids[:int(limit)], 1):
+        token = str(token)
+        if not (_WEB_TOKEN.fullmatch(token) or re.fullmatch(r"[0-9]{1,30}", token)):
+            continue
+        if token in seen:
+            return {}
+        seen.add(token)
+        if root + "/" + token in paths or (number == 1 and root in paths):
+            slots[number] = token
+    return slots
+
+
+def _decode_site_page(html, include_player_paths=False):
     m = re.search(r"(?:window\.)?_ROUTER_DATA\s*=\s*", html)
     if not m:
         return {}
     try:
-        return json.JSONDecoder().raw_decode(html[m.end():])[0]
+        obj = json.JSONDecoder().raw_decode(html[m.end():])[0]
     except (ValueError, TypeError):
         return {}
+    if not isinstance(obj, dict):
+        return {}
+    if include_player_paths:
+        links = _PublicEpisodeLinks()
+        links.feed(html)
+        links.close()
+        obj["_webhtv_player_paths"] = links.paths
+    return obj
+
+
+def _fresh_public_slot(series_id, number=None, episode_id=None):
+    response = requests.get(
+        SITE + "/detail", params={"series_id": series_id},
+        headers={"User-Agent": _PUBLIC_WEB_UA, "Accept": "text/html"},
+        allow_redirects=False, timeout=6,
+    )
+    if response.status_code != 200 or len(response.content) > 2 * 1024 * 1024:
+        raise HongguoPluginError("官網公開分集暫時不可用")
+    slots = _public_slots(_decode_site_page(response.text, True), series_id)
+    if episode_id is not None:
+        if episode_id in slots.values():
+            return episode_id
+        raise HongguoPluginError("本集目前未開放網頁播放")
+    if number not in slots:
+        raise HongguoPluginError("本集目前未開放網頁播放")
+    return slots[number]
+
+
+def _data(url, include_player_paths=False):
+    return _decode_site_page(_page(url), include_player_paths)
+
 
 def _item(x):
     x = x or {}
@@ -6956,29 +7213,50 @@ class Spider(_BaseSpider):
     def detailContent(self, ids):
         sid = str(ids[0] if isinstance(ids, (list, tuple)) else ids)
         sid = sid.replace("hg-series-v1:", "")
-        p = ((_data(SITE + "/detail?series_id=" + quote(sid, safe="")).get("loaderData") or {}).get("detail_page") or {})
+        if not re.fullmatch(r"[0-9]{1,30}", sid):
+            return {"list": []}
+        payload = _data(SITE + "/detail?series_id=" + quote(sid, safe=""), include_player_paths=True)
+        p = (payload.get("loaderData") or {}).get("detail_page") or {}
         s = p.get("seriesDetail") or {}
-        vids = s.get("vid_list") or []
+        if p.get("isSuccess") is False or str(s.get("series_id")) != sid:
+            return {"list": []}
+        vids = s.get("vid_list")
+        if not isinstance(vids, list):
+            vids = []
+        numeric = [(i, str(v)) for i, v in enumerate(vids, 1)
+                   if re.fullmatch(r"[0-9]{1,30}", str(v))]
+        slots = _public_slots(payload, sid)
         actors = [str(x.get("nickname")) for x in (s.get("celebrities") or []) if isinstance(x, dict) and x.get("nickname")]
         try:
             _dm_series_load()
-            for _one in vids:
-                _dm_remember_series(_one, sid)
+            for _, video_id in numeric:
+                _dm_remember_series(video_id, sid)
             _dm_series_save()
         except Exception:
             pass
         play_from = []
         play_url = []
-        for q, line_name in _HG_QUALITY_LINES:
-            eps = "#".join(
-                "%d%s%s%s%s" % (i + 1, "$", EPISODE_PREFIX, q + ":", str(v))
-                for i, v in enumerate(vids)
-            )
-            play_from.append(line_name)
-            play_url.append(eps)
+        if slots:
+            for label, prefix in ((_NATIVE_AUTO_LINE, _NATIVE_SLOT_PREFIX),
+                                  (_NATIVE_HD_LINE, _PUBLIC_HD_SLOT_PREFIX),
+                                  (_PUBLIC_LINE, _PUBLIC_SLOT_PREFIX)):
+                play_from.append(label)
+                play_url.append("#".join("%d$%s%s:%d" % (n, prefix, sid, n) for n in slots))
+        if numeric:
+            for q, line_name in _HG_QUALITY_LINES:
+                play_from.append(line_name)
+                play_url.append("#".join("%d$%s%s:%s" % (i, EPISODE_PREFIX, q, vid)
+                                         for i, vid in numeric))
         return {"list": [{"vod_id": sid, "vod_name": str(s.get("series_name") or ""), "vod_pic": str(s.get("series_cover") or ""), "vod_year": "", "vod_area": "", "vod_director": "", "vod_actor": ",".join(actors), "vod_content": str(s.get("series_intro") or ""), "vod_remarks": str(s.get("episode_right_text") or ""), "vod_play_from": "$$$".join(play_from), "vod_play_url": "$$$".join(play_url)}]}
     def playerContent(self, flag, id, vipFlags=None):
         token = str(id or "")
+        if (token.startswith((_NATIVE_SLOT_PREFIX, _PUBLIC_HD_SLOT_PREFIX, "hongguo:", "https://"))
+                or re.fullmatch(r"[0-9]{1,30}[/_][0-9]{1,30}", token)):
+            try:
+                return _native_playback(token, flag)
+            except (HongguoPluginError, ValueError, requests.RequestException) as exc:
+                msg = str(exc) if isinstance(exc, HongguoPluginError) else "官網播放資料暫時不可用"
+                return {"parse": 0, "jx": 0, "playUrl": "", "url": "", "header": {}, "msg": msg}
         if token.startswith(_PUBLIC_PAGE_PREFIX):
             try:
                 sid, vid = token[len(_PUBLIC_PAGE_PREFIX):].split(":", 1)
@@ -6993,13 +7271,23 @@ class Spider(_BaseSpider):
                     "header": {"User-Agent": _PUBLIC_WEB_UA, "Referer": SITE + "/"},
                     "quality": "%dP" % info["quality"], "width": info["width"],
                     "height": info["height"], "codec": info["codec"]}
-        if token.startswith(_PUBLIC_EPISODE_PREFIX):
-            vid = token[len(_PUBLIC_EPISODE_PREFIX):]
+        if token.startswith((_PUBLIC_SLOT_PREFIX, _PUBLIC_EPISODE_PREFIX)):
+            wanted = 360
             try:
+                if token.startswith(_PUBLIC_SLOT_PREFIX):
+                    key = token.split(":", 1)[1]
+                    match = re.fullmatch(r"([0-9]{1,30}):([1-9][0-9]{0,6})", key)
+                    if not match:
+                        raise HongguoPluginError("公開分集識別無效")
+                    vid = _fresh_public_slot(match[1], int(match[2]))
+                else:
+                    vid = token[len(_PUBLIC_EPISODE_PREFIX):]
+                    if not re.fullmatch(r"[0-9]{1,30}", vid):
+                        raise HongguoPluginError("公開分集識別無效")
                 url = _public_web_media_url(vid)
                 info = _public_mp4_info(url)
-                if info["quality"] != 360:
-                    raise HongguoPluginError("官網片源實際解析度不符 360P")
+                if info["quality"] != wanted:
+                    raise HongguoPluginError("官網片源實際解析度不符 %dP" % wanted)
             except (ValueError, HongguoPluginError, requests.RequestException):
                 # Fail explicitly; never substitute a different episode or preview.
                 return {"parse": 0, "jx": 0, "playUrl": "", "url": "",
@@ -7008,6 +7296,9 @@ class Spider(_BaseSpider):
                     "header": {"User-Agent": _PUBLIC_WEB_UA, "Referer": SITE + "/"},
                     "quality": "%dP" % info["quality"], "width": info["width"],
                     "height": info["height"], "codec": info["codec"]}
+        if token.startswith(EPISODE_PREFIX) and _WEB_TOKEN.fullmatch(_split_episode_token(token)[1]):
+            return {"parse": 0, "jx": 0, "playUrl": "", "url": "", "header": {},
+                    "msg": "官網分集已更新，請重新開啟劇集詳情後選集"}
         self._adopt_working_pair()
         # 从线路名（flag，如“红果超清/红果高清”）与集 token 双路解析清晰度。
         # token 已是 'hg-episode-v1:<q>:<vid>'，flag 用于旧壳只传线路名时兜底。

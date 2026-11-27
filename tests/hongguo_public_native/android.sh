@@ -16,7 +16,7 @@ keytool -genkeypair -keystore "$tmp/debug.p12" -storepass android -alias probe -
 adb install -r "$tmp/probe-signed.apk"
 adb shell input keyevent 82
 for ep in 1 3; do
-    python "$src/media.py" "$ep" "$tmp/media.json"
+    python "$src/media.py" "$ep" "$tmp/media.json" 1080
     adb shell am force-stop test.hongguo
     adb logcat -c
     payload="$(base64 -w0 "$tmp/media.json")"

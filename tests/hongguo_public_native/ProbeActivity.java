@@ -42,7 +42,7 @@ public final class ProbeActivity extends Activity implements SurfaceHolder.Callb
             if (finished || player == null) return;
             int pos = player.getCurrentPosition();
             int width = player.getVideoWidth(), height = player.getVideoHeight();
-            if (rendered && Math.min(width, height) == 360 && pos > 350 && !requestedSeek) {
+            if (rendered && Math.min(width, height) == 1080 && pos > 350 && !requestedSeek) {
                 Log.i("HGNative", "rendered " + width + "x" + height + " at " + pos);
                 requestedSeek = true;
                 player.seekTo(5000L, MediaPlayer.SEEK_CLOSEST);

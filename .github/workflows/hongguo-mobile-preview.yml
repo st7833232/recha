@@ -34,7 +34,21 @@ jobs:
             echo "Episode $ep"
             xcrun simctl spawn "$phone" "$tmp/probe" "$tmp/media.json"
           done
+  android-source-1080:
+    name: Verify a real 1080P Hongguo source for Android
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install requests
+      - name: Check public episodes before starting the emulator
+        run: python tests/hongguo_public_native/media.py 1 "$RUNNER_TEMP/source.json" 1080
   android-media:
+    name: Play and seek with MediaPlayer at 1080P
+    needs: android-source-1080
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:

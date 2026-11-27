@@ -1048,6 +1048,7 @@ EPISODE_PREFIX = "hg-episode-v1:"
 _PUBLIC_EPISODE_PREFIX = "hg-public-v1:"
 _PUBLIC_LINE = "官網公開 360P"
 _PUBLIC_SLOT_PREFIX = "hg-web-slot-v1:"
+_PUBLIC_HD_SLOT_PREFIX = "hg-web-1080-slot-v1:"
 _WEB_TOKEN = re.compile(r"v1_[A-Za-z0-9_-]{8,128}")
 _PUBLIC_PAGE_PREFIX = "hg-public-page-v1:"
 _PUBLIC_PAGE_LINE = "官網公開原始畫質"
@@ -1270,7 +1271,8 @@ def _public_page_media_url(series_id: str, video_id: str) -> str:
     The official page must itself explicitly mark the episode as unprotected.
     No guessed media addresses, private hosts, or redirect retries.
     """
-    if not all(re.fullmatch(r"[0-9]{1,30}", str(v)) for v in (series_id, video_id)):
+    if (not re.fullmatch(r"[0-9]{1,30}", str(series_id)) or not (
+            re.fullmatch(r"[0-9]{1,30}", str(video_id)) or _WEB_TOKEN.fullmatch(str(video_id)))):
         raise HongguoPluginError("公開分集識別無效")
     path = "/player/%s/%s" % (series_id, video_id)
     response = requests.get(SITE + path, headers={
@@ -1284,7 +1286,7 @@ def _public_page_media_url(series_id: str, video_id: str) -> str:
     html = response.text
     router = _router_data(html)
     loader = router.get("loaderData")
-    data = loader.get("player_(series_id)/(vid)/page") if isinstance(loader, dict) else None
+    data = (loader.get("player_(series_id)/(vid)/page") or loader.get("player_(series_id)/page")) if isinstance(loader, dict) else None
     if not isinstance(data, dict):
         raise HongguoPluginError("官網缺少目前分集資料")
     detail = data.get("seriesDetail")
@@ -7078,10 +7080,11 @@ class Spider(_BaseSpider):
                     "header": {"User-Agent": _PUBLIC_WEB_UA, "Referer": SITE + "/"},
                     "quality": "%dP" % info["quality"], "width": info["width"],
                     "height": info["height"], "codec": info["codec"]}
-        if token.startswith((_PUBLIC_SLOT_PREFIX, _PUBLIC_EPISODE_PREFIX)):
+        if token.startswith((_PUBLIC_SLOT_PREFIX, _PUBLIC_HD_SLOT_PREFIX, _PUBLIC_EPISODE_PREFIX)):
+            wanted = 1080 if token.startswith(_PUBLIC_HD_SLOT_PREFIX) else 360
             try:
-                if token.startswith(_PUBLIC_SLOT_PREFIX):
-                    key = token[len(_PUBLIC_SLOT_PREFIX):]
+                if token.startswith((_PUBLIC_SLOT_PREFIX, _PUBLIC_HD_SLOT_PREFIX)):
+                    key = token.split(":", 1)[1]
                     match = re.fullmatch(r"([0-9]{1,30}):([1-9][0-9]{0,6})", key)
                     if not match:
                         raise HongguoPluginError("公開分集識別無效")
@@ -7092,8 +7095,8 @@ class Spider(_BaseSpider):
                         raise HongguoPluginError("公開分集識別無效")
                 url = _public_web_media_url(vid)
                 info = _public_mp4_info(url)
-                if info["quality"] != 360:
-                    raise HongguoPluginError("官網片源實際解析度不符 360P")
+                if info["quality"] != wanted:
+                    raise HongguoPluginError("官網片源實際解析度不符 %dP" % wanted)
             except (ValueError, HongguoPluginError, requests.RequestException):
                 # Fail explicitly; never substitute a different episode or preview.
                 return {"parse": 0, "jx": 0, "playUrl": "", "url": "",

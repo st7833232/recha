@@ -68,7 +68,7 @@
       "key": "py_hongguo",
       "name": "紅果 • 短劇",
       "type": 3,
-      "api": "https://raw.githubusercontent.com/cluntop/tvbox/main/py/hongguo.py",
+      "api": "./py/红果短剧.py",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,

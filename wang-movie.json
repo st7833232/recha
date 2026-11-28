@@ -75,17 +75,6 @@
       "genre": "shortdrama"
     },
     {
-      "key": "anime1",
-      "name": "Anime1 • 動畫",
-      "type": 3,
-      "api": "./py/anime1.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 1,
-      "genre": "anime"
-    },
-    {
       "key": "Ikanbot",
       "name": "🥇｜愛看機器人｜",
       "type": 3,
